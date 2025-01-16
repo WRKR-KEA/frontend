@@ -1,91 +1,83 @@
 import React from "react";
-import Pagination from "react-js-pagination";
-import styled from "styled-components";
 
-// Styled component for pagination
-const StyledReactPaginate = styled(Pagination as any)`
-  display: flex;
-  flex-direction: row;
-  gap: 5px;
-  margin-top: 20px;
-  cursor: pointer;
-  list-style: none;
-  justify-content: center;  /* 중앙 정렬 */
-
-  .page-item {
-    padding: 8px 12px;
-    border-radius: 50px;
-    color: black;
-    font-size: 16px;
-    text-align: center;
-    transition: background-color 0.2s, color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .page-item:hover {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-
-  .active {
-    font-weight: bold;
-    color: white;
-    background-color: #252E66;  /* 현재 페이지 색상 */
-    border-radius: 50%;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-
-  .previous-item,
-  .next-item {
-    padding: 8px 12px;
-    border-radius: 50px;
-    font-size: 16px;
-    color: #61d0d0;
-    background-color: #ffffff;
-    margin: 0px 10px;
-  }
-
-  .previous-item:hover,
-  .next-item:hover {
-    background-color: rgba(255, 255, 255, 0.6);
-  }
-`;
-
-type PaginationProps = {
+interface PagePaginationProps {
   totalItemsCount: number;
   itemsCountPerPage: number;
   pageRangeDisplayed: number;
   onPageChange: (pageNumber: number) => void;
-};
+}
 
-const PagePagination = ({
+const PagePagination: React.FC<PagePaginationProps> = ({
   totalItemsCount,
   itemsCountPerPage,
   pageRangeDisplayed,
   onPageChange,
-}: PaginationProps) => {
+}) => {
+  const totalPages = Math.ceil(totalItemsCount / itemsCountPerPage);
+  const [currentPage, setCurrentPage] = React.useState(1);
+
+  const handleClick = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+    onPageChange(pageNumber);
+  };
+
+  const renderPageNumbers = () => {
+    const pages: number[] = [];
+    const startPage = Math.max(1, currentPage - Math.floor(pageRangeDisplayed / 2));
+    const endPage = Math.min(totalPages, startPage + pageRangeDisplayed - 1);
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    return pages.map((page) => (
+      <button
+        key={page}
+        onClick={() => handleClick(page)}
+        className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
+          currentPage === page
+            ? "bg-[#4F507F] text-white"
+            : "text-black hover:bg-[#9192AE]"
+        }`}
+      >
+        {page}
+      </button>
+    ));
+  };
+
+  const goToFirstPage = () => handleClick(1);
+  const goToLastPage = () => handleClick(totalPages);
+  const goToPreviousPage = () => handleClick(Math.max(1, currentPage - 1));
+  const goToNextPage = () => handleClick(Math.min(totalPages, currentPage + 1));
+
   return (
-    <StyledReactPaginate
-      activePage={1}
-      itemsCountPerPage={itemsCountPerPage}
-      totalItemsCount={totalItemsCount}
-      pageRangeDisplayed={pageRangeDisplayed}
-      onChange={onPageChange}
-      previousLabel="<"
-      nextLabel=">"
-      breakLabel="..."
-      containerClassName={"pagination"}
-      pageClassName={"page-item"}
-      pageLinkClassName={"page-link"}
-      previousClassName={"previous-item"}
-      nextClassName={"next-item"}
-      activeClassName={"active"}
-    />
+    <div className="flex items-center">
+      <button
+        onClick={goToFirstPage}
+        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+      >
+        {"<<"}
+      </button>
+      <button
+        onClick={goToPreviousPage}
+        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+      >
+        {"<"}
+      </button>
+      {renderPageNumbers()}
+      <button
+        onClick={goToNextPage}
+        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+      >
+        {">"}
+      </button>
+      <button
+        onClick={goToLastPage}
+        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+      >
+        {">>"}
+      </button>
+    </div>
   );
 };
 

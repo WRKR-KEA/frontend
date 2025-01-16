@@ -21,16 +21,20 @@ export default function UserTicketListPage() {
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex justify-between items-center">
-        <h2 className="text-lg font-semibold">티켓 조회</h2>
-        <FilterNum onSelectCount={handleSelectCount} /> {/* 필터 컴포넌트 추가 */}
+        <h2 className="text-md font-semibold">티켓 조회</h2>
+        <FilterNum onSelectCount={handleSelectCount} />
       </div>
       <TicketList maxTicketsToShow={maxTicketsToShow} page={currentPage} />
-      <PagePagination
-        totalItemsCount={1000} // 예시로 1000개 항목으로 설정, 실제 항목 수에 맞게 변경
-        itemsCountPerPage={maxTicketsToShow}
-        pageRangeDisplayed={5}
-        onPageChange={handlePageChange}
-      />
+      
+      {/* 페이지네이션 컨테이너 */}
+      <div className="flex justify-center items-center mt-4">
+        <PagePagination
+          totalItemsCount={1000} 
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }

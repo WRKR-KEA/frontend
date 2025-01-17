@@ -1,4 +1,4 @@
-"use client"; // 클라이언트 컴포넌트로 지정
+"use client"; 
 import { useState } from "react";
 
 interface FirstTaskDropProps {
@@ -8,14 +8,10 @@ interface FirstTaskDropProps {
 
 export default function FirstTaskDrop({ selectedService, onServiceChange }: FirstTaskDropProps) {
   const services = [
-    "Database (DB)",
-    "Virtual Machine (VM)",
-    "Monitoring & Logging",
-    "Hadoop",
-    "Kubernetes (K8s)",
-    "Cloud Storage",
-    "Networking",
-    "기타",
+    "인프라 (Infrastructure)",
+    "시스템 (System)",
+    "네트워크 (Networking)",
+    "기타 (Others)"
   ];
 
   const [isOpen, setIsOpen] = useState(false); // State to toggle the dropdown visibility

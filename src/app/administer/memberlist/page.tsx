@@ -1,19 +1,33 @@
 "use client";
-
+import { Search } from "@/components/search";
+import PagePagination from "@/components/pagination";
 import { useState } from "react";
 
 export default function AdminMemberListPage() {
-    const [isFilterOpen, setIsFilterOpen] = useState(false); // 필터 드롭다운 상태
 
-    const toggleFilter = () => {
-        setIsFilterOpen((prev) => !prev); // 필터 상태 토글
-    };
-
+    const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
     const [activeTab, setActiveTab] = useState("Tab1");
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
     const handleTabClick = (tabName: string) => {
         setActiveTab(tabName);
     };
+
+
+    const handleSelectCount = (count: number) => {
+        setMaxTicketsToShow(count);
+    };
+
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber);
+        window.scrollTo(0, 0); // 페이지 변경 시 스크롤 맨 위로 이동
+    };
+
+    const handleSearchChange = (term: string) => {
+        setSearchTerm(term);
+    };
+
 
 
 
@@ -101,57 +115,17 @@ export default function AdminMemberListPage() {
     ];
 
     return (
-        <div className="flex flex-col items-center bg-white p-4 rounded-md w-full">
-            {/* 상단 검색 및 필터 영역 */}
-            <div className="flex items-center justify-between w-full">
-                {/* 필터 버튼 */}
-                <div className="relative">
-                    <button
-                        onClick={toggleFilter}
-                        className="flex items-center px-4 py-4 border border-gray-300 rounded-md text-sm hover:bg-gray-100 focus:outline-none"
-                    >
-                        전체
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4 ml-1"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M19 9l-7 7-7-7"
-                            />
-                        </svg>
-                    </button>
+        <div className="flex flex-col bg-white p-4 rounded-md w-full">
+            {/* 상단 검색 및 필터 영역 */}<div className="flex items-center">
 
-                    {/* 필터 드롭다운 */}
-                    {isFilterOpen && (
-                        <ul className="absolute mt-2 w-32 bg-white border border-gray-300 rounded-md shadow-lg z-10">
-                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                이메일
-                            </li>
-                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                이름
-                            </li>
-                            <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">
-                                부서
-                            </li>
-                        </ul>
-                    )}
+
+                <h2 className="text-md font-semibold">회원 조회</h2>
+
+                {/* 검색 컴포넌트 추가 */}
+                <div className="flex items-center space-x-2 ml-4">
+                    <Search onSearchChange={handleSearchChange} />
                 </div>
 
-                {/* 검색바 */}
-                <div className="flex-grow flex items-center bg-gray-100 px-4 py-4 rounded-md text-gray-500 ml-4">
-                    <img src="/search.png" className="w-5" />
-                    <input
-                        type="text"
-                        placeholder="Search for teachers by name or email"
-                        className="w-full bg-transparent text-sm focus:outline-none ml-2"
-                    />
-                </div>
             </div>
 
 
@@ -188,9 +162,10 @@ export default function AdminMemberListPage() {
                     </button>
 
                     {/* 오른쪽 끝 파란색 버튼 */}
-                    <button className="ml-auto px-4 py-2 bg-blue-500 text-white rounded-md font-semibold hover:bg-blue-600">
-                        추가
+                    <button className="ml-auto px-3 py-2 border-2 border-[#4B5FC2] text-[#4B5FC2] bg-white rounded-md hover:bg-[#4B5FC2] hover:text-white transition">
+                        회원 삭제
                     </button>
+
                 </div>
 
 
@@ -243,6 +218,15 @@ export default function AdminMemberListPage() {
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="flex justify-center items-center mt-4 w-full">
+                    <PagePagination
+                        totalItemsCount={1000}
+                        itemsCountPerPage={maxTicketsToShow}
+                        pageRangeDisplayed={5}
+                        onPageChange={handlePageChange}
+                    />
                 </div>
 
             </div>

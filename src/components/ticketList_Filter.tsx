@@ -90,7 +90,7 @@ export function TicketList_Filter({ maxTicketsToShow, page, searchTerm }: Ticket
                 </div>
               )}
             </th>
-            <th className="px-4 py-2 w-80">제목</th> {/* 제목 열 넓이를 넓게 설정 */}
+            <th className="px-4 py-2 w-80">제목</th>
             <th className="px-4 py-2 w-32">담당자</th>
             <th className="px-4 py-2 w-32">요청자</th>
             <th className="px-4 py-2 w-36">요청일</th>

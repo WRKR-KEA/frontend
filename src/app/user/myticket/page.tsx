@@ -42,7 +42,7 @@ export default function UserTicketListPage() {
       <TicketList_Filter
         maxTicketsToShow={maxTicketsToShow}
         page={currentPage}
-        searchTerm={searchTerm}  // 필터링을 위한 검색어 전달
+        searchTerm={searchTerm}
       />
       
       <div className="flex justify-center items-center mt-4">

@@ -23,7 +23,7 @@ export default function UserCreateTicketPage() {
       <h2 className="text-md font-semibold w-60">티켓 생성</h2>
       <div className="flex space-x-0 mb-5">
         {/* 업무 분류 및 드롭다운 */}
-        <div className="flex flex-col items-start ml-8 w-80">
+        <div className="flex flex-col items-start ml-8 mr-16 w-80">
           <label>업무 분류</label>
           <FirstTaskDrop
             selectedService={selectedService}
@@ -37,7 +37,7 @@ export default function UserCreateTicketPage() {
           <SecondTaskDrop
             selectedRequestType={selectedRequestType}
             onRequestTypeChange={handleRequestTypeChange}
-            selectedService={selectedService} // Pass selectedService to SecondTaskDrop
+            selectedService={selectedService} 
           />
         </div>
       </div>

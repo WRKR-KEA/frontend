@@ -1,11 +1,12 @@
-"use client"; 
+"use client";
 
 import { useState } from "react";
 import FirstTaskDrop from "../../../components/firstTaskDrop";
 import SecondTaskDrop from "../../../components/secondTaskDrop";
-import Help from "../../../components/Help"; 
-import Modal from "../../../components/Modal"; 
+import Help from "../../../components/Help";
+import Modal from "../../../components/Modal";
 import SparkleButton from "../../../components/sparkleButton";
+import Template from "../../../components/Template"; // Template.tsx 컴포넌트 불러오기
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState<string>("1차 카테고리를 선택해주세요.");
@@ -38,11 +39,7 @@ export default function UserCreateTicketPage() {
             onClick={toggleModal}
           >
             <span className="text-sm font-medium">도움말</span>
-            <img
-              src="/helpIcon.png"
-              alt="Help Icon"
-              className="w-4 h-4"
-            />
+            <img src="/helpIcon.png" alt="Help Icon" className="w-4 h-4" />
           </button>
         </div>
 
@@ -60,11 +57,13 @@ export default function UserCreateTicketPage() {
             <SecondTaskDrop
               selectedRequestType={selectedRequestType}
               onRequestTypeChange={handleRequestTypeChange}
-              selectedService={selectedService} 
+              selectedService={selectedService}
             />
           </div>
         </div>
       </div>
+
+      <Template />
 
       {isModalOpen && (
         <Modal onClose={toggleModal}>
@@ -72,10 +71,10 @@ export default function UserCreateTicketPage() {
         </Modal>
       )}
 
-      {/* SparkleButton 추가 */}
+      {/* SparkleButton */}
       <div className="flex justify-center">
         <SparkleButton onClick={handleCreate}>생성하기</SparkleButton>
-    </div>
+      </div>
     </div>
   );
 }

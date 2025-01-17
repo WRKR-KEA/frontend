@@ -184,9 +184,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {!isLoginPage && (
           <header
             className="text-black p-6 flex justify-between items-center border-b"
-            style={{ borderColor: "rgba(0, 0, 0, 0.1)" }}
+            style={{ borderColor: "rgba(0, 0, 0, 0.1)",  height: "40px" }} //헤더 높이 변경
           >
-            <div className="ml-4">{pageTitle}</div>
+            <div className="text-[#252E66] font-semibold" >{pageTitle}</div> 
+            {/* 왼쪽 여백 없앰, 글씨 색상 변경 */}
             <nav>
               <ul className="flex space-x-4">
                 <li>
@@ -195,7 +196,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <li>
                   <img src="/ticket_remind.png" className="w-5" />
                 </li>
-                <li>로그아웃</li>
+                <li className="text-[#252E66] text-sm">로그아웃</li>
+                {/* 로그아웃 글씨 색상, 글씨 크기 변경 */}
               </ul>
             </nav>
           </header>)}

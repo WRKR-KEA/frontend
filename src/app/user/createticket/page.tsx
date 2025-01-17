@@ -29,25 +29,17 @@ export default function UserCreateTicketPage() {
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex items-center justify-between">
-        <h2 className="text-md font-semibold w-60">티켓 생성</h2>
+        <h2 className="text-md font-semibold w-60 mb-4">티켓 생성</h2>
         <button
-          className="flex items-center justify-center w-8 h-8 rounded-full bg-gray-200"
+          className="flex items-center justify-center space-x-2 text-[#6E61CA] hover:text-[#5A50A8]"
           onClick={toggleModal}
         >
-          <svg
-            className="w-4 h-4 text-gray-500"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M12 8v4m0 0v4m0-4H8m4 0h4"
-            />
-          </svg>
+          <span className="text-sm font-medium">도움말</span>
+          <img
+          src="/helpIcon.png"
+          alt="Help Icon"
+          className="w-4 h-4"
+        />
         </button>
       </div>
 

@@ -1,8 +1,8 @@
 import { FaCheck, FaExclamationTriangle } from 'react-icons/fa';  // 체크 아이콘과 주의 아이콘을 위한 라이브러리
 
-export function TicketStatus({ status }: { status: 'new' | 'rejected' | 'in-progress' | 'completed' | 'delegated' }) {
+export function TicketStatus({ status }: { status: 'new' | 'rejected' | 'in-progress' | 'completed' }) {
   const isRejected = status === 'rejected';
-  const isInProgress = status === 'in-progress' || status === 'delegated';
+  const isInProgress = status === 'in-progress';
   const isCompleted = status === 'completed';
   const isNew = status === 'new';
 
@@ -17,16 +17,7 @@ export function TicketStatus({ status }: { status: 'new' | 'rejected' | 'in-prog
           </div>
           <span>작업 요청</span>
         </div>
-        <span className="mb-4 text-gray-400">----------</span> 
-        
-        {/* 승인 완료 */}
-        <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-300">
-            {(isInProgress || isCompleted || isRejected) && <FaCheck className="text-white" />} {/* 진행 중, 완료 상태에서 체크 표시 */}
-          </div>
-          <span>승인 완료</span>
-        </div>
-        <span className="mb-4 text-gray-400">----------</span> 
+        <span className="mb-4 text-gray-400">----------------</span> 
 
         {/* 작업 진행 */}
         <div className="flex flex-col items-center">
@@ -35,7 +26,7 @@ export function TicketStatus({ status }: { status: 'new' | 'rejected' | 'in-prog
           </div>
           <span>작업 진행</span>
         </div>
-        <span className="mb-4 text-gray-400">----------</span> 
+        <span className="mb-4 text-gray-400">----------------</span> 
 
         {/* 작업 완료 */}
         <div className="flex flex-col items-center">
@@ -49,3 +40,12 @@ export function TicketStatus({ status }: { status: 'new' | 'rejected' | 'in-prog
     </div>
   );
 }
+
+ {/* 승인 완료 */}
+//  <div className="flex flex-col items-center">
+//  <div className="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-300">
+//    {(isInProgress || isCompleted || isRejected) && <FaCheck className="text-white" />} {/* 진행 중, 완료 상태에서 체크 표시 */}
+//  </div>
+//  <span>승인 완료</span>
+// </div>
+// <span className="mb-4 text-gray-400">----------</span> 

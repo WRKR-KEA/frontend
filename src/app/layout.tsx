@@ -8,6 +8,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   const pathname = usePathname(); // 현재 경로 가져오기
   const [isStatisticsOpen, setIsStatisticsOpen] = useState(false); // 상태 관리
 
+  const excludedPaths = ["/login", "/changepassword", "/locked", "/passwordchangemodal"];
+  const isLoginPage = excludedPaths.includes(pathname);
+
   const toggleStatistics = () => {
     setIsStatisticsOpen((prev) => !prev); // 열고 닫기 토글
   };
@@ -31,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en">
       <body className="h-screen flex">
-        {/* 사이드바 */}
+      {!isLoginPage && (
         <aside className="w-64 h-screen bg-[#252E66] text-white flex flex-col justify-between">
           {/* 상단 사용자 정보 */}
           <div>
@@ -173,11 +176,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <div className="mb-5 flex justify-center">
             <img src="/logo.png" className="w-28 h-auto" alt="Brand Logo" />
           </div>
-        </aside>
+        </aside>)}
 
         {/* 메인 컨테이너 */}
         <div className="flex-1 flex flex-col">
           {/* 헤더바 */}
+          {!isLoginPage && (
           <header
             className="text-black p-6 flex justify-between items-center border-b"
             style={{ borderColor: "rgba(0, 0, 0, 0.1)",  height: "40px" }} //헤더 높이 변경
@@ -196,7 +200,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 {/* 로그아웃 글씨 색상, 글씨 크기 변경 */}
               </ul>
             </nav>
-          </header>
+          </header>)}
 
           {/* 메인 콘텐츠 */}
           <main className="flex-1 overflow-y-auto bg-white">{children}</main>

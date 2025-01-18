@@ -1,10 +1,14 @@
 import React from 'react';
 
 type TicketListProps = {
-  maxTicketsToShow: number; page: number;
+  maxTicketsToShow: number; 
+  page: number;
+  status?: string; 
+  handler?: string; 
+  requester?: string;
 };
 
-export function TicketList({ maxTicketsToShow, page }: TicketListProps ) {
+export function TicketList({ maxTicketsToShow, page,  status, handler, requester }: TicketListProps ) {
   const tickets = [
     { "id": "AAA000001", "status": "작업완료", "title": "VM이 안됩니다. 도와주세요!", "requester": "춘식이", "requestDate": "2025.01.01", "updateDate": "2025.01.14", "handler": "라이언" },
     { "id": "AAA000002", "status": "작업진행", "title": "네트워크 장애 해결 요청", "requester": "춘식이", "requestDate": "2025.01.02", "updateDate": "2025.01.15", "handler": "어피치" },
@@ -47,8 +51,17 @@ const statusStyles: Record<string, string> = {
     위임: "bg-blue-100 text-blue-600",
   };
 
+  // 필터링 로직
+  const filteredTickets = tickets.filter(ticket => {
+    return (
+      (!status || ticket.status === status) &&
+      (!handler || ticket.handler.toLowerCase().includes(handler.toLowerCase())) &&
+      (!requester || ticket.requester.toLowerCase().includes(requester.toLowerCase()))
+    );
+  });
+
   // 페이지에 해당하는 티켓들을 잘라서 표시
-  const displayedTickets = tickets.slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
+  const displayedTickets = filteredTickets.slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
 
   return (
     <div className="bg-white rounded-md shadow-md">

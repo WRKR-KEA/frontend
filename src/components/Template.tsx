@@ -27,7 +27,7 @@ export default function Template() {
         <textarea
           id="content"
           className="w-full border border-gray-300 rounded-md p-2"
-          rows={6}
+          style={{ height: "360px" }} 
           placeholder="내용을 입력해주세요."
           value={content}
           onChange={(e) => setContent(e.target.value)}

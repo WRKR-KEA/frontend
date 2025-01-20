@@ -1,4 +1,4 @@
-"use client"; // 클라이언트 컴포넌트로 지정
+"use client";
 
 import { useState } from "react";
 import { TicketList_Filter } from "../../../components/ticketList_Filter";

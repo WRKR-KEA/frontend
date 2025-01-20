@@ -43,22 +43,12 @@ export function TicketList_Filter({ maxTicketsToShow, page, searchTerm }: Ticket
   const statusStyles: Record<string, string> = {
     작업완료: "bg-green-100 text-green-600",
     작업진행: "bg-purple-100 text-purple-600",
-    작업취소: "bg-red-100 text-red-600",
-    승인: "bg-orange-100 text-orange-600",
-    작업요청: "bg-pink-100 text-pink-600",
+    작업취소: "bg-gray-100 text-gray-600",
+    작업반려: "bg-red-100 text-red-600",
+    작업요청: "bg-blue-100 text-blue-600",
   };
 
   const [filterStatus, setFilterStatus] = useState<string>("전체");
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-
-  const handleStatusClick = (status: string) => {
-    if (filterStatus === status) {
-      setFilterStatus("전체");
-    } else {
-      setFilterStatus(status);
-    }
-    setIsDropdownOpen(false);
-  };
 
   const filteredTickets = tickets.filter(ticket => {
     const matchesSearchTerm = ticket.title.includes(searchTerm) || ticket.handler.includes(searchTerm) || ticket.id.includes(searchTerm);
@@ -74,21 +64,7 @@ export function TicketList_Filter({ maxTicketsToShow, page, searchTerm }: Ticket
         <thead>
           <tr className="bg-gray-100 text-left">
             <th className="px-4 py-2 w-36">티켓 ID</th>
-            <th className="px-4 py-2 w-24 flex items-center cursor-pointer" onClick={() => setIsDropdownOpen(!isDropdownOpen)}>
-            상태
-            <span className="ml-2 text-sm">
-                {isDropdownOpen ? "▲" : "▼"}
-                </span>
-              {isDropdownOpen && (
-                <div className="absolute bg-white border shadow-lg mt-60">
-                  {["전체", "작업완료","작업요청", "작업진행", "작업취소"].map((status) => (
-                    <div key={status} className="cursor-pointer px-4 py-2 hover:bg-gray-100 font-normal" onClick={() => handleStatusClick(status)}>
-                      {status}
-                    </div>
-                  ))}
-                </div>
-              )}
-            </th>
+            <th className="px-4 py-2 w-24">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
             <th className="px-4 py-2 w-32">담당자</th>
             <th className="px-4 py-2 w-32">요청자</th>

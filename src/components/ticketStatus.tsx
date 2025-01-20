@@ -1,4 +1,4 @@
-import { FaCheck, FaExclamationTriangle } from 'react-icons/fa';  // 체크 아이콘과 주의 아이콘을 위한 라이브러리
+import { FaCheck, FaExclamationTriangle } from 'react-icons/fa';  
 
 export function TicketStatus({ status }: { status: 'new' | 'rejected' | 'in-progress' | 'completed' }) {
   const isRejected = status === 'rejected';

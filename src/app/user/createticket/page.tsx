@@ -6,7 +6,7 @@ import SecondTaskDrop from "../../../components/secondTaskDrop";
 import Help from "../../../components/Help";
 import Modal from "../../../components/Modal";
 import SparkleButton from "../../../components/sparkleButton";
-import Template from "../../../components/Template"; // Template.tsx 컴포넌트 불러오기
+import Template from "../../../components/Template"; 
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState<string>("1차 카테고리를 선택해주세요.");
@@ -29,7 +29,6 @@ export default function UserCreateTicketPage() {
     console.log("Ticket created!");
   };
 
-  // 선택 조건: 기본값이 아닌 경우만 렌더링
   const isReadyToShow = selectedService !== "1차 카테고리를 선택해주세요." && 
                         selectedRequestType !== "2차 카테고리를 선택해주세요.";
 
@@ -47,8 +46,9 @@ export default function UserCreateTicketPage() {
           </button>
         </div>
 
-        <div className="flex space-x-0 mb-5">
-          <div className="flex flex-col items-start ml-8 mr-16 w-80">
+        {/* 업무 분류와 업무 중앙 정렬 */}
+        <div className="flex justify-center items-start space-x-16 mb-5">
+          <div className="flex flex-col items-start w-80">
             <label>업무 분류</label>
             <FirstTaskDrop
               selectedService={selectedService}
@@ -56,7 +56,7 @@ export default function UserCreateTicketPage() {
             />
           </div>
 
-          <div className="flex flex-col items-start">
+          <div className="flex flex-col items-start w-80">
             <label>업무</label>
             <SecondTaskDrop
               selectedRequestType={selectedRequestType}

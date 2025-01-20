@@ -29,6 +29,10 @@ export default function UserCreateTicketPage() {
     console.log("Ticket created!");
   };
 
+  // 선택 조건: 기본값이 아닌 경우만 렌더링
+  const isReadyToShow = selectedService !== "1차 카테고리를 선택해주세요." && 
+                        selectedRequestType !== "2차 카테고리를 선택해주세요.";
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col min-h-screen justify-between">
       <div>
@@ -63,18 +67,21 @@ export default function UserCreateTicketPage() {
         </div>
       </div>
 
-      <Template />
+      {/* 조건부 렌더링 */}
+      {isReadyToShow && (
+        <>
+          <Template />
+          <div className="flex justify-center">
+            <SparkleButton onClick={handleCreate}>생성하기</SparkleButton>
+          </div>
+        </>
+      )}
 
       {isModalOpen && (
         <Modal onClose={toggleModal}>
           <Help />
         </Modal>
       )}
-
-      {/* SparkleButton */}
-      <div className="flex justify-center">
-        <SparkleButton onClick={handleCreate}>생성하기</SparkleButton>
-      </div>
     </div>
   );
 }

@@ -1,42 +1,144 @@
-"use client"; // 클라이언트 컴포넌트로 지정
+"use client";
 
-import { useState } from 'react';
+import { useState } from "react";
+import ProfileSave from "../../../components/profileSave";
+import ProfileEdit from "../../../components/profileEdit"; 
 
 export default function UserProfilePage() {
-    const [emailNotifications, setEmailNotifications] = useState(false);
+  const [emailNotifications, setEmailNotifications] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false); // State to track if the user is editing
+  
+  // 프로필 정보
+  const profile = {
+    name: "춘식이",
+    position: "직무",
+    email: "choonsik@example.com",
+    phone: "010-0000-0000",
+    department: "카카오프렌즈",
+    role: "사원",
+    permission: "권한",
+  };
 
-    const toggleEmailNotifications = () => {
-        setEmailNotifications(!emailNotifications);
-    };
+  const toggleEmailNotifications = () => {
+    setEmailNotifications(!emailNotifications);
+  };
 
-    return (
-        <div style={{ padding: '20px', textAlign: 'center', background: '#f5f5dc' }}>
-            <img
-                src="https://via.placeholder.com/100" // 프로필 이미지 URL
-                alt="Profile"
-                style={{ borderRadius: '50%', marginBottom: '20px' }}
-            />
-            <h1>춘식이</h1>
-            <p>한컴 타자 (권한)</p>
-            <p>컨택은 choonsik@example.com 또는 010-0000-0000</p>
-            <p>감사합니다. (이메일, 전화번호)</p>
-            <div style={{ margin: '20px 0' }}>
-                <span>카카오프렌즈</span> | <span>사원</span> | <span>미정</span>
-            </div>
-            <div style={{ margin: '20px 0' }}>
-                <label>
-                    이메일 수신 동의
-                    <input
-                        type="checkbox"
-                        checked={emailNotifications}
-                        onChange={toggleEmailNotifications}
-                        style={{ marginLeft: '10px' }}
-                    />
-                </label>
-            </div>
-            <button style={{ padding: '10px 20px', background: '#4CAF50', color: 'white', border: 'none', borderRadius: '5px' }}>
-                수정
-            </button>
-        </div>
-    );
+  const toggleDropdown = () => {
+    setIsDropdownOpen(!isDropdownOpen);
+  };
+
+  const toggleEditing = () => {
+    setIsEditing(!isEditing); // Toggle between edit/save mode
+  };
+
+  return (
+    <div
+      style={{
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
+      <div
+        style={{
+          background: "#f5f5dc",
+          flex: "30%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      ></div>
+
+      <div
+        style={{
+          background: "white",
+          flex: "70%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          flexDirection: "column",
+          padding: "20px",
+          position: "relative",
+        }}
+      >
+        {/* 이메일 아이콘 */}
+        <img
+          src="/email.png"
+          alt="Email Icon"
+          style={{
+            position: "absolute",
+            top: "-30px",
+            right: "5px",
+            width: "30px",
+            height: "30px",
+            cursor: "pointer",
+          }}
+          onClick={toggleDropdown}
+        />
+
+        {/* 이메일 드롭다운 */}
+        {isDropdownOpen && (
+          <div
+            style={{
+              position: "absolute",
+              top: "0",
+              right: "5px",
+              background: "white",
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              padding: "10px",
+              boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+              zIndex: 1000,
+            }}
+          >
+            <label style={{ display: "flex", alignItems: "center" }}>
+              이메일 수신 동의
+              <input
+                type="checkbox"
+                checked={emailNotifications}
+                onChange={toggleEmailNotifications}
+                style={{ marginLeft: "10px" }}
+              />
+            </label>
+          </div>
+        )}
+
+        {/* 프로필 이미지 */}
+        <img
+          src="/profile.png"
+          alt="Profile"
+          style={{
+            borderRadius: "50%",
+            marginBottom: "20px",
+            width: "250px",
+            height: "250px",
+            marginTop: "-270px",
+          }}
+        />
+
+        {/* Conditionally render ProfileSave or ProfileEdit */}
+        {isEditing ? (
+          <ProfileEdit profile={profile} />
+        ) : (
+          <ProfileSave profile={profile} />
+        )}
+
+        {/* Edit/Save Button */}
+        <button
+          style={{
+            marginTop: "50px",
+            padding: "10px 50px",
+            background: "#FAF0CA",
+            color: "black",
+            border: "none",
+            borderRadius: "5px",
+          }}
+          onClick={toggleEditing} // Toggle between Edit and Save
+        >
+          {isEditing ? "저장" : "수정"} {/* Change text based on edit mode */}
+        </button>
+      </div>
+    </div>
+  );
 }

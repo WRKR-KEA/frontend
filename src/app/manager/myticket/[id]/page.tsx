@@ -6,12 +6,13 @@ import { TicketStatus } from "../../../../components/ticketStatus";
 import TicketComment from "../../../../components/ticketComment";
 import Button from "../../../../components/Button";
 import TicketChange from "../../../../components/ticketChange";
+import { TicketComplete } from "../../../../components/ticketComplete";
 import Modal from "../../../../components/Modal";
 
 export default function UserTicketDetailPage() {
   const ticketStatus = "rejected"; // 예시
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isCancelDropdownOpen, setIsCancelDropdownOpen] = useState(false);
+  const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
+  const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
 
   const logs = [
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
@@ -23,17 +24,16 @@ export default function UserTicketDetailPage() {
     { message: "감사합니다.", role: "admin" },
   ];
 
-  const handleCancelTicket = () => {
-    setIsCancelDropdownOpen((prev) => !prev); // 드롭다운 토글
+  const handleCompleteTicket = () => {
+    setIsCompleteTicketOpen(true); // 작업 완료 모달 열기
   };
 
-  const confirmCancelTicket = () => {
-    console.log("작업 취소 확인");
-    setIsCancelDropdownOpen(false); // 드롭다운 닫기
+  const closeCompleteTicketModal = () => {
+    setIsCompleteTicketOpen(false); // 작업 완료 모달 닫기
   };
 
-  const toggleModal = () => {
-    setIsModalOpen((prev) => !prev);
+  const toggleChangeModal = () => {
+    setIsChangeModalOpen((prev) => !prev); // 담당자 변경 모달 열고 닫기
   };
 
   return (
@@ -41,8 +41,8 @@ export default function UserTicketDetailPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
-          <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
-          <Button label="담당자 변경" onClick={toggleModal} color={1} />
+          <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
+          <Button label="작업 완료" onClick={handleCompleteTicket} color={3} />
         </div>
       </div>
 
@@ -54,25 +54,16 @@ export default function UserTicketDetailPage() {
       <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
       <TicketComment logs={logs} />
 
-      {/* 작업 취소 드롭다운 */}
-      {isCancelDropdownOpen && (
-        <div className="mt-4 p-4 bg-gray-100 rounded-lg shadow-md flex flex-col items-center">
-          <p className="text-sm text-red-600 text-center">
-            작업을 취소하시겠습니까?<br />
-            취소 후 복구할 수 없어요.
-          </p>
-          <div className="mt-4 flex space-x-4">
-            <Button label="취소" onClick={handleCancelTicket} color={2} />
-            <Button label="작업 취소" onClick={confirmCancelTicket} color={1} />
-          </div>
-        </div>
-      )}
-
-      {/* 모달 */}
-      {isModalOpen && (
-        <Modal onClose={toggleModal}>
+      {/* 담당자 변경 모달 */}
+      {isChangeModalOpen && (
+        <Modal onClose={toggleChangeModal}>
           <TicketChange />
         </Modal>
+      )}
+
+      {/* 작업 완료 모달 */}
+      {isCompleteTicketOpen && (
+        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={() => console.log("작업이 완료되었습니다.")} />
       )}
     </div>
   );

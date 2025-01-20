@@ -6,7 +6,7 @@ import SecondTaskDrop from "../../../components/secondTaskDrop";
 import Help from "../../../components/Help";
 import Modal from "../../../components/Modal";
 import SparkleButton from "../../../components/sparkleButton";
-import Template from "../../../components/Template"; // Template.tsx 컴포넌트 불러오기
+import Template from "../../../components/Template"; 
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState<string>("1차 카테고리를 선택해주세요.");

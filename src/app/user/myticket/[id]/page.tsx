@@ -1,9 +1,11 @@
+"use client";
+
 import { TicketInfo } from "../../../../components/ticketInfo";
 import { TicketStatus } from "../../../../components/ticketStatus";
 import TicketComment from "../../../../components/ticketComment";
+import Button from "../../../../components/Button"; 
 
 export default function UserTicketDetailPage() {
-  const maxTicketsToShow = 10; // 최대 표시할 티켓 수
   const ticketStatus = "rejected"; // 예시 상태, 필요에 따라 이 값을 동적으로 설정
 
   const logs = [
@@ -26,15 +28,26 @@ export default function UserTicketDetailPage() {
 
     ];
 
+    const handleCancelTicket = () => {
+      console.log("작업취소 처리");
+    };
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
+    <div className="flex justify-between items-center"> {/* 제목과 버튼을 같은 줄로 배치 */}
       <h2 className="text-md font-semibold">티켓 상세 정보</h2>
-      <div className="flex space-x-6">
-        <TicketInfo />
-        <TicketStatus status={ticketStatus} /> {/* 상태를 props로 전달 */}
+      <div className="flex space-x-2 mt-2"> {/* 버튼을 오른쪽 끝에 배치 */}
+        <Button label="작업 취소" onClick={handleCancelTicket} color={2} /> 
       </div>
-      <h2 className="text-md font-semibold">티켓 상세 문의</h2>
-      <TicketComment logs={logs} /> {/* 코멘트 컴포넌트 추가 */}
     </div>
+
+    <div className="flex space-x-6">
+      <TicketInfo />
+      <TicketStatus status={ticketStatus} />
+    </div>
+
+    <h2 className="text-md font-semibold">티켓 상세 문의</h2>
+    <TicketComment logs={logs} /> {/* 코멘트 컴포넌트 추가 */}
+  </div>
   );
 }

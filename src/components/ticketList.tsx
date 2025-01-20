@@ -43,12 +43,11 @@ export function TicketList({ maxTicketsToShow, page,  status, handler, requester
   ];
 
 const statusStyles: Record<string, string> = {
-    작업완료: "bg-green-100 text-green-600",
-    작업진행: "bg-purple-100 text-purple-600",
-    반려: "bg-red-100 text-red-600",
-    승인: "bg-orange-100 text-orange-600",
-    작업요청: "bg-pink-100 text-pink-600",
-    위임: "bg-blue-100 text-blue-600",
+    작업완료: "bg-[#D1EEE2] text-[#3A966F]",
+    작업진행: "bg-[#CFE3FF] text-[#3E7DD6]",
+    작업취소: "bg-[#E0E0E0] text-[#767676]",
+    반려: "bg-[#F3CDBE] text-[#DE6231]",
+    작업요청: "bg-[#FFE9B6] text-[#D79804]",
   };
 
   // 필터링 로직

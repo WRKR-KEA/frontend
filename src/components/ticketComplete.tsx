@@ -3,7 +3,7 @@
 import Button from "./Button";
 
 export function TicketComplete({ isOpen, onClose, onConfirm }) {
-  if (!isOpen) return null; // isOpen이 false일 때 아무것도 렌더링하지 않음
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
@@ -12,7 +12,7 @@ export function TicketComplete({ isOpen, onClose, onConfirm }) {
         {/* <p className="text-red-500 text-sm mb-8">완료 후 복구할 수 없어요.</p> */}
         <div className="flex justify-center space-x-4">
           <Button label="취소" onClick={onClose} color={4} />
-          <Button label="작업 완료" onClick={onConfirm} color={3} />
+          <Button label="완료하기" onClick={onConfirm} color={3} />
         </div>
       </div>
     </div>

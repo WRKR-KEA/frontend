@@ -7,7 +7,7 @@ import { TicketList } from "../../../components/ticketList";
 
 export default function UserHomePage() {
   const maxTicketsToShow = 10; // 최대 표시할 티켓 수
-  const ticketStatus = 'in-progress'; //예시 상태
+  const ticketStatus = ''; //예시 상태
   const [ticketHandler, setTicketHandler] = useState<string>(''); // 필터링 담당자
   const [ticketRequester, setTicketRequester] = useState<string>(''); // 필터링 요청자
 

@@ -4,7 +4,7 @@ import React from 'react';
 type ButtonProps = {
   label: string;
   onClick: () => void;
-  color: 1 | 2 | 3 | 4; // 색상 옵션: 1=파란색, 2=빨간색, 3=초록색
+  color: 1 | 2 | 3 | 4; // 색상 옵션: 1=파란색, 2=빨간색, 3=초록색, 4=회색
   className?: string;
 };
 

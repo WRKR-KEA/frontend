@@ -7,12 +7,13 @@ import TicketComment from "../../../../components/ticketComment";
 import Button from "../../../../components/Button";
 import TicketChange from "../../../../components/ticketChange";
 import { TicketComplete } from "../../../../components/ticketComplete";
-import Modal from "../../../../components/Modal";
+import {TicketAbort} from "../../../../components/ticketAbort";
 
 export default function UserTicketDetailPage() {
   const ticketStatus = "rejected"; // 예시
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
+  const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
 
   const logs = [
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
@@ -28,6 +29,14 @@ export default function UserTicketDetailPage() {
     setIsCompleteTicketOpen(true); // 작업 완료 모달 열기
   };
 
+  const handleAbortTicket = () => {
+    setIsAbortTicketOpen(true); // 작업 반려 모달 열기
+  };
+
+  const closeAbortTicketModal = () => {
+    setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
+  };
+
   const closeCompleteTicketModal = () => {
     setIsCompleteTicketOpen(false); // 작업 완료 모달 닫기
   };
@@ -41,6 +50,7 @@ export default function UserTicketDetailPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
+          <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
           <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
           <Button label="작업 완료" onClick={handleCompleteTicket} color={3} />
         </div>
@@ -54,11 +64,14 @@ export default function UserTicketDetailPage() {
       <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
       <TicketComment logs={logs} />
 
+      {/* 작업 반려 모달 */}
+      {isAbortTicketOpen && (
+          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={() => console.log("작업이 반려되었습니다.")} />
+      )}
+
       {/* 담당자 변경 모달 */}
       {isChangeModalOpen && (
-        <Modal onClose={toggleChangeModal}>
           <TicketChange />
-        </Modal>
       )}
 
       {/* 작업 완료 모달 */}

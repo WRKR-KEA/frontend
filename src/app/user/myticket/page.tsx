@@ -30,7 +30,7 @@ export default function UserTicketListPage() {
         <h2 className="text-md font-semibold">티켓 조회</h2>
         
         {/* 검색 컴포넌트 추가 */}
-        <div className="flex items-center space-x-2 ml-4"> 
+        <div className="flex items-center space-x-4 ml-4 "> 
           <Search onSearchChange={handleSearchChange} /> 
         </div>
 

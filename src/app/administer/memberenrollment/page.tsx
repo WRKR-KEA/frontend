@@ -132,7 +132,6 @@ const AdminMemberEnrollPage: React.FC = () => {
               required
             >
               <option value="">권한을 선택하세요</option>
-              <option value="admin">관리자</option>
               <option value="manager">담당자</option>
               <option value="user">사용자</option>
             </select>

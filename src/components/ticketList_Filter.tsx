@@ -5,9 +5,10 @@ type TicketList_FilterProps = {
   maxTicketsToShow: number;
   page: number;
   searchTerm: string;
+  dateRange: { startDate: Date | null; endDate: Date | null };
 };
 
-export function TicketList_Filter({ maxTicketsToShow, page, searchTerm }: TicketList_FilterProps) {
+export function TicketList_Filter({ maxTicketsToShow, page, searchTerm,dateRange }: TicketList_FilterProps) {
   const tickets = [
   { "id": "AAA000001", "status": "작업완료", "title": "VM이 안됩니다. 도와주세요!", "requester": "춘식이", "requestDate": "2025.01.01", "updateDate": "2025.01.14", "handler": "라이언" },
   { "id": "AAA000002", "status": "작업진행", "title": "네트워크 장애 해결 요청", "requester": "춘식이", "requestDate": "2025.01.02", "updateDate": "2025.01.15", "handler": "어피치" },
@@ -57,10 +58,22 @@ export function TicketList_Filter({ maxTicketsToShow, page, searchTerm }: Ticket
     setFilterStatus(tab);
   };
 
-  const filteredTickets = tickets.filter(ticket => {
-    const matchesSearchTerm = ticket.title.includes(searchTerm) || ticket.handler.includes(searchTerm) || ticket.id.includes(searchTerm);
-    const matchesStatus = filterStatus === "전체" || ticket.status === filterStatus;
-    return matchesSearchTerm && matchesStatus;
+  const filteredTickets = tickets.filter((ticket) => {
+    const matchesSearchTerm =
+      ticket.title.includes(searchTerm) ||
+      ticket.handler.includes(searchTerm) ||
+      ticket.id.includes(searchTerm);
+    const matchesStatus =
+      filterStatus === "전체" || ticket.status === filterStatus;
+
+      const matchesDateRange =
+      ticket.requestDate &&
+      (!dateRange.startDate ||
+        !dateRange.endDate ||
+        (new Date(ticket.requestDate) >= dateRange.startDate &&
+          new Date(ticket.requestDate) <= dateRange.endDate));
+  
+    return matchesSearchTerm && matchesStatus && matchesDateRange;
   });
 
   const displayedTickets = filteredTickets.slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);

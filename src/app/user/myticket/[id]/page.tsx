@@ -16,9 +16,12 @@ export default function UserTicketDetailPage() {
     { message: "안녕하세요, 티켓 관련해서 문의 드립니다.", role: "admin" },
     { message: "티켓 세부 사항 설명 드리겠습니다.", role: "admin" },
     { message: "질문을 작성하였습니다.", role: "user" },
+    { log: "담당자가 콘으로 변경되었습니다.", role: "admin" },
+    { log: "담당자가 라이언으로 변경되었습니다.", role: "admin" },
     { message: "세부 사항을 알려주셔서 감사합니다.", role: "user" },
     { message: "티켓을 처리해 드리겠습니다.", role: "admin" },
     { message: "감사합니다.", role: "admin" },
+    { message: "감사합니다.", role: "user" },
   ];
 
   const handleCancelTicket = () => {

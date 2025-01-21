@@ -9,7 +9,7 @@ import { TicketCancel } from "../../../../components/ticketCancel";
 
 export default function UserTicketDetailPage() {
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
-  const ticketStatus = "rejected";
+  const ticketStatus = "cancelled";
 
   const logs = [
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },

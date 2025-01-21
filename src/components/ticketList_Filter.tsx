@@ -58,7 +58,7 @@
   
     const [filterStatus, setFilterStatus] = useState<string>('전체');
     const [activeTab, setActiveTab] = useState<string>('전체');
-    const router = useRouter(); // useRouter hook
+    const router = useRouter(); 
   
     const handleTabClick = (tab: string) => {
       setActiveTab(tab);
@@ -66,8 +66,8 @@
     };
   
     const handleTicketClick = (ticketId: string) => {
-      // Navigate to the ticket details page using the ticket ID
-      router.push(`/user/myticket/${ticketId}`);
+      const currentPath = window.location.pathname; // 현재 경로를 가져옴
+      router.push(`${currentPath}/${ticketId}`);
     };
   
     const filteredTickets = tickets.filter((ticket) => {
@@ -113,7 +113,7 @@
               <tr
                 key={ticket.id}
                 className="border-t cursor-pointer"
-                onClick={() => handleTicketClick(ticket.id)} // Add click handler
+                onClick={() => handleTicketClick(ticket.id)}
               >
                 <td className="px-4 py-2">{ticket.id}</td>
                 <td className="px-4 py-2">

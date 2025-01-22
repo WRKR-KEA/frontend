@@ -9,7 +9,7 @@ export default function UserHomePage() {
   const maxTicketsToShow = 10; // 최대 표시할 티켓 수
   const ticketStatus = ''; //예시 상태
   const [ticketHandler, setTicketHandler] = useState<string>(''); // 필터링 담당자
-  const [ticketRequester, setTicketRequester] = useState<string>(''); // 필터링 요청자
+  const [ticketRequester, setTicketRequester] = useState<string>('춘식이'); // 필터링 요청자
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TicketList_Filter } from "../../../components/ticketList_Filter";
+import { TicketList_Depart } from "../../../components/ticketList_Depart";
 import { FilterNum } from "../../../components/filterNum";
 import PagePagination from "../../../components/pagination";
 import { Search } from "../../../components/search";
@@ -90,7 +90,7 @@ export default function DepartmentTicketListPage() {
         </div>
       </div>
 
-      <TicketList_Filter
+      <TicketList_Depart
         maxTicketsToShow={maxTicketsToShow}
         page={currentPage}
         searchTerm={searchTerm}

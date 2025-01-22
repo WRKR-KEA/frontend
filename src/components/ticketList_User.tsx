@@ -1,15 +1,31 @@
-import React from 'react';
-//pin한 데이터만 보이게
+import React, { useState } from 'react';
+import { FilterTab } from './filterTab';
+import { useRouter } from 'next/navigation';
+import { MdPushPin, MdOutlinePushPin } from 'react-icons/md'; // react-icons 추가
 
-type TicketListProps = {
-  maxTicketsToShow: number; 
+type TicketList_UserProps = {
+  maxTicketsToShow: number;
   page: number;
-  status?: string; 
-  handler?: string; 
-  requester?: string;
+  searchTerm: string;
+  dateRange: { startDate: Date | null; endDate: Date | null };
 };
 
-export function TicketList({ maxTicketsToShow, page,  status, handler, requester }: TicketListProps ) {
+type Ticket = {
+  id: string;
+  status: string;
+  title: string;
+  requester: string;
+  requestDate: string;
+  updateDate: string;
+  handler: string;
+};
+
+export function TicketList_User({
+  maxTicketsToShow,
+  page,
+  searchTerm,
+  dateRange,
+}: TicketList_UserProps) {
   const tickets = [
     { "id": "AAA000001", "status": "작업완료", "title": "VM이 안됩니다. 도와주세요!", "requester": "춘식이", "requestDate": "2025.01.01", "updateDate": "2025.01.14", "handler": "라이언" },
     { "id": "AAA000002", "status": "작업진행", "title": "네트워크 장애 해결 요청", "requester": "춘식삼", "requestDate": "2025.01.02", "updateDate": "2025.01.15", "handler": "어피치" },
@@ -43,54 +59,116 @@ export function TicketList({ maxTicketsToShow, page,  status, handler, requester
     { "id": "AAA000030", "status": "반려", "title": "사용자 권한 수정 요청", "requester": "춘식이", "requestDate": "2025.01.30", "updateDate": "2025.02.12", "handler": "어피치" }
   ];
 
-const statusStyles: Record<string, string> = {
-    작업완료: "bg-[#D1EEE2] text-[#3A966F]",
-    작업진행: "bg-[#CFE3FF] text-[#3E7DD6]",
-    작업취소: "bg-[#E0E0E0] text-[#767676]",
-    반려: "bg-[#F3CDBE] text-[#DE6231]",
-    작업요청: "bg-[#FFE9B6] text-[#D79804]",
+
+  const statusStyles: Record<string, string> = {
+    작업완료: 'bg-[#D1EEE2] text-[#3A966F]',
+    작업진행: 'bg-[#CFE3FF] text-[#3E7DD6]',
+    작업취소: 'bg-[#E0E0E0] text-[#767676]',
+    반려: 'bg-[#F3CDBE] text-[#DE6231]',
+    작업요청: 'bg-[#FFE9B6] text-[#D79804]',
   };
 
-  // 필터링 로직
-  const filteredTickets = tickets.filter(ticket => {
-    return (
-      (!status || ticket.status === status) &&
-      (!handler || ticket.handler.toLowerCase().includes(handler.toLowerCase())) &&
-      (!requester || ticket.requester.toLowerCase().includes(requester.toLowerCase()))
-    );
+  const [filterStatus, setFilterStatus] = useState<string>('전체');
+  const [activeTab, setActiveTab] = useState<string>('전체');
+  const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
+  const router = useRouter();
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+    setFilterStatus(tab);
+  };
+
+  const handleTicketClick = (ticketId: string) => {
+    const currentPath = window.location.pathname;
+    router.push(`${currentPath}/${ticketId}`);
+  };
+
+  const handlePinClick = (ticketId: string) => {
+    setPinnedTickets((prevPinned) => {
+      if (prevPinned.includes(ticketId)) {
+        return prevPinned.filter((id) => id !== ticketId);
+      }
+      if (prevPinned.length < 10) {
+        return [ticketId, ...prevPinned];
+      }
+      return prevPinned;
+    });
+  };
+
+  const sortedTickets = [...tickets].sort((a, b) =>
+    new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
+  );
+
+  const filteredTickets = sortedTickets.filter((ticket) => {
+    const matchesSearchTerm =
+      ticket.title.includes(searchTerm) ||
+      ticket.handler.includes(searchTerm) ||
+      ticket.id.includes(searchTerm);
+    const matchesStatus =
+      filterStatus === '전체' || ticket.status === filterStatus;
+    const matchesDateRange =
+      ticket.requestDate &&
+      (!dateRange.startDate ||
+        !dateRange.endDate ||
+        (new Date(ticket.requestDate) >= dateRange.startDate &&
+          new Date(ticket.requestDate) <= dateRange.endDate));
+    return matchesSearchTerm && matchesStatus && matchesDateRange;
   });
 
-  // 페이지에 해당하는 티켓들을 잘라서 표시
-  const displayedTickets = filteredTickets.slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
+  const displayedTickets = [
+    ...filteredTickets.filter((ticket) => pinnedTickets.includes(ticket.id)),
+    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.id)),
+  ].slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
 
   return (
     <div className="bg-white rounded-md shadow-md">
+      <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-100 text-left">
-            <th className="p-2 border">티켓 번호</th>
-            <th className="p-2 border">상태</th>
-            <th className="p-2 border">제목</th>
-            <th className="p-2 border">담당자</th>
-            <th className="p-2 border">요청자</th>
-            <th className="p-2 border">요청일</th>
-            <th className="p-2 border">최근 업데이트일</th>
+            <th className="px-4 py-2 w-8"></th>
+            <th className="px-4 py-2 w-30">티켓 ID</th>
+            <th className="px-4 py-2 w-30">상태</th>
+            <th className="px-4 py-2 w-80">제목</th>
+            <th className="px-4 py-2 w-32">담당자</th>
+            <th className="px-4 py-2 w-32">요청자</th>
+            <th className="px-4 py-2 w-36">요청일</th>
+            <th className="px-4 py-2 w-36">마지막 업데이트</th>
           </tr>
         </thead>
         <tbody>
           {displayedTickets.map((ticket) => (
-            <tr key={ticket.id} className="border-b">
-              <td className="p-2 border">{ticket.id}</td>
-              <td className="p-2 border">
-                <span className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${statusStyles[ticket.status] || ""}`}>
+            <tr
+              key={ticket.id}
+              className="border-t cursor-pointer"
+              onClick={() => handleTicketClick(ticket.id)}
+            >
+              <td
+                className="px-4 py-2"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePinClick(ticket.id);
+                }}
+              >
+                {pinnedTickets.includes(ticket.id) ? (
+                  <MdPushPin className="text-red-500" size={20} />
+                ) : (
+                  <MdOutlinePushPin className="text-gray-400" size={20} />
+                )}
+              </td>
+              <td className="px-4 py-2">{ticket.id}</td>
+              <td className="px-4 py-2">
+                <span
+                  className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}
+                >
                   {ticket.status}
                 </span>
               </td>
-              <td className="p-2 border">{ticket.title}</td>
-              <td className="p-2 border">{ticket.handler}</td>
-              <td className="p-2 border">{ticket.requester}</td>
-              <td className="p-2 border">{ticket.requestDate}</td>
-              <td className="p-2 border">{ticket.updateDate}</td>
+              <td className="px-4 py-2">{ticket.title}</td>
+              <td className="px-4 py-2">{ticket.handler}</td>
+              <td className="px-4 py-2">{ticket.requester}</td>
+              <td className="px-4 py-2">{ticket.requestDate}</td>
+              <td className="px-4 py-2">{ticket.updateDate}</td>
             </tr>
           ))}
         </tbody>

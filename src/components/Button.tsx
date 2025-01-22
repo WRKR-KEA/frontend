@@ -12,13 +12,13 @@ const Button: React.FC<ButtonProps> = ({ label, onClick, color, className = '' }
   // 색상에 따른 클래스 설정
   let buttonClass = '';
   if (color === 1) {
-    buttonClass = 'text-blue-500 border-2 w-[95px] border-blue-500 hover:bg-blue-500 hover:text-white'; 
+    buttonClass = 'text-white w-[95px] bg-[#252E66] hover:bg-[#000034]'; 
   } else if (color === 2) {
-    buttonClass = 'text-red-500 border-2 w-[95px] border-red-500 hover:bg-red-500 hover:text-white'; 
+    buttonClass = 'text-white w-[95px] bg-[#DF4B38] hover:bg-[#AD1906]'; 
   } else if (color === 3) {
-    buttonClass = 'text-green-500 border-2 w-[95px] border-green-500 hover:bg-green-500 hover:text-white'; 
+    buttonClass = 'text-white w-[95px] bg-[#3A966F] hover:bg-[#08643D]'; 
   } else if (color === 4) {
-      buttonClass = 'text-gray-500 border-2 w-[95px] border-gray-500 hover:bg-gray-500 hover:text-white';   
+      buttonClass = 'text-white w-[95px] bg-gray-500 hover:bg-gray-600';   
   }
 
   return (

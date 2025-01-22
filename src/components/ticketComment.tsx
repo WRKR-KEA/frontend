@@ -12,27 +12,24 @@ const TicketComment = ({ logs }) => {
     const file = e.target.files[0];
     if (file) {
       setFile(file);
-      // 파일을 메시지에 바로 추가하거나 보내는 로직을 여기서 처리할 수 있음
     }
   };
 
   // 메시지 전송 핸들러
   const handleSendMessage = () => {
     if (message.trim() || file) {
-      // 여기서 메시지와 파일을 서버에 전송하는 로직을 추가
       console.log("Message Sent:", message);
       console.log("File Sent:", file);
 
-      // 메시지 초기화
       setMessage("");
       setFile(null);
     }
   };
 
   return (
-    <div className="bg-gray-50 border border-gray-300 rounded-md p-4" style={{ height: "460px" }}>
-      {/* 메시지 목록 부분: 스크롤 가능 */}
-      <div className="overflow-y-auto pr-2" style={{ maxHeight: "380px" }}>
+    <div className="bg-gray-50 border border-gray-300 rounded-md p-4 flex flex-col h-[460px]">
+      {/* 메시지 목록 부분 */}
+      <div className="overflow-y-auto pr-2 flex-1">
         {logs.map((log, index) => (
           <div key={index} className="flex flex-col mb-2">
             {log.log && (
@@ -61,13 +58,13 @@ const TicketComment = ({ logs }) => {
         ))}
       </div>
 
-      {/* 메시지 작성란*/}
+      {/* 메시지 작성란 */}
       <div className="flex space-x-4 items-center mt-2">
         {/* 파일 첨부 버튼 */}
         <label htmlFor="file-upload" className="cursor-pointer">
-        <button className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl">
+          <button className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl">
             <FiPaperclip className="text-xl text-gray-600" />
-        </button>
+          </button>
         </label>
         <input
           id="file-upload"
@@ -90,7 +87,7 @@ const TicketComment = ({ logs }) => {
           onClick={handleSendMessage}
           className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
         >
-          <FiSend className="text-xl" /> 
+          <FiSend className="text-xl" />
         </button>
       </div>
     </div>

@@ -3,7 +3,7 @@ import { FilterTab } from './filterTab';
 import { useRouter } from 'next/navigation';
 import { MdPushPin, MdOutlinePushPin } from 'react-icons/md'; // react-icons 추가
 
-type TicketList_ManagerProps = {
+type TicketList_UserManagerProps = {
   maxTicketsToShow: number;
   page: number;
   searchTerm: string;
@@ -20,12 +20,12 @@ type Ticket = {
   handler: string;
 };
 
-export function TicketList_Manager({
+export function TicketList_UserManager({
   maxTicketsToShow,
   page,
   searchTerm,
   dateRange,
-}: TicketList_ManagerProps) {
+}: TicketList_UserManagerProps) {
   const tickets = [
     { "id": "AAA000001", "status": "작업완료", "title": "VM이 안됩니다. 도와주세요!", "requester": "춘식이", "requestDate": "2025.01.01", "updateDate": "2025.01.14", "handler": "라이언" },
     { "id": "AAA000002", "status": "작업진행", "title": "네트워크 장애 해결 요청", "requester": "춘식삼", "requestDate": "2025.01.02", "updateDate": "2025.01.15", "handler": "어피치" },

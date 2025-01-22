@@ -77,18 +77,23 @@ export function TicketList_Depart({
       ticket.id.includes(searchTerm);
     const matchesStatus =
       filterStatus === '전체' || ticket.status === filterStatus;
-
+  
     const matchesDateRange =
       ticket.requestDate &&
       (!dateRange.startDate ||
         !dateRange.endDate ||
         (new Date(ticket.requestDate) >= dateRange.startDate &&
           new Date(ticket.requestDate) <= dateRange.endDate));
-
+  
     return matchesSearchTerm && matchesStatus && matchesDateRange;
   });
-
-  const displayedTickets = filteredTickets.slice(
+  
+  // Sort the filtered tickets by requestDate in descending order
+  const sortedTickets = filteredTickets.sort((a, b) => {
+    return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
+  });
+  
+  const displayedTickets = sortedTickets.slice(
     (page - 1) * maxTicketsToShow,
     page * maxTicketsToShow
   );
@@ -134,4 +139,4 @@ export function TicketList_Depart({
       </table>
     </div>
   );
-}
+} 

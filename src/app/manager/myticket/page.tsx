@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TicketList_Manager} from "../../../components/ticketList_Manager";
+import { TicketList_UserManager} from "../../../components/ticketList_UserManager";
 import { FilterNum } from "../../../components/filterNum"; 
 import { FilterOrder } from "../../../components/filterOrder"; 
 import PagePagination from "../../../components/pagination"; 
@@ -51,7 +51,7 @@ export default function ManagerTicketListPage() {
           </div>
         </div>
   
-        <TicketList_Manager
+        <TicketList_UserManager
           maxTicketsToShow={maxTicketsToShow}
           page={currentPage}
           searchTerm={searchTerm}

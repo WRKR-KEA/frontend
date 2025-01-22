@@ -89,10 +89,10 @@ export default function ManagericketDetailPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
-        {/* <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
-        <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
-        <Button label="작업 완료" onClick={handleCompleteTicket} color={3} /> */}
-        </div>
+        {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
+        {statusMap[selectedTicket.status] === "new" && (
+            <Button label="작업 승인" onClick={handleCancelTicket} color={5} />
+          )}    </div>
       </div>
 
       <div className="flex space-x-6">

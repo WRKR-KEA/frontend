@@ -37,7 +37,7 @@ export default function UserTicketDetailPage() {
     }
   }, [tickets]);
 
-   // 티켓 상태 변환 맵
+  // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
     작업요청: "new", // '작업요청' -> 'new'
     반려: "rejected", // '반려' -> 'rejected'
@@ -68,13 +68,16 @@ export default function UserTicketDetailPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
-          <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
+          {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
+          {statusMap[selectedTicket.status] === "new" && (
+            <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
+          )}
         </div>
       </div>
 
       <div className="flex space-x-6">
         <TicketInfo ticket={selectedTicket} />
-       <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
+        <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
       </div>
 
       <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>

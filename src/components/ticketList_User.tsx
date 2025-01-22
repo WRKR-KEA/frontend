@@ -3,7 +3,7 @@ import { FilterTab } from './filterTab';
 import { useRouter } from 'next/navigation';
 import { MdPushPin, MdOutlinePushPin } from 'react-icons/md'; // react-icons 추가
 
-type TicketList_UserManagerProps = {
+type TicketList_UserProps = {
   tickets: Array<{
     id: string;
     number: string;
@@ -21,13 +21,13 @@ type TicketList_UserManagerProps = {
   dateRange: { startDate: Date | null; endDate: Date | null };
 };
 
-export function TicketList_UserManager({
+export function TicketList_User({
   tickets,
   maxTicketsToShow,
   page,
   searchTerm,
   dateRange,
-}: TicketList_UserManagerProps) {
+}: TicketList_UserProps) {
   const statusStyles: Record<string, string> = {
     작업완료: 'bg-[#D1EEE2] text-[#3A966F]',
     작업진행: 'bg-[#CFE3FF] text-[#3E7DD6]',

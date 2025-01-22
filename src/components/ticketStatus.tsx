@@ -17,7 +17,7 @@ export function TicketStatus({
       <div className="flex items-center justify-around relative">
         {/* 작업 요청 */}
         <div className="flex flex-col items-center">
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-300">
+          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-yellow-300 mb-2">
             <FaCheck className="text-white" /> {/* 작업 요청은 항상 체크 표시 */}
           </div>
           <span>작업 요청</span>
@@ -25,7 +25,7 @@ export function TicketStatus({
 
         {/* 첫 번째 구분선 */}
         <div className="flex items-center relative">
-          <hr className="w-32 border-t-2 border-gray-300 mb-4" />
+          <hr className="w-32 border-t-2 border-gray-300 mb-6" />
           {isCancelled && (
             <div className="absolute flex flex-col items-center -top-3 left-1/2 transform -translate-x-1/2">
               <FaExclamationTriangle className="text-red-500 text-xl" />
@@ -37,7 +37,7 @@ export function TicketStatus({
         {/* 작업 진행 */}
         <div className="flex flex-col items-center">
           <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
               isInProgress || isCompleted || isRejected ? 'bg-yellow-300' : 'bg-gray-200'
             }`}
           >
@@ -48,7 +48,7 @@ export function TicketStatus({
 
         {/* 두 번째 구분선 */}
         <div className="flex items-center relative">
-          <hr className="w-32 border-t-2 border-gray-300 mb-4" />
+          <hr className="w-32 border-t-2 border-gray-300 mb-6" />
           {isRejected && (
             <div className="absolute flex flex-col items-center -top-3 left-1/2 transform -translate-x-1/2">
               <FaExclamationTriangle className="text-red-500 text-xl" />
@@ -60,7 +60,7 @@ export function TicketStatus({
         {/* 작업 완료 */}
         <div className="flex flex-col items-center">
           <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center ${
+            className={`w-10 h-10 rounded-full flex items-center justify-center mb-2 ${
               isCompleted ? 'bg-yellow-300' : 'bg-gray-200'
             }`}
           >

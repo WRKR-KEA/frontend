@@ -3,6 +3,7 @@ import React from "react";
 interface TicketInfoProps {
   ticket: {
     id: string;
+    number: string;
     status: string;
     title: string;
     requester: string;
@@ -11,7 +12,7 @@ interface TicketInfoProps {
     updateDate: string;
     completeDate: string;
     handler: string;
-    isPinned: boolean;
+    ispinned: boolean;
   }
 }
 
@@ -24,7 +25,7 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
 
   return (
     <div className="bg-white pl-4 pt-4 pb-4 rounded-md shadow-md flex-1 max-w-4xl mx-auto">
-      <h2 className="text-lg font-semibold mb-4">{ticket.id} 티켓 상세 정보</h2>
+      <h2 className="text-lg font-semibold mb-4">{ticket.number} 티켓 상세 정보</h2>
       <div className="grid grid-cols-2 gap-x-8">
         {/* 첫 번째 열 */}
         <div className="space-y-4 text-left">

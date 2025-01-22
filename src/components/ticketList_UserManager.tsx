@@ -6,12 +6,14 @@ import { MdPushPin, MdOutlinePushPin } from 'react-icons/md'; // react-icons 추
 type TicketList_UserManagerProps = {
   tickets: Array<{
     id: string;
+    number: string;
     status: string;
     title: string;
     requester: string;
     requestDate: string;
     updateDate: string;
     handler: string;
+    ispinned: boolean;
   }>;
   maxTicketsToShow: number;
   page: number;
@@ -46,13 +48,14 @@ export function TicketList_UserManager({
 
   const handleTicketClick = (ticketId: string) => {
     const currentPath = window.location.pathname;
+    // console.log(ticketId);
     router.push(`${currentPath}/${ticketId}`);
   };
-
+  
   const handlePinClick = (ticketId: string) => {
     setPinnedTickets((prevPinned) => {
       if (prevPinned.includes(ticketId)) {
-        return prevPinned.filter((id) => id !== ticketId);
+        return prevPinned.filter((Id) => Id !== ticketId);
       }
       if (prevPinned.length < 10) {
         return [ticketId, ...prevPinned];
@@ -69,7 +72,7 @@ export function TicketList_UserManager({
     const matchesSearchTerm =
       ticket.title.includes(searchTerm) ||
       ticket.handler.includes(searchTerm) ||
-      ticket.id.includes(searchTerm);
+      ticket.number.includes(searchTerm);
     const matchesStatus =
       filterStatus === '전체' || ticket.status === filterStatus;
     const matchesDateRange =
@@ -82,8 +85,8 @@ export function TicketList_UserManager({
   });
 
   const displayedTickets = [
-    ...filteredTickets.filter((ticket) => pinnedTickets.includes(ticket.id)),
-    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.id)),
+    ...filteredTickets.filter((ticket) => pinnedTickets.includes(ticket.number)),
+    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.number)),
   ].slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
 
   return (
@@ -93,7 +96,7 @@ export function TicketList_UserManager({
         <thead>
           <tr className="bg-gray-100 text-left">
             <th className="px-4 py-2 w-8"></th>
-            <th className="px-4 py-2 w-36">티켓 ID</th>
+            <th className="px-4 py-2 w-36">티켓 번호</th>
             <th className="px-4 py-2 w-24">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
             <th className="px-4 py-2 w-32">담당자</th>
@@ -113,16 +116,16 @@ export function TicketList_UserManager({
                 className="px-4 py-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick(ticket.id);
+                  handlePinClick(ticket.number); // Pin/unpin using ticket number
                 }}
               >
-                {pinnedTickets.includes(ticket.id) ? (
+                {pinnedTickets.includes(ticket.number) ? (
                   <MdPushPin className="text-red-500" size={20} />
                 ) : (
                   <MdOutlinePushPin className="text-gray-400" size={20} />
                 )}
               </td>
-              <td className="px-4 py-2">{ticket.id}</td>
+              <td className="px-4 py-2">{ticket.number}</td>
               <td className="px-4 py-2">
                 <span
                   className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}

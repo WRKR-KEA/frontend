@@ -2,6 +2,7 @@ import React from 'react';
 
 type Ticket = {
   id: string;
+  number: string;
   status: string;
   title: string;
   requester: string;
@@ -75,7 +76,7 @@ export function TicketList({
                 onTicketClick?.(ticket);
               }}
             >
-              <td className="p-2 border">{ticket.id}</td>
+              <td className="p-2 border">{ticket.number}</td>
               <td className="p-2 border">
                 <span
                   className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${

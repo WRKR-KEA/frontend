@@ -90,7 +90,7 @@ export function TicketList_Depart({
               className="border-t cursor-pointer"
               onClick={() => handleTicketClick(ticket.id)}
             >
-              <td className="px-4 py-2">{ticket.id}</td>
+              <td className="px-4 py-2">{ticket.number}</td>
               <td className="px-4 py-2">
                 <span
                   className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}

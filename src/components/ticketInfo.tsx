@@ -1,16 +1,27 @@
-interface Ticket {
-  id: string;
-  status: string;
-  title: string;
-  requester: string;
-  requestDate: string;
-  acceptData: string;
-  updateDate: string;
-  completeData: string;
-  handler: string;
+import React from "react";
+
+interface TicketInfoProps {
+  ticket: {
+    id: string;
+    status: string;
+    title: string;
+    requester: string;
+    requestDate: string;
+    acceptDate: string;
+    updateDate: string;
+    completeDate: string;
+    handler: string;
+    isPinned: boolean;
+  }
 }
 
-export function TicketInfo({ ticket }: { ticket: Ticket }) {
+export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
+  // If ticket is undefined, display a loading state or message
+  if (!ticket) {
+    console.log(ticket);
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="bg-white pl-4 pt-4 pb-4 rounded-md shadow-md flex-1 max-w-4xl mx-auto">
       <h2 className="text-lg font-semibold mb-4">{ticket.id} 티켓 상세 정보</h2>
@@ -21,7 +32,6 @@ export function TicketInfo({ ticket }: { ticket: Ticket }) {
           <div>처리자: {ticket.handler}</div>
           <div>요청자: {ticket.requester}</div>
         </div>
-
         {/* 두 번째 열 */}
         <div className="space-y-4 text-left">
           <div>생성 일시: {ticket.requestDate}</div>
@@ -32,4 +42,4 @@ export function TicketInfo({ ticket }: { ticket: Ticket }) {
       </div>
     </div>
   );
-}
+};

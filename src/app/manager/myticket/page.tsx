@@ -6,6 +6,7 @@ import { FilterNum } from "../../../components/filterNum";
 import { FilterOrder } from "../../../components/filterOrder"; 
 import PagePagination from "../../../components/pagination"; 
 import { Search } from "../../../components/search";
+import { ticketDummyData } from "../../../data/ticketDummyData";
 
 export default function ManagerTicketListPage() {
     const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
@@ -17,6 +18,8 @@ export default function ManagerTicketListPage() {
       key: "selection",
     });
     
+    const [tickets, setTickets] = useState(ticketDummyData); 
+
     const handleSelectCount = (count: number) => {
       setMaxTicketsToShow(count);
     };
@@ -34,6 +37,9 @@ export default function ManagerTicketListPage() {
       console.log(`Selected Order: ${order}`);
     };
   
+      // Filter tickets where requester is "담당자 이름"
+  const filteredTickets = tickets.filter(ticket => ticket.handler === "어피치");
+
     return (
       <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
         <div className="flex items-center">
@@ -52,6 +58,7 @@ export default function ManagerTicketListPage() {
         </div>
   
         <TicketList_UserManager
+          tickets={filteredTickets} 
           maxTicketsToShow={maxTicketsToShow}
           page={currentPage}
           searchTerm={searchTerm}
@@ -60,7 +67,7 @@ export default function ManagerTicketListPage() {
   
         <div className="flex justify-center items-center mt-4">
           <PagePagination
-            totalItemsCount={1000}
+            totalItemsCount={filteredTickets.length}
             itemsCountPerPage={maxTicketsToShow}
             pageRangeDisplayed={5}
             onPageChange={handlePageChange}

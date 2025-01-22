@@ -19,7 +19,8 @@ export default function ManagerTicketListPage() {
     });
     
     const [tickets, setTickets] = useState(ticketDummyData); 
-
+    // Filter tickets where requester is "담당자 이름"
+    const filteredTickets = tickets.filter(ticket => ticket.handler === "어피치");
     const handleSelectCount = (count: number) => {
       setMaxTicketsToShow(count);
     };
@@ -36,9 +37,6 @@ export default function ManagerTicketListPage() {
     const handleSelectOrder = (order: string) => {
       console.log(`Selected Order: ${order}`);
     };
-  
-      // Filter tickets where requester is "담당자 이름"
-  const filteredTickets = tickets.filter(ticket => ticket.handler === "어피치");
 
     return (
       <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">

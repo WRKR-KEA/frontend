@@ -9,6 +9,7 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css"; // 기본 스타일
 import "react-date-range/dist/theme/default.css"; // 테마 스타일
 import { format } from "date-fns";
+import { ticketDummyData } from "../../../data/ticketDummyData";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
@@ -22,6 +23,8 @@ export default function DepartmentTicketListPage() {
     endDate: null,
     key: "selection",
   });
+
+  const [tickets, setTickets] = useState(ticketDummyData); 
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -99,7 +102,7 @@ export default function DepartmentTicketListPage() {
 
       <div className="flex justify-center items-center mt-4">
         <PagePagination
-          totalItemsCount={1000}
+          totalItemsCount={tickets.length}
           itemsCountPerPage={maxTicketsToShow}
           pageRangeDisplayed={5}
           onPageChange={handlePageChange}

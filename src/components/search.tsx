@@ -20,7 +20,7 @@ export const Search = ({ onSearchChange }: SearchProps) => {
         type="text"
         value={searchInput}
         onChange={handleInputChange}
-        placeholder="제목, 담당자, 티켓번호"
+        placeholder="제목, 담당자, 티켓번호 검색"
         className="outline-none text-sm" // placeholder 텍스트 크기 줄임
       />
     </div>

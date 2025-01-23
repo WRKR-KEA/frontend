@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import ProfileSave from "../../../components/profileSave";
-import ProfileEdit from "../../../components/profileEdit"; 
+import ProfileSave from "@/components/profileSave";
+import ProfileEdit from "@/components/profileEdit"; 
 
 export default function UserProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FilterTab } from './filterTab';
 import { useRouter } from 'next/navigation'; 
-import { ticketDummyData } from "../data/ticketDummyData";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 type TicketList_DepartProps = {
   maxTicketsToShow: number;

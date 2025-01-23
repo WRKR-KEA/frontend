@@ -2,15 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
-import { TicketInfo } from "../../../../components/ticketInfo";
-import { TicketStatus } from "../../../../components/ticketStatus";
-import TicketComment from "../../../../components/ticketComment";
-import Button from "../../../../components/Button";
-import { TicketCancel } from "../../../../components/ticketCancel";
-import TicketChange from "../../../../components/ticketChange";
-import { TicketComplete } from "../../../../components/ticketComplete";
-import {TicketAbort} from "../../../../components/ticketAbort";
-import { ticketDummyData } from "../../../../data/ticketDummyData";
+import { TicketInfo } from "@/components/ticketInfo";
+import { TicketStatus } from "@/components/ticketStatus";
+import TicketComment from "@/components/ticketComment";
+import Button from "@/components/Button";
+import { TicketCancel } from "@/components/ticketCancel";
+import TicketChange from "@/components/ticketChange";
+import { TicketComplete } from "@/components/ticketComplete";
+import {TicketAbort} from "@/components/ticketAbort";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -108,8 +108,20 @@ export default function ManagericketDetailPage() {
       <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
       <TicketComment logs={logs} />
 
-      {/* TicketCancel 컴포넌트 */}
-      <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />
+       {/* 작업 반려 모달 */}
+       {isAbortTicketOpen && (
+          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={() => console.log("작업이 반려되었습니다.")} />
+      )}
+
+      {/* 담당자 변경 모달 */}
+      {isChangeModalOpen && (
+          <TicketChange />
+      )}
+
+      {/* 작업 완료 모달 */}
+      {isCompleteTicketOpen && (
+        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={() => console.log("작업이 완료되었습니다.")} />
+      )}
     </div>
   );
 }

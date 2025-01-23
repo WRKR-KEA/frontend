@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { TicketList_Manager} from "../../../components/ticketList_Manager";
-import { FilterNum } from "../../../components/filterNum"; 
-import { FilterOrder } from "../../../components/filterOrder"; 
-import PagePagination from "../../../components/pagination"; 
-import { Search } from "../../../components/search";
-import { ticketDummyData } from "../../../data/ticketDummyData";
+import { TicketList_Manager} from "@/components/ticketList_Manager";
+import { FilterNum } from "@/components/filterNum"; 
+import { FilterOrder } from "@/components/filterOrder"; 
+import PagePagination from "@/components/pagination"; 
+import { Search } from "@/components/search";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function ManagerTicketListPage() {
     const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);

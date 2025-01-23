@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import FirstTaskDrop from "../../../components/firstTaskDrop";
-import SecondTaskDrop from "../../../components/secondTaskDrop";
-import Help from "../../../components/Help";
-import Modal from "../../../components/Modal";
-import SparkleButton from "../../../components/sparkleButton";
-import Template from "../../../components/Template";
+import FirstTaskDrop from "@/components/firstTaskDrop";
+import SecondTaskDrop from "@/components/secondTaskDrop";
+import Help from "@/components/Help";
+import Modal from "@/components/Modal";
+import SparkleButton from "@/components/sparkleButton";
+import Template from "@/components/Template";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState<string>("1차 카테고리를 선택해주세요.");
@@ -38,7 +38,6 @@ export default function UserCreateTicketPage() {
   };
 
   const isHelpButtonVisible = selectedService !== "1차 카테고리를 선택해주세요.";
-
   const isReadyToShow = selectedService !== "1차 카테고리를 선택해주세요." &&
                         selectedRequestType !== "2차 카테고리를 선택해주세요.";
 
@@ -49,16 +48,15 @@ export default function UserCreateTicketPage() {
           <h2 className="text-md font-semibold w-60 mb-4">티켓 생성</h2>
           {isHelpButtonVisible && (
             <button
-            className="flex items-center justify-center space-x-2 text-[#6E61CA] hover:text-[#5A50A8]"
-            onClick={() => updateHelpContent(selectedService)}
-          >
-            <span className="text-sm font-medium">도움말</span>
-            <img src="/helpIcon.png" alt="Help Icon" className="w-4 h-4" />
-          </button>
+              className="flex items-center justify-center space-x-2 text-[#6E61CA] hover:text-[#5A50A8]"
+              onClick={() => updateHelpContent(selectedService)}
+            >
+              <span className="text-sm font-medium">도움말</span>
+              <img src="/helpIcon.png" alt="Help Icon" className="w-4 h-4" />
+            </button>
           )}
         </div>
 
-        {/* 업무 분류와 업무 중앙 정렬 */}
         <div className="flex justify-center items-start space-x-16 mb-5">
           <div className="flex flex-col items-start w-80">
             <label>업무 분류</label>
@@ -79,7 +77,6 @@ export default function UserCreateTicketPage() {
         </div>
       </div>
 
-      {/* 조건부 렌더링 */}
       {isReadyToShow && (
         <>
           <Template />

@@ -2,15 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
-import { TicketInfo } from "../../../../components/ticketInfo";
-import { TicketStatus } from "../../../../components/ticketStatus";
-import TicketComment from "../../../../components/ticketComment";
-import Button from "../../../../components/Button";
-import { TicketCancel } from "../../../../components/ticketCancel";
-import TicketChange from "../../../../components/ticketChange";
-import { TicketComplete } from "../../../../components/ticketComplete";
-import {TicketAbort} from "../../../../components/ticketAbort";
-import { ticketDummyData } from "../../../../data/ticketDummyData";
+import { TicketInfo } from "@/components/ticketInfo";
+import { TicketStatus } from "@/components/ticketStatus";
+import TicketComment from "@/components/ticketComment";
+import Button from "@/components/Button";
+import { TicketAccept } from "@/components/ticketAccept";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -52,7 +49,7 @@ export default function ManagericketDetailPage() {
     작업취소: "cancelled", // '작업취소' -> 'cancelled'
   };
 
-  const handleCancelTicket = () => {
+  const handleAcceptTicket = () => {
     setIsModalOpen(true); // 모달 열기
   };
 
@@ -91,7 +88,7 @@ export default function ManagericketDetailPage() {
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
         {statusMap[selectedTicket.status] === "new" && (
-            <Button label="작업 승인" onClick={handleCancelTicket} color={5} />
+            <Button label="작업 승인" onClick={handleAcceptTicket} color={5} />
           )}    </div>
       </div>
 
@@ -104,7 +101,7 @@ export default function ManagericketDetailPage() {
       <TicketComment logs={logs} />
 
       {/* TicketCancel 컴포넌트 */}
-      <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />
+      <TicketAccept isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />
     </div>
   );
 }

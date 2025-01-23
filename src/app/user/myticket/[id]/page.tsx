@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
-import { TicketInfo } from "../../../../components/ticketInfo";
-import { TicketStatus } from "../../../../components/ticketStatus";
-import TicketComment from "../../../../components/ticketComment";
-import Button from "../../../../components/Button";
-import { TicketCancel } from "../../../../components/ticketCancel";
-import { ticketDummyData } from "../../../../data/ticketDummyData";
+import { TicketInfo } from "@/components/ticketInfo";
+import { TicketStatus } from "@/components/ticketStatus";
+import TicketComment from "@/components/ticketComment";
+import Button from "@/components/Button";
+import { TicketCancel } from "@/components/ticketCancel";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserTicketDetailPage() {
   const router = useRouter();

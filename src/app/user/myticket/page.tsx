@@ -1,11 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { TicketList_User} from "../../../components/ticketList_User";
-import { FilterNum } from "../../../components/filterNum"; 
-import PagePagination from "../../../components/pagination"; 
-import { Search } from "../../../components/search";
-import { ticketDummyData } from "../../../data/ticketDummyData";
+import { TicketList_User} from "@/components/ticketList_User";
+import { FilterNum } from "@/components/filterNum"; 
+import PagePagination from "@/components/pagination"; 
+import { Search } from "@/components/search";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);

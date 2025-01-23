@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { TicketInfo } from "../../../components/ticketInfo";
-import { TicketStatus } from "../../../components/ticketStatus";
-import { TicketList } from "../../../components/ticketList";
-import { ticketDummyData } from "../../../data/ticketDummyData";
+import { TicketInfo } from "@/components/ticketInfo";
+import { TicketStatus } from "@/components/ticketStatus";
+import { TicketList } from "@/components/ticketList";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function ManagerHomePage() {
   const maxTicketsToShow = 10;

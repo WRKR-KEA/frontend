@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import ProfileSave from "../../../components/profileSave";
-import ProfileManagerEdit from "../../../components/profileManagerEdit"; 
+import ProfileSave from "@/components/profileSave";
+import ProfileManagerEdit from "@/components/profileManagerEdit"; 
 
 export default function ManagerProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);

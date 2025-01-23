@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { FilterTab } from './filterTab';
 import { useRouter } from 'next/navigation';
 import { MdPushPin, MdOutlinePushPin } from 'react-icons/md';
-import { HighlightText } from '@/components/highlightText'; 
+import { HighlightText } from '@/components/highlightText';
 
 type TicketList_UserProps = {
   tickets: Array<{
@@ -55,9 +55,10 @@ export function TicketList_User({
   const handlePinClick = (ticketId: string) => {
     setPinnedTickets((prevPinned) => {
       if (prevPinned.includes(ticketId)) {
-        return prevPinned.filter((Id) => Id !== ticketId);
-      }
-      if (prevPinned.length < 10) {
+        // 이미 핀된 티켓을 클릭하면 취소
+        return prevPinned.filter((id) => id !== ticketId);
+      } else if (prevPinned.length < 10) {
+        // 최대 10개까지 핀을 설정
         return [ticketId, ...prevPinned];
       }
       return prevPinned;
@@ -85,8 +86,11 @@ export function TicketList_User({
   });
 
   const displayedTickets = [
-    ...filteredTickets.filter((ticket) => pinnedTickets.includes(ticket.number)),
-    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.number)),
+    // 핀된 티켓을 위로 정렬하고, 그 후 나머지 티켓을 이어서 출력
+    ...filteredTickets.filter((ticket) =>
+      pinnedTickets.includes(ticket.number) || ticket.ispinned
+    ),
+    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.number) && !ticket.ispinned),
   ].slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
 
   return (
@@ -116,10 +120,10 @@ export function TicketList_User({
                 className="px-4 py-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick(ticket.id);
+                  handlePinClick(ticket.number); // 티켓 번호로 핀 설정
                 }}
               >
-                {ticket.ispinned || pinnedTickets.includes(ticket.id) ? (
+                {ticket.ispinned || pinnedTickets.includes(ticket.number) ? (
                   <MdPushPin className="text-red-500" size={20} />
                 ) : (
                   <MdOutlinePushPin className="text-gray-400" size={20} />

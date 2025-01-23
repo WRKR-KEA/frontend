@@ -9,7 +9,7 @@ import TicketChange from "../../../../components/ticketChange";
 import { TicketComplete } from "../../../../components/ticketComplete";
 import {TicketAbort} from "../../../../components/ticketAbort";
 
-export default function UserTicketDetailPage() {
+export default function ManagerTicketDetailPage() {
   const ticketStatus = "rejected"; // 예시
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
@@ -19,8 +19,8 @@ export default function UserTicketDetailPage() {
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
     { message: "안녕하세요, 티켓 관련해서 문의 드립니다.", role: "admin" },
     { message: "안녕하세요. 티켓 세부 사항 설명 드리겠습니다.", role: "admin" },
-    { message: "질문을 작성하였습니다.", role: "user" },
-    { message: "세부 사항을 알려주셔서 감사합니다.", role: "user" },
+    { message: "질문을 작성하였습니다.", role: "Manager" },
+    { message: "세부 사항을 알려주셔서 감사합니다.", role: "Manager" },
     { message: "티켓을 처리해 드리겠습니다.", role: "admin" },
     { message: "감사합니다.", role: "admin" },
   ];

@@ -11,7 +11,12 @@ export default function ManagerTicketListPage() {
     const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [searchTerm, setSearchTerm] = useState<string>("");
-  
+    const [dateRange, setDateRange] = useState<any>({
+      startDate: null,
+      endDate: null,
+      key: "selection",
+    });
+    
     const handleSelectCount = (count: number) => {
       setMaxTicketsToShow(count);
     };
@@ -50,6 +55,7 @@ export default function ManagerTicketListPage() {
           maxTicketsToShow={maxTicketsToShow}
           page={currentPage}
           searchTerm={searchTerm}
+          dateRange={dateRange}
         />
   
         <div className="flex justify-center items-center mt-4">

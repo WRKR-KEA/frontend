@@ -1,15 +1,19 @@
 "use client";
 
+import { FilterNum } from "@/components/filterNum";
 import PagePagination from "@/components/pagination";
 import React, { useState } from "react";
-import { FaSearch } from "react-icons/fa"; // 돋보기 아이콘
+import { FaSearch } from "react-icons/fa";
+import { DateRange } from "react-date-range";
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 
 interface LogEntry {
   id: number;
   timestamp: string;
   user: string;
   email: string;
-  status: string; // 로그인 성공/실패 여부 추가
+  status: string;
 }
 
 const mockData: LogEntry[] = Array.from({ length: 100 }, (_, index) => ({
@@ -17,15 +21,37 @@ const mockData: LogEntry[] = Array.from({ length: 100 }, (_, index) => ({
   timestamp: "2025-01-22T07:51:21.542Z",
   user: `User${index + 1}`,
   email: `useremail${index + 1}@gmail.com`,
-  status: index % 2 === 0 ? "성공" : "실패", // 짝수는 성공, 홀수는 실패
+  status: index % 2 === 0 ? "성공" : "실패",
 }));
 
 export default function LogPage() {
   const [logs, setLogs] = useState<LogEntry[]>(mockData);
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchInput, setSearchInput] = useState<string>(""); // 검색 입력 상태
+
+  // Pagination
   const [currentPage, setCurrentPage] = useState<number>(1);
   const itemsPerPage = 10;
+
+  // Date Range Picker 관련 상태 및 핸들러
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [dateRange, setDateRange] = useState({
+    startDate: null,
+    endDate: null,
+    key: "selection",
+  });
+
+  const handleDateChange = (ranges: any) => {
+    setDateRange(ranges.selection);
+  };
+
+  const toggleCalendar = () => {
+    setIsCalendarOpen(!isCalendarOpen);
+  };
+
+  // 날짜 범위 포맷팅
+  const formattedDateRange = dateRange.startDate && dateRange.endDate
+    ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`
+    : "모든 날짜";
 
   const filteredLogs = logs.filter(
     (log) =>
@@ -46,34 +72,69 @@ export default function LogPage() {
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value); // 검색 상태 업데이트
-    setCurrentPage(1); // 검색 시 페이지를 첫 페이지로 초기화
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
   };
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchInput(e.target.value); // 검색 입력 상태 업데이트
-    handleSearchChange(e); // 검색 함수 호출
+  const handleSelectCount = (count: number) => {
+    setCurrentPage(1);
+    const updatedLogs = mockData.slice(0, count);
+    setLogs(updatedLogs);
   };
 
   return (
     <div className="p-6">
-      <div className="flex items-center">
-        <h2 className="text-md font-semibold">로그 조회</h2>
-        <div className="flex items-center space-x-2 ml-4">
-          <div className="flex items-center border-b p-2">
-            <FaSearch className="text-gray-500 mr-2" />
-            <input
-              type="text"
-              value={searchInput}
-              onChange={handleInputChange}
-              placeholder="검색어를 입력하세요"
-              className="outline-none text-sm"
-            />
+      <div className="flex items-center justify-between">
+        {/* 왼쪽 - 제목과 검색창 */}
+        <div className="flex items-center">
+          <h2 className="text-md font-semibold">로그 조회</h2>
+          <div className="flex items-center space-x-2 ml-4">
+            <div className="flex items-center border-b p-2">
+              <FaSearch className="text-gray-500 mr-2" />
+              <input
+                type="text"
+                value={searchTerm}
+                onChange={handleSearchChange}
+                placeholder="검색어를 입력하세요"
+                className="outline-none text-sm"
+              />
+            </div>
           </div>
+        </div>
+
+        {/* 오른쪽 - 캘린더 버튼과 필터 */}
+        <div className="flex items-center space-x-4 relative">
+          {/* 캘린더 버튼 */}
+          <button
+            className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-4 py-2 rounded-md"
+            onClick={toggleCalendar}
+          >
+            <span>{formattedDateRange}</span>
+            <img
+              src="/calendarIcon.png"
+              alt="Calendar Icon"
+              className="w-5 h-5 ml-2 mb-1"
+            />
+          </button>
+
+          {isCalendarOpen && (
+            <div className="absolute top-12 right-0 z-10 bg-white border shadow-lg rounded-md">
+              <DateRange
+                editableDateInputs={true}
+                onChange={handleDateChange}
+                moveRangeOnFirstSelection={false}
+                ranges={[dateRange]}
+                rangeColors={["#6E61CA"]}
+              />
+            </div>
+          )}
+
+          {/* 필터 버튼 */}
+          <FilterNum onSelectCount={handleSelectCount} />
         </div>
       </div>
 
-      <table className="w-full border-collapse border border-gray-300 rounded-md overflow-hidden">
+      <table className="w-full border-collapse border border-gray-300 rounded-md overflow-hidden mt-4">
         <thead className="bg-gray-100">
           <tr>
             <th className="p-3 border w-2/12">인덱스</th>

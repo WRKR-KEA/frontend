@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FilterTab_Manager } from './filterTab_Manager';
 import { useRouter } from 'next/navigation';
 import { MdPushPin, MdOutlinePushPin } from 'react-icons/md'; // react-icons 추가
+import { HighlightText } from '@/components/highlightText'; 
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -125,7 +126,7 @@ export function TicketList_Manager({
                   <MdOutlinePushPin className="text-gray-400" size={20} />
                 )}
               </td>
-              <td className="px-4 py-2">{ticket.number}</td>
+              <td className="px-4 py-2"><HighlightText text={ticket.number} highlight={searchTerm} /></td>
               <td className="px-4 py-2">
                 <span
                   className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}
@@ -133,8 +134,8 @@ export function TicketList_Manager({
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2">{ticket.title}</td>
-              <td className="px-4 py-2">{ticket.handler}</td>
+              <td className="px-4 py-2"><HighlightText text={ticket.title} highlight={searchTerm} /></td>
+              <td className="px-4 py-2"><HighlightText text={ticket.handler} highlight={searchTerm} /></td>
               <td className="px-4 py-2">{ticket.requester}</td>
               <td className="px-4 py-2">{ticket.requestDate}</td>
               <td className="px-4 py-2">{ticket.updateDate}</td>

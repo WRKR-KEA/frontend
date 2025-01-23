@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { FilterTab } from './filterTab';
 import { useRouter } from 'next/navigation'; 
 import { ticketDummyData } from "@/data/ticketDummyData";
+import { HighlightText } from '@/components/highlightText'; 
 
 type TicketList_DepartProps = {
   maxTicketsToShow: number;
@@ -90,7 +91,7 @@ export function TicketList_Depart({
               className="border-t cursor-pointer"
               onClick={() => handleTicketClick(ticket.id)}
             >
-              <td className="px-4 py-2">{ticket.number}</td>
+              <td className="px-4 py-2"><HighlightText text={ticket.number} highlight={searchTerm} /></td>
               <td className="px-4 py-2">
                 <span
                   className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}
@@ -98,8 +99,8 @@ export function TicketList_Depart({
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2">{ticket.title}</td>
-              <td className="px-4 py-2">{ticket.handler}</td>
+              <td className="px-4 py-2"><HighlightText text={ticket.title} highlight={searchTerm} /></td>
+              <td className="px-4 py-2"><HighlightText text={ticket.handler} highlight={searchTerm} /></td>
               <td className="px-4 py-2">{ticket.requester}</td>
               <td className="px-4 py-2">{ticket.requestDate}</td>
               <td className="px-4 py-2">{ticket.updateDate}</td>

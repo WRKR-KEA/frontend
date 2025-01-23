@@ -22,19 +22,7 @@ export default function ManagerTicketListPage() {
 
   // Filter tickets where requester is "담당자 이름"
   const filteredTickets = tickets
-    .filter((ticket) => ticket.handler === "어피치")
-    .sort((a, b) => {
-      if (sortOrder === "최신순") {
-        return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
-      } else if (sortOrder === "오래된 순") {
-        return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
-      } else if (sortOrder === "우선순위 순") {
-        if (b.ispinned && !a.ispinned) return 1;
-        if (a.ispinned && !b.ispinned) return -1;
-        return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
-      }
-      return 0;
-    });
+    .filter((ticket) => ticket.handler === "어피치");
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
@@ -42,7 +30,7 @@ export default function ManagerTicketListPage() {
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    window.scrollTo(0, 0); // 페이지 변경 시 스크롤 맨 위로 이동
+    window.scrollTo(0, 0);
   };
 
   const handleSearchChange = (term: string) => {

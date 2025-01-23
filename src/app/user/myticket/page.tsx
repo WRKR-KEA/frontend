@@ -21,27 +21,7 @@ export default function UserTicketListPage() {
 
   // 요청자가 "춘식이"인 티켓만 필터링 및 검색어와 일치하는 티켓 필터링
   const filteredTickets = tickets
-    .filter((ticket) => ticket.requester === "춘식이")
-    .filter((ticket) =>
-      searchTerm
-        ? Object.values(ticket)
-            .filter((value) => value !== null) // null 값을 제외
-            .some((value) =>
-              value
-                .toString()
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())
-            )
-        : true
-    );
-
-  // 텍스트 강조 표시 함수
-  const highlightText = (text: string | null): string => {
-    if (!text || !searchTerm) return text || "";
-
-    const regex = new RegExp(`(${searchTerm})`, "gi");
-    return text.replace(regex, `<b class="text-red-500">$1</b>`);
-  };
+    .filter((ticket) => ticket.requester === "춘식이");
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
@@ -61,7 +41,6 @@ export default function UserTicketListPage() {
       <div className="flex items-center">
         <h2 className="text-md font-semibold">티켓 조회</h2>
 
-        {/* 검색 컴포넌트 추가 */}
         <div className="flex items-center space-x-4 ml-4">
           <Search onSearchChange={handleSearchChange} />
         </div>
@@ -72,9 +51,7 @@ export default function UserTicketListPage() {
       </div>
 
       <TicketList_User
-        tickets={filteredTickets.map((ticket) => ({
-          ...ticket,
-        }))}
+        tickets={filteredTickets}
         maxTicketsToShow={maxTicketsToShow}
         page={currentPage}
         searchTerm={searchTerm}

@@ -20,6 +20,7 @@ type TicketList_ManagerProps = {
   page: number;
   searchTerm: string;
   dateRange: { startDate: Date | null; endDate: Date | null };
+  sortOrder: string; 
 };
 
 export function TicketList_Manager({
@@ -28,6 +29,7 @@ export function TicketList_Manager({
   page,
   searchTerm,
   dateRange,
+  sortOrder,  
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
     작업완료: 'bg-[#D1EEE2] text-[#3A966F]',
@@ -65,27 +67,33 @@ export function TicketList_Manager({
     });
   };
 
-  const sortedTickets = [...tickets].sort((a, b) =>
-    new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
-  );
-
+  const sortedTickets = [...tickets].sort((a, b) => {
+    // console.log(sortOrder);
+    if (sortOrder === "최신순") {
+      // 최신순: 요청일 순으로 정렬
+      return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
+    } else if (sortOrder === "오래된 순") {
+      // 오래된 순: 요청일 순으로 정렬
+      return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
+    } else if (sortOrder === "우선순위 순") {
+      // 우선순위 순: 핀된 항목 우선
+      if (a.ispinned && !b.ispinned) return -1;
+      if (!a.ispinned && b.ispinned) return 1;
+      return 0; // 둘 다 핀되어 있거나 둘 다 핀이 없으면 원래 순서대로
+    }
+    return 0; // 기본 값은 변경하지 않음
+  });
+  
   const filteredTickets = sortedTickets.filter((ticket) => {
     const matchesSearchTerm =
       ticket.title.includes(searchTerm) ||
       ticket.number.includes(searchTerm);
     const matchesStatus =
       (filterStatus === '전체' || ticket.status === filterStatus) && ticket.status !== '작업요청'; 
-    const matchesDateRange =
-      ticket.requestDate &&
-      (!dateRange.startDate ||
-        !dateRange.endDate ||
-        (new Date(ticket.requestDate) >= dateRange.startDate &&
-          new Date(ticket.requestDate) <= dateRange.endDate));
-    return matchesSearchTerm && matchesStatus && matchesDateRange;
+    return matchesSearchTerm && matchesStatus;
   });
-
+  
   const displayedTickets = [
-    // 핀된 티켓을 위로 정렬하고, 그 후 나머지 티켓을 이어서 출력
     ...filteredTickets.filter((ticket) =>
       pinnedTickets.includes(ticket.number) || ticket.ispinned
     ),
@@ -109,7 +117,7 @@ export function TicketList_Manager({
           </tr>
         </thead>
         <tbody>
-          {displayedTickets.map((ticket) => (
+          {filteredTickets.map((ticket) => (
             <tr
               key={ticket.id}
               className="border-t cursor-pointer"

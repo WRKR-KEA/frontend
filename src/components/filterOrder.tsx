@@ -10,7 +10,7 @@ export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
 
   const handleSelect = (order: string) => {
     setSelectedOrder(order);
-    onSelectOrder(order);
+    onSelectOrder(order); // 선택된 order 값을 부모로 전달
     setIsOpen(false); // 선택 후 드롭다운 닫기
   };
 

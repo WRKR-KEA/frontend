@@ -4,7 +4,7 @@ import React from 'react';
 type ButtonProps = {
   label: string;
   onClick: () => void;
-  color: 1 | 2 | 3 | 4; // 색상 옵션: 1=파란색, 2=빨간색, 3=초록색, 4=회색
+  color: 1 | 2 | 3 | 4 | 5; // 색상 옵션: 1=파란색, 2=빨간색, 3=초록색, 4=회색, 5=노란색
   className?: string;
 };
 
@@ -19,6 +19,8 @@ const Button: React.FC<ButtonProps> = ({ label, onClick, color, className = '' }
     buttonClass = 'text-white w-[95px] bg-[#3A966F] hover:bg-[#08643D]'; 
   } else if (color === 4) {
       buttonClass = 'text-white w-[95px] bg-gray-500 hover:bg-gray-600';   
+  } else if (color === 5) {
+    buttonClass = 'text-white w-[95px] bg-yellow-500 hover:bg-yellow-600';   
   }
 
   return (

@@ -6,7 +6,7 @@ interface FilterOrderProps {
 
 export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState("최신순");
+  const [selectedOrder, setSelectedOrder] = useState("우선순위 순");
 
   const handleSelect = (order: string) => {
     setSelectedOrder(order);

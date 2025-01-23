@@ -1,15 +1,19 @@
 "use client";
 
-import { useState } from "react";
-import { TicketInfo } from "../../../../components/ticketInfo";
-import { TicketStatus } from "../../../../components/ticketStatus";
-import TicketComment from "../../../../components/ticketComment";
-import Button from "../../../../components/Button";
-import { TicketCancel } from "../../../../components/ticketCancel"; 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import { TicketInfo } from "@/components/ticketInfo";
+import { TicketStatus } from "@/components/ticketStatus";
+import TicketComment from "@/components/ticketComment";
+import Button from "@/components/Button";
+import { TicketCancel } from "@/components/ticketCancel";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserTicketDetailPage() {
+  const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
-  const ticketStatus = "cancelled";
+  const [tickets] = useState(ticketDummyData); // 더미 데이터
+  const [selectedTicket, setSelectedTicket] = useState<any | null>(null); // 선택된 티켓
 
   const logs = [
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
@@ -24,6 +28,24 @@ export default function UserTicketDetailPage() {
     { message: "감사합니다.", role: "user" },
   ];
 
+  useEffect(() => {
+    const id = window.location.pathname.split("/").pop(); // URL에서 id 추출
+    if (id) {
+      const ticket = tickets.find((ticket) => ticket.id == id);
+      console.log(id, tickets[id-1]);
+      setSelectedTicket(tickets[id-1]); // 티켓이 없으면 null 설정
+    }
+  }, [tickets]);
+
+  // 티켓 상태 변환 맵
+  const statusMap: Record<string, string> = {
+    작업요청: "new", // '작업요청' -> 'new'
+    반려: "rejected", // '반려' -> 'rejected'
+    작업진행: "in-progress", // '작업진행' -> 'in-progress'
+    작업완료: "completed", // '작업완료' -> 'completed'
+    작업취소: "cancelled", // '작업취소' -> 'cancelled'
+  };
+
   const handleCancelTicket = () => {
     setIsModalOpen(true); // 모달 열기
   };
@@ -37,18 +59,25 @@ export default function UserTicketDetailPage() {
     setIsModalOpen(false); // 모달 닫기
   };
 
+  if (!selectedTicket) {
+    return <div>티켓 정보를 불러오는 중입니다...</div>; // 데이터 로딩 처리
+  }
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex justify-between items-center">
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
-          <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
+          {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
+          {statusMap[selectedTicket.status] === "new" && (
+            <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
+          )}
         </div>
       </div>
 
       <div className="flex space-x-6">
-        <TicketInfo />
-        <TicketStatus status={ticketStatus} />
+        <TicketInfo ticket={selectedTicket} />
+        <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
       </div>
 
       <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>

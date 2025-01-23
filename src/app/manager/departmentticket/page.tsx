@@ -1,14 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { TicketList_Filter } from "../../../components/ticketList_Filter";
-import { FilterNum } from "../../../components/filterNum";
-import PagePagination from "../../../components/pagination";
-import { Search } from "../../../components/search";
+import { TicketList_Depart } from "@/components/ticketList_Depart";
+import { FilterNum } from "@/components/filterNum";
+import PagePagination from "@/components/pagination";
+import { Search } from "@/components/search";
 import { DateRange } from "react-date-range";
-import "react-date-range/dist/styles.css"; // 기본 스타일
-import "react-date-range/dist/theme/default.css"; // 테마 스타일
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
@@ -22,6 +23,8 @@ export default function DepartmentTicketListPage() {
     endDate: null,
     key: "selection",
   });
+
+  const [tickets, setTickets] = useState(ticketDummyData); 
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -90,7 +93,7 @@ export default function DepartmentTicketListPage() {
         </div>
       </div>
 
-      <TicketList_Filter
+      <TicketList_Depart
         maxTicketsToShow={maxTicketsToShow}
         page={currentPage}
         searchTerm={searchTerm}
@@ -99,7 +102,7 @@ export default function DepartmentTicketListPage() {
 
       <div className="flex justify-center items-center mt-4">
         <PagePagination
-          totalItemsCount={1000}
+          totalItemsCount={tickets.length}
           itemsCountPerPage={maxTicketsToShow}
           pageRangeDisplayed={5}
           onPageChange={handlePageChange}

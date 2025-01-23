@@ -1,11 +1,11 @@
 import React from 'react';
 
-type FilterTabProps = {
+type FilterTab_ManagerProps = {
   activeTab: string;
   handleTabClick: (tab: string) => void;
 };
 
-export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
+export function FilterTab_Manager({ activeTab, handleTabClick }: FilterTab_ManagerProps) {
   return (
     <div className="flex border-gray-200 w-full items-center">
       <button
@@ -31,14 +31,6 @@ export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
         }`}
       >
         작업 진행
-      </button>
-      <button
-        onClick={() => handleTabClick("작업요청")}
-        className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업요청" ? "border-b-2 border-black text-black" : "text-gray-500"
-        }`}
-      >
-        작업 요청
       </button>
       <button
         onClick={() => handleTabClick("반려")}

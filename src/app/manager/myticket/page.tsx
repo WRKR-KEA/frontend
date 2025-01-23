@@ -7,6 +7,7 @@ import { FilterOrder } from "@/components/filterOrder";
 import PagePagination from "@/components/pagination"; 
 import { Search } from "@/components/search";
 import { ticketDummyData } from "@/data/ticketDummyData";
+import { Search_manager } from "@/components/search_manager";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
@@ -48,7 +49,7 @@ export default function ManagerTicketListPage() {
 
         {/* 검색 컴포넌트 */}
         <div className="flex items-center space-x-2 ml-4">
-          <Search onSearchChange={handleSearchChange} />
+          <Search_manager onSearchChange={handleSearchChange} />
         </div>
 
         <div className="ml-auto flex items-center ">

@@ -43,7 +43,7 @@ export function FilterTab_Manager({ activeTab, handleTabClick }: FilterTab_Manag
       <button
         onClick={() => handleTabClick("작업취소")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "반려" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "작업취소" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 취소

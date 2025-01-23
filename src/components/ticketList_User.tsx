@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { FilterTab } from './filterTab';
 import { useRouter } from 'next/navigation';
-import { MdPushPin, MdOutlinePushPin } from 'react-icons/md'; // react-icons 추가
+import { MdPushPin, MdOutlinePushPin } from 'react-icons/md';
+import { HighlightText } from '@/components/highlightText'; 
 
 type TicketList_UserProps = {
   tickets: Array<{
@@ -48,10 +49,9 @@ export function TicketList_User({
 
   const handleTicketClick = (ticketId: string) => {
     const currentPath = window.location.pathname;
-    // console.log(ticketId);
     router.push(`${currentPath}/${ticketId}`);
   };
-  
+
   const handlePinClick = (ticketId: string) => {
     setPinnedTickets((prevPinned) => {
       if (prevPinned.includes(ticketId)) {
@@ -116,7 +116,7 @@ export function TicketList_User({
                 className="px-4 py-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick(ticket.number); // Pin/unpin using ticket number
+                  handlePinClick(ticket.number);
                 }}
               >
                 {pinnedTickets.includes(ticket.number) ? (
@@ -125,7 +125,7 @@ export function TicketList_User({
                   <MdOutlinePushPin className="text-gray-400" size={20} />
                 )}
               </td>
-              <td className="px-4 py-2">{ticket.number}</td>
+              <td className="px-4 py-2"><HighlightText text={ticket.number} highlight={searchTerm} /></td>
               <td className="px-4 py-2">
                 <span
                   className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}
@@ -133,8 +133,12 @@ export function TicketList_User({
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2">{ticket.title}</td>
-              <td className="px-4 py-2">{ticket.handler}</td>
+              <td className="px-4 py-2">
+                <HighlightText text={ticket.title} highlight={searchTerm} />
+              </td>
+              <td className="px-4 py-2">
+                <HighlightText text={ticket.handler} highlight={searchTerm} />
+              </td>
               <td className="px-4 py-2">{ticket.requester}</td>
               <td className="px-4 py-2">{ticket.requestDate}</td>
               <td className="px-4 py-2">{ticket.updateDate}</td>

@@ -6,8 +6,8 @@ import { FilterNum } from "@/components/filterNum";
 import PagePagination from "@/components/pagination";
 import { Search } from "@/components/search";
 import { DateRange } from "react-date-range";
-import "react-date-range/dist/styles.css"; // 기본 스타일
-import "react-date-range/dist/theme/default.css"; // 테마 스타일
+import "react-date-range/dist/styles.css";
+import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
 import { ticketDummyData } from "@/data/ticketDummyData";
 

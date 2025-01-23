@@ -42,7 +42,7 @@ export default function ManagerProfilePage() {
     >
       <div
         style={{
-          background: "#f5f5dc",
+          background: "#FFE9B6",
           flex: "30%",
           display: "flex",
           justifyContent: "center",
@@ -129,7 +129,7 @@ export default function ManagerProfilePage() {
           style={{
             marginTop: "50px",
             padding: "10px 50px",
-            background: "#FAF0CA",
+            background: "#FFE9B6",
             color: "black",
             border: "none",
             borderRadius: "5px",

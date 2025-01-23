@@ -32,6 +32,7 @@ export default function DepartmentTicketListPage() {
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
+    setCurrentPage(1); // 페이지 수 초기화
   };
 
   const handlePageChange = (pageNumber: number) => {

@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { TicketList_Manager } from "@/components/ticketList_Manager";
-import { FilterNum } from "@/components/filterNum"; 
-import { FilterOrder } from "@/components/filterOrder"; 
+import { FilterNum } from "@/components/Filters/filterNum"; 
+import { FilterOrder } from "@/components/Filters/filterOrder"; 
 import PagePagination from "@/components/pagination"; 
 import { ticketDummyData } from "@/data/ticketDummyData";
 import { Search_manager } from "@/components/search_manager";

@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import FirstTaskDrop from "@/components/firstTaskDrop";
-import SecondTaskDrop from "@/components/secondTaskDrop";
-import Help from "@/components/Help";
-import Modal from "@/components/Modal";
-import SparkleButton from "@/components/sparkleButton";
-import Template from "@/components/Template";
-import Button from "@/components/Button";
+import FirstTaskDrop from "@/components/Tickets/firstTaskDrop";
+import SecondTaskDrop from "@/components/Tickets/secondTaskDrop";
+import Help from "@/components/Modals/Help";
+import Modal from "@/components/Modals/Modal";
+import SparkleButton from "@/components/Buttons/sparkleButton";
+import Template from "@/components/Tickets/Template";
+import Button from "@/components/Buttons/Button";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");

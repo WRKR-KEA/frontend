@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { FilterTab_Manager } from './filterTab_Manager';
+import { FilterTab } from '@/components/Filters/filterTab';
 import { useRouter } from 'next/navigation';
 import { MdPushPin, MdOutlinePushPin } from 'react-icons/md';
 import { HighlightText } from '@/components/highlightText';
 
-type TicketList_ManagerProps = {
+type TicketList_UserProps = {
   tickets: Array<{
     id: string;
     number: string;
@@ -12,7 +12,7 @@ type TicketList_ManagerProps = {
     title: string;
     requester: string;
     requestDate: string;
-    updateDate: string;
+    updateDate: string | null;
     handler: string;
     ispinned: boolean;
   }>;
@@ -20,23 +20,21 @@ type TicketList_ManagerProps = {
   page: number;
   searchTerm: string;
   dateRange: { startDate: Date | null; endDate: Date | null };
-  sortOrder: string; 
 };
 
-export function TicketList_Manager({
+export function TicketList_User({
   tickets,
   maxTicketsToShow,
   page,
   searchTerm,
   dateRange,
-  sortOrder,  
-}: TicketList_ManagerProps) {
+}: TicketList_UserProps) {
   const statusStyles: Record<string, string> = {
     작업완료: 'bg-[#D1EEE2] text-[#3A966F]',
     작업진행: 'bg-[#CFE3FF] text-[#3E7DD6]',
     작업취소: 'bg-[#E0E0E0] text-[#767676]',
     반려: 'bg-[#F3CDBE] text-[#DE6231]',
-    // 작업요청: 'bg-[#FFE9B6] text-[#D79804]',
+    작업요청: 'bg-[#FFE9B6] text-[#D79804]',
   };
 
   const [filterStatus, setFilterStatus] = useState('전체');
@@ -67,42 +65,37 @@ export function TicketList_Manager({
     });
   };
 
-  const sortedTickets = [...tickets].sort((a, b) => {
-    // console.log(sortOrder);
-    if (sortOrder === "최신순") {
-      // 최신순: 요청일 순으로 정렬
-      return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
-    } else if (sortOrder === "오래된 순") {
-      // 오래된 순: 요청일 순으로 정렬
-      return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
-    } else if (sortOrder === "우선순위 순") {
-      // 우선순위 순: 핀된 항목 우선
-      if (a.ispinned && !b.ispinned) return -1;
-      if (!a.ispinned && b.ispinned) return 1;
-      return 0; // 둘 다 핀되어 있거나 둘 다 핀이 없으면 원래 순서대로
-    }
-    return 0; // 기본 값은 변경하지 않음
-  });
-  
+  const sortedTickets = [...tickets].sort((a, b) =>
+    new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
+  );
+
   const filteredTickets = sortedTickets.filter((ticket) => {
     const matchesSearchTerm =
       ticket.title.includes(searchTerm) ||
+      ticket.handler.includes(searchTerm) ||
       ticket.number.includes(searchTerm);
     const matchesStatus =
-      (filterStatus === '전체' || ticket.status === filterStatus) && ticket.status !== '작업요청'; 
-    return matchesSearchTerm && matchesStatus;
+      filterStatus === '전체' || ticket.status === filterStatus;
+    const matchesDateRange =
+      ticket.requestDate &&
+      (!dateRange.startDate ||
+        !dateRange.endDate ||
+        (new Date(ticket.requestDate) >= dateRange.startDate &&
+          new Date(ticket.requestDate) <= dateRange.endDate));
+    return matchesSearchTerm && matchesStatus && matchesDateRange;
   });
-  
+
   const displayedTickets = [
+    // 핀된 티켓을 위로 정렬하고, 그 후 나머지 티켓을 이어서 출력
     ...filteredTickets.filter((ticket) =>
-      pinnedTickets.includes(ticket.number) || ticket.ispinned
+      pinnedTickets.includes(ticket.id) || ticket.ispinned
     ),
-    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.number) && !ticket.ispinned),
+    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.id) && !ticket.ispinned),
   ].slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
 
   return (
     <div className="bg-white rounded-md shadow-md">
-      <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
+      <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-100 text-left">
@@ -117,7 +110,7 @@ export function TicketList_Manager({
           </tr>
         </thead>
         <tbody>
-          {filteredTickets.map((ticket) => (
+          {displayedTickets.map((ticket) => (
             <tr
               key={ticket.id}
               className="border-t cursor-pointer"
@@ -148,7 +141,7 @@ export function TicketList_Manager({
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2">
-                {ticket.handler}
+                <HighlightText text={ticket.handler} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2">{ticket.requester}</td>
               <td className="px-4 py-2">{ticket.requestDate}</td>

@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Button from "./Button";
+import Button from "@/components/Buttons/Button";
 
-export function TicketAbort({ isOpen, onClose, onConfirm }) {
+type TicketAbortProps = {
+  isOpen: boolean; // isOpen은 boolean 타입
+  onClose: () => void; // onClose는 void를 반환하는 함수
+  onConfirm: () => void; // onConfirm도 void를 반환하는 함수
+};
+
+export function TicketAbort({ isOpen, onClose, onConfirm }: TicketAbortProps) {
   if (!isOpen) return null;
   const [content, setContent] = useState("");
 
@@ -30,7 +36,7 @@ export function TicketAbort({ isOpen, onClose, onConfirm }) {
         </div> */}
         <div className="flex justify-center space-x-4">
           <Button label="취소" onClick={onClose} color={4} />
-          <Button label="반려하기" onClick={() => onConfirm(content)} color={2} />
+          <Button label="반려하기" onClick={() => {onConfirm}} color={2} />
         </div>
       </div>
     </div>

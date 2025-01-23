@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FilterTab } from './filterTab';
+import { FilterTab } from '@/components/Filters/filterTab';
 import { useRouter } from 'next/navigation'; 
 import { ticketDummyData } from "@/data/ticketDummyData";
 import { HighlightText } from '@/components/highlightText'; 

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { TicketInfo } from "@/components/ticketInfo";
-import { TicketStatus } from "@/components/ticketStatus";
-import { TicketList } from "@/components/ticketList";
+import { TicketInfo } from "@/components/Tickets/ticketInfo";
+import { TicketStatus } from "@/components/Tickets/ticketStatus";
+import { TicketList } from "@/components/Tickets/ticketList";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserHomePage() {
@@ -50,7 +50,7 @@ export default function UserHomePage() {
       <div className="flex space-x-6">
         {/* TicketInfo에 선택된 티켓 전달 */}
         <TicketInfo ticket={selectedTicket} />
-        <TicketStatus status={ticketStatus} /> {/* 선택된 티켓 상태 전달 */}
+        <TicketStatus status={ticketStatus} /> 
       </div>
       <h2 className="text-md font-semibold">최근 티켓 현황</h2>
       <TicketList

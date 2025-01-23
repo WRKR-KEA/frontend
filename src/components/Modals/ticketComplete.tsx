@@ -1,8 +1,14 @@
 "use client";
 
-import Button from "./Button";
+import Button from "@/components/Buttons/Button";
 
-export function TicketComplete({ isOpen, onClose, onConfirm }) {
+type TicketCompleteProps = {
+  isOpen: boolean; // isOpen은 boolean 타입
+  onClose: () => void; // onClose는 void를 반환하는 함수
+  onConfirm: () => void; // onConfirm도 void를 반환하는 함수
+};
+
+export function TicketComplete({ isOpen, onClose, onConfirm }: TicketCompleteProps) {
   if (!isOpen) return null;
 
   return (

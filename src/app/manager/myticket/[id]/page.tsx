@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
-import { TicketInfo } from "@/components/ticketInfo";
-import { TicketStatus } from "@/components/ticketStatus";
-import TicketComment from "@/components/ticketComment";
-import Button from "@/components/Button";
-import { TicketCancel } from "@/components/ticketCancel";
-import TicketChange from "@/components/ticketChange";
-import { TicketComplete } from "@/components/ticketComplete";
-import {TicketAbort} from "@/components/ticketAbort";
+import { TicketInfo } from "@/components/Tickets/ticketInfo";
+import { TicketStatus } from "@/components/Tickets/ticketStatus";
+import TicketComment from "@/components/Tickets/ticketComment";
+import Button from "@/components/Buttons/Button";
+import { TicketCancel } from "@/components/Modals/ticketCancel";
+import TicketChange from "@/components/Modals/ticketChange";
+import { TicketComplete } from "@/components/Modals/ticketComplete";
+import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function ManagericketDetailPage() {

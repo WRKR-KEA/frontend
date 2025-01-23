@@ -1,8 +1,14 @@
 "use client";
 
-import Button from "./Button";
+import Button from "@/components/Buttons/Button";
 
-export function TicketCancel({ isOpen, onClose, onConfirm }) {
+type TicketCancelProps = {
+  isOpen: boolean; 
+  onClose: () => void; 
+  onConfirm: () => void; 
+};
+
+export function TicketCancel({ isOpen, onClose, onConfirm }: TicketCancelProps) {
   if (!isOpen) return null; // isOpen이 false일 때 아무것도 렌더링하지 않음
 
   return (

@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { TicketInfo } from "@/components/ticketInfo";
-import { TicketStatus } from "@/components/ticketStatus";
-import { TicketList } from "@/components/ticketList";
+import { TicketInfo } from "@/components/Tickets/ticketInfo";
+import { TicketStatus } from "@/components/Tickets/ticketStatus";
+import { TicketList } from "@/components/Tickets/ticketList";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function ManagerHomePage() {

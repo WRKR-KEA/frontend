@@ -1,6 +1,6 @@
 "use client";
 
-import { FilterNum } from "@/components/filterNum";
+import { FilterNum } from "@/components/Filters/filterNum";
 import PagePagination from "@/components/pagination";
 import React, { useState } from "react";
 import { FaSearch } from "react-icons/fa";

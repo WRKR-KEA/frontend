@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { TicketList_Depart } from "@/components/ticketList_Depart";
-import { FilterNum } from "@/components/filterNum";
+import { FilterNum } from "@/components/Filters/filterNum";
 import PagePagination from "@/components/pagination";
 import { Search } from "@/components/search";
 import { DateRange } from "react-date-range";

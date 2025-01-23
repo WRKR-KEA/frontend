@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { TicketList_Depart } from "@/components/ticketList_Depart";
+import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
 import { FilterNum } from "@/components/Filters/filterNum";
 import PagePagination from "@/components/pagination";
 import { Search } from "@/components/search";

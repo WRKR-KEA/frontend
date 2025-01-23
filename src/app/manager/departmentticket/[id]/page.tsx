@@ -32,11 +32,12 @@ export default function ManagericketDetailPage() {
   ];
 
   useEffect(() => {
-    const id = window.location.pathname.split("/").pop(); // URL에서 id 추출
+    const id = window.location.pathname.split("/").pop();
     if (id) {
-      const ticket = tickets.find((ticket) => ticket.id == id);
-      console.log(id, tickets[id-1]);
-      setSelectedTicket(tickets[id-1]); // 티켓이 없으면 null 설정
+      const numericId = parseInt(id, 10); 
+      const ticket = tickets.find((ticket) => ticket.id === numericId.toString()); 
+      console.log(numericId, tickets[numericId - 1]); 
+      setSelectedTicket(tickets[numericId - 1]);
     }
   }, [tickets]);
 

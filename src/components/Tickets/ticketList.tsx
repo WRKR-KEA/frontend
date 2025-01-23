@@ -7,7 +7,7 @@ type Ticket = {
   title: string;
   requester: string;
   requestDate: string;
-  updateDate: string;
+  updateDate: string | null;
   handler: string;
   ispinned: boolean;
 };

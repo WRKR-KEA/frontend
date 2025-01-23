@@ -12,7 +12,7 @@ type TicketList_ManagerProps = {
     title: string;
     requester: string;
     requestDate: string;
-    updateDate: string;
+    updateDate: string | null;
     handler: string;
     ispinned: boolean;
   }>;

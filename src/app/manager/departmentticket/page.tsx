@@ -12,9 +12,9 @@ import { format } from "date-fns";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function DepartmentTicketListPage() {
-  const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // 캘린더 상태 관리
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);

@@ -8,8 +8,8 @@ import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserHomePage() {
   const maxTicketsToShow = 10;
-  const [ticketHandler, setTicketHandler] = useState<string>(""); // 필터링 담당자
-  const [ticketRequester, setTicketRequester] = useState<string>("춘식이"); // 필터링 요청자
+  const [ticketHandler, setTicketHandler] = useState(""); // 필터링 담당자
+  const [ticketRequester, setTicketRequester] = useState("춘식이"); // 필터링 요청자
   const [tickets, setTickets] = useState(ticketDummyData);
 
   // 티켓 상태 변환 맵
@@ -21,7 +21,7 @@ export default function UserHomePage() {
     작업취소: "cancelled", // '작업취소' -> 'cancelled'
   };
 
-  const [ticketStatus, setTicketStatus] = useState<string>("");
+  const [ticketStatus, setTicketStatus] = useState("");
   const [selectedTicket, setSelectedTicket] = useState<any>(tickets[0]); // 기본 선택된 티켓은 첫 번째 티켓으로 설정
 
   // 컴포넌트 마운트 시 첫 번째 티켓의 상태 변환 후 상태 설정

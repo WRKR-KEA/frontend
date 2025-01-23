@@ -26,10 +26,10 @@ const mockData: LogEntry[] = Array.from({ length: 100 }, (_, index) => ({
 
 export default function LogPage() {
   const [logs, setLogs] = useState<LogEntry[]>(mockData);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Pagination
-  const [currentPage, setCurrentPage] = useState<number>(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   // Date Range Picker 관련 상태 및 핸들러

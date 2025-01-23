@@ -8,10 +8,10 @@ import { Search } from "@/components/search";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserTicketListPage() {
-  const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>("");
-  const [dateRange, setDateRange] = useState<any>({
+  const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null,
     key: "selection",

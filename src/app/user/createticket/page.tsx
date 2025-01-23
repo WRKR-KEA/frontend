@@ -10,10 +10,10 @@ import Template from "@/components/Template";
 import Button from "@/components/Button";
 
 export default function UserCreateTicketPage() {
-  const [selectedService, setSelectedService] = useState<string>("1차 카테고리를 선택해주세요.");
-  const [selectedRequestType, setSelectedRequestType] = useState<string>("2차 카테고리를 선택해주세요.");
+  const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");
+  const [selectedRequestType, setSelectedRequestType] = useState("2차 카테고리를 선택해주세요.");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [helpContent, setHelpContent] = useState<string>("");
+  const [helpContent, setHelpContent] = useState("");
 
   const handleServiceChange = (value: string) => {
     setSelectedService(value);

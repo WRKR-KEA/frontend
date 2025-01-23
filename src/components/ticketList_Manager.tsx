@@ -39,9 +39,9 @@ export function TicketList_Manager({
     // 작업요청: 'bg-[#FFE9B6] text-[#D79804]',
   };
 
-  const [filterStatus, setFilterStatus] = useState<string>('전체');
-  const [activeTab, setActiveTab] = useState<string>('전체');
-  const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
+  const [filterStatus, setFilterStatus] = useState('전체');
+  const [activeTab, setActiveTab] = useState('전체');
+  const [pinnedTickets, setPinnedTickets] = useState([]);
   const router = useRouter();
 
   const handleTabClick = (tab: string) => {

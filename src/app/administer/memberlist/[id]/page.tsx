@@ -31,8 +31,8 @@ const AdminMemberDetailPage: React.FC<AdminMemberDetailProps> = ({
     tasks,
   });
 
-  const [selectedCategory, setSelectedCategory] = useState<string>("");
-  const [selectedSubCategory, setSelectedSubCategory] = useState<string>("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedSubCategory, setSelectedSubCategory] = useState("");
 
   const categories: { [key: string]: string[] } = {
     클라우드: ["AWS", "Azure", "GCP"],

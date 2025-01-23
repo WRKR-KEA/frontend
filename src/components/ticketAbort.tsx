@@ -5,7 +5,7 @@ import Button from "./Button";
 
 export function TicketAbort({ isOpen, onClose, onConfirm }) {
   if (!isOpen) return null;
-  const [content, setContent] = useState<string>("");
+  const [content, setContent] = useState("");
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">

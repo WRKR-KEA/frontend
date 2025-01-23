@@ -7,6 +7,7 @@ import Help from "@/components/Help";
 import Modal from "@/components/Modal";
 import SparkleButton from "@/components/sparkleButton";
 import Template from "@/components/Template";
+import Button from "@/components/Button";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState<string>("1차 카테고리를 선택해주세요.");
@@ -81,7 +82,8 @@ export default function UserCreateTicketPage() {
         <>
           <Template />
           <div className="flex justify-center">
-            <SparkleButton onClick={handleCreate}>생성하기</SparkleButton>
+            {/* <SparkleButton onClick={handleCreate}>생성하기</SparkleButton>  */}
+            <Button label="작업 승인" onClick={handleCreate} color={1} />
           </div>
         </>
       )}

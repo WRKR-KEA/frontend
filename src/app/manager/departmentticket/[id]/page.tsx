@@ -88,7 +88,7 @@ export default function ManagericketDetailPage() {
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
         {statusMap[selectedTicket.status] === "new" && (
-            <Button label="작업 승인" onClick={handleAcceptTicket} color={5} />
+            <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
           )}    </div>
       </div>
 

@@ -11,7 +11,7 @@ export function TicketAccept({ isOpen, onClose, onConfirm }) {
         <p className="text-black text-lg font-medium mb-6">티켓을 승인하시겠습니까?</p>
         <div className="flex justify-center space-x-4">
           <Button label="취소" onClick={onClose} color={4} />
-          <Button label="작업 승인" onClick={onConfirm} color={5} />
+          <Button label="작업 승인" onClick={onConfirm} color={1} />
         </div>
       </div>
     </div>

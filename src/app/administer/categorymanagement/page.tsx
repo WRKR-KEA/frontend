@@ -45,113 +45,113 @@ const SortableItem: React.FC<{
   onTemplate,
   onHelp,
 }) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id,
-  });
+    const {
+      attributes,
+      listeners,
+      setNodeRef,
+      transform,
+      transition,
+      isDragging,
+    } = useSortable({
+      id,
+    });
 
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
+    const style = {
+      transform: CSS.Transform.toString(transform),
+      transition,
+      opacity: isDragging ? 0.5 : 1,
+    };
 
-  const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(name);
+    const [isEditing, setIsEditing] = useState(false);
+    const [editValue, setEditValue] = useState(name);
 
-  const handleSave = () => {
-    if (editValue.trim()) {
-      onEdit(editValue.trim());
-      setIsEditing(false);
-    } else {
-      alert("이름을 입력해주세요.");
-    }
-  };
+    const handleSave = () => {
+      if (editValue.trim()) {
+        onEdit(editValue.trim());
+        setIsEditing(false);
+      } else {
+        alert("이름을 입력해주세요.");
+      }
+    };
 
-  return (
-    <li
-      ref={setNodeRef}
-      style={style}
-      className="bg-gray-50 border border-gray-200 rounded-md hover:shadow transition-shadow relative"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center space-x-4">
-          <div {...attributes} {...listeners}>
-            <img src="/hamburg.png" alt="drag" className="w-5" />
-          </div>
-          {isEditing ? (
-            <input
-              type="text"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              className="border rounded px-2 py-1 text-gray-700"
-            />
-          ) : (
-            <span className="text-lg font-semibold text-gray-700 pointer-events-none">
-              {name}
-            </span>
-          )}
-        </div>
-
-        {isHovered && !isDragging && (
-          <div className="absolute right-4 flex space-x-2">
+    return (
+      <li
+        ref={setNodeRef}
+        style={style}
+        className="bg-gray-50 border border-gray-200 rounded-md hover:shadow transition-shadow relative"
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+      >
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center space-x-4">
+            <div {...attributes} {...listeners}>
+              <img src="/hamburg.png" alt="drag" className="w-5" />
+            </div>
             {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  className="px-3 py-1 bg-green-50 text-green-500 text-sm rounded-md hover:bg-green-100"
-                >
-                  저장
-                </button>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  취소
-                </button>
-              </>
+              <input
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                className="border rounded px-2 py-1 text-gray-700"
+              />
             ) : (
-              <>
-                <button
-                  onClick={onHelp}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  도움말
-                </button>
-                <button
-                  onClick={onTemplate}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  템플릿
-                </button>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-3 py-1 bg-blue-50 text-blue-500 text-sm rounded-md hover:bg-blue-100"
-                >
-                  수정
-                </button>
-                <button
-                  onClick={onDelete}
-                  className="px-3 py-1 bg-red-50 text-red-500 text-sm rounded-md hover:bg-red-100"
-                >
-                  삭제
-                </button>
-              </>
+              <span className="text-lg font-semibold text-gray-700 pointer-events-none">
+                {name}
+              </span>
             )}
           </div>
-        )}
-      </div>
-    </li>
-  );
-};
+
+          {isHovered && !isDragging && (
+            <div className="absolute right-4 flex space-x-2">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSave}
+                    className="px-3 py-1 bg-green-50 text-green-500 text-sm rounded-md hover:bg-green-100"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    취소
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={onHelp}
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    도움말
+                  </button>
+                  <button
+                    onClick={onTemplate}
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    템플릿
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="px-3 py-1 bg-blue-50 text-blue-500 text-sm rounded-md hover:bg-blue-100"
+                  >
+                    수정
+                  </button>
+                  <button
+                    onClick={onDelete}
+                    className="px-3 py-1 bg-red-50 text-red-500 text-sm rounded-md hover:bg-red-100"
+                  >
+                    삭제
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </li>
+    );
+  };
 
 const CategoryManagement: React.FC = () => {
   const [categories, setCategories] = useState<Category[]>([
@@ -224,13 +224,18 @@ const CategoryManagement: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  const saveModal = () => {
+
+  }
+
   return (
-    <div className="bg-gray-100 min-h-screen py-10 px-6">
+    <div className="bg-gray-100 h-full py-10 px-6">
       <Modal
         isOpen={isModalOpen}
         title={modalContent.title}
         content={modalContent.content}
         onClose={closeModal}
+        onSave={saveModal}
       />
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
         <h1 className="text-2xl font-bold mb-6 text-gray-800">카테고리 관리</h1>
@@ -267,17 +272,27 @@ const CategoryManagement: React.FC = () => {
           </SortableContext>
           <DragOverlay>
             {activeId ? (
-              <div className="bg-white shadow-lg rounded-md p-4">
-                {categories.find((category) => category.id === activeId)?.name}
+              <div
+                className="bg-gray-50 border border-gray-200 rounded-md hover:shadow transition-shadow p-4 flex items-center space-x-4"
+                style={{
+                  opacity: 1, // 드래그 시 동일한 투명도
+                }}
+              >
+                <img src="/hamburg.png" alt="drag" className="w-5" />
+                <span className="text-lg font-semibold text-gray-700">
+                  {categories.find((category) => category.id === activeId)?.name}
+                </span>
               </div>
             ) : null}
           </DragOverlay>
+
+
         </DndContext>
         <button
           className="mt-6 px-6 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md hover:bg-blue-600 transition-all shadow-sm"
           onClick={handleAddCategory}
         >
-        카테고리 추가
+          카테고리 추가
         </button>
       </div>
     </div>

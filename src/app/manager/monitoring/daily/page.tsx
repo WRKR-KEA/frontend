@@ -1,39 +1,40 @@
 "use client";
 
-import React from 'react';
-import dynamic from 'next/dynamic';
+import React from "react";
+import dynamic from "next/dynamic";
+import { ApexOptions } from "apexcharts"; // ApexOptions 타입 가져오기
 
-const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
+const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function DailyMonitoring() {
-  const lineChartOptions = {
+  const lineChartOptions: ApexOptions = {
     chart: {
-      id: 'tickets-line-chart',
+      id: "tickets-line-chart",
     },
     xaxis: {
       categories: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     },
     stroke: {
-      curve: 'smooth',
+      curve: "smooth",
     },
-    colors: ['#F56C6C'],
+    colors: ["#F56C6C"],
   };
 
   const lineChartSeries = [
     {
-      name: '발행된 티켓 수',
+      name: "발행된 티켓 수",
       data: [100, 200, 150, 300, 500, 400, 600, 800, 1000, 1200, 1500, 1800, 2000, 1700, 1500, 1300, 1100, 1000, 900, 800, 700, 600, 500, 400],
     },
   ];
 
-  const donutChartOptions = {
+  const donutChartOptions: ApexOptions = {
     chart: {
-      type: 'donut',
+      type: "donut",
     },
-    labels: ['햄버거', '도넛', '아이스크림', '캔디'],
-    colors: ['#2D2D2D', '#AEDAFF', '#A7E9AF', '#FFB5B5'],
+    labels: ["햄버거", "도넛", "아이스크림", "캔디"],
+    colors: ["#2D2D2D", "#AEDAFF", "#A7E9AF", "#FFB5B5"],
     legend: {
-      position: 'right',
+      position: "right",
     },
   };
 
@@ -61,13 +62,11 @@ export default function DailyMonitoring() {
       </div>
 
       <div className="bg-white p-6 rounded-lg shadow-md">
-          <h4 className="text-lg text-gray-800 mb-4">시간 당 발행된 티켓 수</h4>
-          <Chart options={lineChartOptions} series={lineChartSeries} type="line" height={300} />
-        </div>
+        <h4 className="text-lg text-gray-800 mb-4">시간 당 발행된 티켓 수</h4>
+        <Chart options={lineChartOptions} series={lineChartSeries} type="line" height={300} />
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        
-
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h4 className="text-lg text-gray-800 mb-4">티켓 카테고리</h4>
           <Chart options={donutChartOptions} series={donutChartSeries} type="donut" height={300} />

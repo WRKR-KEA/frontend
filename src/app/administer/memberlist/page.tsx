@@ -2,7 +2,6 @@
 
 import { Search } from "@/components/search";
 import PagePagination from "@/components/pagination";
-import MemberList from "@/components/MemberList";
 import { useState } from "react";
 
 export default function AdminMemberListPage() {
@@ -164,7 +163,49 @@ export default function AdminMemberListPage() {
           </button>
         </div>
 
-        <MemberList data={data} />
+        <div className="w-full mx-auto mt-3">
+                    <table className="w-full table-fixed border-collapse border border-gray-300 rounded-md overflow-hidden">
+                        <thead>
+                            <tr>
+                                <th className="p-3 text-left w-1/12"></th> {/* 첫 번째 열 */}
+                                <th className="p-3 text-left w-2/12">이름</th> {/* 이름 */}
+                                <th className="p-3 text-left w-2/12">직책</th> {/* 직책 */}
+                                <th className="p-3 text-left w-2/12">전화번호</th> {/* 전화번호 */}
+                                <th className="p-3 text-left w-3/12">이메일 주소</th> {/* 이메일 */}
+                                <th className="p-3 text-left w-2/12">담당 티켓</th> {/* 담당 티켓 */}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {data.map((row, index) => (
+                                <tr
+                                    key={index}
+                                    className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}
+                                >
+                                    
+                                    <td className="p-3 w-1/12">
+                                    <input type="checkbox"/>
+                                    </td>
+                                    <td className="p-3 w-2/12">
+                                        <div className="flex items-center space-x-3"> 
+                                            <img
+                                                src={row.avatar}
+                                                alt={row.name}
+                                                className="w-8 h-8 rounded-full"
+                                            />
+                                            <span>{row.name}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-4 w-2/12">{row.subject}</td>
+                                    <td className="p-4 w-2/12">{row.phone}</td>
+                                    <td className="p-4 w-3/12">{row.email}</td>
+                                    <td className="p-4 w-2/12">{row.tickets}</td> 
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+
+
+                </div>
 
         <div className="flex justify-center items-center mt-4 w-full">
           <PagePagination

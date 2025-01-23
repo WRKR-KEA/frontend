@@ -8,9 +8,9 @@ interface TicketInfoProps {
     title: string;
     requester: string;
     requestDate: string;
-    acceptDate: string;
-    updateDate: string;
-    completeDate: string;
+    acceptDate: string | null;
+    updateDate: string | null;
+    completeDate: string | null;
     handler: string;
     ispinned: boolean;
   }

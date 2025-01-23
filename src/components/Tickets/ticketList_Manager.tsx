@@ -12,7 +12,9 @@ type TicketList_ManagerProps = {
     title: string;
     requester: string;
     requestDate: string;
+    acceptDate: string | null;
     updateDate: string | null;
+    completeDate: string | null;
     handler: string;
     ispinned: boolean;
   }>;
@@ -41,7 +43,7 @@ export function TicketList_Manager({
 
   const [filterStatus, setFilterStatus] = useState('전체');
   const [activeTab, setActiveTab] = useState('전체');
-  const [pinnedTickets, setPinnedTickets] = useState([]);
+  const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
   const router = useRouter();
 
   const handleTabClick = (tab: string) => {

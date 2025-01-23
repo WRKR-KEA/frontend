@@ -7,7 +7,9 @@ type Ticket = {
   title: string;
   requester: string;
   requestDate: string;
+  acceptDate: string | null;
   updateDate: string | null;
+  completeDate: string | null;
   handler: string;
   ispinned: boolean;
 };
@@ -44,7 +46,8 @@ export function TicketList({
   const filteredTickets = tickets.filter((ticket) => {
     return (
       (!handler || ticket.handler.toLowerCase().includes(handler.toLowerCase())) &&
-      (!requester || ticket.requester.toLowerCase().includes(requester.toLowerCase()))    );
+      (!requester || ticket.requester.toLowerCase().includes(requester.toLowerCase()))
+    );
   });
 
   // 페이지에 해당하는 티켓들을 잘라서 표시
@@ -99,3 +102,25 @@ export function TicketList({
     </div>
   );
 }
+
+// 페이지에서 getServerSideProps를 사용해 데이터를 서버에서 가져옵니다.
+export async function getServerSideProps(context: any) {
+  const { page = 1, maxTicketsToShow = 10, status, handler, requester } = context.query;
+
+  // 여기서 실제 데이터를 API나 DB에서 가져옵니다.
+  const res = await fetch('https://api.example.com/tickets'); // 예시 API 호출
+  const tickets = await res.json();
+
+  return {
+    props: {
+      tickets,
+      maxTicketsToShow: parseInt(maxTicketsToShow, 10),
+      page: parseInt(page, 10),
+      status,
+      handler,
+      requester,
+    },
+  };
+}
+
+export default TicketList;

@@ -6,6 +6,23 @@ import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
+type Ticket = {
+  id: string;
+  number: string;
+  status: string;
+  title: string;
+  requester: string;
+  requestDate: string;
+  acceptDate: string | null;
+  updateDate: string | null;
+  completeDate: string | null;
+  handler: string;
+  ispinned: boolean;
+};
+
+// Define the status types more specifically
+type TicketStatusType = "new" | "rejected" | "in-progress" | "completed" | "cancelled";
+
 export default function UserHomePage() {
   const maxTicketsToShow = 10;
   const [ticketHandler, setTicketHandler] = useState(""); // 필터링 담당자
@@ -13,7 +30,7 @@ export default function UserHomePage() {
   const [tickets, setTickets] = useState(ticketDummyData);
 
   // 티켓 상태 변환 맵
-  const statusMap: Record<string, string> = {
+  const statusMap: Record<string, TicketStatusType> = {
     작업요청: "new", // '작업요청' -> 'new'
     반려: "rejected", // '반려' -> 'rejected'
     작업진행: "in-progress", // '작업진행' -> 'in-progress'
@@ -21,21 +38,21 @@ export default function UserHomePage() {
     작업취소: "cancelled", // '작업취소' -> 'cancelled'
   };
 
-  const [ticketStatus, setTicketStatus] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState<any>(tickets[0]); // 기본 선택된 티켓은 첫 번째 티켓으로 설정
+  // Set ticketStatus to a valid TicketStatusType, defaulting to 'new'
+  const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("new"); 
+  const [selectedTicket, setSelectedTicket] = useState<Ticket>(tickets[0]); // 기본 선택된 티켓은 첫 번째 티켓으로 설정
 
   // 컴포넌트 마운트 시 첫 번째 티켓의 상태 변환 후 상태 설정
   useEffect(() => {
     if (tickets.length > 0) {
-      const initialStatus = statusMap[tickets[0].status] || tickets[0].status; // 상태 변환 맵을 사용하여 초기 상태 설정
+      const initialStatus = statusMap[tickets[0].status] || "new"; // 기본값 'new'로 설정
       setTicketStatus(initialStatus);
       console.log("초기 티켓의 상태:", initialStatus); // 초기 상태 로그 출력
     }
   }, []); // 컴포넌트 마운트 시에만 실행
 
   const handleTicketClick = (ticket: Ticket) => {
-    // 상태 변환 후 setTicketStatus 호출
-    const newStatus = statusMap[ticket.status] || ticketStatus; // ticket.status로 기본 상태 설정
+    const newStatus = statusMap[ticket.status] || "new"; // 기본값 'new'로 설정
     setTicketStatus(newStatus); // 선택한 티켓 상태 업데이트
     setSelectedTicket(ticket); // 선택한 티켓 업데이트
     console.log("클릭한 티켓의 상태:", newStatus); // 변환된 상태를 로그로 확인
@@ -50,7 +67,7 @@ export default function UserHomePage() {
       <div className="flex space-x-6">
         {/* TicketInfo에 선택된 티켓 전달 */}
         <TicketInfo ticket={selectedTicket} />
-        <TicketStatus status={ticketStatus} /> 
+        <TicketStatus status={ticketStatus} /> {/* Ensured the correct type here */}
       </div>
       <h2 className="text-md font-semibold">최근 티켓 현황</h2>
       <TicketList

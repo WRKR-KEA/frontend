@@ -6,6 +6,22 @@ import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
+type Ticket = {
+  id: string;
+  number: string;
+  status: string;
+  title: string;
+  requester: string;
+  requestDate: string;
+  acceptDate: string | null;
+  updateDate: string | null;
+  completeDate: string | null;
+  handler: string;
+  ispinned: boolean;
+};
+
+type TicketStatusType = "new" | "rejected" | "in-progress" | "completed" | "cancelled";
+
 export default function ManagerHomePage() {
   const maxTicketsToShow = 10;
   const [ticketHandler, setTicketHandler] = useState("어피치"); // 필터링 담당자
@@ -13,8 +29,7 @@ export default function ManagerHomePage() {
 
   const [tickets, setTickets] = useState(ticketDummyData); 
 
-  // 티켓 상태 변환 맵
-  const statusMap: Record<string, string> = {
+  const statusMap: Record<string, TicketStatusType> = {
     작업요청: "new", // '작업요청' -> 'new'
     반려: "rejected", // '반려' -> 'rejected'
     작업진행: "in-progress", // '작업진행' -> 'in-progress'
@@ -22,9 +37,9 @@ export default function ManagerHomePage() {
     작업취소: "cancelled", // '작업취소' -> 'cancelled'
   };
 
-  const [ticketStatus, setTicketStatus] = useState("");
-  const [selectedTicket, setSelectedTicket] = useState<any>(tickets[0]); // 기본 선택된 티켓은 첫 번째 티켓으로 설정
-
+  const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("new"); 
+  const [selectedTicket, setSelectedTicket] = useState<Ticket>(tickets[0]); // 기본 선택된 티켓은 첫 번째 티켓으로 설정
+  
   // 컴포넌트 마운트 시 첫 번째 티켓의 상태 변환 후 상태 설정
   useEffect(() => {
     if (tickets.length > 0) {

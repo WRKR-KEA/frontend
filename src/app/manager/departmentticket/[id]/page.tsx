@@ -53,8 +53,8 @@ export default function ManagericketDetailPage() {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmCancel = () => {
-    console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가
+  const confirmAccept = () => {
+    console.log("작업이 승인되었습니다."); 
     setIsModalOpen(false); // 모달 닫기
   };
 
@@ -100,8 +100,7 @@ export default function ManagericketDetailPage() {
       <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
       <TicketComment logs={logs} />
 
-      {/* TicketCancel 컴포넌트 */}
-      <TicketAccept isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />
+      <TicketAccept isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmAccept} />
     </div>
   );
 }

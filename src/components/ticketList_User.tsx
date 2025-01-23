@@ -116,10 +116,10 @@ export function TicketList_User({
                 className="px-4 py-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick(ticket.number);
+                  handlePinClick(ticket.id);
                 }}
               >
-                {pinnedTickets.includes(ticket.number) ? (
+                {ticket.ispinned || pinnedTickets.includes(ticket.id) ? (
                   <MdPushPin className="text-red-500" size={20} />
                 ) : (
                   <MdOutlinePushPin className="text-gray-400" size={20} />

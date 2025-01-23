@@ -1,5 +1,5 @@
 export const ticketDummyData = [
-  { "id": "1", "number": "AAA000001", "status": "작업완료", "title": "VM이 안됩니다. 도와주세요!", "requester": "춘식이", "requestDate": "2025.01.01", "updateDate": "2025.01.14", "handler": "라이언", "ispinned": true, "acceptDate": "2025.01.02", "completeDate": "2025.01.14" },
+  { "id": "1", "number": "AAA000001", "status": "작업요청", "title": "VM이 안됩니다. 도와주세요!", "requester": "춘식이", "requestDate": "2025.01.01", "updateDate": "2025.01.14", "handler": "라이언", "ispinned": true, "acceptDate": "2025.01.02", "completeDate": "2025.01.14" },
   { "id": "2", "number": "AAA000002", "status": "작업진행", "title": "네트워크 장애 해결 요청", "requester": "춘식이", "requestDate": "2025.01.02", "updateDate": "2025.01.15", "handler": "어피치", "ispinned": false, "acceptDate": null, "completeDate": null },
   { "id": "3", "number": "AAA000003", "status": "작업완료", "title": "하드웨어 장애 해결 요청", "requester": "루피", "requestDate": "2025.01.03", "updateDate": "2025.01.16", "handler": "어피치", "ispinned": true, "acceptDate": "2025.01.04", "completeDate": "2025.01.16" },
   { "id": "4", "number": "AAA000004", "status": "작업요청", "title": "권한 요청", "requester": "춘식이", "requestDate": "2025.01.04", "updateDate": "2025.01.17", "handler": "어피치", "ispinned": false, "acceptDate": null, "completeDate": null },

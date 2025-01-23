@@ -48,6 +48,14 @@ export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
       >
         작업 반려
       </button>
+      <button
+        onClick={() => handleTabClick("작업취소")}
+        className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
+          activeTab === "반려" ? "border-b-2 border-black text-black" : "text-gray-500"
+        }`}
+      >
+        작업 취소
+      </button>
     </div>
   );
 }

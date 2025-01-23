@@ -10,7 +10,7 @@ export default function UserHomePage() {
   const maxTicketsToShow = 10;
   const [ticketHandler, setTicketHandler] = useState<string>(""); // 필터링 담당자
   const [ticketRequester, setTicketRequester] = useState<string>("춘식이"); // 필터링 요청자
-  const [tickets, setTickets] = useState(ticketDummyData); 
+  const [tickets, setTickets] = useState(ticketDummyData);
 
   // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
@@ -41,6 +41,9 @@ export default function UserHomePage() {
     console.log("클릭한 티켓의 상태:", newStatus); // 변환된 상태를 로그로 확인
   };
 
+  // ispinned 값이 true인 티켓만 필터링
+  const pinnedTickets = tickets.filter((ticket) => ticket.ispinned);
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <h2 className="text-md font-semibold">최근 티켓 조회</h2>
@@ -51,7 +54,7 @@ export default function UserHomePage() {
       </div>
       <h2 className="text-md font-semibold">최근 티켓 현황</h2>
       <TicketList
-        tickets={tickets} // 데이터를 넘김
+        tickets={pinnedTickets} // ispinned 값이 true인 티켓만 전달
         maxTicketsToShow={maxTicketsToShow}
         page={1}
         status={ticketStatus}

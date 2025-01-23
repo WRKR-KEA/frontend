@@ -9,6 +9,7 @@ type Ticket = {
   requestDate: string;
   updateDate: string;
   handler: string;
+  ispinned: boolean;
 };
 
 type TicketListProps = {
@@ -18,6 +19,7 @@ type TicketListProps = {
   status?: string;
   handler?: string;
   requester?: string;
+  ispinned?: boolean;
   onTicketClick?: (ticket: Ticket) => void; // 티켓 클릭 핸들러
 };
 
@@ -42,8 +44,7 @@ export function TicketList({
   const filteredTickets = tickets.filter((ticket) => {
     return (
       (!handler || ticket.handler.toLowerCase().includes(handler.toLowerCase())) &&
-      (!requester || ticket.requester.toLowerCase().includes(requester.toLowerCase()))
-    );
+      (!requester || ticket.requester.toLowerCase().includes(requester.toLowerCase()))    );
   });
 
   // 페이지에 해당하는 티켓들을 잘라서 표시

@@ -1,15 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, ChangeEvent } from "react";
 import { FiPaperclip, FiSend } from "react-icons/fi"; // 아이콘 가져오기
 
-const TicketComment = ({ logs }) => {
-  const [message, setMessage] = useState(""); // 메시지 상태 관리
-  const [file, setFile] = useState(null); // 파일 상태 관리
+interface Log {
+  log?: string;
+  message?: string;
+  role?: "admin" | "user"; // 역할은 admin 또는 user로 한정
+}
+
+interface TicketCommentProps {
+  logs: Log[]; // logs는 Log 배열 타입
+}
+
+const TicketComment: React.FC<TicketCommentProps> = ({ logs }) => {
+  const [message, setMessage] = useState<string>(""); // 메시지 상태 관리
+  const [file, setFile] = useState<File | null>(null); // 파일 상태 관리
 
   // 파일 첨부 핸들러
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]; // 첫 번째 파일만 처리
     if (file) {
       setFile(file);
     }

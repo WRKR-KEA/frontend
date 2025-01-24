@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, ChangeEvent } from "react";
 import { FiPaperclip, FiSend } from "react-icons/fi"; // 아이콘 가져오기
 

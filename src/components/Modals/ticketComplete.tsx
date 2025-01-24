@@ -1,5 +1,3 @@
-"use client";
-
 import Button from "@/components/Buttons/Button";
 
 type TicketCompleteProps = {

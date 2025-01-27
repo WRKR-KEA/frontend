@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
 import { FilterNum } from "@/components/Filters/filterNum";
-import PagePagination from "@/components/pagination";
 import { Search } from "@/components/search";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
@@ -102,12 +101,7 @@ export default function DepartmentTicketListPage() {
       />
 
       <div className="flex justify-center items-center mt-4">
-        <PagePagination
-          totalItemsCount={tickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
-        />
+        {/* 페이지네이션 컴포넌트가 이제 TicketList_Depart 내에 포함되어 있으므로, 이 부분을 제거하거나 적절히 수정해 주세요. */}
       </div>
     </div>
   );

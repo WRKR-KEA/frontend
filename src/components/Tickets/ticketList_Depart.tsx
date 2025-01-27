@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FilterTab } from '@/components/Filters/filterTab';
 import { useRouter } from 'next/navigation'; 
 import { ticketDummyData } from "@/data/ticketDummyData";
 import { HighlightText } from '@/components/highlightText'; 
+import PagePagination from "@/components/pagination";
 
 type TicketList_DepartProps = {
   maxTicketsToShow: number;
@@ -27,17 +28,27 @@ export function TicketList_Depart({
     작업요청: 'bg-[#FFE9B6] text-[#D79804]',
   };
 
+  const [currentPage, setCurrentPage] = useState(page); // 현재 페이지 상태
   const [filterStatus, setFilterStatus] = useState('전체');
   const [activeTab, setActiveTab] = useState('전체');
   const router = useRouter(); 
 
+  useEffect(() => {
+    setCurrentPage(page); // `page` prop이 바뀔 때 상태 업데이트
+  }, [page]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page); // 페이지 변경 시 상태 업데이트
+  };
+
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setFilterStatus(tab);
+    setCurrentPage(1); 
   };
 
   const handleTicketClick = (ticketId: string) => {
-    const currentPath = window.location.pathname; // 현재 경로를 가져옴
+    const currentPath = window.location.pathname;
     router.push(`${currentPath}/${ticketId}`);
   };
 
@@ -65,8 +76,8 @@ export function TicketList_Depart({
   });
   
   const displayedTickets = sortedTickets.slice(
-    (page - 1) * maxTicketsToShow,
-    page * maxTicketsToShow
+    (currentPage - 1) * maxTicketsToShow,
+    currentPage * maxTicketsToShow
   );
 
   return (
@@ -108,6 +119,14 @@ export function TicketList_Depart({
           ))}
         </tbody>
       </table>
+      <div className="flex justify-center items-center mt-4">
+        <PagePagination
+          totalItemsCount={filteredTickets.length}
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
-} 
+}

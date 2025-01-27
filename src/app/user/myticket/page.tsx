@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { TicketList_User } from "@/components/Tickets/ticketList_User";
 import { FilterNum } from "@/components/Filters/filterNum";
-import PagePagination from "@/components/pagination";
 import { Search } from "@/components/search";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState({
     startDate: null,
@@ -19,18 +17,11 @@ export default function UserTicketListPage() {
 
   const [tickets, setTickets] = useState(ticketDummyData);
 
-  // 요청자가 "춘식이"인 티켓만 필터링 및 검색어와 일치하는 티켓 필터링
-  const filteredTickets = tickets
-    .filter((ticket) => ticket.requester === "춘식이");
+  // 요청자가 "춘식이"인 티켓만 필터링
+  const filteredTickets = tickets.filter((ticket) => ticket.requester === "춘식이");
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
-    setCurrentPage(1); // 페이지 수 초기화
-  };
-
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo(0, 0); // 페이지 변경 시 스크롤 맨 위로 이동
   };
 
   const handleSearchChange = (term: string) => {
@@ -54,19 +45,9 @@ export default function UserTicketListPage() {
       <TicketList_User
         tickets={filteredTickets}
         maxTicketsToShow={maxTicketsToShow}
-        page={currentPage}
         searchTerm={searchTerm}
         dateRange={dateRange}
       />
-
-      <div className="flex justify-center items-center mt-4">
-        <PagePagination
-          totalItemsCount={filteredTickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
-        />
-      </div>
     </div>
   );
 }

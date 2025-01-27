@@ -2,15 +2,13 @@
 
 import { useState } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
-import { FilterNum } from "@/components/Filters/filterNum"; 
-import { FilterOrder } from "@/components/Filters/filterOrder"; 
-import PagePagination from "@/components/pagination"; 
+import { FilterNum } from "@/components/Filters/filterNum";
+import { FilterOrder } from "@/components/Filters/filterOrder";
 import { ticketDummyData } from "@/data/ticketDummyData";
 import { Search_manager } from "@/components/search_manager";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
-  const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [dateRange, setDateRange] = useState({
     startDate: null,
@@ -20,22 +18,8 @@ export default function ManagerTicketListPage() {
   const [tickets, setTickets] = useState(ticketDummyData);
   const [sortOrder, setSortOrder] = useState("우선순위 순");
 
-  // Filter tickets where requester is "담당자 이름"
-  const filteredTickets = tickets.filter((ticket) => ticket.handler === "어피치");
-
-  // Calculate paginated tickets
-  const startIndex = (currentPage - 1) * maxTicketsToShow;
-  const endIndex = startIndex + maxTicketsToShow;
-  const paginatedTickets = filteredTickets.slice(startIndex, endIndex); // 페이지별 티켓 계산
-
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
-    setCurrentPage(1); // 페이지 수 초기화
-  };
-
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-    window.scrollTo(0, 0);
   };
 
   const handleSearchChange = (term: string) => {
@@ -62,22 +46,12 @@ export default function ManagerTicketListPage() {
       </div>
 
       <TicketList_Manager
-        tickets={paginatedTickets}
+        tickets={tickets}
         maxTicketsToShow={maxTicketsToShow}
-        page={currentPage}
         searchTerm={searchTerm}
         dateRange={dateRange}
         sortOrder={sortOrder}
-      /> 
-      
-      <div className="flex justify-center items-center mt-4">
-        <PagePagination
-          totalItemsCount={filteredTickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      />
     </div>
   );
 }

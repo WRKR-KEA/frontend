@@ -119,7 +119,7 @@ export function TicketList_Depart({
           ))}
         </tbody>
       </table>
-      <div className="flex justify-center items-center mt-4">
+      <div className="flex justify-center items-center mt-4 mb-4">
         <PagePagination
           totalItemsCount={filteredTickets.length}
           itemsCountPerPage={maxTicketsToShow}

@@ -5,10 +5,10 @@ import PagePagination from "@/components/pagination";
 import { useState } from "react";
 
 export default function AdminMemberListPage() {
-  const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
+  const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [activeTab, setActiveTab] = useState("Tab1");
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const handleTabClick = (tabName: string) => {
     setActiveTab(tabName);

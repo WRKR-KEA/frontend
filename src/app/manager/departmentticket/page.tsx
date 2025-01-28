@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { TicketList_Depart } from "@/components/ticketList_Depart";
-import { FilterNum } from "@/components/filterNum";
-import PagePagination from "@/components/pagination";
+import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
+import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
@@ -12,9 +11,9 @@ import { format } from "date-fns";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function DepartmentTicketListPage() {
-  const [maxTicketsToShow, setMaxTicketsToShow] = useState<number>(20);
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   // 캘린더 상태 관리
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -32,6 +31,7 @@ export default function DepartmentTicketListPage() {
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
+    setCurrentPage(1); // 페이지 수 초기화
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -101,12 +101,7 @@ export default function DepartmentTicketListPage() {
       />
 
       <div className="flex justify-center items-center mt-4">
-        <PagePagination
-          totalItemsCount={tickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          onPageChange={handlePageChange}
-        />
+        {/* 페이지네이션 컴포넌트가 이제 TicketList_Depart 내에 포함되어 있으므로, 이 부분을 제거하거나 적절히 수정해 주세요. */}
       </div>
     </div>
   );

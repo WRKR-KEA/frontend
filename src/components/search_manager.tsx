@@ -6,7 +6,7 @@ interface Search_managerProps {
 }
 
 export const Search_manager = ({ onSearchChange }: Search_managerProps) => {
-  const [searchInput, setSearchInput] = useState<string>("");
+  const [searchInput, setSearchInput] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);

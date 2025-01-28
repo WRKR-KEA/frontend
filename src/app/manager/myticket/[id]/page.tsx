@@ -2,14 +2,14 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
-import { TicketInfo } from "@/components/ticketInfo";
-import { TicketStatus } from "@/components/ticketStatus";
-import TicketComment from "@/components/ticketComment";
-import Button from "@/components/Button";
-import { TicketCancel } from "@/components/ticketCancel";
-import TicketChange from "@/components/ticketChange";
-import { TicketComplete } from "@/components/ticketComplete";
-import {TicketAbort} from "@/components/ticketAbort";
+import { TicketInfo } from "@/components/Tickets/ticketInfo";
+import { TicketStatus } from "@/components/Tickets/ticketStatus";
+import TicketComment from "@/components/Tickets/ticketComment";
+import Button from "@/components/Buttons/Button";
+import { TicketCancel } from "@/components/Modals/ticketCancel";
+import TicketChange from "@/components/Modals/ticketChange";
+import { TicketComplete } from "@/components/Modals/ticketComplete";
+import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function ManagericketDetailPage() {
@@ -35,11 +35,12 @@ export default function ManagericketDetailPage() {
   ];
 
   useEffect(() => {
-    const id = window.location.pathname.split("/").pop(); // URL에서 id 추출
+    const id = window.location.pathname.split("/").pop();
     if (id) {
-      const ticket = tickets.find((ticket) => ticket.id == id);
-      console.log(id, tickets[id-1]);
-      setSelectedTicket(tickets[id-1]); // 티켓이 없으면 null 설정
+      const numericId = parseInt(id, 10); 
+      const ticket = tickets.find((ticket) => ticket.id === numericId.toString()); 
+      console.log(numericId, tickets[numericId - 1]); 
+      setSelectedTicket(tickets[numericId - 1]);
     }
   }, [tickets]);
 

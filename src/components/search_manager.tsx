@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 
-interface SearchProps {
+interface Search_managerProps {
   onSearchChange: (term: string) => void;
 }
 
-export const Search = ({ onSearchChange }: SearchProps) => {
+export const Search_manager = ({ onSearchChange }: Search_managerProps) => {
   const [searchInput, setSearchInput] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,8 +20,8 @@ export const Search = ({ onSearchChange }: SearchProps) => {
         type="text"
         value={searchInput}
         onChange={handleInputChange}
-        placeholder="제목, 담당자, 티켓번호"
-        className="outline-none text-sm w-[130px]" 
+        placeholder="제목, 티켓번호"
+        className="outline-none text-sm w-[85px]"
       />
     </div>
   );

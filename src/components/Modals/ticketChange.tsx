@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ChangeMemberList from "@/components/changeMemberList";
-import Button from "@/components/Button";
+import Button from "@/components/Buttons/Button";
 
 const mockData = [
   {

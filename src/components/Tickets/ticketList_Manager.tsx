@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { FilterTab_Manager } from './filterTab_Manager';
+import { FilterTab_Manager } from '@/components/Filters/filterTab_Manager';
 import { useRouter } from 'next/navigation';
-import { MdPushPin, MdOutlinePushPin } from 'react-icons/md'; // react-icons 추가
-import { HighlightText } from '@/components/highlightText'; 
+import { MdPushPin, MdOutlinePushPin } from 'react-icons/md';
+import { HighlightText } from '@/components/highlightText';
+import PagePagination from "@/components/pagination";
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -12,83 +13,87 @@ type TicketList_ManagerProps = {
     title: string;
     requester: string;
     requestDate: string;
-    updateDate: string;
+    acceptDate: string | null;
+    updateDate: string | null;
+    completeDate: string | null;
     handler: string;
     ispinned: boolean;
   }>;
   maxTicketsToShow: number;
-  page: number;
   searchTerm: string;
   dateRange: { startDate: Date | null; endDate: Date | null };
+  sortOrder: string; 
 };
 
 export function TicketList_Manager({
   tickets,
   maxTicketsToShow,
-  page,
   searchTerm,
   dateRange,
+  sortOrder,  
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
     작업완료: 'bg-[#D1EEE2] text-[#3A966F]',
     작업진행: 'bg-[#CFE3FF] text-[#3E7DD6]',
     작업취소: 'bg-[#E0E0E0] text-[#767676]',
     반려: 'bg-[#F3CDBE] text-[#DE6231]',
-    // 작업요청: 'bg-[#FFE9B6] text-[#D79804]',
   };
 
-  const [filterStatus, setFilterStatus] = useState<string>('전체');
-  const [activeTab, setActiveTab] = useState<string>('전체');
+  const [filterStatus, setFilterStatus] = useState('전체');
+  const [activeTab, setActiveTab] = useState('전체');
   const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지 상태 추가
   const router = useRouter();
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setFilterStatus(tab);
+    setCurrentPage(1); 
   };
 
   const handleTicketClick = (ticketId: string) => {
     const currentPath = window.location.pathname;
-    // console.log(ticketId);
     router.push(`${currentPath}/${ticketId}`);
   };
-  
+
   const handlePinClick = (ticketId: string) => {
     setPinnedTickets((prevPinned) => {
       if (prevPinned.includes(ticketId)) {
-        return prevPinned.filter((Id) => Id !== ticketId);
-      }
-      if (prevPinned.length < 10) {
+        return prevPinned.filter((id) => id !== ticketId);
+      } else if (prevPinned.length < 10) {
         return [ticketId, ...prevPinned];
       }
       return prevPinned;
     });
   };
 
-  const sortedTickets = [...tickets].sort((a, b) =>
-    new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
-  );
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const sortedTickets = [...tickets].sort((a, b) => {
+    if (sortOrder === "최신순") {
+      return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
+    } else if (sortOrder === "오래된 순") {
+      return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
+    } else if (sortOrder === "우선순위 순") {
+      if (a.ispinned && !b.ispinned) return -1;
+      if (!a.ispinned && b.ispinned) return 1;
+      return 0;
+    }
+    return 0;
+  });
 
   const filteredTickets = sortedTickets.filter((ticket) => {
     const matchesSearchTerm =
-      ticket.title.includes(searchTerm) ||
-      ticket.handler.includes(searchTerm) ||
-      ticket.number.includes(searchTerm);
+      ticket.title.includes(searchTerm) || ticket.number.includes(searchTerm);
     const matchesStatus =
       (filterStatus === '전체' || ticket.status === filterStatus) && ticket.status !== '작업요청'; 
-    const matchesDateRange =
-      ticket.requestDate &&
-      (!dateRange.startDate ||
-        !dateRange.endDate ||
-        (new Date(ticket.requestDate) >= dateRange.startDate &&
-          new Date(ticket.requestDate) <= dateRange.endDate));
-    return matchesSearchTerm && matchesStatus && matchesDateRange;
+    return matchesSearchTerm && matchesStatus;
   });
 
-  const displayedTickets = [
-    ...filteredTickets.filter((ticket) => pinnedTickets.includes(ticket.number)),
-    ...filteredTickets.filter((ticket) => !pinnedTickets.includes(ticket.number)),
-  ].slice((page - 1) * maxTicketsToShow, page * maxTicketsToShow);
+  const startIndex = (currentPage - 1) * maxTicketsToShow;
+  const displayedTickets = filteredTickets.slice(startIndex, startIndex + maxTicketsToShow);
 
   return (
     <div className="bg-white rounded-md shadow-md">
@@ -117,10 +122,10 @@ export function TicketList_Manager({
                 className="px-4 py-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick(ticket.number); // Pin/unpin using ticket number
+                  handlePinClick(ticket.number);
                 }}
               >
-                {pinnedTickets.includes(ticket.number) ? (
+                {ticket.ispinned || pinnedTickets.includes(ticket.number) ? (
                   <MdPushPin className="text-red-500" size={20} />
                 ) : (
                   <MdOutlinePushPin className="text-gray-400" size={20} />
@@ -134,8 +139,12 @@ export function TicketList_Manager({
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2"><HighlightText text={ticket.title} highlight={searchTerm} /></td>
-              <td className="px-4 py-2"><HighlightText text={ticket.handler} highlight={searchTerm} /></td>
+              <td className="px-4 py-2">
+                <HighlightText text={ticket.title} highlight={searchTerm} />
+              </td>
+              <td className="px-4 py-2">
+                {ticket.handler}
+              </td>
               <td className="px-4 py-2">{ticket.requester}</td>
               <td className="px-4 py-2">{ticket.requestDate}</td>
               <td className="px-4 py-2">{ticket.updateDate}</td>
@@ -143,6 +152,14 @@ export function TicketList_Manager({
           ))}
         </tbody>
       </table>
+      <div className="flex justify-center items-center mt-4 mb-4">
+        <PagePagination
+          totalItemsCount={filteredTickets.length}
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }

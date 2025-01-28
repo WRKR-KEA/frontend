@@ -13,6 +13,7 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@toast-ui/react-editor": "^3.2.3",
     "apexcharts": "^4.3.0",
+    "axios": "^1.7.9",
     "date-fns": "^4.1.0",
     "next": "15.1.4",
     "react": "^19.0.0",

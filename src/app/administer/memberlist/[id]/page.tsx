@@ -19,7 +19,6 @@ const AdminMemberDetailPage: React.FC<AdminMemberDetailProps> = ({
   department = "인프라",
   position = "팀장",
   tasks = ["AWS", "스토리지", "VM 인스턴스"],
-  avatar = "/profile.jpg",
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState({

@@ -123,12 +123,12 @@ export default function AdminMemberListPage() {
                     <table className="w-full table-fixed border-collapse border border-gray-300 rounded-md overflow-hidden">
                         <thead>
                             <tr>
-                                <th className="p-3 text-left w-1/12"></th> {/* 첫 번째 열 */}
-                                <th className="p-3 text-left w-2/12">이름</th> {/* 이름 */}
-                                <th className="p-3 text-left w-2/12">직책</th> {/* 직책 */}
-                                <th className="p-3 text-left w-2/12">전화번호</th> {/* 전화번호 */}
-                                <th className="p-3 text-left w-3/12">이메일 주소</th> {/* 이메일 */}
-                                <th className="p-3 text-left w-2/12">담당 티켓</th> {/* 담당 티켓 */}
+                                <th className="p-3 text-left w-1/12"></th>
+                                <th className="p-3 text-left w-2/12">이름</th>
+                                <th className="p-3 text-left w-2/12">직책</th>
+                                <th className="p-3 text-left w-2/12">전화번호</th>
+                                <th className="p-3 text-left w-3/12">이메일 주소</th>
+                                <th className="p-3 text-left w-2/12">담당 티켓</th>
                             </tr>
                         </thead>
                         <tbody>

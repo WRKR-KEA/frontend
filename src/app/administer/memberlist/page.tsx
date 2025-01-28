@@ -181,7 +181,6 @@ export default function AdminMemberListPage() {
                                     key={index}
                                     className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}
                                 >
-                                    
                                     <td className="p-3 w-1/12">
                                     <input type="checkbox"/>
                                     </td>

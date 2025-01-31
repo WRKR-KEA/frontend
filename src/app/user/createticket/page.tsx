@@ -7,7 +7,7 @@ import Help from "@/components/Modals/Help";
 import Modal from "@/components/Modals/Modal";
 import Template from "@/components/Tickets/Template";
 import Button from "@/components/Buttons/Button";
-import { createTicket } from "@/lib/api/createTickets";
+import { createTicket } from "@/lib/api/userTickets";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");
@@ -68,7 +68,7 @@ export default function UserCreateTicketPage() {
         className="flex justify-center items-center min-h-screen"
         style={{ backgroundColor: "#252E66" }}
       >
-        <h1 className="text-white text-lg font-semibold">티켓 생성이 완료되었습니다!</h1>
+        <h1 className="text-white text-lg font-semibold">✨티켓 생성이 완료되었습니다!</h1>
       </div>
     );
   }

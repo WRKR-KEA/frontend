@@ -1,11 +1,5 @@
 import axios from 'axios';
 
-export interface TicketData {
-  title: string;
-  content: string;
-  categoryId: string;
-}
-
 export interface Ticket {
   id: string;
   managerName: string;
@@ -42,26 +36,7 @@ export interface TicketDetail {
   startedAt: string;
 }
 
-const BASE_URL = "http://localhost:8080";
-
-// 티켓 생성 API
-export async function createTicket(userId: number, ticketData: TicketData) {
-  const url = `${BASE_URL}/api/user/tickets`;
-
-  try {
-    const response = await axios.post(url, ticketData, {
-      params: { userId },
-      headers: {
-        'Content-Type': 'application/json;charset=UTF-8',
-      },
-    });
-    console.log("Response Data:", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error("Error Response:", error.response?.data || error.message);
-    throw new Error(error.response?.data?.message || "티켓 생성에 실패했습니다.");
-  }
-}
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
 
 // 사용자 요청 전체 티켓 조회 API
 export async function getUserTickets(userId: number, page: number, size: number): Promise<TicketResponse> {

@@ -7,7 +7,7 @@ import Help from "@/components/Modals/Help";
 import Modal from "@/components/Modals/Modal";
 import Template from "@/components/Tickets/Template";
 import Button from "@/components/Buttons/Button";
-import { createTicket } from "@/lib/api/userTickets";
+import { createTicket } from "@/lib/api/userCreateTickets";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");
@@ -37,15 +37,22 @@ export default function UserCreateTicketPage() {
         content: content || "Default Content",
         categoryId: selectedService,
       };
-      console.log(ticketData);
-      const userId = 1; // 예시 사용자 ID
+      console.log("📌 요청 데이터:", ticketData);
+  
+      const userId = 22; // 예시 사용자 ID
       const result = await createTicket(userId, ticketData);
-
-      console.log("티켓 생성 성공:", result);
+  
+      console.log("✅ 티켓 생성 성공:", result);
       setIsTicketCreated(true); // 생성 완료 상태로 변경
     } catch (error: any) {
-      console.error("티켓 생성 중 오류 발생:", error.message);
-      alert(error.message || "티켓 생성 중 문제가 발생했습니다.");
+      console.error("❌ 티켓 생성 중 오류 발생:", error);
+      console.error("📌 오류 상세 정보:", error.response?.data || error.message);
+  
+      alert(
+        error.response?.data?.message ||
+        error.message ||
+        "티켓 생성 중 문제가 발생했습니다."
+      );
     }
   };
 

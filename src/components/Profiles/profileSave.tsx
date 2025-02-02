@@ -1,11 +1,16 @@
 type Profile = {
-    name: string;
-    department: string;
-    role: string;
-    permission: string;
-    position: string;
-    email: string;
-    phone: string;
+  agitNotification: boolean;
+  agitURL: string;
+  email: string;
+  emailNotification: boolean;
+  memebrId: string;
+  name: string;
+  nickname: string;
+  phone: string;
+  position: string;
+  profileImage: string;
+  role: string;
+  serviceNotification: boolean;
   };
   
   function ProfileSave({ profile }: { profile: Profile }) {
@@ -22,7 +27,7 @@ type Profile = {
         >
           {profile.name}
         </h1>
-        <p style={{ textAlign: "center" }}>{profile.position}</p>
+        {/* <p style={{ textAlign: "center" }}>{profile.position}</p> */}
         <p style={{ textAlign: "center" }}>
             {profile.email} / {profile.phone}
         </p> 
@@ -47,7 +52,7 @@ type Profile = {
               fontWeight: "bold",
             }}
           >
-            {profile.department}
+            {profile.position}
           </div>
   
           {/* 세로 구분선 */}
@@ -89,7 +94,7 @@ type Profile = {
               fontWeight: "bold",
             }}
           >
-            {profile.permission}
+            {profile.nickname}
           </div>
         </div>
       </div>

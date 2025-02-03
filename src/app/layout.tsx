@@ -1,14 +1,56 @@
-'use client'
+'use client';
 import "./globals.css";
 import Sidebar from "@/components/sidebar";
 import Headerbar from "@/components/headerbar";
 import { usePathname } from "next/navigation";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useState, useEffect } from "react";
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname(); // 현재 경로 가져오기
-
+  const [queryClient] = useState(() => new QueryClient());
   const excludedPaths = ["/login", "/changepassword", "/locked", "/passwordchangemodal", "/reissuepassword"];
   const isExcluded = excludedPaths.includes(pathname);
+
+  // 리프레시 토큰 요청 함수
+  const refreshAccessToken = async () => {
+    try {
+      const refreshToken = sessionStorage.getItem("refreshToken");
+      if (!refreshToken) {
+        console.warn("리프레시 토큰이 없습니다.");
+        return;
+      }
+
+      const response = await fetch("http://172.16.211.53:8080/api/auth/refresh", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${refreshToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        console.error("토큰 갱신 실패:", response.statusText);
+        return;
+      }
+
+      const data = await response.json();
+      if (data.result?.accessToken && data.result?.refreshToken) {
+        sessionStorage.setItem("accessToken", data.result.accessToken);
+        sessionStorage.setItem("refreshToken", data.result.refreshToken);
+        console.log("토큰이 갱신되었습니다.");
+      } else {
+        console.error("응답에 토큰이 포함되지 않았습니다.");
+      }
+    } catch (error) {
+      console.error("토큰 갱신 중 오류:", error);
+    }
+  };
+
+  // useEffect로 새로고침 시 토큰 갱신
+  useEffect(() => {
+    refreshAccessToken();
+  }, []);
 
   return (
     <html lang="en">
@@ -22,7 +64,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {!isExcluded && <Headerbar />}
 
           {/* 메인 콘텐츠 */}
-          <main className="flex-1 overflow-y-auto bg-white">{children}</main>
+          <main className="flex-1 overflow-y-auto bg-white">
+            <QueryClientProvider client={queryClient}>
+              {children}
+            </QueryClientProvider>
+          </main>
         </div>
       </body>
     </html>

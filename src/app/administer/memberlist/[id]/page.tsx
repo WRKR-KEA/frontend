@@ -8,7 +8,7 @@ interface AdminMemberDetailProps {
   phone: string;
   department: string;
   position: string;
-  tasks: string[];
+  tasks: string;
   avatar: string;
 }
 
@@ -18,7 +18,7 @@ const AdminMemberDetailPage: React.FC<AdminMemberDetailProps> = ({
   phone = "01012345678",
   department = "인프라",
   position = "팀장",
-  tasks = ["AWS", "스토리지", "VM 인스턴스"],
+  tasks = "AWS, 스토리지, VM 인스턴스",
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState({
@@ -30,32 +30,13 @@ const AdminMemberDetailPage: React.FC<AdminMemberDetailProps> = ({
     tasks,
   });
 
-  const [selectedCategory, setSelectedCategory] = useState("");
-  const [selectedSubCategory, setSelectedSubCategory] = useState("");
-
-  const categories: { [key: string]: string[] } = {
-    클라우드: ["AWS", "Azure", "GCP"],
-    스토리지: ["NAS", "SAN", "Object Storage"],
-    네트워크: ["Firewall", "Router", "Switch"],
-  };
-
-  const handleAddTask = (): void => {
-    if (selectedSubCategory && !editableData.tasks.includes(selectedSubCategory)) {
-      setEditableData((prev) => ({
-        ...prev,
-        tasks: [...prev.tasks, selectedSubCategory],
-      }));
-      setSelectedSubCategory("");
-    }
-  };
-
   const handleSave = (): void => {
     setIsEditing(false);
     console.log("Updated Data:", editableData);
   };
 
   return (
-    <div className="bg-gray-50 flex justify-center p-8">
+    <div className="flex justify-center p-8">
       <div className="bg-white shadow-md rounded-lg p-12 w-full max-w-4xl">
         {/* 프로필 헤더 */}
         <div className="flex items-center space-x-6 border-b pb-6">
@@ -65,7 +46,6 @@ const AdminMemberDetailPage: React.FC<AdminMemberDetailProps> = ({
               alt={editableData.name}
               className="w-32 h-32 rounded-full object-cover"
             />
-           
           </div>
           <div className="w-full">
             {isEditing ? (
@@ -154,55 +134,21 @@ const AdminMemberDetailPage: React.FC<AdminMemberDetailProps> = ({
           </div>
         </div>
 
-        {/* 담당업무 */}
+        {/* 담당업무 - 단순 인풋 필드로 변경 */}
         <div className="mt-6">
           <h2 className="text-sm font-semibold text-gray-500">담당업무</h2>
-          <div className="flex space-x-2 mt-2">
-            {editableData.tasks.map((task, index) => (
-              <span
-                key={index}
-                className="px-4 py-2 bg-[#F4D35E] text-white text-sm font-semibold rounded-full"
-              >
-                {task}
-              </span>
-            ))}
-          </div>
-
-          {isEditing && (
-            <div className="mt-4 space-y-4">
-              <select
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="border-b-2 border-gray-300 px-4 py-2 w-full focus:outline-none"
-              >
-                <option value="">1차 카테고리 선택</option>
-                {Object.keys(categories).map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </select>
-              {selectedCategory && (
-                <select
-                  value={selectedSubCategory}
-                  onChange={(e) => setSelectedSubCategory(e.target.value)}
-                  className="border-b-2 border-gray-300 px-4 py-2 w-full focus:outline-none"
-                >
-                  <option value="">2차 카테고리 선택</option>
-                  {categories[selectedCategory].map((subCategory) => (
-                    <option key={subCategory} value={subCategory}>
-                      {subCategory}
-                    </option>
-                  ))}
-                </select>
-              )}
-              <button
-                onClick={handleAddTask}
-                className="px-4 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600"
-              >
-                추가
-              </button>
-            </div>
+          {isEditing ? (
+            <input
+              type="text"
+              value={editableData.tasks}
+              onChange={(e) =>
+                setEditableData({ ...editableData, tasks: e.target.value })
+              }
+              className="w-full border-b-2 border-gray-300 px-2 py-1 focus:outline-none"
+              placeholder="담당 업무를 쉼표(,)로 구분하여 입력하세요"
+            />
+          ) : (
+            <p className="text-gray-700">{editableData.tasks}</p>
           )}
         </div>
 

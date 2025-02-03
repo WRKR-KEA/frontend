@@ -60,7 +60,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-8 p-8">
       {/* 상단 바 */}
-      <div className="flex items-center justify-between relative">
+      <div className="flex items-center justify-between relative z-50">
         <h2 className="text-md font-semibold">월간 모니터링</h2>
         <div className="relative">
           {/* 달력 버튼 */}
@@ -78,7 +78,7 @@ export default function Dashboard() {
 
           {/* 달력 */}
           {isCalendarOpen && (
-            <div className="absolute top-12 right-0 z-10 bg-white border shadow-lg rounded-md p-4">
+            <div className="absolute top-12 right-0 bg-white border shadow-lg rounded-md p-4">
               <DatePicker
                 selected={selectedDate}
                 onChange={handleDateChange}
@@ -91,10 +91,8 @@ export default function Dashboard() {
         </div>
       </div>
 
-
-
       {/* 통계 카드 */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 relative z-10">
         <div className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-lg text-gray-800 mb-2">일간 전체 티켓</h3>
           <p className="text-2xl font-bold text-blue-600">1,006</p>
@@ -114,15 +112,13 @@ export default function Dashboard() {
       </div>
 
       {/* 바 차트 */}
-      <div className="bg-white p-6 rounded-lg shadow-md">
+      <div className="bg-white p-6 rounded-lg shadow-md relative z-10">
         <h4 className="text-lg text-gray-800 mb-4">월간 발행된 티켓 수</h4>
         <Chart options={barChartOptions} series={barChartSeries} type="bar" height={300} />
       </div>
 
-
-
       {/* 도넛 차트 */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h4 className="text-lg text-gray-800 mb-4">티켓 카테고리</h4>
           <Chart options={donutChartOptions} series={donutChartSeries} type="donut" height={300} />

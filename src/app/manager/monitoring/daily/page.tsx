@@ -6,7 +6,7 @@ import { ApexOptions } from "apexcharts"; // ApexOptions 타입 가져오기
 import { Calendar } from "react-date-range";
 import "react-date-range/dist/styles.css"; // 기본 스타일
 import "react-date-range/dist/theme/default.css"; // 테마 스타일
-
+import "./custom-datepicker.css"; // 커스터마이징된 CSS
 const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
 
 export default function DailyMonitoring() {
@@ -60,7 +60,7 @@ export default function DailyMonitoring() {
   return (
     <div className="flex flex-col gap-8 p-8">
       {/* 상단 바 */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between z-1000">
         <h2 className="text-md font-semibold">일간 모니터링</h2>
         <div className="relative">
           {/* 달력 버튼 */}
@@ -78,7 +78,7 @@ export default function DailyMonitoring() {
 
           {/* 달력 */}
           {isCalendarOpen && (
-            <div className="absolute top-12 right-0 z-10 bg-white border shadow-lg rounded-md">
+            <div className="absolute top-12 right-0 z-50 bg-white border shadow-lg rounded-md">
               <Calendar
                 date={selectedDate}
                 onChange={handleDateChange}
@@ -86,6 +86,7 @@ export default function DailyMonitoring() {
               />
             </div>
           )}
+
         </div>
       </div>
 

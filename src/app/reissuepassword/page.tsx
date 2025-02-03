@@ -1,11 +1,9 @@
 "use client";
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // useRouter 사용
 
 export default function LoginPage() {
   const [nickname, setNickname] = useState("");
   const [error, setError] = useState("");
-  const router = useRouter(); // Next.js 라우터 사용
 
   const handlenicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
@@ -31,11 +29,6 @@ export default function LoginPage() {
     alert("로그인 성공!");
   };
 
-  // 비밀번호 재발급 페이지로 이동
-  const handleForgotPassword = () => {
-    router.push("/reissuepassword");
-  };
-
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#252E66]/80">
       {/* 헤더 */}
@@ -55,9 +48,10 @@ export default function LoginPage() {
 
       {/* 로그인 박스 */}
       <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
-        <h2 className="text-3xl font-bold mb-2">로그인</h2>
+        <h2 className="text-3xl font-bold mb-2">비밀번호 재발급</h2>
+        
         <p className="text-sm text-gray-600 mb-6">
-          서비스를 사용하려면 로그인하세요.
+            재발급받을 이메일을 입력하세요.
         </p>
 
         {/* 로그인 폼 */}
@@ -75,33 +69,13 @@ export default function LoginPage() {
               <p className="text-red-500 text-sm mt-2">{error}</p>
             )}
           </div>
-          <div className="mb-6">
-            <input
-              type="password"
-              id="password"
-              className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="비밀번호를 입력하세요"
-            />
-          </div>
-
-          {/* 로그인 버튼 */}
+          
           <button
             type="submit"
             className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
           >
-            로그인
+            비밀번호 재발급
           </button>
-
-          {/* 비밀번호 찾기 버튼 */}
-          <div className="flex justify-end mt-4">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-sm text-[#252E66] hover:underline focus:outline-none"
-            >
-              비밀번호를 잊으셨나요?
-            </button>
-          </div>
         </form>
       </div>
     </div>

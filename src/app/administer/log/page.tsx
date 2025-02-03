@@ -106,7 +106,7 @@ export default function LogPage() {
         <div className="flex items-center space-x-4 relative">
           {/* 캘린더 버튼 */}
           <button
-            className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-4 py-2 rounded-md"
+            className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-2 py-2 rounded-md"
             onClick={toggleCalendar}
           >
             <span>{formattedDateRange}</span>

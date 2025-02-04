@@ -1,14 +1,16 @@
 "use client";
-import { usePathname } from "next/navigation"; // 수정된 import
-import { useRouter } from "next/router";
+import { usePathname, useRouter } from "next/navigation"; // 수정된 import
 import Link from "next/link";
 import { useState } from "react";
 import path from "path";
+import userStore from "@/stores/userStore"; // ✅ zustand 스토어 import
 
 export default function Headerbar() {
     const pathname = usePathname(); // 현재 경로 가져오기
     const [activeModal, setActiveModal] = useState<null | string>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true); // 사이드바 상태 관리
+    const router = useRouter(); // ✅ 페이지 이동을 위한 useRouter
+    const { setUser } = userStore(); // ✅ zustand에서 setUser 가져오기
 
     // 사이드바 열고 닫기 함수
     const toggleSidebar = () => {
@@ -47,6 +49,38 @@ export default function Headerbar() {
                 return "페이지 없음";
         }
     })();
+
+    // ✅ 로그아웃 처리 함수
+    const handleLogout = async () => {
+        const accessToken = sessionStorage.getItem("accessToken"); // ✅ accessToken 가져오기
+
+        try {
+            if (accessToken) {
+                const response = await fetch("http://172.16.211.53:8080/api/auth/logout", {
+                    method: "DELETE",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${accessToken}`, 
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`로그아웃 요청 실패: ${response.statusText}`);
+                }
+            }
+        } catch (error) {
+            console.error("로그아웃 요청 중 오류 발생:", error);
+        }
+
+        // ✅ 클라이언트 상태 초기화
+        setUser(null);
+        sessionStorage.removeItem("accessToken"); // ✅ accessToken 삭제
+        sessionStorage.removeItem("refreshToken"); // ✅ refreshToken 삭제
+
+        // ✅ 로그인 페이지로 이동
+        router.push("/login");
+    };
+
 
     return (
         <header
@@ -175,8 +209,13 @@ export default function Headerbar() {
                             </div>
                         )}
                     </li>
-                    {/* 로그아웃 */}
-                    <li className="text-[#252E66] text-sm cursor-pointer">로그아웃</li>
+                    {/* ✅ 로그아웃 버튼 (클릭 시 로그아웃 처리) */}
+                    <li
+                        className="text-[#252E66] text-sm cursor-pointer"
+                        onClick={handleLogout} // ✅ 로그아웃 이벤트 적용
+                    >
+                        로그아웃
+                    </li>
                 </ul>
             </nav>
         </header>

@@ -59,7 +59,6 @@ export default function AdminMemberListPage() {
     ...filters, // 검색 필터 (email, name, department)
   });
 
-  console.log(members);
   if (isLoading) return <p>로딩 중...</p>;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 

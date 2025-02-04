@@ -1,13 +1,13 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import useUserStore from "@/stores/userStore"
 export default function LoginPage() {
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
-
+  const setUser = useUserStore((state) => state.setUser);
   // 닉네임 입력 처리
   const handlenicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
@@ -18,11 +18,9 @@ export default function LoginPage() {
     setPassword(e.target.value);
   };
 
-  // 로그인 요청 처리
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 유효성 검사
     if (nickname === "" || password === "") {
       alert("닉네임과 비밀번호를 입력하세요.");
       return;
@@ -34,10 +32,7 @@ export default function LoginPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          nickname,
-          password,
-        }),
+        body: JSON.stringify({ nickname, password }),
       });
 
       if (!response.ok) {
@@ -49,7 +44,7 @@ export default function LoginPage() {
       const data = await response.json();
       console.log("로그인 성공:", data);
 
-      // 토큰 저장
+      // ✅ 토큰 저장
       if (data.result?.accessToken && data.result?.refreshToken) {
         sessionStorage.setItem("accessToken", data.result.accessToken);
         sessionStorage.setItem("refreshToken", data.result.refreshToken);
@@ -58,9 +53,27 @@ export default function LoginPage() {
         console.error("토큰이 응답에 포함되어 있지 않습니다.");
       }
 
+      // ✅ Zustand userStore에 로그인 정보 저장
+      if (data.result) {
+        setUser({
+          profileImage: data.result.profileImage,
+          name: data.result.nickname,
+          role: data.result.role,
+        });
+        console.log("사용자 정보가 userStore에 저장되었습니다.");
+      }
+
       // 로그인 성공 시 리다이렉트
       alert("로그인 성공!");
-      router.push("/dashboard"); // 로그인 후 대시보드로 이동
+      if (data.result.role === "USER") {
+        router.push("/user/home");
+      }
+      else if (data.result.role === "MANAGER") {
+        router.push("/manager/home");
+      }
+      else if (data.result.role === "ADMIN") {
+        router.push("/administer/memberlist");
+      }
     } catch (err) {
       console.error("로그인 에러:", err);
       setError("서버와 통신 중 오류가 발생했습니다.");

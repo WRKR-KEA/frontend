@@ -5,12 +5,18 @@ import Headerbar from "@/components/headerbar";
 import { usePathname } from "next/navigation";
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect } from "react";
+import useUserStore from "@/stores/userStore"; // ✅ Zustand 스토어 import
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname(); // 현재 경로 가져오기
   const [queryClient] = useState(() => new QueryClient());
   const excludedPaths = ["/login", "/changepassword", "/locked", "/passwordchangemodal", "/reissuepassword"];
   const isExcluded = excludedPaths.includes(pathname);
+
+  // ✅ Zustand에서 유저 정보 가져오기
+  const user = useUserStore((state) => state.user);
+
+  console.log("현재 로그인된 유저 정보:", user); // ✅ 유저 정보 확인 가능
 
   // 리프레시 토큰 요청 함수
   const refreshAccessToken = async () => {
@@ -47,16 +53,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     }
   };
 
-  // useEffect로 새로고침 시 토큰 갱신
+  // ✅ 유저 정보가 있을 때만 토큰 갱신 (로그인된 상태에서만 실행)
   useEffect(() => {
-    refreshAccessToken();
-  }, []);
+    if (user) {
+      refreshAccessToken();
+    }
+  }, [user]);
 
   return (
     <html lang="en">
       <body className="h-screen flex">
         {/* 경로가 제외 대상이 아닌 경우에만 사이드바와 헤더바 표시 */}
-        {!isExcluded && <Sidebar />}
+        {!isExcluded && <Sidebar user={user}/>}
 
         {/* 메인 컨테이너 */}
         <div className="flex-1 flex flex-col">

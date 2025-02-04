@@ -15,10 +15,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
   // ✅ Zustand에서 유저 정보 가져오기
   const user = useUserStore((state) => state.user);
+  const { setUser } = useUserStore();
 
   console.log("현재 로그인된 유저 정보:", user); // ✅ 유저 정보 확인 가능
 
-  // 리프레시 토큰 요청 함수
   const refreshAccessToken = async () => {
     try {
       const refreshToken = sessionStorage.getItem("refreshToken");
@@ -26,21 +26,33 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         console.warn("리프레시 토큰이 없습니다.");
         return;
       }
-
+  
       const response = await fetch("http://172.16.211.53:8080/api/auth/refresh", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${refreshToken}`,
+          Authorization: `Bearer ${refreshToken}`,
         },
       });
-
+  
       if (!response.ok) {
         console.error("토큰 갱신 실패:", response.statusText);
         return;
       }
-
+  
+      // Ensure response.json() is called only once
       const data = await response.json();
+
+      // ✅ Zustand userStore에 로그인 정보 저장
+      if (data.result) {
+        setUser({
+          profileImage: data.result.profileImage,
+          name: data.result.name,
+          role: data.result.role,
+        });
+        console.log("사용자 정보가 userStore에 저장되었습니다.");
+      }
+  
       if (data.result?.accessToken && data.result?.refreshToken) {
         sessionStorage.setItem("accessToken", data.result.accessToken);
         sessionStorage.setItem("refreshToken", data.result.refreshToken);
@@ -52,13 +64,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       console.error("토큰 갱신 중 오류:", error);
     }
   };
+  
 
   // ✅ 유저 정보가 있을 때만 토큰 갱신 (로그인된 상태에서만 실행)
   useEffect(() => {
-    if (user) {
       refreshAccessToken();
-    }
-  }, [user]);
+  }, []);
 
   return (
     <html lang="en">

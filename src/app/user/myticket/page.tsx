@@ -4,7 +4,7 @@ import { useState } from "react";
 import { TicketList_User } from "@/components/Tickets/ticketList_User";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
-import { useUserTicketListQuery } from "@/hooks/useUserTicket";
+import { ticketDummyData } from "@/data/ticketDummyData";
 
 export default function UserTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -15,20 +15,10 @@ export default function UserTicketListPage() {
     key: "selection",
   });
 
-  // ✅ useUserTicketListQuery 훅을 사용하여 API에서 티켓 데이터 가져오기
-  const { data: tickets, isLoading, error } = useUserTicketListQuery({});
+  const [tickets, setTickets] = useState(ticketDummyData);
 
-  console.log(tickets)
-  // 에러 처리
-  if (error) {
-    return <p className="text-red-500">티켓 데이터를 불러오는 중 오류가 발생했습니다.</p>;
-  }
-
-  // 로딩 상태 처리
-  if (isLoading) {
-    return <p className="text-gray-500">로딩 중...</p>;
-  }
-
+  // 요청자가 "춘식이"인 티켓만 필터링
+  const filteredTickets = tickets.filter((ticket) => ticket.requester === "춘식이");
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
@@ -53,8 +43,8 @@ export default function UserTicketListPage() {
       </div>
 
       <TicketList_User
-        tickets={tickets}
-        maxTicketsToShow={tickets.size}
+        tickets={filteredTickets}
+        maxTicketsToShow={maxTicketsToShow}
         searchTerm={searchTerm}
         dateRange={dateRange}
       />

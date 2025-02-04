@@ -44,8 +44,6 @@ export function TicketList_User({
   const [currentPage, setCurrentPage] = useState(1); // 페이지 상태 추가
   const router = useRouter();
 
-  console.log("유저티켓리스트!",tickets)
-
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setFilterStatus(tab);

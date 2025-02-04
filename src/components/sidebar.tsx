@@ -63,12 +63,12 @@ export default function Sidebar({ user }: SidebarProps) {
             <div>
                 <div className="flex items-center space-x-2 mt-6 ml-10">
                     <img
-                        src="/userProfileImage.png"
+                        src={"/userProfileImage.png"}
                         alt="User Avatar"
                         className="w-8 h-8 rounded-full"
                     />
                     <span className="text-white font-inter text-base font-semibold leading-normal">
-                        사용자 이름
+                        {user?.name}
                     </span>
                 </div>
 

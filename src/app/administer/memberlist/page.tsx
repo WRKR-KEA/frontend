@@ -25,7 +25,7 @@ export default function AdminMemberListPage() {
   // ✅ 페이지네이션 변경
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    window.scrollTo(0, 0);
+
   };
 
   // ✅ 검색 입력 필드 변경 처리

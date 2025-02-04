@@ -57,7 +57,7 @@ export default function LoginPage() {
       if (data.result) {
         setUser({
           profileImage: data.result.profileImage,
-          name: data.result.nickname,
+          name: data.result.name,
           role: data.result.role,
         });
         console.log("사용자 정보가 userStore에 저장되었습니다.");

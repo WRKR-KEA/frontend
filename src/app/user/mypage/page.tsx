@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { fetchMyPage } from "@/lib/api/userInfo";
+import { updateMyPage } from "@/lib/api/userInfo"; // API 호출 함수 임포트
 import ProfileSave from "@/components/Profiles/profileSave";
-import ProfileEdit from "@/components/Profiles/profileEdit"; 
+import ProfileEdit from "@/components/Profiles/profileEdit";
 
 export default function UserProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // State to track if the user is editing
-  
-  // 프로필 정보
-  const profile = {
-    name: "춘식이",
-    position: "직무",
-    email: "choonsik@example.com",
-    phone: "010-0000-0000",
-    department: "카카오프렌즈",
-    role: "사원",
-    permission: "권한",
-  };
+  const [isEditing, setIsEditing] = useState(false); // 편집 모드 상태
+  const [profile, setProfile] = useState<any>(null); // 상태로 프로필 데이터 저장
+
+  useEffect(() => {
+    // 컴포넌트가 마운트될 때 API 호출
+    const memberId = "user.cyw";
+    fetchMyPage(memberId)
+      .then((data) => {
+        setProfile(data.result);
+        console.log(data.result);
+      })
+      .catch((error) => {
+        console.error(error.message);
+      });
+  }, []);
 
   const toggleEmailNotifications = () => {
     setEmailNotifications(!emailNotifications);
@@ -29,8 +34,31 @@ export default function UserProfilePage() {
   };
 
   const toggleEditing = () => {
-    setIsEditing(!isEditing); // Toggle between edit/save mode
+    setIsEditing(!isEditing); // 편집 모드 전환
   };
+
+  const saveProfile = async () => {
+    if (profile) {
+      const updateData = {
+        position: profile.position,
+        phone: profile.phone,
+      };
+
+      try {
+        await updateMyPage(profile.memberId, updateData); 
+        alert("프로필이 저장되었습니다."); // 성공 메시지
+        console.log(updateData);
+        setIsEditing(false); // 편집 모드 종료
+      } catch (error) {
+        console.error("프로필 저장 실패", error);
+        alert("프로필 저장에 실패했습니다."); // 실패 메시지
+      }
+    }
+  };
+
+  if (!profile) {
+    return <div>Loading...</div>; // 프로필 데이터가 로딩 중일 때
+  }
 
   return (
     <div
@@ -106,7 +134,7 @@ export default function UserProfilePage() {
 
         {/* 프로필 이미지 */}
         <img
-          src="/profile.png"
+          src={profile.profileImage || "/profile.png"}
           alt="Profile"
           style={{
             borderRadius: "50%",
@@ -117,27 +145,46 @@ export default function UserProfilePage() {
           }}
         />
 
-        {/* Conditionally render ProfileSave or ProfileEdit */}
+        {/* 프로필 정보 */}
         {isEditing ? (
           <ProfileEdit profile={profile} />
         ) : (
           <ProfileSave profile={profile} />
         )}
 
-        {/* Edit/Save Button */}
-        <button
-          style={{
-            marginTop: "50px",
-            padding: "10px 50px",
-            background: "#FFE9B6",
-            color: "black",
-            border: "none",
-            borderRadius: "5px",
-          }}
-          onClick={toggleEditing} // Toggle between Edit and Save
-        >
-          {isEditing ? "저장" : "수정"} {/* Change text based on edit mode */}
-        </button>
+        {/* Edit 버튼 (편집 모드로 전환) */}
+        {!isEditing && (
+          <button
+            style={{
+              marginTop: "50px",
+              padding: "10px 50px",
+              background: "#FFE9B6",
+              color: "black",
+              border: "none",
+              borderRadius: "5px",
+            }}
+            onClick={toggleEditing} // 수정 버튼 클릭 시 편집 모드 전환
+          >
+            수정
+          </button>
+        )}
+
+        {/* Save 버튼 (편집 후 저장) */}
+        {isEditing && (
+          <button
+            style={{
+              marginTop: "50px",
+              padding: "10px 50px",
+              background: "#FFE9B6",
+              color: "black",
+              border: "none",
+              borderRadius: "5px",
+            }}
+            onClick={saveProfile} // 저장 버튼 클릭 시 프로필 저장
+          >
+            저장
+          </button>
+        )}
       </div>
     </div>
   );

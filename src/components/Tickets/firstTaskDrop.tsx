@@ -10,7 +10,8 @@ export default function FirstTaskDrop({ selectedService, onServiceChange }: Firs
     "인프라 (Infrastructure)",
     "시스템 (System)",
     "네트워크 (Networking)",
-    "기타 (Others)"
+    "기타 (Others)",
+    "1"
   ];
 
   const [isOpen, setIsOpen] = useState(false); // State to toggle the dropdown visibility

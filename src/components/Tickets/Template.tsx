@@ -1,9 +1,13 @@
-import { useState } from "react";
+import { ChangeEvent } from "react";
 
-export default function Template() {
-  const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+interface TemplateProps {
+  title: string;
+  content: string;
+  setTitle: (value: string) => void;
+  setContent: (value: string) => void;
+}
 
+export default function Template({ title, content, setTitle, setContent }: TemplateProps) {
   return (
     <div>
       <h2 className="text-md font-semibold w-60 mb-4">템플릿 작성</h2>
@@ -17,7 +21,7 @@ export default function Template() {
           className="w-full border border-gray-300 rounded-md p-2"
           placeholder="제목을 입력해주세요."
           value={title}
-          onChange={(e) => setTitle(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLInputElement>) => setTitle(e.target.value)}
         />
       </div>
       <div className="mb-4">
@@ -27,10 +31,10 @@ export default function Template() {
         <textarea
           id="content"
           className="w-full border border-gray-300 rounded-md p-2"
-          style={{ height: "360px" }} 
+          style={{ height: "360px" }}
           placeholder="내용을 입력해주세요."
           value={content}
-          onChange={(e) => setContent(e.target.value)}
+          onChange={(e: ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
         />
       </div>
     </div>

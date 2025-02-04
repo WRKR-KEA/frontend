@@ -1,118 +1,82 @@
 "use client";
 
-import { Search } from "@/components/search";
+import { useEffect, useState } from "react";
+import { FaSearch } from "react-icons/fa";
+import { useMemberListQuery } from "@/hooks/useMemberList";
 import PagePagination from "@/components/pagination";
-import { useState } from "react";
+import Link from "next/link";
 
 export default function AdminMemberListPage() {
-  const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
-  const [activeTab, setActiveTab] = useState("전체");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("전체"); // 역할 선택 (탭)
+  const [currentPage, setCurrentPage] = useState(1); // 페이지네이션
+  const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
+  const [filters, setFilters] = useState({
+    email: "",
+    name: "",
+    department: "",
+  });
 
-  const handleTabClick = (tabName: string) => setActiveTab(tabName);
+  // ✅ 역할 선택 시 role 변경 (탭 클릭)
+  const handleTabClick = (tabName: string) => {
+    setActiveTab(tabName);
+    setCurrentPage(1); // 역할 변경 시 첫 페이지로 이동
+  };
+
+  // ✅ 페이지네이션 변경
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
     window.scrollTo(0, 0);
   };
-  const handleSearchChange = (term: string) => setSearchTerm(term);
 
-  const data = [
-    {
-      avatar: "/userProfileImage.png",
-      name: "어피치",
-      role: "사용자",
-      phone: "010-0000-0000",
-      email: "michelle.rivera@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "라이언",
-      role: "담당자",
-      phone: "010-0000-0000",
-      email: "debbie.baker@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "콘",
-      role: "사용자",
-      phone: "010-0000-0000",
-      email: "kenzi.lawson@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "무지",
-      role: "담당자",
-      phone: "010-0000-0000",
-      email: "nathan.roberts@example.com",
-    },{
-      avatar: "/userProfileImage.png",
-      name: "어피치",
-      role: "사용자",
-      phone: "010-0000-0000",
-      email: "michelle.rivera@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "라이언",
-      role: "담당자",
-      phone: "010-0000-0000",
-      email: "debbie.baker@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "콘",
-      role: "사용자",
-      phone: "010-0000-0000",
-      email: "kenzi.lawson@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "무지",
-      role: "담당자",
-      phone: "010-0000-0000",
-      email: "nathan.roberts@example.com",
-    },{
-      avatar: "/userProfileImage.png",
-      name: "어피치",
-      role: "사용자",
-      phone: "010-0000-0000",
-      email: "michelle.rivera@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "라이언",
-      role: "담당자",
-      phone: "010-0000-0000",
-      email: "debbie.baker@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "콘",
-      role: "사용자",
-      phone: "010-0000-0000",
-      email: "kenzi.lawson@example.com",
-    },
-    {
-      avatar: "/userProfileImage.png",
-      name: "무지",
-      role: "담당자",
-      phone: "010-0000-0000",
-      email: "nathan.roberts@example.com",
-    },
-  ];
+  // ✅ 검색 입력 필드 변경 처리
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchInput(e.target.value);
+  };
 
-  // 필터링된 데이터
-  const filteredData = data.filter((user) => {
-    if (activeTab === "전체") return true; // "전체" 탭은 모든 데이터를 보여줌
-    return user.role === activeTab;
+  // ✅ 검색 입력 후 0.5초(500ms) 동안 추가 입력이 없으면 검색 수행
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const [email, name, department] = searchInput.split(" ").filter(Boolean);
+      setFilters({ email: email || "", name: name || "", department: department || "" });
+      setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    }, 500);
+
+    return () => clearTimeout(timeoutId); // 새로운 입력이 있으면 기존 타이머 삭제
+  }, [searchInput]);
+
+  // ✅ 역할(role) 매핑 함수
+  const getRoleQuery = () => {
+    if (activeTab === "사용자") return "USER";
+    if (activeTab === "담당자") return "MANAGER";
+    return undefined; // 전체일 경우 role을 아예 제거 (쿼리에 포함되지 않도록)
+  };
+
+  // ✅ useMemberListQuery 훅 사용 (동적 파라미터 적용)
+  const { data: members, isLoading, error } = useMemberListQuery({
+    page: currentPage,
+    size: 10, // 항상 10으로 고정
+    role: getRoleQuery(), // 역할 매핑
+    ...filters, // 검색 필터 (email, name, department)
   });
+
+  if (isLoading) return <p>로딩 중...</p>;
+  if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (
     <div className="flex flex-col bg-white p-4 rounded-md w-full">
       <div className="flex items-center">
         <h2 className="text-md font-semibold">회원 조회</h2>
-        <Search onSearchChange={handleSearchChange} />
+
+        <div className="flex items-center border-b p-2">
+          <FaSearch className="text-gray-500 mr-2" />
+          <input
+            type="text"
+            value={searchInput}
+            onChange={handleInputChange}
+            placeholder="이메일, 이름, 부서"
+            className="outline-none text-sm w-[120px]"
+          />
+        </div>
       </div>
 
       <div className="flex flex-col w-full mt-2">
@@ -121,11 +85,10 @@ export default function AdminMemberListPage() {
             <button
               key={tab}
               onClick={() => handleTabClick(tab)}
-              className={`w-32 text-center py-3 font-semibold ${
-                activeTab === tab
+              className={`w-32 text-center py-3 font-semibold ${activeTab === tab
                   ? "border-b-2 border-black text-black"
                   : "text-gray-500"
-              }`}
+                }`}
             >
               {tab}
             </button>
@@ -147,7 +110,7 @@ export default function AdminMemberListPage() {
               </tr>
             </thead>
             <tbody>
-              {filteredData.map((row, index) => (
+              {members?.elements?.map((row: any, index: number) => (
                 <tr
                   key={index}
                   className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}
@@ -156,14 +119,19 @@ export default function AdminMemberListPage() {
                     <input type="checkbox" />
                   </td>
                   <td className="p-3 w-2/12">
-                    <div className="flex items-center space-x-3">
-                      <img
-                        src={row.avatar}
-                        alt={row.name}
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <span>{row.name}</span>
-                    </div>
+    
+
+                    <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
+                      <div className="flex items-center space-x-3">
+                        <img
+                          src={"/userProfileImage.png"}
+                          alt={row.name}
+                          className="w-8 h-8 rounded-full"
+                        />
+                        <span>{row.name}</span>
+                      </div>
+                    </Link>
+
                   </td>
                   <td className="p-4 w-2/12">{row.role}</td>
                   <td className="p-4 w-2/12">{row.phone}</td>
@@ -176,8 +144,8 @@ export default function AdminMemberListPage() {
 
         <div className="flex justify-center mt-4">
           <PagePagination
-            totalItemsCount={filteredData.length}
-            itemsCountPerPage={maxTicketsToShow}
+            totalItemsCount={members?.totalElements || 0}
+            itemsCountPerPage={members?.size || 10}
             pageRangeDisplayed={5}
             onPageChange={handlePageChange}
           />

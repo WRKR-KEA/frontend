@@ -36,7 +36,7 @@ const AdminMemberDetailPage: React.FC<AdminMemberDetailProps> = ({
   };
 
   return (
-    <div className="flex justify-center p-8">
+    <div className="bg-gray-50 flex justify-center p-8">
       <div className="bg-white shadow-md rounded-lg p-12 w-full max-w-4xl">
         {/* 프로필 헤더 */}
         <div className="flex items-center space-x-6 border-b pb-6">

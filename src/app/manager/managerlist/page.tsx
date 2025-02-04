@@ -3,16 +3,12 @@
 import { Search } from "@/components/search";
 import PagePagination from "@/components/pagination";
 import { useState } from "react";
+import { useManagerListQuery } from "@/hooks/useManagerList"; // useManagerListQuery 훅 import
 
 export default function AdminMemberListPage() {
     const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
-    const [activeTab, setActiveTab] = useState("Tab1");
     const [currentPage, setCurrentPage] = useState(1);
     const [searchTerm, setSearchTerm] = useState("");
-
-    const handleTabClick = (tabName: string) => {
-        setActiveTab(tabName);
-    };
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
@@ -23,51 +19,11 @@ export default function AdminMemberListPage() {
         setSearchTerm(term);
     };
 
-    const data = [
-        {
-            avatar: "/userProfileImage.png",
-            name: "라이언",
-            role: "담당자",
-            phone: "010-0000-0000",
-            email: "debbie.baker@example.com",
-        },
-        {
-            avatar: "/userProfileImage.png",
-            name: "무지",
-            role: "담당자",
-            phone: "010-0000-0000",
-            email: "nathan.roberts@example.com",
-        },
-        {
-            avatar: "/userProfileImage.png",
-            name: "라이언",
-            role: "담당자",
-            phone: "010-0000-0000",
-            email: "debbie.baker@example.com",
-        }, {
-            avatar: "/userProfileImage.png",
-            name: "라이언",
-            role: "담당자",
-            phone: "010-0000-0000",
-            email: "debbie.baker@example.com",
-        },
-        {
-            avatar: "/userProfileImage.png",
-            name: "무지",
-            role: "담당자",
-            phone: "010-0000-0000",
-            email: "nathan.roberts@example.com",
-        },
-        {
-            avatar: "/userProfileImage.png",
-            name: "라이언",
-            role: "담당자",
-            phone: "010-0000-0000",
-            email: "debbie.baker@example.com",
-        },
+    // useManagerListQuery 훅 사용
+    const { data: members, isLoading, error } = useManagerListQuery();
 
-
-    ];
+    if (isLoading) return <p>로딩 중...</p>;
+    if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
     return (
         <div className="flex flex-col bg-white p-4 rounded-md w-full">
@@ -91,7 +47,7 @@ export default function AdminMemberListPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.map((row, index) => (
+                            {members?.map((row: any, index: number) => (
                                 <tr
                                     key={index}
                                     className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}
@@ -100,7 +56,7 @@ export default function AdminMemberListPage() {
                                     <td className="p-3 w-2/12">
                                         <div className="flex items-center space-x-3">
                                             <img
-                                                src={row.avatar}
+                                                src={row.avatar || "/userProfileImage.png"}
                                                 alt={row.name}
                                                 className="w-8 h-8 rounded-full"
                                             />
@@ -118,7 +74,7 @@ export default function AdminMemberListPage() {
 
                 <div className="flex justify-center items-center mt-4 w-full">
                     <PagePagination
-                        totalItemsCount={1000}
+                        totalItemsCount={members?.length || 0}
                         itemsCountPerPage={maxTicketsToShow}
                         pageRangeDisplayed={5}
                         onPageChange={handlePageChange}

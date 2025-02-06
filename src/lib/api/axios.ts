@@ -1,6 +1,10 @@
-import axios, { AxiosInstance } from "axios";
+'use client';
 
-const accessToken = typeof window !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
+
+import axios, { AxiosInstance } from 'axios';
+
+const BASE_URL = 'http://172.16.211.53:8080';
+const accessToken = sessionStorage.getItem('accessToken');
 
 const apiConfig = {
   backend: {
@@ -14,8 +18,10 @@ const api: AxiosInstance = axios.create({
   baseURL: server,
   withCredentials: true, // 쿠키를 포함한 인증 정보를 서버에 전송
   headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${accessToken}`,
+
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${accessToken}`,
+
   },
 });
 

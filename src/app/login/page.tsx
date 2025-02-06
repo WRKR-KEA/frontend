@@ -1,15 +1,18 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import useUserStore from "@/stores/userStore"
+import useUserStore from "@/stores/userStore";
+import axios, { AxiosInstance } from "axios";
+
 export default function LoginPage() {
   const [nickname, setNickname] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
+
   // 닉네임 입력 처리
-  const handlenicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
   };
 
@@ -17,6 +20,22 @@ export default function LoginPage() {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
+
+  const apiConfig = {
+    backend: {
+      baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+    },
+  };
+  
+  const server = apiConfig.backend.baseURL;
+  
+  const api: AxiosInstance = axios.create({
+    baseURL: server,
+    withCredentials: true, // 쿠키를 포함한 인증 정보를 서버에 전송
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -27,52 +46,48 @@ export default function LoginPage() {
     }
 
     try {
-      const response = await fetch("http://172.16.211.53:8080/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ nickname, password }),
-      });
+      // Axios를 사용하여 로그인 API 호출
+      const response = await api.post("/api/auth/login", { nickname, password });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        setError(errorData.message || "로그인 실패");
-        return;
-      }
-
-      const data = await response.json();
-      console.log("로그인 성공:", data);
+      console.log("로그인 성공:", response);
 
       // ✅ 토큰 저장
-      if (data.result?.accessToken && data.result?.refreshToken) {
-        sessionStorage.setItem("accessToken", data.result.accessToken);
-        sessionStorage.setItem("refreshToken", data.result.refreshToken);
+      if (response.data.result?.accessToken && response.data.result?.refreshToken) {
+        sessionStorage.setItem("accessToken", response.data.result.accessToken);
+        sessionStorage.setItem("refreshToken", response.data.result.refreshToken);
         console.log("토큰이 세션스토리지에 저장되었습니다.");
       } else {
         console.error("토큰이 응답에 포함되어 있지 않습니다.");
       }
 
       // ✅ Zustand userStore에 로그인 정보 저장
-      if (data.result) {
+      if (response.data.result) {
         setUser({
-          profileImage: data.result.profileImage,
-          name: data.result.name,
-          role: data.result.role,
+          profileImage: response.data.result.profileImage,
+          name: response.data.result.name,
+          role: response.data.result.role,
         });
         console.log("사용자 정보가 userStore에 저장되었습니다.");
       }
 
-      // 로그인 성공 시 리다이렉트
-      alert("로그인 성공!");
-      if (data.result.role === "USER") {
-        router.push("/user/home");
-      }
-      else if (data.result.role === "MANAGER") {
-        router.push("/manager/home");
-      }
-      else if (data.result.role === "ADMIN") {
-        router.push("/administer/memberlist");
+      // 임시 비밀번호인 경우 변경 페이지로 이동
+      if (response.data.result.isTempPassword) {
+        alert("최초 로그인 시 비밀번호 변경이 필요합니다.")
+        router.push("/changepassword"); 
+      } else {
+        // 로그인 성공 시 리다이렉트
+        alert("로그인 성공!");
+        switch (response.data.result.role) {
+          case "USER":
+            router.push("/user/home");
+            break;
+          case "MANAGER":
+            router.push("/manager/home");
+            break;
+          case "ADMIN":
+            router.push("/administer/memberlist");
+            break;
+        }
       }
     } catch (err) {
       console.error("로그인 에러:", err);
@@ -91,7 +106,7 @@ export default function LoginPage() {
       <header className="absolute top-0 w-full bg-white py-4 shadow-sm">
         <div className="w-full flex items-center justify-between px-6">
           {/* 로고 */}
-          <img src="/loginLogo.png" className="w-32" />
+          <img src="/loginLogo.png" className="w-32" alt="Logo" />
           {/* 로그인 버튼 */}
           <a
             href="/login"
@@ -113,10 +128,10 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
-              type="nickname"
+              type="text"
               id="nickname"
               value={nickname}
-              onChange={handlenicknameChange}
+              onChange={handleNicknameChange}
               className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
               placeholder="닉네임을 입력하세요"
             />

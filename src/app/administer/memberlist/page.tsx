@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useMemberListQuery } from "@/hooks/useMemberList";
 import PagePagination from "@/components/pagination";
@@ -10,11 +10,7 @@ export default function AdminMemberListPage() {
   const [activeTab, setActiveTab] = useState("전체"); // 역할 선택 (탭)
   const [currentPage, setCurrentPage] = useState(1); // 페이지네이션
   const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
-  const [filters, setFilters] = useState({
-    email: "",
-    name: "",
-    department: "",
-  });
+  const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
 
   // ✅ 역할 선택 시 role 변경 (탭 클릭)
   const handleTabClick = (tabName: string) => {
@@ -25,7 +21,6 @@ export default function AdminMemberListPage() {
   // ✅ 페이지네이션 변경
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-
   };
 
   // ✅ 검색 입력 필드 변경 처리
@@ -33,16 +28,13 @@ export default function AdminMemberListPage() {
     setSearchInput(e.target.value);
   };
 
-  // ✅ 검색 입력 후 0.5초(500ms) 동안 추가 입력이 없으면 검색 수행
-  useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      const [email, name, department] = searchInput.split(" ").filter(Boolean);
-      setFilters({ email: email || "", name: name || "", department: department || "" });
+  // ✅ 검색 입력 후 Enter 키 입력 시 실행
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
       setCurrentPage(1); // 검색 시 첫 페이지로 이동
-    }, 500);
-
-    return () => clearTimeout(timeoutId); // 새로운 입력이 있으면 기존 타이머 삭제
-  }, [searchInput]);
+    }
+  };
 
   // ✅ 역할(role) 매핑 함수
   const getRoleQuery = () => {
@@ -52,12 +44,57 @@ export default function AdminMemberListPage() {
   };
 
   // ✅ useMemberListQuery 훅 사용 (동적 파라미터 적용)
-  const { data: members, isLoading, error } = useMemberListQuery({
+  const { data: members, isLoading, error, refetch } = useMemberListQuery({
     page: currentPage,
     size: 10, // 항상 10으로 고정
     role: getRoleQuery(), // 역할 매핑
-    ...filters, // 검색 필터 (email, name, department)
+    query: searchTrigger, // ✅ Enter 입력 시 검색어 적용
   });
+
+  // ✅ 선택된 유저 ID 리스트
+  const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
+
+  // ✅ 체크박스 변경 핸들러
+  const handleCheckboxChange = (memberId: string) => {
+    setSelectedMembers((prev) =>
+      prev.includes(memberId) ? prev.filter((id) => id !== memberId) : [...prev, memberId]
+    );
+  };
+
+  // ✅ 선택한 유저 삭제 API 호출
+  const handleDeleteMembers = async () => {
+    if (selectedMembers.length === 0) {
+      alert("삭제할 회원을 선택해주세요.");
+      return;
+    }
+
+    try {
+      const accessToken = sessionStorage.getItem("accessToken");
+      if (!accessToken) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+
+      const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ memberIdList: selectedMembers }),
+      });
+
+      if (!response.ok) {
+        throw new Error("회원 삭제 실패");
+      }
+
+      alert("선택한 회원이 삭제되었습니다.");
+      setSelectedMembers([]);
+      refetch();
+    } catch (error) {
+      console.error("❌ 삭제 요청 실패:", error);
+    }
+  };
 
   if (isLoading) return <p>로딩 중...</p>;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
@@ -73,8 +110,9 @@ export default function AdminMemberListPage() {
             type="text"
             value={searchInput}
             onChange={handleInputChange}
-            placeholder="이메일, 이름, 부서"
-            className="outline-none text-sm w-[120px]"
+            onKeyDown={handleInputKeyDown} // ✅ Enter 키 입력 감지
+            placeholder="이메일, 이름, 부서 검색"
+            className="outline-none text-sm w-[180px]"
           />
         </div>
       </div>
@@ -85,15 +123,17 @@ export default function AdminMemberListPage() {
             <button
               key={tab}
               onClick={() => handleTabClick(tab)}
-              className={`w-32 text-center py-3 font-semibold ${activeTab === tab
-                  ? "border-b-2 border-black text-black"
-                  : "text-gray-500"
-                }`}
+              className={`w-32 text-center py-3 font-semibold ${
+                activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500"
+              }`}
             >
               {tab}
             </button>
           ))}
-          <button className="ml-auto px-3 py-2 border-2 border-[#4B5FC2] text-[#4B5FC2] rounded-md hover:bg-[#4B5FC2] hover:text-white transition">
+          <button
+            onClick={handleDeleteMembers}
+            className="ml-auto px-3 py-2 border-2 border-[#4B5FC2] text-[#4B5FC2] rounded-md hover:bg-[#4B5FC2] hover:text-white transition"
+          >
             회원 삭제
           </button>
         </div>
@@ -104,6 +144,7 @@ export default function AdminMemberListPage() {
               <tr>
                 <th className="p-3 w-1/12"></th>
                 <th className="p-3 text-left w-2/12">이름</th>
+                <th className="p-3 text-left w-2/12">부서</th>
                 <th className="p-3 text-left w-2/12">직책</th>
                 <th className="p-3 text-left w-2/12">전화번호</th>
                 <th className="p-3 text-left w-3/12">이메일 주소</th>
@@ -111,16 +152,15 @@ export default function AdminMemberListPage() {
             </thead>
             <tbody>
               {members?.elements?.map((row: any, index: number) => (
-                <tr
-                  key={index}
-                  className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}
-                >
+                <tr key={index} className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}>
                   <td className="p-3 w-1/12">
-                    <input type="checkbox" />
+                    <input
+                      type="checkbox"
+                      checked={selectedMembers.includes(row.memberId)}
+                      onChange={() => handleCheckboxChange(row.memberId)}
+                    />
                   </td>
                   <td className="p-3 w-2/12">
-    
-
                     <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
                       <div className="flex items-center space-x-3">
                         <img
@@ -131,8 +171,8 @@ export default function AdminMemberListPage() {
                         <span>{row.name}</span>
                       </div>
                     </Link>
-
                   </td>
+                  <td className="p-4 w-2/12">{row.department}</td>
                   <td className="p-4 w-2/12">{row.role}</td>
                   <td className="p-4 w-2/12">{row.phone}</td>
                   <td className="p-4 w-3/12">{row.email}</td>
@@ -142,6 +182,7 @@ export default function AdminMemberListPage() {
           </table>
         </div>
 
+        {/* ✅ 페이지네이션 추가 */}
         <div className="flex justify-center mt-4">
           <PagePagination
             totalItemsCount={members?.totalElements || 0}

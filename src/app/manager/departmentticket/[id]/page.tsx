@@ -8,6 +8,7 @@ import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
 import { TicketAccept } from "@/components/Modals/ticketAccept";
 import { ticketDummyData } from "@/data/ticketDummyData";
+import { updateManagerTicketApprove } from "@/services/manager";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -54,9 +55,19 @@ export default function ManagericketDetailPage() {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmAccept = () => {
-    console.log("작업이 승인되었습니다."); 
-    setIsModalOpen(false); // 모달 닫기
+  const confirmAccept = async () => {
+    try {
+      console.log("작업 승인 요청 데이터:", selectedTicket);
+
+      const result = await updateManagerTicketApprove(selectedTicket);
+      console.log("작업 승인 성공:", result);
+
+      alert("작업이 승인되었습니다.");
+      setIsModalOpen(false); // 모달 닫기
+    } catch (error) {
+      console.error("작업 승인 중 오류 발생:", error);
+      // alert("작업 승인 중 문제가 발생했습니다.");
+    }
   };
 
   const closeModal = () => {
@@ -89,7 +100,7 @@ export default function ManagericketDetailPage() {
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
         {statusMap[selectedTicket.status] === "new" && (
-            <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
+          <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
           )}    </div>
       </div>
 

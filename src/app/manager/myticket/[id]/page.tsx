@@ -11,7 +11,7 @@ import TicketChange from "@/components/Modals/ticketChange";
 import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { ticketDummyData } from "@/data/ticketDummyData";
-import { updateManagerTicketReject } from "@/services/manager";
+import { updateManagerTicketReject, updateManagerTicketComplete } from "@/services/manager";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -60,9 +60,19 @@ export default function ManagericketDetailPage() {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmCancel = () => {
-    console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가
-    setIsModalOpen(false); // 모달 닫기
+  const confirmCompleteTicket = async () => {
+    if (!param) return;
+
+    try {
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketComplete(param.id);
+      console.log("완료 성공:", result);
+      // alert("티켓이 완료되었습니다.");
+      closeCompleteTicketModal();
+    } catch (error) {
+      console.error("티켓 완료 중 오류 발생:", error);
+      //alert("티켓 완료 중 문제가 발생했습니다.");
+    }
   };
 
   const confirmAbortTicket = async () => {
@@ -113,7 +123,7 @@ export default function ManagericketDetailPage() {
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "in-progress" 상태일 때만 보이도록 조건 추가 */}
-        {statusMap[selectedTicket.status] === "in-progress" && (
+        {statusMap[selectedTicket.status] === "new" && (
           <div className="flex space-x-2 mt-2">
             <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
             <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
@@ -143,7 +153,7 @@ export default function ManagericketDetailPage() {
 
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (
-        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={() => console.log("작업이 완료되었습니다.")} />
+        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
       )}
     </div>
   );

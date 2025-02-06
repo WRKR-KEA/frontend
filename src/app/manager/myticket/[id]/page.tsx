@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import { useParams, useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
@@ -11,6 +11,7 @@ import TicketChange from "@/components/Modals/ticketChange";
 import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { ticketDummyData } from "@/data/ticketDummyData";
+import { updateManagerTicketReject } from "@/services/manager";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -20,6 +21,8 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
+
+  const param = useParams();
 
   const logs = [
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
@@ -62,6 +65,21 @@ export default function ManagericketDetailPage() {
     setIsModalOpen(false); // 모달 닫기
   };
 
+  const confirmAbortTicket = async () => {
+    if (!param) return;
+
+    try {
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketReject(param.id);
+      console.log("작업 반려 성공:", result);
+      // alert("작업이 반려되었습니다.");
+      closeAbortTicketModal();
+    } catch (error) {
+      console.error("작업 반려 중 오류 발생:", error);
+      //alert("작업 반려 중 문제가 발생했습니다.");
+    }
+  };
+
   const closeModal = () => {
     setIsModalOpen(false); // 모달 닫기
   };
@@ -71,9 +89,13 @@ export default function ManagericketDetailPage() {
   }
 
   const handleCompleteTicket = () => {
-    setIsCompleteTicketOpen(true);}; // 작업 완료 모달 열기
+    setIsCompleteTicketOpen(true); // 작업 완료 모달 열기
+  }; 
+
   const handleAbortTicket = () => {
-    setIsAbortTicketOpen(true); };
+    setIsAbortTicketOpen(true); 
+  };
+
   const closeAbortTicketModal = () => {
     setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
   };
@@ -111,7 +133,7 @@ export default function ManagericketDetailPage() {
 
        {/* 작업 반려 모달 */}
        {isAbortTicketOpen && (
-          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={() => console.log("작업이 반려되었습니다.")} />
+          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={confirmAbortTicket} />
       )}
 
       {/* 담당자 변경 모달 */}

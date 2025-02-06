@@ -1,4 +1,4 @@
-import api from "axios.ts 경로";
+import api from "../lib/api/axios";
 
 // (DELETE) 카테고리 삭제
 export async function deleteAdminCategories(categoryId: string) {

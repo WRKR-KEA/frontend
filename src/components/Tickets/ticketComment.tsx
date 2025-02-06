@@ -1,22 +1,14 @@
 import React, { useState, ChangeEvent } from "react";
 import { FiPaperclip, FiSend } from "react-icons/fi"; // 아이콘 가져오기
 
-interface Log {
-  log?: string;
-  message?: string;
-  role?: "admin" | "user"; // 역할은 admin 또는 user로 한정
-}
 
-interface TicketCommentProps {
-  logs: Log[]; // logs는 Log 배열 타입
-}
 
-const TicketComment: React.FC<TicketCommentProps> = ({ logs }) => {
-  const [message, setMessage] = useState<string>(""); // 메시지 상태 관리
-  const [file, setFile] = useState<File | null>(null); // 파일 상태 관리
+const TicketComment: any = ({ logs }:any) => {
+  const [message, setMessage] = useState(""); // 메시지 상태 관리
+  const [file, setFile] = useState(null); // 파일 상태 관리
 
   // 파일 첨부 핸들러
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = (e: any) => {
     const file = e.target.files?.[0]; // 첫 번째 파일만 처리
     if (file) {
       setFile(file);
@@ -38,7 +30,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs }) => {
     <div className="bg-gray-50 border border-gray-300 rounded-md p-4 flex flex-col h-[460px]">
       {/* 메시지 목록 부분 */}
       <div className="overflow-y-auto pr-2 flex-1">
-        {logs.map((log, index) => (
+        {logs.map((log:any, index:any) => (
           <div key={index} className="flex flex-col mb-2">
             {log.log && (
               <div className="flex items-center justify-center mb-1">

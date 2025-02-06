@@ -1,10 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { TicketList_User } from "@/components/Tickets/ticketList_User";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
 import { ticketDummyData } from "@/data/ticketDummyData";
+import useUserStore from "@/stores/userStore";
+import { useUserTicketListQuery } from "@/hooks/useUserTicket";
+
+type Ticket = {
+  id: string;
+  number: string;
+  status: string;
+  title: string;
+  requester: string;
+  requestDate: string;
+  acceptDate: string | null;
+  updateDate: string | null;
+  completeDate: string | null;
+  handler: string;
+  ispinned: boolean;
+};
 
 export default function UserTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -15,10 +31,30 @@ export default function UserTicketListPage() {
     key: "selection",
   });
 
-  const [tickets, setTickets] = useState(ticketDummyData);
+  const user = useUserStore((state) => state.user);
+  const ticketRequester = user ? user.name : ""; // 유저가 null일 경우 빈 문자열 처리
 
-  // 요청자가 "춘식이"인 티켓만 필터링
-  const filteredTickets = tickets.filter((ticket) => ticket.requester === "춘식이");
+  // 유저 티켓 리스트 가져오기
+  const { data, isLoading, error } = useUserTicketListQuery({
+    requester: ticketRequester,
+  });
+
+  // 티켓 데이터 변환 및 설정
+  const tickets: Ticket[] = data?.elements.map((ticket: any) => ({
+    id: ticket.id,
+    number: ticket.serialNumber,
+    status: ticket.status,
+    title: ticket.title,
+    requester: ticket.requester,
+    requestDate: ticket.createdAt,
+    acceptDate: ticket.startedAt || null,
+    updateDate: ticket.updatedAt || null,
+    completeDate: null,
+    handler: ticket.managerName,
+    ispinned: false,
+  })) || [];
+
+  console.log("티켓 데이터:", tickets);
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
@@ -43,7 +79,7 @@ export default function UserTicketListPage() {
       </div>
 
       <TicketList_User
-        tickets={filteredTickets}
+        tickets={tickets}
         maxTicketsToShow={maxTicketsToShow}
         searchTerm={searchTerm}
         dateRange={dateRange}

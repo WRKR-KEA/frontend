@@ -1,19 +1,28 @@
 import React, { useState, ChangeEvent } from "react";
 import { FiPaperclip, FiSend } from "react-icons/fi"; // 아이콘 가져오기
+import useUserStore from "@/stores/userStore";
 
 interface Log {
   log?: string;
   message?: string;
-  role?: "admin" | "user"; // 역할은 admin 또는 user로 한정
+  role?: "MANAGER" | "USER"; // 역할은 admin 또는 user로 한정
 }
 
-interface TicketCommentProps {
+export interface TicketCommentProps {
   logs: Log[]; // logs는 Log 배열 타입
 }
 
 const TicketComment: React.FC<TicketCommentProps> = ({ logs }) => {
+  const user = useUserStore((state) => state.user);
+
   const [message, setMessage] = useState<string>(""); // 메시지 상태 관리
   const [file, setFile] = useState<File | null>(null); // 파일 상태 관리
+
+  if (logs.length === 0) {
+    logs = [
+      { log: "소통 내역이 없습니다."} as Log
+    ]
+  }
 
   // 파일 첨부 핸들러
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -51,11 +60,11 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs }) => {
             )}
             {log.message && (
               <div
-                className={`flex ${log.role === "admin" ? "justify-start" : "justify-end"}`}
+                className={`flex ${log.role !== user?.role ? "justify-start" : "justify-end"}`}
               >
                 <div
                   className={`max-w-[1100px] p-2 rounded-lg ${
-                    log.role === "admin" ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-700"
+                    log.role === user?.role ? "bg-blue-100 text-blue-700" : "bg-gray-200 text-gray-700"
                   }`}
                 >
                   {log.message}

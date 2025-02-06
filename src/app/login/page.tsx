@@ -113,7 +113,7 @@ export default function LoginPage() {
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <input
-              type="nickname"
+              type="text"
               id="nickname"
               value={nickname}
               onChange={handlenicknameChange}

@@ -1,302 +1,239 @@
-// CategoryManagement.tsx
-'use client';
+"use client";
 
-import React, { useState } from "react";
-import Modal from "./Modal";
+import React, { useEffect, useState } from "react";
+import { useCategoryListQuery } from "@/hooks/useCategoryList";
+import SortableItem from "./SortableItem";
 import {
-  DndContext,
-  closestCenter,
-  useSensor,
-  useSensors,
-  PointerSensor,
-  KeyboardSensor,
-  DragOverlay,
+    DndContext,
+    closestCenter,
+    useSensor,
+    useSensors,
+    PointerSensor,
+    KeyboardSensor,
+    DragOverlay,
 } from "@dnd-kit/core";
 import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
+    arrayMove,
+    SortableContext,
+    sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 
 interface Category {
-  id: number;
-  name: string;
+    categoryId: number;
+    name: string;
 }
 
-const SortableItem: React.FC<{
-  id: number;
-  name: string;
-  isHovered: boolean;
-  onMouseEnter: () => void;
-  onMouseLeave: () => void;
-  onEdit: (newName: string) => void;
-  onDelete: () => void;
-  onTemplate: () => void;
-  onHelp: () => void;
-}> = ({
-  id,
-  name,
-  isHovered,
-  onMouseEnter,
-  onMouseLeave,
-  onEdit,
-  onDelete,
-  onTemplate,
-  onHelp,
-}) => {
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({
-    id,
-  });
-
-  const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.5 : 1,
-  };
-
-  const [isEditing, setIsEditing] = useState(false);
-  const [editValue, setEditValue] = useState(name);
-
-  const handleSave = () => {
-    if (editValue.trim()) {
-      onEdit(editValue.trim());
-      setIsEditing(false);
-    } else {
-      alert("이름을 입력해주세요.");
-    }
-  };
-
-  return (
-    <li
-      ref={setNodeRef}
-      style={style}
-      className="bg-gray-50 border border-gray-200 rounded-md hover:shadow transition-shadow relative"
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-    >
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center space-x-4">
-          <div {...attributes} {...listeners}>
-            <img src="/hamburg.png" alt="drag" className="w-5" />
-          </div>
-          {isEditing ? (
-            <input
-              type="text"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              className="border rounded px-2 py-1 text-gray-700"
-            />
-          ) : (
-            <span className="text-lg font-semibold text-gray-700 pointer-events-none">
-              {name}
-            </span>
-          )}
-        </div>
-
-        {isHovered && !isDragging && (
-          <div className="absolute right-4 flex space-x-2">
-            {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  className="px-3 py-1 bg-green-50 text-green-500 text-sm rounded-md hover:bg-green-100"
-                >
-                  저장
-                </button>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  취소
-                </button>
-              </>
-            ) : (
-              <>
-                <button
-                  onClick={onHelp}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  도움말
-                </button>
-                <button
-                  onClick={onTemplate}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  템플릿
-                </button>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-3 py-1 bg-blue-50 text-blue-500 text-sm rounded-md hover:bg-blue-100"
-                >
-                  수정
-                </button>
-                <button
-                  onClick={onDelete}
-                  className="px-3 py-1 bg-red-50 text-red-500 text-sm rounded-md hover:bg-red-100"
-                >
-                  삭제
-                </button>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-    </li>
-  );
-};
-
 const CategoryManagement: React.FC = () => {
-  const [categories, setCategories] = useState<Category[]>([
-    { id: 1, name: "인프라 (Infrastructure)" },
-    { id: 2, name: "시스템 (System)" },
-    { id: 3, name: "네트워크 (Network)" },
-  ]);
+    const { data: categoryData, isLoading, isError, refetch } = useCategoryListQuery();
+    const [isInitialRender, setIsInitialRender] = useState(true); // ✅ 최초 렌더링 감지 플래그
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [activeCategory, setActiveCategory] = useState<Category | null>(null); // ✅ 드래그 중인 아이템
+    const [templateOpen, setTemplateOpen] = useState(false)
+    const [helpOpen, setHelpOpen] = useState(false)
 
-  const [hoveredCategory, setHoveredCategory] = useState<number | null>(null);
-  const [activeId, setActiveId] = useState<number | null>(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [modalContent, setModalContent] = useState({ title: "", content: "" });
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, {
-      activationConstraint: {
-        distance: 8,
-      },
-    }),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    })
-  );
+    useEffect(() => {
+        if (categoryData?.result?.categories) {
+            const sortedCategories = [...categoryData.result.categories].sort((a, b) => a.seq - b.seq);
+            setCategories(sortedCategories);
+        }
+    }, [categoryData]);
 
-  const handleDragStart = (event: any) => {
-    setActiveId(event.active.id);
-  };
 
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-
-    if (active.id !== over?.id) {
-      setCategories((items) => {
-        const oldIndex = items.findIndex((item) => item.id === active.id);
-        const newIndex = items.findIndex((item) => item.id === over.id);
-        return arrayMove(items, oldIndex, newIndex);
-      });
+    const onHelp = () => {
+        //도움말 보여주기
+        setHelpOpen(true)
     }
-    setActiveId(null);
-  };
 
-  const handleAddCategory = () => {
-    const newName = prompt("새로운 카테고리 이름을 입력하세요:");
-    if (newName) {
-      setCategories((prev) => [
-        ...prev,
-        { id: prev.length + 1, name: newName },
-      ]);
+    const onTemplate = () => {
+
+        //템플릿 보여주기
+        setTemplateOpen(true)
     }
-  };
 
-  const handleEditCategory = (id: number, newName: string) => {
-    setCategories((prev) =>
-      prev.map((category) =>
-        category.id === id ? { ...category, name: newName } : category
-      )
+    // ✅ 드래그 시작 시 호출
+    const handleDragStart = (event: any) => {
+        const { active } = event;
+        const category = categories.find((c) => c.categoryId === active.id);
+        if (category) setActiveCategory(category);
+    };
+
+    // ✅ 드래그 종료 시 호출
+    const handleDragEnd = (event: any) => {
+        const { active, over } = event;
+        const isAlert = true
+        if (!over || active.id === over.id) return;
+
+        setCategories((prev) => {
+            const oldIndex = prev.findIndex((item) => item.categoryId === active.id);
+            const newIndex = prev.findIndex((item) => item.categoryId === over.id);
+            return arrayMove(prev, oldIndex, newIndex);
+        });
+
+        setActiveCategory(null);
+        updateCategoryOrder(isAlert);
+    };
+
+    useEffect(() => {
+        if (isInitialRender) {
+            setIsInitialRender(false);
+            return; // ✅ 첫 번째 렌더링에서는 실행 안 함
+        }
+
+        const isAlert = false
+        if (categories.length) {
+            updateCategoryOrder(isAlert);
+        }
+    }, [categories]);
+
+
+
+    // ✅ 카테고리 추가 함수
+    const handleAddCategory = async () => {
+        const newName = prompt("새로운 카테고리 이름을 입력하세요:");
+        if (!newName) {
+            alert("카테고리 이름을 입력해주세요.");
+            return;
+        }
+
+        const newSeq = categories.length + 1;
+
+        try {
+            const accessToken = sessionStorage.getItem("accessToken");
+
+            const response = await fetch(
+                "http://172.16.211.53:8080/api/admin/categories",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${accessToken}`,
+                    },
+                    body: JSON.stringify({ name: newName, seq: newSeq }),
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error("카테고리 생성 실패");
+            }
+
+            alert("새로운 카테고리가 추가되었습니다.");
+            refetch();
+        } catch (error) {
+            console.error("❌ 카테고리 추가 오류:", error);
+            alert("카테고리를 추가하는 중 오류가 발생했습니다.");
+        }
+    };
+
+
+    const updateCategoryOrder = async (isAlert: boolean) => {
+        if (!categories.length) return; // 카테고리가 없으면 실행하지 않음
+
+        const updatedCategories = categories.map((category, index) => ({
+            categoryId: category.categoryId, // 기존 ID 유지
+            seq: index + 1, // 항상 1부터 시작하는 seq 값 적용
+        }));
+
+        try {
+            const accessToken = sessionStorage.getItem("accessToken");
+
+            const response = await fetch("http://172.16.211.53:8080/api/admin/categories", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${accessToken}`,
+                },
+                body: JSON.stringify(updatedCategories), // 변환된 데이터 전송
+            });
+
+            if (!response.ok) {
+                throw new Error("카테고리 순서 업데이트 실패");
+            }
+
+            if (isAlert) {
+                alert("카테고리 순서가 업데이트되었습니다.");
+            }
+
+        } catch (error) {
+            console.error("❌ 카테고리 순서 업데이트 오류:", error);
+            alert("카테고리 순서를 업데이트하는 중 오류가 발생했습니다.");
+        }
+    };
+
+
+
+    // ✅ DND 관련 설정
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+        useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
-  };
 
-  const handleDeleteCategory = (id: number) => {
-    setCategories((prev) => prev.filter((category) => category.id !== id));
-  };
+    return (
+        <div className="bg-gray-100 py-10 px-6">
+            <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
+                <h1 className="text-2xl font-bold mb-6 text-gray-800">카테고리 관리</h1>
 
-  const openModal = (title: string, content: string) => {
-    setModalContent({ title, content });
-    setIsModalOpen(true);
-  };
+                {isLoading ? (
+                    <p>🔄 로딩 중...</p>
+                ) : isError ? (
+                    <p>❌ 오류 발생</p>
+                ) : (
+                    <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragStart={handleDragStart} // ✅ 드래그 시작 시 실행
+                        onDragEnd={handleDragEnd}
+                    >
+                        <SortableContext items={categories.map((c) => c.categoryId)}>
+                            <ul className="space-y-4">
+                                {categories.map((category) => (
+                                    <SortableItem
+                                        key={category.categoryId}
+                                        categoryId={category.categoryId}
+                                        name={category.name}
+                                        refetch={refetch}
+                                        onHelp={onHelp}
+                                        onTemplate={onTemplate}
+                                    />
+                                ))}
+                            </ul>
+                        </SortableContext>
 
-  const closeModal = () => {
-    setIsModalOpen(false);
-  };
+                        {/* ✅ DragOverlay 추가 → 드래그 중 UI 유지 */}
+                        <DragOverlay>
+                            {activeCategory ? (
+                                <div
+                                    className="bg-gray-50 border border-gray-200 rounded-md shadow-lg px-4 py-7 flex items-center space-x-4"
+                                    style={{
+                                        opacity: 1,
+                                        width: "100%", // ✅ 원본 아이템과 같은 너비
+                                        height: "50px", // ✅ 리스트 아이템과 동일한 높이 유지
+                                        display: "flex",
+                                        alignItems: "center",
+                                        // justifyContent: "space-between",
+                                    }}
+                                >
+                                    <img src="/hamburg.png" alt="drag" className="w-5" />
+                                    <span className="text-lg font-semibold text-gray-700">
+                                        {activeCategory.name}
+                                    </span>
+                                </div>
+                            ) : null}
+                        </DragOverlay>
 
-  const saveModal = () => {
-    // 모달 저장 로직
-  };
 
-  return (
-    <div className="bg-gray-100 h-full py-10 px-6">
-      <Modal
-        isOpen={isModalOpen}
-        title={modalContent.title}
-        content={modalContent.content}
-        onClose={closeModal}
-        onSave={saveModal}
-      />
-      <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-        <h1 className="text-2xl font-bold mb-6 text-gray-800">카테고리 관리</h1>
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext items={categories.map((category) => category.id)}>
-            <ul className="space-y-4">
-              {categories.map((category) => (
-                <SortableItem
-                  key={category.id}
-                  id={category.id}
-                  name={category.name}
-                  isHovered={hoveredCategory === category.id}
-                  onMouseEnter={() => setHoveredCategory(category.id)}
-                  onMouseLeave={() => setHoveredCategory(null)}
-                  onEdit={(newName) => handleEditCategory(category.id, newName)}
-                  onDelete={() => handleDeleteCategory(category.id)}
-                  onTemplate={() =>
-                    openModal(
-                      `${category.name} 템플릿`,
-                      `${category.name} 템플릿에 대한 설명입니다.`
-                    )
-                  }
-                  onHelp={() =>
-                    openModal(
-                      `${category.name} 도움말`,
-                      `${category.name} 도움말 내용입니다.`
-                    )
-                  }
-                />
-              ))}
-            </ul>
-          </SortableContext>
-          <DragOverlay>
-            {activeId ? (
-              <div
-                className="bg-gray-50 border border-gray-200 rounded-md hover:shadow transition-shadow p-4 flex items-center space-x-4"
-                style={{ opacity: 1 }}
-              >
-                <img src="/hamburg.png" alt="drag" className="w-5" />
-                <span className="text-lg font-semibold text-gray-700">
-                  {categories.find((category) => category.id === activeId)?.name}
-                </span>
-              </div>
-            ) : null}
-          </DragOverlay>
-        </DndContext>
-        <button
-          className="w-full mt-6 px-6 py-4 bg-gray-500 text-white text-sm font-semibold rounded-md hover:bg-gray-600 transition-all shadow-sm"
-          onClick={handleAddCategory}
-        >
-          카테고리 추가
-        </button>
-      </div>
-    </div>
-  );
+                    </DndContext>
+                )}
+
+                <button
+                    className="w-full mt-6 px-6 py-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
+                    onClick={handleAddCategory}
+                >
+                    카테고리 추가
+                </button>
+            </div>
+        </div>
+    );
 };
 
 export default CategoryManagement;

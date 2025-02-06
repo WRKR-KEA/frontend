@@ -20,7 +20,7 @@ const fetchUserTicketList = async (queryParams: Record<string, string | number>)
     }
   );
   console.log("유저티켓리스트",response)
-  return response.data.result; 
+  return response.data.result; // 필요한 데이터만 반환
 };
 
 // ✅ 동적으로 쿼리 파라미터를 받을 수 있도록 수정

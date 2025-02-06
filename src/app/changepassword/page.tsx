@@ -1,5 +1,8 @@
 "use client";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import useUserStore from "@/stores/userStore";
+import api from "@/lib/api/axios"; 
 
 export default function ChangePasswordPage() {
     const [nickname, setNickname] = useState("");
@@ -8,11 +11,11 @@ export default function ChangePasswordPage() {
     const [nicknameError, setNicknameError] = useState("");
     const [passwordError, setPasswordError] = useState("");
     const [confirmPasswordError, setConfirmPasswordError] = useState("");
+    const router = useRouter();
+    const user = useUserStore((state) => state.user); // userStore에서 회원 정보 가져오기
 
     const handlenicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNickname(e.target.value);
-
-        // 아이디 형식 검증
         const nicknameRegex = /^[a-zA-Z0-9._%+-]+@gachon\.ac\.kr$/;
         if (!nicknameRegex.test(e.target.value)) {
             setNicknameError("아이디 형식이 올바르지 않습니다.");
@@ -23,8 +26,6 @@ export default function ChangePasswordPage() {
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPassword(e.target.value);
-
-        // 비밀번호 조건 검증
         const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[~!@#$%^&*_-])[A-Za-z\d~!@#$%^&*_-]{8,12}$/;
         if (!passwordRegex.test(e.target.value)) {
             setPasswordError(
@@ -37,8 +38,6 @@ export default function ChangePasswordPage() {
 
     const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setConfirmPassword(e.target.value);
-
-        // 비밀번호 확인 검증
         if (e.target.value !== password) {
             setConfirmPasswordError("비밀번호가 일치하지 않습니다.");
         } else {
@@ -46,9 +45,40 @@ export default function ChangePasswordPage() {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        alert("비밀번호 변경 성공!");
+
+        // 비밀번호 변경 요청
+        try {
+            const response = await api.patch("/api/user/members/password", {
+                password,
+                confirmPassword,
+            });
+
+            if (response.data.isSuccess) {
+                alert("비밀번호 변경 성공!");
+
+                // 역할에 따라 라우팅
+                switch (user?.role) {
+                    case "USER":
+                        router.push("/user/home");
+                        break;
+                    case "MANAGER":
+                        router.push("/manager/home");
+                        break;
+                    case "ADMIN":
+                        router.push("/administer/memberlist");
+                        break;
+                    default:
+                        break;
+                }
+            } else {
+                alert("비밀번호 변경 실패: " + response.data.message);
+            }
+        } catch (error) {
+            console.error("비밀번호 변경 에러:", error);
+            alert("서버와 통신 중 오류가 발생했습니다.");
+        }
     };
 
     return (
@@ -70,17 +100,6 @@ export default function ChangePasswordPage() {
 
                 {/* 비밀번호 변경 폼 */}
                 <form onSubmit={handleSubmit}>
-                    <div className="mb-4">
-                        {/* <input
-              type="nickname"
-              id="nickname"
-              value={nickname}
-              onChange={handlenicknameChange}
-              className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="아이디를를 입력하세요"
-            />
-            {nicknameError && <p className="text-red-500 text-sm mt-2">{nicknameError}</p>} */}
-                    </div>
                     <div className="mb-4">
                         <input
                             type="password"

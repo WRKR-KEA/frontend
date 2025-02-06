@@ -64,10 +64,10 @@ export async function postAdminCategory(categoryData: {
 
 // (DELETE) 관리자 - 선택한 회원 삭제
 export async function deleteAdminMembers(membersData: {
-  memberIdList: string[];
+  memberIdList: any;
 }) {
   try {
-    const { data } = await api.delete("/api/admin/members", membersData);
+    const { data } = await api.delete("/api/admin/members", { membersData });
     return data;
   } catch (error) {
     console.error("회원 삭제에 실패했습니다. :", error);

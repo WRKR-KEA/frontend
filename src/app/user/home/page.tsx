@@ -54,7 +54,7 @@ export default function UserHomePage() {
     number: ticket.serialNumber,
     status: ticket.status,
     title: ticket.title,
-    requester: ticket.managerName,
+    requester: user?.name,
     requestDate: ticket.createdAt,
     acceptDate: ticket.startedAt || null,
     updateDate: ticket.updatedAt || null,

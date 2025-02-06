@@ -17,25 +17,25 @@ export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
         전체
       </button>
       <button
-        onClick={() => handleTabClick("작업완료")}
+        onClick={() => handleTabClick("완료")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업완료" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "완료" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 완료
       </button>
       <button
-        onClick={() => handleTabClick("작업진행")}
+        onClick={() => handleTabClick("진행")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업진행" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "진행" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 진행
       </button>
       <button
-        onClick={() => handleTabClick("작업요청")}
+        onClick={() => handleTabClick("요청")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업요청" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "요청" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 요청
@@ -49,9 +49,9 @@ export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
         작업 반려
       </button>
       <button
-        onClick={() => handleTabClick("작업취소")}
+        onClick={() => handleTabClick("취소")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업취소" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "취소" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 취소

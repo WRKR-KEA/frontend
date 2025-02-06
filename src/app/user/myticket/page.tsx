@@ -45,7 +45,7 @@ export default function UserTicketListPage() {
     number: ticket.serialNumber,
     status: ticket.status,
     title: ticket.title,
-    requester: ticket.requester,
+    requester: user?.name,
     requestDate: ticket.createdAt,
     acceptDate: ticket.startedAt || null,
     updateDate: ticket.updatedAt || null,

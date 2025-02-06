@@ -10,41 +10,27 @@ import { TicketCancel } from "@/components/Modals/ticketCancel";
 import TicketChange from "@/components/Modals/ticketChange";
 import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
-import { ticketDummyData } from "@/data/ticketDummyData";
+import {fetchComments} from "@/services/user";
+import {fetchManagerTicket} from "@/services/manager";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
-  const [tickets] = useState(ticketDummyData); // 더미 데이터
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); // 선택된 티켓
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
+  const [logs, setLogs] = useState([]);
 
-  const logs = [
-    { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
-    { message: "안녕하세요, 티켓 관련해서 문의 드립니다.", role: "admin" },
-    { message: "티켓 세부 사항 설명 드리겠습니다.", role: "admin" },
-    { message: "질문을 작성하였습니다.", role: "user" },
-    { log: "담당자가 콘으로 변경되었습니다.", role: "admin" },
-    { log: "담당자가 라이언으로 변경되었습니다.", role: "admin" },
-    { message: "세부 사항을 알려주셔서 감사합니다.", role: "user" },
-    { message: "티켓을 처리해 드리겠습니다.", role: "admin" },
-    { message: "감사합니다.", role: "admin" },
-    { message: "감사합니다.", role: "user" },
-  ];
+  const statusMapping = {
+    REQUEST: "작업요청",
+    CANCEL: "작업취소",
+    IN_PROGRESS: "작업진행",
+    REJECT: "반려",
+    COMPLETE: "작업완료"
+  };
 
-  useEffect(() => {
-    const id = window.location.pathname.split("/").pop();
-    if (id) {
-      const numericId = parseInt(id, 10); 
-      const ticket = tickets.find((ticket) => ticket.id === numericId.toString()); 
-      console.log(numericId, tickets[numericId - 1]); 
-      setSelectedTicket(tickets[numericId - 1]);
-    }
-  }, [tickets]);
-
-   // 티켓 상태 변환 맵
+  // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
     작업요청: "new", // '작업요청' -> 'new'
     반려: "rejected", // '반려' -> 'rejected'
@@ -52,6 +38,67 @@ export default function ManagericketDetailPage() {
     작업완료: "completed", // '작업완료' -> 'completed'
     작업취소: "cancelled", // '작업취소' -> 'cancelled'
   };
+
+  useEffect(() => {
+    const id = window.location.pathname.split("/").pop();
+    if (id) {
+      getTicketDetail(id).then(data => {
+        console.log('ticket', data);
+        setSelectedTicket(data);
+      })
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedTicket?.status == "작업요청" || selectedTicket?.status == "취소") return;
+    getComments(selectedTicket).then(data => {
+      console.log('comments:', data)
+      setLogs(data)
+    })
+  }, [selectedTicket])
+
+  const getComments = async (ticket) => {
+    try {
+      const response = await fetchComments(ticket.id);
+      console.log("response:", response)
+      return response.result.comments
+      .map(comment => {
+        if (comment.type === "SYSTEM") {
+          return {
+            log: comment.content
+          }
+        } else {
+          return {
+            message: comment.content,
+            role: comment.type
+          }
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  }
+
+  const getTicketDetail = async (ticketId) => {
+    const response = await fetchManagerTicket(ticketId);
+    console.log("response:", response);
+    const ticket = response.result;
+    return {
+      id: ticket.ticketId,
+      number: "?????",
+      status: statusMapping[ticket.status],
+      type: ticket.category,
+      title: ticket.title,
+      content: ticket.content,
+      requester: ticket.userNickname,
+      handler: ticket.managerNickname,
+      requestDate: ticket.createdAt,
+      acceptDate: ticket.startedAt == null ? "―" : ticket.startedAt,
+      updateDate: ticket.updatedAt == null ? "―" : ticket.updatedAt,
+      completeDate: ticket.completedAt == null ? "―" : ticket.completedAt,
+    }
+  }
 
   const handleCancelTicket = () => {
     setIsModalOpen(true); // 모달 열기

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import { useParams, useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
@@ -18,6 +18,8 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
+  
+  const param =useParams();
 
   const logs = [
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
@@ -57,12 +59,12 @@ export default function ManagericketDetailPage() {
 
   const confirmAccept = async () => {
     try {
-      console.log("작업 승인 요청 데이터:", selectedTicket);
 
-      const result = await updateManagerTicketApprove(selectedTicket);
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketApprove([param.id]);
       console.log("작업 승인 성공:", result);
 
-      alert("작업이 승인되었습니다.");
+      //alert("작업이 승인되었습니다.");
       setIsModalOpen(false); // 모달 닫기
     } catch (error) {
       console.error("작업 승인 중 오류 발생:", error);

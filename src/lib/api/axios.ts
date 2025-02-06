@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from "axios";
 
-const accessToken = sessionStorage.getItem("accessToken");
+const accessToken = typeof window !== 'undefined' ? sessionStorage.getItem('accessToken') : null;
 
 const apiConfig = {
   backend: {

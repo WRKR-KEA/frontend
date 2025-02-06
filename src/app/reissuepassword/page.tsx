@@ -13,7 +13,7 @@ export default function ReissuePasswordPage() {
     setNickname(e.target.value);
 
     // 아이디 형식 검증
-    const nicknameRegex = /^(?=.*[a-z]{2,})(?=.*\.[a-z]{2,}).{5,15}$/;
+    const nicknameRegex = /^[a-z]{3,10}\.[a-z]{1,5}$/;
     if (!nicknameRegex.test(e.target.value)) {
       setError("아이디 형식이 올바르지 않습니다.");
     } else {

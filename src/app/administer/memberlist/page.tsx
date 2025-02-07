@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import { FaSearch } from "react-icons/fa";
-import { useMemberListQuery } from "@/hooks/useMemberList";
-import PagePagination from "@/components/pagination";
-import Link from "next/link";
+import { useEffect, useState } from 'react';
+import { FaSearch } from 'react-icons/fa';
+import { useMemberListQuery } from '@/hooks/useMemberList';
+import PagePagination from '@/components/pagination';
+import Link from 'next/link';
 
 export default function AdminMemberListPage() {
-  const [activeTab, setActiveTab] = useState("전체"); // 역할 선택 (탭)
+  const [activeTab, setActiveTab] = useState('전체'); // 역할 선택 (탭)
   const [currentPage, setCurrentPage] = useState(1); // 페이지네이션
-  const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
-  const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
+  const [searchInput, setSearchInput] = useState(''); // 검색 입력 필드
+  const [searchTrigger, setSearchTrigger] = useState(''); // ✅ Enter 입력 후 실행할 검색어
 
   // ✅ 역할 선택 시 role 변경 (탭 클릭)
   const handleTabClick = (tabName: string) => {
@@ -30,7 +30,7 @@ export default function AdminMemberListPage() {
 
   // ✅ 검색 입력 후 Enter 키 입력 시 실행
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter") {
+    if (e.key === 'Enter') {
       setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
       setCurrentPage(1); // 검색 시 첫 페이지로 이동
     }
@@ -38,8 +38,8 @@ export default function AdminMemberListPage() {
 
   // ✅ 역할(role) 매핑 함수
   const getRoleQuery = () => {
-    if (activeTab === "사용자") return "USER";
-    if (activeTab === "담당자") return "MANAGER";
+    if (activeTab === '사용자') return 'USER';
+    if (activeTab === '담당자') return 'MANAGER';
     return undefined; // 전체일 경우 role을 아예 제거 (쿼리에 포함되지 않도록)
   };
 
@@ -64,42 +64,42 @@ export default function AdminMemberListPage() {
   // ✅ 체크박스 변경 핸들러
   const handleCheckboxChange = (memberId: string) => {
     setSelectedMembers((prev) =>
-      prev.includes(memberId) ? prev.filter((id) => id !== memberId) : [...prev, memberId]
+      prev.includes(memberId) ? prev.filter((id) => id !== memberId) : [...prev, memberId],
     );
   };
 
   // ✅ 선택한 유저 삭제 API 호출
   const handleDeleteMembers = async () => {
     if (selectedMembers.length === 0) {
-      alert("삭제할 회원을 선택해주세요.");
+      alert('삭제할 회원을 선택해주세요.');
       return;
     }
 
     try {
-      const accessToken = sessionStorage.getItem("accessToken");
+      const accessToken = sessionStorage.getItem('accessToken');
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        alert('로그인이 필요합니다.');
         return;
       }
 
-      const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
-        method: "DELETE",
+      const response = await fetch('http://172.16.211.53:8080/api/admin/members', {
+        method: 'DELETE',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({ memberIdList: selectedMembers }),
       });
 
       if (!response.ok) {
-        throw new Error("회원 삭제 실패");
+        throw new Error('회원 삭제 실패');
       }
 
-      alert("선택한 회원이 삭제되었습니다.");
+      alert('선택한 회원이 삭제되었습니다.');
       setSelectedMembers([]);
       refetch();
     } catch (error) {
-      console.error("❌ 삭제 요청 실패:", error);
+      console.error('❌ 삭제 요청 실패:', error);
     }
   };
 
@@ -126,12 +126,12 @@ export default function AdminMemberListPage() {
 
       <div className="flex flex-col w-full mt-2">
         <div className="flex items-center border-b">
-          {["전체", "사용자", "담당자"].map((tab) => (
+          {['전체', '사용자', '담당자'].map((tab) => (
             <button
               key={tab}
               onClick={() => handleTabClick(tab)}
               className={`w-32 text-center py-3 font-semibold ${
-                activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500"
+                activeTab === tab ? 'border-b-2 border-black text-black' : 'text-gray-500'
               }`}
             >
               {tab}
@@ -148,53 +148,56 @@ export default function AdminMemberListPage() {
         <div className="mt-3">
           <table className="w-full table-fixed border-collapse rounded-md">
             <thead>
-              <tr>
-                <th className="p-3 w-1/12"></th>
-                <th className="p-3 text-left w-2/12">이름</th>
-                <th className="p-3 text-left w-2/12">부서</th>
-                <th className="p-3 text-left w-2/12">직책</th>
-                <th className="p-3 text-left w-2/12">전화번호</th>
-                <th className="p-3 text-left w-3/12">이메일 주소</th>
-              </tr>
+            <tr>
+              <th className="p-3 w-1/12"></th>
+              <th className="p-3 text-left w-2/12">이름</th>
+              <th className="p-3 text-left w-2/12">부서</th>
+              <th className="p-3 text-left w-2/12">직책</th>
+              <th className="p-3 text-left w-2/12">전화번호</th>
+              <th className="p-3 text-left w-3/12">이메일 주소</th>
+            </tr>
             </thead>
             <tbody>
-              {members?.elements?.map((row: any, index: number) => (
-                <tr key={index} className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}>
-                  <td className="p-3 w-1/12">
-                    <input
-                      type="checkbox"
-                      checked={selectedMembers.includes(row.memberId)}
-                      onChange={() => handleCheckboxChange(row.memberId)}
-                    />
-                  </td>
-                  <td className="p-3 w-2/12">
-                    <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src={"/userProfileImage.png"}
-                          alt={row.name}
-                          className="w-8 h-8 rounded-full"
-                        />
-                        <span>{row.name}</span>
-                      </div>
-                    </Link>
-                  </td>
-                  <td className="p-4 w-2/12">{row.department}</td>
-                  <td className="p-4 w-2/12">{row.role}</td>
-                  <td className="p-4 w-2/12">{row.phone}</td>
-                  <td className="p-4 w-3/12">{row.email}</td>
-                </tr>
-              ))}
+            {members?.elements?.map((row: any, index: number) => (
+              <tr key={index} className={index % 2 === 0 ? 'bg-[#6E61CA]/20' : ''}>
+                <td className="p-3 w-1/12">
+                  <input
+                    type="checkbox"
+                    checked={selectedMembers.includes(row.memberId)}
+                    onChange={() => handleCheckboxChange(row.memberId)}
+                  />
+                </td>
+                <td className="p-3 w-2/12">
+                  <Link href={`memberlist/${row.memberId}`}
+                        className="cursor-pointer hover:underline">
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={'/userProfileImage.png'}
+                        alt={row.name}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <span>{row.name}</span>
+                    </div>
+                  </Link>
+                </td>
+                <td className="p-4 w-2/12">{row.department}</td>
+                <td className="p-4 w-2/12">{row.role}</td>
+                <td className="p-4 w-2/12">{row.phone}</td>
+                <td className="p-4 w-3/12">{row.email}</td>
+              </tr>
+            ))}
             </tbody>
-        
-        {/* ✅ 페이지네이션 추가 */}
-        <div className="flex justify-center mt-4">
-          <PagePagination
-            totalItemsCount={members?.totalElements || 0}
-            itemsCountPerPage={members?.size || 10}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageChange}
-          />
+          </table>
+
+          {/* ✅ 페이지네이션 추가 */}
+          <div className="flex justify-center mt-4">
+            <PagePagination
+              totalItemsCount={members?.totalElements || 0}
+              itemsCountPerPage={members?.size || 10}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       </div>
     </div>

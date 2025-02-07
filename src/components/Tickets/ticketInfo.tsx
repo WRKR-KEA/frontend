@@ -30,7 +30,7 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
       <div className="grid grid-cols-2 gap-x-8">
         {/* 첫 번째 열 */}
         <div className="space-y-4 text-left">
-          <div>업무: {ticket.type}</div>
+          <div>제목: {ticket.title}</div>
           <div>처리자: {ticket.handler}</div>
           <div>요청자: {ticket.requester}</div>
         </div>

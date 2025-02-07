@@ -1,15 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { TicketInfo } from '@/components/Tickets/ticketInfo';
-import { TicketStatus } from '@/components/Tickets/ticketStatus';
-import TicketComment from '@/components/Tickets/ticketComment';
-import Button from '@/components/Buttons/Button';
-import { TicketAccept } from '@/components/Modals/ticketAccept';
-import { fetchComments } from '@/services/user';
-import { fetchManagerTicket } from '@/services/manager';
-import { useCommentList } from '@/hooks/useCommentList';
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import { TicketInfo } from "@/components/Tickets/ticketInfo";
+import { TicketStatus } from "@/components/Tickets/ticketStatus";
+import TicketComment from "@/components/Tickets/ticketComment";
+import Button from "@/components/Buttons/Button";
+import { TicketAccept } from "@/components/Modals/ticketAccept";
+import { ticketDummyData } from "@/data/ticketDummyData";
+import { updateManagerTicketApprove, fetchManagerTicket } from "@/services/manager";
+import {fetchComments} from "@/services/user";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -18,7 +18,9 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
-  const [ticketId, setTicketId] = useState('');
+  
+  const param =useParams();
+  const [logs, setLogs] = useState([]);
 
   const statusMapping = {
     REQUEST: '작업요청',
@@ -88,9 +90,19 @@ export default function ManagericketDetailPage() {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmAccept = () => {
-    console.log('작업이 승인되었습니다.');
-    setIsModalOpen(false); // 모달 닫기
+  const confirmAccept = async () => {
+    try {
+
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketApprove([param.id]);
+      console.log("작업 승인 성공:", result);
+
+      //alert("작업이 승인되었습니다.");
+      setIsModalOpen(false); // 모달 닫기
+    } catch (error) {
+      console.error("작업 승인 중 오류 발생:", error);
+      // alert("작업 승인 중 문제가 발생했습니다.");
+    }
   };
 
   const closeModal = () => {
@@ -124,11 +136,10 @@ export default function ManagericketDetailPage() {
       <div className="flex justify-between items-center">
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
-          {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
-          {statusMap[selectedTicket.status] === 'new' && (
-            <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
-          )}{' '}
-        </div>
+        {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
+        {statusMap[selectedTicket.status] === "new" && (
+          <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
+          )}    </div>
       </div>
 
       <div className="flex space-x-6">

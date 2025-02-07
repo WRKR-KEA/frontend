@@ -2,9 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  body {
+    min-width: 1024px;
+    font-family: 'Pretendard';
+    overflow-wrap: break-word;
+  }
+}
 
-/* @layer base {
-    body {
-      font-family: 'Pretendard';
-    }
-  } */
+/* 스크롤바 숨기기 */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}

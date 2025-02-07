@@ -1,4 +1,4 @@
-import api from "@/lib/api/axios";
+import api from "../lib/api/axios";
 
 // (GET) 코멘트 내역 조회
 export async function fetchComments(ticketId: string) {
@@ -43,6 +43,7 @@ export async function postComment(
     console.error('코멘트 작성에 실패했습니다. :', error);
   }
 }
+
 
 // (GET) 도움말 조회
 export async function fetchGuide(cryptoCategoryId: string) {

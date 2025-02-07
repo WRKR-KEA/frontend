@@ -53,10 +53,10 @@ export default function AdminMemberListPage() {
 
   // ✅ API 응답의 현재 페이지 값으로 currentPage 업데이트
   useEffect(() => {
-    if (members?.data?.result?.currentPage) {
-      setCurrentPage(members?.data?.result?.currentPage);
+    if (members?.result?.currentPage) {
+      setCurrentPage(members.result.currentPage);
     }
-  }, [members?.data?.result?.currentPage]);
+  }, [members?.result?.currentPage]);
 
   // ✅ 선택된 유저 ID 리스트
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -82,6 +82,10 @@ export default function AdminMemberListPage() {
         return;
       }
 
+      // ✅ 확인을 눌렀을 때만 삭제 진행
+      const isConfirmed = confirm("정말로 삭제하시겠습니까?");
+      if (!isConfirmed) return;
+
       const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
         method: "DELETE",
         headers: {
@@ -100,8 +104,10 @@ export default function AdminMemberListPage() {
       refetch();
     } catch (error) {
       console.error("❌ 삭제 요청 실패:", error);
+      alert("회원 삭제 중 오류가 발생했습니다.");
     }
   };
+
 
   if (isLoading) return <p>로딩 중...</p>;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
@@ -130,9 +136,8 @@ export default function AdminMemberListPage() {
             <button
               key={tab}
               onClick={() => handleTabClick(tab)}
-              className={`w-32 text-center py-3 font-semibold ${
-                activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500"
-              }`}
+              className={`w-32 text-center py-3 font-semibold ${activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500"
+                }`}
             >
               {tab}
             </button>
@@ -165,6 +170,7 @@ export default function AdminMemberListPage() {
                       type="checkbox"
                       checked={selectedMembers.includes(row.memberId)}
                       onChange={() => handleCheckboxChange(row.memberId)}
+                      className="w-4 h-4 accent-[#4B5FC2] cursor-pointer rounded-md border-2 border-gray-400 transition-all duration-200 checked:bg-[#4B5FC2] checked:border-transparent focus:ring-2 focus:ring-[#4B5FC2] focus:outline-none"
                     />
                   </td>
                   <td className="p-3 w-2/12">
@@ -186,7 +192,9 @@ export default function AdminMemberListPage() {
                 </tr>
               ))}
             </tbody>
-        
+          </table>
+        </div>
+
         {/* ✅ 페이지네이션 추가 */}
         <div className="flex justify-center mt-4">
           <PagePagination

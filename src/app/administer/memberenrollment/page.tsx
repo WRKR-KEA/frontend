@@ -109,6 +109,13 @@ const handleDownloadTemplate = async () => {
 
 // 회원 정보 업로드 핸들러
 const handleUploadMembers = async (file: File) => {
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  
+  if (file.size > MAX_FILE_SIZE) {
+    alert("파일 크기가 5MB를 초과할 수 없습니다.");
+    return;
+  }
+
   const accessToken = sessionStorage.getItem("accessToken");
 
   if (!accessToken) {

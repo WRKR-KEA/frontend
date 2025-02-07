@@ -36,19 +36,19 @@ export function TicketList_Manager({
   onPageChange,
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
-    COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
-    IN_PROGRESS: "bg-[#CFE3FF] text-[#3E7DD6]",
-    CANCEL: "bg-[#E0E0E0] text-[#767676]",
-    REJECT: "bg-[#F3CDBE] text-[#DE6231]",
-    REQUEST: "bg-[#FFE9B6] text-[#D79804]",
+    COMPLETE: "bg-complete text-complete",
+    IN_PROGRESS: "bg-inProgress text-inProgress",
+    CANCEL: "bg-cancel text-cancel",
+    REJECT: "bg-reject text-reject",
+    REQUEST: "bg-request text-request",
   };
 
   const statusMap: Record<string, string> = {
-    COMPLETE: "COMPLETE",
-    IN_PROGRESS: "IN_PROGRESS",
-    CANCEL: "CANCEL",
-    REJECT: "REJECT",
-    REQUEST: "REQUEST",
+    REQUEST: "작업 요청",
+    CANCEL: "취소",
+    IN_PROGRESS : "작업 진행",
+    REJECT: "반려",
+    COMPLETE: "작업 완료",
   };
 
   const [activeTab, setActiveTab] = useState("전체");
@@ -60,7 +60,7 @@ export function TicketList_Manager({
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
-    onStatusChange(statusMap[tab]);
+    onStatusChange(tab);
   };
 
   const handleTicketClick = (ticketId: string) => {
@@ -100,8 +100,9 @@ export function TicketList_Manager({
       });
     } catch (err) {
       console.error("Error while pinning/unpinning the ticket:", err);
-      setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
-      setTimeout(() => setErrorMessage(null), 3000);
+        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
+        setTimeout(() => setErrorMessage(null), 3000); // Hide the message after 3 seconds
+
     }
   };
 
@@ -133,21 +134,21 @@ export function TicketList_Manager({
       <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="px-4 py-2 w-8"></th>
-            <th className="px-4 py-2 w-36">티켓 번호</th>
-            <th className="px-4 py-2 w-24">상태</th>
-            <th className="px-4 py-2 w-40">제목</th>
-            <th className="px-4 py-2 w-32">요청자</th>
-            <th className="px-4 py-2 w-36">요청일</th>
-            <th className="px-4 py-2 w-36">마지막 업데이트</th>
+          <tr className="bg-gray-6 text-left border-b border-gray-4">
+            <th className="px-4 py-2 w-8 min-w-8"></th>
+            <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
+            <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
+            <th className="px-4 py-2 w-80">제목</th>
+            <th className="px-4 py-2 w-32 min-w-32">요청자</th>
+            <th className="px-4 py-2 w-44 min-w-44">요청일</th>
+            <th className="px-4 py-2 w-44 min-w-44">최근 변경일</th>
           </tr>
         </thead>
         <tbody>
           {displayedTickets.map((ticket) => (
             <tr
               key={ticket.id}
-              className="border-t cursor-pointer"
+              className="border-t border-gray-5 cursor-pointer"
               onClick={() => handleTicketClick(ticket.id)}
             >
               <td
@@ -160,21 +161,21 @@ export function TicketList_Manager({
                 {ticket.ispinned || pinnedTickets.includes(ticket.id) ? (
                   <MdPushPin className="text-accent-1" size={20} />
                 ) : (
-                  <MdOutlinePushPin className="text-gray-3" size={20} />
+                  <MdOutlinePushPin className="text-gray-4" size={20} />
                 )}
               </td>
               <td className="px-4 py-2">
                 <HighlightText text={ticket.number} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2">
-                <span className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}>
-                  {ticket.status}
+              <td className="px-4 py-2 text-center">
+                <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
+                  {statusMap[ticket.status]}
                 </span>
               </td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2">{ticket.requester}</td>
+              <td className="px-4 py-2 truncate">{ticket.requester}</td>
               <td className="px-4 py-2">{ticket.requestDate}</td>
               <td className="px-4 py-2">{ticket.updateDate}</td>
             </tr>

@@ -31,6 +31,23 @@ const CategoryManagement: React.FC = () => {
     const [templateOpen, setTemplateOpen] = useState(false)
     const [helpOpen, setHelpOpen] = useState(false)
 
+    const [modalState, setModalState] = useState({
+        isOpen: false,
+        title: "",
+        btnText: "",
+        onClose:()=>{},
+    })
+
+    const showModal =(title:string, btnText='닫기')=> {
+        setModalState({
+            isOpen: true,
+            title,
+            btnText,
+            onClose: () => {
+                setModalState({ ...prev, isOpen: false });
+            },
+        });
+    };
 
     useEffect(() => {
         if (categoryData?.result?.categories) {
@@ -92,7 +109,7 @@ const CategoryManagement: React.FC = () => {
     const handleAddCategory = async () => {
         const newName = prompt("새로운 카테고리 이름을 입력하세요:");
         if (!newName) {
-            alert("카테고리 이름을 입력해주세요.");
+            showModal("카테고리 이름을 입력해주세요.");
             return;
         }
 
@@ -117,11 +134,11 @@ const CategoryManagement: React.FC = () => {
                 throw new Error("카테고리 생성 실패");
             }
 
-            alert("새로운 카테고리가 추가되었습니다.");
+            showModal("새로운 카테고리가 추가되었습니다.");
             refetch();
         } catch (error) {
             console.error("❌ 카테고리 추가 오류:", error);
-            alert("카테고리를 추가하는 중 오류가 발생했습니다.");
+            showModal("카테고리를 추가하는 중 오류가 발생했습니다.");
         }
     };
 
@@ -151,12 +168,12 @@ const CategoryManagement: React.FC = () => {
             }
 
             if (isAlert) {
-                alert("카테고리 순서가 업데이트되었습니다.");
+                showModal("카테고리 순서가 업데이트되었습니다.");
             }
 
         } catch (error) {
             console.error("❌ 카테고리 순서 업데이트 오류:", error);
-            alert("카테고리 순서를 업데이트하는 중 오류가 발생했습니다.");
+            showModal("카테고리 순서를 업데이트하는 중 오류가 발생했습니다.");
         }
     };
 
@@ -234,6 +251,15 @@ const CategoryManagement: React.FC = () => {
                     카테고리 추가
                 </button>
             </div>
+            {modalState.isOpen && (
+                <Modal onClosed={modalState.onClose}>
+                    <AlertModal
+                        title={modalState.title}
+                        message={modalState.message}
+                        onClosed={modalState.onClose}
+                        />
+                </Modal>
+            )}
         </div>
     );
 };

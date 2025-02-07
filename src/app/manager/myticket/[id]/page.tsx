@@ -13,6 +13,8 @@ import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import {fetchComments} from "@/services/user";
 import { useCommentList } from '@/hooks/useCommentList';
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -113,11 +115,11 @@ export default function ManagericketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(param.id);
       console.log("완료 성공:", result);
-      // alert("티켓이 완료되었습니다.");
+
       closeCompleteTicketModal();
     } catch (error) {
       console.error("티켓 완료 중 오류 발생:", error);
-      //alert("티켓 완료 중 문제가 발생했습니다.");
+
     }
   };
 
@@ -128,11 +130,11 @@ export default function ManagericketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketReject(param.id);
       console.log("작업 반려 성공:", result);
-      // alert("작업이 반려되었습니다.");
+
       closeAbortTicketModal();
     } catch (error) {
       console.error("작업 반려 중 오류 발생:", error);
-      //alert("작업 반려 중 문제가 발생했습니다.");
+
     }
   };
 
@@ -165,12 +167,14 @@ export default function ManagericketDetailPage() {
   };
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
-      <div className="flex justify-between items-center">
-        <h2 className="text-md font-semibold">티켓 상세 정보</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "in-progress" 상태일 때만 보이도록 조건 추가 */}
+
         {statusMap[selectedTicket.status] === "IN_PROGRESS" && (
           <div className="flex space-x-2 mt-2">
+
             <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
             <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
             <Button label="작업 완료" onClick={handleCompleteTicket} color={3} />
@@ -184,8 +188,8 @@ export default function ManagericketDetailPage() {
        <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
       </div>
 
-      <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment logs={logs} />
+      <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
+      <TicketComment logs={logs} ticketId={selectedTicket.id} />
 
        {/* 작업 반려 모달 */}
        {isAbortTicketOpen && (
@@ -200,6 +204,15 @@ export default function ManagericketDetailPage() {
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (
         <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
+      )}
+        {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
       )}
     </div>
   );

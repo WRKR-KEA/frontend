@@ -14,6 +14,25 @@ export default function ChangePasswordPage() {
     const router = useRouter();
     const user = useUserStore((state) => state.user); // userStore에서 회원 정보 가져오기
 
+    const [modalState, setModalState] = useState({
+        isOpen: false,
+        title: "",
+        btnText:'',
+        onClose: () => {},    
+      });
+    
+      const showModal = (title: string, btnText='닫기') => {
+        setModalState({
+          isOpen: true,
+          title,
+          btnText,
+          onClose: () => {
+            setModalState(prev => ({ ...prev, isOpen: false }));
+          },
+       
+        });
+      };
+
     const handlenicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setNickname(e.target.value);
         const nicknameRegex = /^[a-zA-Z0-9._%+-]+@gachon\.ac\.kr$/;
@@ -56,7 +75,7 @@ export default function ChangePasswordPage() {
             });
 
             if (response.data.isSuccess) {
-                alert("비밀번호 변경 성공!");
+                showModal("비밀번호 변경 성공!");
 
                 // 역할에 따라 라우팅
                 switch (user?.role) {
@@ -73,11 +92,11 @@ export default function ChangePasswordPage() {
                         break;
                 }
             } else {
-                alert("비밀번호 변경 실패: " + response.data.message);
+                alershowModalt("비밀번호 변경 실패: " + response.data.message);
             }
         } catch (error) {
             console.error("비밀번호 변경 에러:", error);
-            alert("서버와 통신 중 오류가 발생했습니다.");
+            showModal("서버와 통신 중 오류가 발생했습니다.");
         }
     };
 
@@ -136,6 +155,15 @@ export default function ChangePasswordPage() {
                     </button>
                 </form>
             </div>
+            {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
         </div>
     );
 }

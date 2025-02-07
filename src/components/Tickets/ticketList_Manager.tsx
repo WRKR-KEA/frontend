@@ -158,9 +158,9 @@ export function TicketList_Manager({
                 }}
               >
                 {ticket.ispinned || pinnedTickets.includes(ticket.id) ? (
-                  <MdPushPin className="text-red-500" size={20} />
+                  <MdPushPin className="text-accent-1" size={20} />
                 ) : (
-                  <MdOutlinePushPin className="text-gray-400" size={20} />
+                  <MdOutlinePushPin className="text-gray-3" size={20} />
                 )}
               </td>
               <td className="px-4 py-2">

@@ -12,6 +12,7 @@ import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import {fetchComments} from "@/services/user";
+import { useCommentList } from '@/hooks/useCommentList';
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 
@@ -22,27 +23,7 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
-  const [logs, setLogs] = useState([]);
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    title: "",
-    btnText:'',
-    onClose: () => {},
-  });
-
-  const showModal = (title: string, btnText='닫기') => {
-    setModalState({
-      isOpen: true,
-      title,
-      btnText,
-      onClose: () => {
-        setModalState(prev => ({ ...prev, isOpen: false }));
-      },
-
-    });
-  };
-
-  const param = useParams();
+  const [ticketId, setTicketId] = useState('');
 
   const statusMapping = {
     REQUEST: "작업요청",
@@ -52,6 +33,8 @@ export default function ManagericketDetailPage() {
     COMPLETE: "작업완료"
   };
 
+  const param = useParams();
+
    // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
     작업요청: "new", // '작업요청' -> 'new'
@@ -60,6 +43,8 @@ export default function ManagericketDetailPage() {
     작업완료: "completed", // '작업완료' -> 'completed'
     작업취소: "cancelled", // '작업취소' -> 'cancelled'
   };
+
+  const { data: commentData } = useCommentList({ ticketId });
 
   useEffect(() => {
     const id = window.location.pathname.split("/").pop();
@@ -73,38 +58,35 @@ export default function ManagericketDetailPage() {
 
   useEffect(() => {
     if (selectedTicket?.status == "작업요청" || selectedTicket?.status == "취소") return;
-    getComments(selectedTicket).then(data => {
-      console.log('comments:', data)
-      setLogs(data)
-    })
   }, [selectedTicket])
 
-  const getComments = async (ticket) => {
-    try {
-      const response = await fetchComments(ticket.id);
-      console.log("response:", response)
-      return response.result.comments
-      .map(comment => {
-        if (comment.type === "SYSTEM") {
-          return {
-            log: comment.content
-          }
-        } else {
-          return {
-            message: comment.content,
-            role: comment.type
-          }
-        }
-      })
-    } catch (err) {
-      console.error(err)
-      return []
+  console.log('티켓 ID:', ticketId);
+  console.log('댓글 데이터:', commentData);
+  const logs =
+    commentData?.result?.comments?.map((comment) => {
+      if (comment.type === 'SYSTEM') {
+        return { log: comment.content };
+      }
+      return {
+        message: comment.content,
+        role: comment.type,
+        createdAt: comment.createdAt,
+      };
+    }) || [];
+
+  useEffect(() => {
+    const id = window.location.pathname.split('/').pop();
+    if (id) {
+      setTicketId(id); // 티켓 ID 설정
+      getTicketDetail(id).then((data) => {
+        console.log('ticket', data);
+        setSelectedTicket(data);
+      });
     }
-  }
+  }, []);
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchManagerTicket(ticketId);
-    console.log("response:", response);
     const ticket = response.result;
     return {
       id: ticket.ticketId,
@@ -189,8 +171,10 @@ export default function ManagericketDetailPage() {
         <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "in-progress" 상태일 때만 보이도록 조건 추가 */}
-        {statusMap[selectedTicket.status] === "new" && (
-          <div className="flex space-x-2">
+
+        {statusMap[selectedTicket.status] === "IN_PROGRESS" && (
+          <div className="flex space-x-2 mt-2">
+
             <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
             <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
             <Button label="작업 완료" onClick={handleCompleteTicket} color={3} />

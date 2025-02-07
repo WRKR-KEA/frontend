@@ -64,16 +64,25 @@ export function TicketList_Manager({
   };
 
   const handleTicketClick = (ticketId: string) => {
-    router.push(`/tickets/${ticketId}`);
+    const currentPath = window.location.pathname;
+    router.push(`${currentPath}/${ticketId}`);
   };
 
-  const handlePinClick = async (ticketId: string) => {
+  const handlePinClick = async (ticketId: string, currentPinStatus: boolean) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken");
+  
+      if (!currentPinStatus && pinnedTickets.length >= 10) {
+        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
+        setTimeout(() => setErrorMessage(null), 3000);
+        return; 
+      }
+  
       const response = await api.patch(
         "/api/manager/tickets/pin",
         {
           ticketId: ticketId,
+          pinStatus: !currentPinStatus, 
         },
         {
           headers: {
@@ -81,21 +90,18 @@ export function TicketList_Manager({
           },
         }
       );
-
-      if (response.data.isSuccess) {
-        setPinnedTickets((prevPinned) => {
-          return prevPinned.includes(ticketId)
-            ? prevPinned.filter((id) => id !== ticketId) // Unpin
-            : [ticketId, ...prevPinned].slice(0, 10); // Pin
-        });
-      } else {
-        console.error("Failed to pin the ticket.");
-      }
+  
+      setPinnedTickets((prevState) => {
+        if (!currentPinStatus) {
+          return [...prevState, ticketId];
+        } else {
+          return prevState.filter(id => id !== ticketId);
+        }
+      });
     } catch (err) {
       console.error("Error while pinning/unpinning the ticket:", err);
-        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
-        setTimeout(() => setErrorMessage(null), 3000); // Hide the message after 3 seconds
-      
+      setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
+      setTimeout(() => setErrorMessage(null), 3000);
     }
   };
 
@@ -118,9 +124,9 @@ export function TicketList_Manager({
   );
 
   return (
-    <div className="bg-white rounded-md shadow-md">
+    <div className="bg-white rounded-md shadow-md relative">
       {errorMessage && (
-        <div className="bg-red-500 text-white p-2 rounded-md text-center mb-4">
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-[#DF4B38] text-white p-4 rounded-md text-center w-1/2 z-50 animate-fade-out">
           {errorMessage}
         </div>
       )}
@@ -131,7 +137,7 @@ export function TicketList_Manager({
             <th className="px-4 py-2 w-8"></th>
             <th className="px-4 py-2 w-36">티켓 번호</th>
             <th className="px-4 py-2 w-24">상태</th>
-            <th className="px-4 py-2 w-80">제목</th>
+            <th className="px-4 py-2 w-40">제목</th>
             <th className="px-4 py-2 w-32">요청자</th>
             <th className="px-4 py-2 w-36">요청일</th>
             <th className="px-4 py-2 w-36">마지막 업데이트</th>
@@ -148,7 +154,7 @@ export function TicketList_Manager({
                 className="px-4 py-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick(ticket.id);
+                  handlePinClick(ticket.id, ticket.ispinned);
                 }}
               >
                 {ticket.ispinned || pinnedTickets.includes(ticket.id) ? (

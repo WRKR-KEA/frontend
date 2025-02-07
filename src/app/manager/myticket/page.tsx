@@ -74,6 +74,7 @@ export default function ManagerTicketListPage() {
         }));
 
         setTickets(formattedTickets);
+        console.log("🍉 담당 티켓 정보", formattedTickets);
         setTotalPages(Math.ceil(data.result.totalElements / maxTicketsToShow));
       } else {
         throw new Error(data.message);

@@ -51,7 +51,7 @@ export default function DepartmentTicketListPage() {
     endDate: null,
     key: "selection",
   });
-  
+
   const formattedDateRange = dateRange.startDate
     ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
@@ -143,7 +143,7 @@ export default function DepartmentTicketListPage() {
                 editableDateInputs={true}
                 onChange={handleDateChange}
                 moveRangeOnFirstSelection={false}
-                ranges={[dateRange]}
+                ranges={[dateRange]} // startDate와 endDate를 여기서 설정
                 rangeColors={["#6E61CA"]}
               />
             </div>

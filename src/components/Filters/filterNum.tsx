@@ -37,7 +37,7 @@ export function FilterNum({ onSelectCount, selectedCount }: FilterNumProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mr-2 w-24 bg-white border shadow-lg rounded">
+        <div className="absolute right-0 mr-2 w-24 bg-white border shadow-lg rounded z-50">
           <ul className="space-y-1 p-2">
             {[20, 50, 100].map((count) => (
               <li key={count}>

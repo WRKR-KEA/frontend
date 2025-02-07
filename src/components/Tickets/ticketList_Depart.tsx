@@ -67,7 +67,8 @@ export function TicketList_Depart({
   };
 
   const handleTicketClick = (ticketId: string) => {
-    router.push(`/tickets/${ticketId}`);
+    const currentPath = window.location.pathname;
+    router.push(`${currentPath}/${ticketId}`);
   };
 
   const filteredTickets = tickets.filter((ticket) => {

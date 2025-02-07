@@ -219,8 +219,8 @@ export default function AdminMemberListPage() {
             </tbody>
 
           </table>
+        </div>
 
-        
         {/* ✅ 페이지네이션 추가 */}
         <div className="flex justify-center mt-4">
           <PagePagination

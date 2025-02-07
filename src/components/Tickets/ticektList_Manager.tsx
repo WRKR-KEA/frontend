@@ -1,4 +1,5 @@
 import React from "react";
+import { useRouter } from "next/navigation";
 
 type Ticket = {
   id: string;
@@ -48,6 +49,11 @@ export function TicketList({
   const startIndex = (page - 1) * maxTicketsToShow;
   const endIndex = startIndex + maxTicketsToShow;
   const displayedTickets = tickets.slice(startIndex, endIndex);
+  const router = useRouter();
+
+  const handleTicketClick = (ticketId: string) => {
+    router.push(`http://localhost:3000/manager/myticket/${ticketId}`);
+  };
 
   return (
     <div className="bg-white rounded-md shadow-md">
@@ -67,7 +73,7 @@ export function TicketList({
             <tr
               key={ticket.id}
               className="border-b cursor-pointer hover:bg-gray-100"
-              onClick={() => onTicketClick?.(ticket)}
+              onClick={() => handleTicketClick(ticket.id)}
             >
               <td className="p-2 border">{ticket.number}</td>
               <td className="p-2 border">

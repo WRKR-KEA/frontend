@@ -46,7 +46,7 @@ type Profile = {
           {/* 첫 번째 항목 */}
           <div
             style={{
-              width: "150px", // 고정된 너비
+              width: "200px", // 고정된 너비
               textAlign: "center", // 가운데 정렬
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -67,7 +67,7 @@ type Profile = {
           {/* 두 번째 항목 */}
           <div
             style={{
-              width: "150px", // 고정된 너비
+              width: "200px", // 고정된 너비
               textAlign: "center",
               fontSize: "1.5rem",
               fontWeight: "bold",
@@ -88,7 +88,7 @@ type Profile = {
           {/* 세 번째 항목 */}
           <div
             style={{
-              width: "150px", // 고정된 너비
+              width: "200px", // 고정된 너비
               textAlign: "center",
               fontSize: "1.5rem",
               fontWeight: "bold",

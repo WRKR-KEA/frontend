@@ -8,6 +8,7 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { fetchAdminAccessLogs } from "@/services/admin";
+import { format } from 'date-fns';
 
 interface LogEntry {
   id: number;
@@ -81,8 +82,8 @@ export default function LogPage() {
         role,
         searchTerm,
         undefined,
-        dateRange.startDate ? dateRange.startDate.toISOString() : undefined,
-        dateRange.endDate ? dateRange.endDate.toISOString() : undefined
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
       );
 
       console.log("📌 가져온 로그 데이터:", response);

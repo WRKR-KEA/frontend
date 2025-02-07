@@ -54,6 +54,7 @@ export function TicketList_Manager({
   const [activeTab, setActiveTab] = useState("전체");
   const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const handleTabClick = (tab: string) => {
@@ -92,6 +93,9 @@ export function TicketList_Manager({
       }
     } catch (err) {
       console.error("Error while pinning/unpinning the ticket:", err);
+        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
+        setTimeout(() => setErrorMessage(null), 3000); // Hide the message after 3 seconds
+      
     }
   };
 
@@ -115,6 +119,11 @@ export function TicketList_Manager({
 
   return (
     <div className="bg-white rounded-md shadow-md">
+      {errorMessage && (
+        <div className="bg-red-500 text-white p-2 rounded-md text-center mb-4">
+          {errorMessage}
+        </div>
+      )}
       <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>

@@ -1,4 +1,4 @@
-import api from "../lib/api/axios";
+import api from "@/lib/api/axios";
 
 // (GET) 담당자 티켓 목록 요청
 export async function fetchManagerTicketList(
@@ -36,11 +36,22 @@ export async function fetchManagerDepartmentTicket(
   startDate?: string,
   endDate?: string,
   page?: number,
-  size?: number
+  size?: number,
+  sortType?: "NEWEST" | "OLDEST" | "UPDATED",
 ) {
+  const params = new URLSearchParams();
+
+  if(query) params.append('query', query.toString());
+  if(status) params.append('status', status.toString());
+  if(startDate) params.append('startDate', startDate.toString());
+  if(endDate) params.append('endDate', endDate.toString());
+  if(page) params.append('page', page.toString());
+  if(size) params.append('size', size.toString());
+  if(sortType) params.append('sortType', sortType.toString());
+
   try {
     const { data } = await api.get(
-      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`
+      `/api/manager/tickets/department?${params.toString()}`
     );
     return data;
   } catch (error) {

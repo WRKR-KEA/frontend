@@ -7,10 +7,10 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './custom-datepicker.css';
 import {
-  fetchManagerStatistics,
-  getTicketStatusSummery,
+  fetchManagerStatistics, getTicketStatusSummery,
   postManagerStatistics,
-} from '@/services/manager'; // 커스터마이징된 CSS
+} from '@/services/manager';
+import { string } from 'postcss-selector-parser'; // 커스터마이징된 CSS
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 export default function Dashboard() {
@@ -45,7 +45,7 @@ export default function Dashboard() {
 
   const fetchBarChartData = async (date: string) => {
     try {
-      const data = await fetchManagerStatistics({ date }, 'MONTHLY', ''); // ✅ 객체 { date: string } 로 전달
+      const data = await fetchManagerStatistics({ date } , 'MONTHLY', '');
       setBarChardData(data);
       // console.log(data);
     } catch (error) {
@@ -60,9 +60,8 @@ export default function Dashboard() {
 
   const fetchTicketData = async (date: string) => {
     try {
-      const data = await getTicketStatusSummery('MONTHLY', { date }); // ✅ 객체 { date: string } 로 전달
+      const data = await getTicketStatusSummery('MONTHLY', date);
       setTicketStatusSummery(data);
-      console.log(ticketStatusSummery);
     } catch (error) {
       console.error('API 요청 실패:', error);
     }

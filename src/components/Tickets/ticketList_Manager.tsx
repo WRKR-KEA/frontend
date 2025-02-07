@@ -123,7 +123,7 @@ export function TicketList_Manager({
             <th className="px-4 py-2 w-8"></th>
             <th className="px-4 py-2 w-36">티켓 번호</th>
             <th className="px-4 py-2 w-24">상태</th>
-            <th className="px-4 py-2 w-80">제목</th>
+            <th className="px-4 py-2 w-40">제목</th>
             <th className="px-4 py-2 w-32">요청자</th>
             <th className="px-4 py-2 w-36">요청일</th>
             <th className="px-4 py-2 w-36">마지막 업데이트</th>

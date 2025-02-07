@@ -61,7 +61,7 @@ export default function LogPage() {
 
   useEffect(() => {
     loadLogs(); // 🔹[추가] 컴포넌트 마운트 시 로그 불러오기
-  }, [activeTab,currentPage]);
+  }, [activeTab,currentPage, itemsPerPage]);
 
   const loadLogs = async () => {
     try {
@@ -149,13 +149,12 @@ export default function LogPage() {
   };
 
   const handleSelectCount = (count: number) => {
-    setCurrentPage(1);
-    const updatedLogs = mockData.slice(0, count);
-    setLogs(updatedLogs);
+    setitemsPerPage(count);
+    setCurrentPage(1); // 페이지네이션도 첫 페이지로 이동
   };
 
   const handleTabClick = (tabName: string) => {
-    setActiveTab(tabName);
+    setActiveTab(tabName);  
     setCurrentPage(1);
   };
 
@@ -207,7 +206,7 @@ export default function LogPage() {
           )}
 
           {/* 필터 버튼 */}
-          <FilterNum onSelectCount={() => {}} selectedCount={0} />
+          <FilterNum onSelectCount={handleSelectCount} selectedCount={itemsPerPage} />
         </div>
       </div>
 

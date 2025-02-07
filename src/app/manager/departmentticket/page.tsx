@@ -8,7 +8,7 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
-import { fetchManagerDepartmentTicket } from "@/service/manager";
+import { fetchManagerDepartmentTicket } from "@/services/manager";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);

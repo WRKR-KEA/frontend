@@ -68,7 +68,7 @@ export default function ManagerTicketListPage() {
           number: ticket.serialNumber,
           status: ticket.status,
           title: ticket.title,
-          requester: ticket.requesterName,
+          requester: ticket.requesterNickname,
           requestDate: ticket.createdAt,
           updateDate: ticket.updatedAt,
           handler: "",

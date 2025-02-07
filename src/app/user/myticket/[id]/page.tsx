@@ -7,7 +7,7 @@ import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
 import { TicketCancel } from "@/components/Modals/ticketCancel";
-import {fetchComments, fetchTicketDetail} from "@/services/user";
+import {fetchComments, fetchTicketDetail, updateTicket} from "@/services/user";
 
 export default function UserTicketDetailPage() {
   const router = useRouter();
@@ -97,9 +97,22 @@ export default function UserTicketDetailPage() {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmCancel = () => {
+  const confirmCancel = async () => {
+    const response = await updateTicket(selectedTicket.id);
+
+    if (!response || !response.isSuccess) {
+      throw new Error("티켓 취소 요청이 실패했습니다.");
+    }
+
+    setSelectedTicket((prevTicket: any) => ({
+      ...prevTicket,
+      status: "작업취소", // 상태 업데이트
+    }));
+
     console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가
     setIsModalOpen(false); // 모달 닫기
+
+    router.push("/myticket");
   };
 
   const closeModal = () => {

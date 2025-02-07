@@ -1,5 +1,4 @@
 import api from "../lib/api/axios";
-
 // (GET) 담당자 티켓 목록 요청
 export async function fetchManagerTicketList(
   page?: number,

@@ -8,6 +8,8 @@ import { useState, useEffect, Suspense } from 'react';
 import useUserStore from '@/stores/userStore'; // ✅ Zustand 스토어 import
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 
+
+
 export default function RootLayout({
   children,
 }: {
@@ -113,7 +115,7 @@ export default function RootLayout({
   }
 
   return (
-    <html lang="en">
+    <html lang="ko" >
       <body className="h-screen flex">
         {/* 경로가 제외 대상이 아닌 경우에만 사이드바와 헤더바 표시 */}
         {!isExcluded && <Sidebar user={user} />}

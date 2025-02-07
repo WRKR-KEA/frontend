@@ -10,7 +10,6 @@ import { TicketCancel } from "@/components/Modals/ticketCancel";
 import TicketChange from "@/components/Modals/ticketChange";
 import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
-import { ticketDummyData } from "@/data/ticketDummyData";
 import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import {fetchComments} from "@/services/user";
 
@@ -218,9 +217,9 @@ export default function ManagericketDetailPage() {
       )}
 
       {/* 담당자 변경 모달 */}
-      {isChangeModalOpen && (
-          <TicketChange />
-      )}
+      {isChangeModalOpen && selectedTicket && (
+      <TicketChange ticketId={selectedTicket.id} />
+)}
 
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (

@@ -231,6 +231,38 @@ export async function postAdminTemplate(templateData: {
   }
 }
 
+// (GET) 회원 등록 엑셀 파일 양식 다운로드
+export async function fetchMemberRegisterExcelForm() {
+  try {
+    const response = await api.get("/api/admin/members/excel/example", {
+      responseType: 'blob', // 응답을 Blob 형식으로 요청
+    });
+    console.log(response);
+    return response.data; // 응답 데이터 반환
+  } catch (error) {
+    console.error("회원 등록 엑셀 파일 양식 다운로드에 실패했습니다:", error);
+    throw error; // 오류를 다시 던져서 호출한 곳에서 처리할 수 있도록
+  }
+}
+
+// (POST) 회원 정보 담긴 엑셀 파일 업로드
+export async function postMemberRegisterExcelFile(file: FormData) {
+  try {
+    const response = await api.post("/api/admin/members/excel", file, {
+      headers: {
+        'Content-Type': 'multipart/form-data', // 파일 업로드를 위한 헤더 설정
+      },
+    });
+    return response.data; // 응답 데이터 반환
+  } catch (error) {
+    console.error("엑셀 파일 업로드를 통한 회원 등록에 실패했습니다:", error);
+    throw error; // 오류를 다시 던져서 호출한 곳에서 처리할 수 있도록
+  }
+}
+
+
+
+
 // (GET) 사용자, 관리자 템플릿 조회
 export async function fetchTemplate(categoryId: string) {
   try {

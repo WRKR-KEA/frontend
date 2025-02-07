@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
-import { Search_manager } from "@/components/search_manager";
+import { Search } from "@/components/search";
 import api from "@/lib/api/axios";
+import PagePagination from "@/components/pagination";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -33,19 +34,16 @@ export default function ManagerTicketListPage() {
     setCurrentPage(1);  // Reset to page 1 when changing order
   };
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);  // 페이지 변경 시 currentPage 업데이트
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);  // Update currentPage based on the selected page number
   };
 
   const handleStatusChange = (status: string) => {
     setSelectedStatus(status);
     setCurrentPage(1);  // Reset to page 1 when changing status
   };
-  useEffect(() => {
-    fetchTickets();
-  }, [searchTerm, maxTicketsToShow, sortOrder, currentPage, selectedStatus]);
-  
-  const fetchTickets = async () => {
+
+  const fetchTickets = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -59,58 +57,59 @@ export default function ManagerTicketListPage() {
           },
         }
       );
-  
+
       const data = response.data;
-  
+
       if (data.isSuccess) {
         const formattedTickets = data.result.elements.map((ticket: any) => ({
           id: ticket.id,
           number: ticket.serialNumber,
           status: ticket.status,
           title: ticket.title,
-          requester: ticket.requesterName,
+          requester: ticket.requesterNickname,
           requestDate: ticket.createdAt,
           updateDate: ticket.updatedAt,
           handler: "",
           ispinned: ticket.isPinned,
         }));
-  
+
         setTickets(formattedTickets);
-        console.log(data);
-        console.log(formattedTickets);
-        setTotalPages(Math.ceil(data.result.totalElements / maxTicketsToShow)); 
+        setTotalPages(Math.ceil(data.result.totalElements / maxTicketsToShow));
       } else {
         throw new Error(data.message);
       }
     } catch (err) {
-      console.error("API 요청 오류:", err);
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, maxTicketsToShow, sortOrder, selectedStatus, searchTerm]);
 
-    useEffect(() => {
+  useEffect(() => {
     fetchTickets();
-  }, [searchTerm, maxTicketsToShow, sortOrder, currentPage, selectedStatus]);
+  }, [fetchTickets]); // Re-fetch tickets whenever fetchTickets is updated
+
+  useEffect(() => {
+    fetchTickets(); // Ensure data is fetched whenever currentPage changes
+  }, [currentPage]);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
-      <div className="flex items-center">
-        <h2 className="text-md font-semibold">티켓 조회</h2>
+      <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
+        <div className="flex items-center">
+          <h2 className="text-lg font-semibold">티켓 조회</h2>
 
-        <div className="flex items-center space-x-2 ml-4">
-          <Search_manager onSearchChange={handleSearchChange} />
-        </div>
+          <div className="flex items-center space-x-2 ml-4">
+            <Search onSearchChange={handleSearchChange} placeHolder="제목, 티켓번호"/>
+          </div>
 
-        <div className="ml-auto flex items-center">
-          <FilterOrder onSelectOrder={handleSelectOrder} />
-          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
+          <div className="ml-auto flex items-center">
+            <FilterOrder onSelectOrder={handleSelectOrder}/>
+            <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow}/>
+          </div>
         </div>
-      </div>
 
       <TicketList_Manager
         tickets={tickets}
@@ -119,8 +118,19 @@ export default function ManagerTicketListPage() {
         sortOrder={sortOrder}
         currentPage={currentPage}
         totalPages={totalPages}
-        onStatusChange={handleStatusChange} 
+        onStatusChange={handleStatusChange}
+        onPageChange={handlePageChange}
       />
+      <div className="flex justify-center items-center mt-4 mb-4">
+        <PagePagination
+          totalItemsCount={tickets.length}
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+    </div>
     </div>
   );
 }

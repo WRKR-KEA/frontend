@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-// import { TicketList } from "@/components/Tickets/ticketList";
 import useUserStore from "@/stores/userStore";
 import api from "@/lib/api/axios";
 import { TicketList } from "@/components/Tickets/ticektList_Manager";
@@ -35,7 +34,6 @@ const statusMap: Record<string, TicketStatusType> = {
 export default function ManagerHomePage() {
   const maxTicketsToShow = 10;
   const user = useUserStore((state) => state.user);
-  console.log(user);
 
   // 유저 티켓 목록 요청
   const [pinTickets, setPinTickets] = useState<Ticket[]>([]); // 핀 티켓
@@ -43,13 +41,17 @@ export default function ManagerHomePage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 담당자 메인 페이지 티켓 요청
   const fetchTickets = async () => {
     setIsLoading(true);
     try {
       const { data } = await api.get("/api/manager/tickets/main");
-      console.log(data);
-      const pinTicketList: Ticket[] = data.result.pinTickets.map((ticket: any) => ({
+      
+      console.log("🌈 API 응답 데이터:", data);
+      if (!data || !data.result) {
+        throw new Error("Invalid response format");
+      }
+  
+      const pinTicketList: Ticket[] = data.result.pinTickets?.map((ticket: any) => ({
         id: ticket.ticketId,
         number: ticket.ticketSerialNumber,
         status: ticket.status,
@@ -58,9 +60,9 @@ export default function ManagerHomePage() {
         requestDate: ticket.requestedDate,
         updateDate: ticket.updatedDate,
         handler: ticket.managerNickname,
-      }));
-
-      const requestTicketList: Ticket[] = data.result.requestTickets.map((ticket: any) => ({
+      })) || []; // 값이 없을 경우 빈 배열 할당
+  
+      const requestTicketList: Ticket[] = data.result.requestTickets?.map((ticket: any) => ({
         id: ticket.ticketId,
         number: ticket.ticketSerialNumber,
         status: ticket.status,
@@ -69,12 +71,13 @@ export default function ManagerHomePage() {
         requestDate: ticket.requestedDate,
         updateDate: ticket.updatedDate,
         handler: ticket.managerNickname,
-      }));
-
+      })) || [];
+  
       setPinTickets(pinTicketList);
       setRequestTickets(requestTicketList);
-
+  
     } catch (error) {
+      console.error("🚨 API 요청 오류:", error);
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
@@ -83,20 +86,20 @@ export default function ManagerHomePage() {
 
   useEffect(() => {
     fetchTickets();
-  }, []);
+  }, []); // 빈 배열로 설정해서 컴포넌트가 처음 렌더링될 때만 실행되도록 함.
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
-      <h2 className="text-md font-semibold">고정 티켓 조회</h2>
+      <h2 className="text-lg font-semibold">고정 티켓 조회</h2>
       <TicketList
         tickets={pinTickets}
         maxTicketsToShow={maxTicketsToShow}
         page={1}
       />
-      <h2 className="text-md font-semibold">최근 티켓 현황</h2>
+      <h2 className="text-lg font-semibold">최근 티켓 현황</h2>
       <TicketList
         tickets={requestTickets}
         maxTicketsToShow={maxTicketsToShow}

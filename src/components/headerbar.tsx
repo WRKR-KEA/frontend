@@ -111,11 +111,16 @@ export default function Headerbar() {
             className="text-black p-6 flex justify-between items-center border-b relative"
             style={{ borderColor: "rgba(0, 0, 0, 0.1)", height: "40px" }}
         >
-            <div className="text-[#252E66] font-semibold flex items-center">
+            <div className="text-black font-semibold flex items-center">
                 {/* 사이드바 토글 버튼 */}
-                <svg className="mr-3 cursor-pointer" onClick={toggleSidebar} width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M6.875 3.75V16.25H3.125C2.95924 16.25 2.80027 16.1842 2.68306 16.0669C2.56585 15.9497 2.5 15.7908 2.5 15.625V4.375C2.5 4.20924 2.56585 4.05027 2.68306 3.93306C2.80027 3.81585 2.95924 3.75 3.125 3.75H6.875Z" fill="black" fillOpacity="0.04" />
-                    <path d="M16.875 3.125H3.125C2.79348 3.125 2.47554 3.2567 2.24112 3.49112C2.0067 3.72554 1.875 4.04348 1.875 4.375V15.625C1.875 15.9565 2.0067 16.2745 2.24112 16.5089C2.47554 16.7433 2.79348 16.875 3.125 16.875H16.875C17.2065 16.875 17.5245 16.7433 17.7589 16.5089C17.9933 16.2745 18.125 15.9565 18.125 15.625V4.375C18.125 4.04348 17.9933 3.72554 17.7589 3.49112C17.5245 3.2567 17.2065 3.125 16.875 3.125ZM3.125 11.875H4.375C4.54076 11.875 4.69973 11.8092 4.81694 11.6919C4.93415 11.5747 5 11.4158 5 11.25C5 11.0842 4.93415 10.9253 4.81694 10.8081C4.69973 10.6908 4.54076 10.625 4.375 10.625H3.125V9.375H4.375C4.54076 9.375 4.69973 9.30915 4.81694 9.19194C4.93415 9.07473 5 8.91576 5 8.75C5 8.58424 4.93415 8.42527 4.81694 8.30806C4.69973 8.19085 4.54076 8.125 4.375 8.125H3.125V6.875H4.375C4.54076 6.875 4.69973 6.80915 4.81694 6.69194C4.93415 6.57473 5 6.41576 5 6.25C5 6.08424 4.93415 5.92527 4.81694 5.80806C4.69973 5.69085 4.54076 5.625 4.375 5.625H3.125V4.375H6.25V15.625H3.125V11.875ZM16.875 15.625H7.5V4.375H16.875V15.625Z" fill="black" />
+                <svg className="mr-4 cursor-pointer" onClick={toggleSidebar} width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path
+                        d="M22 11C22 7.229 22 5.343 20.828 4.172C19.656 3.001 17.771 3 14 3H10C6.229 3 4.343 3 3.172 4.172C2.001 5.344 2 7.229 2 11V13C2 16.771 2 18.657 3.172 19.828C4.344 20.999 6.229 21 10 21H14C17.771 21 19.657 21 20.828 19.828C21.999 18.656 22 16.771 22 13V11Z"
+                        stroke="black" stroke-width="1.5"/>
+                    <path d="M18.5 10H12.5M17.5 14H13.5" stroke="black" stroke-width="1.5"
+                          stroke-linecap="round"/>
+                    <path opacity="0.5" d="M9 21V3" stroke="black" stroke-width="1.5"
+                          stroke-linecap="round"/>
                 </svg>
 
                 {pageTitle}
@@ -124,12 +129,11 @@ export default function Headerbar() {
                 <ul className="flex space-x-4">
                     {/* 알림 아이콘 */}
                     <li className="relative">
-                        <img
-                            src="/bell_remind.png"
-                            className="w-5 cursor-pointer"
-                            onClick={() => toggleModal("notification")}
-                            alt="알림"
-                        />
+                        <svg className="cursor-pointer" onClick={() => toggleModal("notification")} width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M20.7927 16.6444C20.2723 15.7481 19.4989 13.2122 19.4989 9.89999C19.4989 7.91087 18.7087 6.00322 17.3022 4.59669C15.8957 3.19017 13.988 2.39999 11.9989 2.39999C10.0098 2.39999 8.10214 3.19017 6.69561 4.59669C5.28909 6.00322 4.49891 7.91087 4.49891 9.89999C4.49891 13.2131 3.72454 15.7481 3.20423 16.6444C3.07135 16.8722 3.00091 17.1311 3.00001 17.3948C2.9991 17.6586 3.06776 17.9179 3.19907 18.1467C3.33037 18.3755 3.51968 18.5656 3.74789 18.6978C3.9761 18.8301 4.23515 18.8998 4.49891 18.9H8.32485C8.49789 19.7467 8.95806 20.5077 9.62754 21.0542C10.297 21.6007 11.1347 21.8992 11.9989 21.8992C12.8631 21.8992 13.7008 21.6007 14.3703 21.0542C15.0398 20.5077 15.4999 19.7467 15.673 18.9H19.4989C19.7626 18.8996 20.0215 18.8298 20.2496 18.6975C20.4777 18.5651 20.6669 18.375 20.7981 18.1463C20.9292 17.9176 20.9978 17.6583 20.9969 17.3946C20.9959 17.1309 20.9255 16.8722 20.7927 16.6444ZM11.9989 20.4C11.5337 20.3999 11.0801 20.2555 10.7003 19.9869C10.3205 19.7183 10.0333 19.3386 9.87829 18.9H14.1195C13.9645 19.3386 13.6773 19.7183 13.2975 19.9869C12.9178 20.2555 12.4641 20.3999 11.9989 20.4ZM4.49891 17.4C5.22079 16.1587 5.99891 13.2825 5.99891 9.89999C5.99891 8.30869 6.63105 6.78257 7.75627 5.65735C8.88149 4.53214 10.4076 3.89999 11.9989 3.89999C13.5902 3.89999 15.1163 4.53214 16.2416 5.65735C17.3668 6.78257 17.9989 8.30869 17.9989 9.89999C17.9989 13.2797 18.7752 16.1559 19.4989 17.4H4.49891Z"
+                                fill="black"/>
+                        </svg>
                         {activeModal === "notification" && (
                             <div className="absolute right-[-23px] top-8 w-80 bg-white border rounded-md shadow-lg p-4 z-10">
                                 {/* 말풍선 뾰족한 부분 */}
@@ -160,12 +164,13 @@ export default function Headerbar() {
 
                     {/* 티켓 알림 아이콘 */}
                     <li className="relative">
-                        <img
-                            src="/ticket_remind.png"
-                            className="w-5 cursor-pointer"
-                            onClick={() => toggleModal("ticket")}
-                            alt="티켓 알림"
-                        />
+                        <svg className="cursor-pointer" onClick={() => toggleModal("ticket")} width="24" height="24" viewBox="0 0 24 24" fill="none">
+                            <path
+                                d="M2 12C2 8.229 2 6.343 3.172 5.172C4.344 4.001 6.229 4 10 4H14C17.771 4 19.657 4 20.828 5.172C21.999 6.344 22 8.229 22 12C22 15.771 22 17.657 20.828 18.828C19.656 19.999 17.771 20 14 20H10C6.229 20 4.343 20 3.172 18.828C2.001 17.656 2 15.771 2 12Z"
+                                stroke="black" stroke-width="1.5"/>
+                            <path opacity="0.5" d="M10 16H6M14 16H12.5M2 10H22" stroke="black"
+                                  stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
                         {activeModal === "ticket" && (
                             <div className="absolute right-[-23px] top-8 w-80 bg-white border rounded-md shadow-lg p-4 z-10">
                                 {/* 말풍선 뾰족한 부분 */}
@@ -195,7 +200,7 @@ export default function Headerbar() {
                     </li>
                     {/* ✅ 로그아웃 버튼 (클릭 시 로그아웃 처리) */}
                     <li
-                        className="text-[#252E66] text-sm cursor-pointer"
+                        className="text-black text-md cursor-pointer"
                         onClick={handleLogout} // ✅ 로그아웃 이벤트 적용
                     >
                         로그아웃

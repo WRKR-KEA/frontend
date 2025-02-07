@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { FilterTab_Manager } from "@/components/Filters/filterTab_Manager";
 import { useRouter } from "next/navigation";
 import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
 import { HighlightText } from "@/components/highlightText";
-import PagePagination from "@/components/pagination";
+import { FilterTab_Manager } from "../Filters/filterTab_Manager";
+import api from "@/lib/api/axios";
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -23,6 +23,7 @@ type TicketList_ManagerProps = {
   sortOrder: string;
   totalPages: number;
   onStatusChange: (status: string) => void;
+  onPageChange: (page: number) => void;
 };
 
 export function TicketList_Manager({
@@ -30,8 +31,9 @@ export function TicketList_Manager({
   maxTicketsToShow,
   searchTerm,
   sortOrder,
-  totalPages,    
+  totalPages,
   onStatusChange,
+  onPageChange,
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
@@ -52,29 +54,49 @@ export function TicketList_Manager({
   const [activeTab, setActiveTab] = useState("전체");
   const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
-    onStatusChange(tab = statusMap[tab]);
+    onStatusChange(statusMap[tab]);
   };
-
 
   const handleTicketClick = (ticketId: string) => {
     router.push(`/tickets/${ticketId}`);
   };
 
-  const handlePinClick = (ticketId: string) => {
-    setPinnedTickets((prevPinned) =>
-      prevPinned.includes(ticketId)
-        ? prevPinned.filter((id) => id !== ticketId)
-        : [ticketId, ...prevPinned].slice(0, 10)
-    );
-  };
+  const handlePinClick = async (ticketId: string) => {
+    try {
+      const accessToken = sessionStorage.getItem("accessToken");
+      const response = await api.patch(
+        "/api/manager/tickets/pin",
+        {
+          ticketId: ticketId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+      if (response.data.isSuccess) {
+        setPinnedTickets((prevPinned) => {
+          return prevPinned.includes(ticketId)
+            ? prevPinned.filter((id) => id !== ticketId) // Unpin
+            : [ticketId, ...prevPinned].slice(0, 10); // Pin
+        });
+      } else {
+        console.error("Failed to pin the ticket.");
+      }
+    } catch (err) {
+      console.error("Error while pinning/unpinning the ticket:", err);
+        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
+        setTimeout(() => setErrorMessage(null), 3000); // Hide the message after 3 seconds
+      
+    }
   };
 
   const sortedTickets = [...tickets].sort((a, b) => {
@@ -97,6 +119,11 @@ export function TicketList_Manager({
 
   return (
     <div className="bg-white rounded-md shadow-md">
+      {errorMessage && (
+        <div className="bg-red-500 text-white p-2 rounded-md text-center mb-4">
+          {errorMessage}
+        </div>
+      )}
       <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
@@ -125,9 +152,9 @@ export function TicketList_Manager({
                 }}
               >
                 {ticket.ispinned || pinnedTickets.includes(ticket.id) ? (
-                  <MdPushPin className="text-red-500" size={20} />
+                  <MdPushPin className="text-accent-1" size={20} />
                 ) : (
-                  <MdOutlinePushPin className="text-gray-400" size={20} />
+                  <MdOutlinePushPin className="text-gray-3" size={20} />
                 )}
               </td>
               <td className="px-4 py-2">
@@ -148,16 +175,6 @@ export function TicketList_Manager({
           ))}
         </tbody>
       </table>
-      <div className="flex justify-center items-center mt-4 mb-4">
-      <PagePagination
-        totalItemsCount={tickets.length} 
-        itemsCountPerPage={maxTicketsToShow}
-        pageRangeDisplayed={5}
-        currentPage={currentPage}
-        totalPages={totalPages} 
-        onPageChange={handlePageChange}
-      />
-      </div>
     </div>
   );
 }

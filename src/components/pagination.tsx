@@ -10,8 +10,6 @@ interface PagePaginationProps {
 }
 
 const PagePagination: React.FC<PagePaginationProps> = ({
-  totalItemsCount,
-  itemsCountPerPage,
   pageRangeDisplayed,
   currentPage,
   totalPages,
@@ -36,17 +34,17 @@ const PagePagination: React.FC<PagePaginationProps> = ({
       pages.push(i);
     }
 
-    return pages.map((page) => (
+    return pages.map((pageNumber) => (
       <button
-        key={page}
-        onClick={() => handleClick(page)}
+        key={pageNumber}
+        onClick={() => handleClick(pageNumber)}
         className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
-          currentPage === page
+          currentPage === pageNumber
             ? "bg-[#4F507F] text-white"
             : "text-black hover:bg-[#9192AE]"
         }`}
       >
-        {page}
+        {pageNumber}
       </button>
     ));
   };

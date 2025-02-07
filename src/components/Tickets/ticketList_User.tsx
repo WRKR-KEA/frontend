@@ -32,19 +32,19 @@ export function TicketList_User({
   console.log("받은 티켓 데이터:", tickets);
 
   const statusStyles: Record<string, string> = {
-    COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
-    IN_PROGRESS: "bg-[#CFE3FF] text-[#3E7DD6]",
-    CANCEL: "bg-[#E0E0E0] text-[#767676]",
-    REJECT: "bg-[#F3CDBE] text-[#DE6231]",
-    REQUEST: "bg-[#FFE9B6] text-[#D79804]",
+    COMPLETE: "bg-complete text-complete",
+    IN_PROGRESS: "bg-inProgress text-inProgress",
+    CANCEL: "bg-cancel text-cancel",
+    REJECT: "bg-reject text-reject",
+    REQUEST: "bg-request text-request",
   };
 
   const statusMap: Record<string, string> = {
-    완료: "COMPLETE",
-    진행: "IN_PROGRESS",
-    취소: "CANCEL",
-    반려: "REJECT",
-    요청: "REQUEST",
+    COMPLETE: "COMPLETE",
+    IN_PROGRESS: "IN_PROGRESS",
+    CANCEL: "CANCEL",
+    REJECT: "REJECT",
+    REQUEST: "REQUEST",
   };
 
   const [filterStatus, setFilterStatus] = useState("전체");
@@ -58,9 +58,9 @@ export function TicketList_User({
     setCurrentPage(1);
   };
 
-  const handleTicketClick = (ticketId: string) => {
+  const handleTicketClick = (Id: string) => {
     const currentPath = window.location.pathname;
-    router.push(`${currentPath}/${ticketId}`);
+    router.push(`${currentPath}/${Id}`);
   };
 
   const sortedTickets = [...tickets].sort(
@@ -70,13 +70,14 @@ export function TicketList_User({
   const filteredTickets = sortedTickets.filter((ticket) => {
     const matchesSearchTerm =
       ticket.title.includes(searchTerm) ||
-      ticket.handler.includes(searchTerm) ||
+      ticket.handler?.includes(searchTerm) ||
       ticket.number.includes(searchTerm);
     const matchesStatus =
       filterStatus === "전체" || statusMap[ticket.status] === filterStatus;
     return matchesSearchTerm && matchesStatus;
   });
 
+  const totalPages = Math.ceil(filteredTickets.length / maxTicketsToShow);
   const displayedTickets = filteredTickets.slice(
     (currentPage - 1) * maxTicketsToShow,
     currentPage * maxTicketsToShow
@@ -133,15 +134,16 @@ export function TicketList_User({
           })}
         </tbody>
       </table>
-      <div className="flex justify-center items-center mt-4 mb-4">
+      {/* <div className="flex justify-center items-center mt-4 mb-4">
         <PagePagination
           totalItemsCount={filteredTickets.length}
           itemsCountPerPage={maxTicketsToShow}
           pageRangeDisplayed={5}
           currentPage={currentPage}
+          totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

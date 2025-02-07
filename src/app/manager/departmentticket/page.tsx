@@ -8,7 +8,8 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
-import { fetchManagerDepartmentTicket } from "@/service/manager";
+import { fetchManagerDepartmentTicket } from "@/services/manager";
+import PagePagination from "@/components/pagination";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -18,12 +19,9 @@ export default function DepartmentTicketListPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<any>({
-    startDate: null,
-    endDate: null,
-    key: "selection",
-  });
-  const [status, setStatus] = useState<string | null>(null);
+  const [totalPages, setTotalPages] = useState(1);
+  const [status, setStatus] = useState<string>("");  
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -47,41 +45,45 @@ export default function DepartmentTicketListPage() {
     setDateRange(ranges.selection);
   };
 
+  const [dateRange, setDateRange] = useState<any>({
+    startDate: null,
+    endDate: null,
+    key: "selection",
+  });
+  
   const formattedDateRange = dateRange.startDate
-    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(
-        dateRange.endDate,
-        "yyyy.MM.dd"
-      )}`
+    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
+  
+  const handleStatusChange = (status: string) => {
+    setStatus(status);
+    setCurrentPage(1);  // Reset to page 1 when changing status
+  };
 
-    const handleStatusChange = (newStatus: string | null) => {
-      setStatus(newStatus);
-    };
-    
-    const fetchTickets = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await fetchManagerDepartmentTicket(
-          searchTerm,
-          status,
-          dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null,
-          dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null,
-          currentPage,
-          maxTicketsToShow
-        );
-        setTickets(data?.result?.elements || []);
-        console.log("ticket", tickets);
-      } catch (err) {
-        setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-console.log(tickets);
+  const fetchTickets = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchManagerDepartmentTicket(
+        searchTerm,
+        status,
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined, 
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined, 
+        currentPage,
+        maxTicketsToShow
+      );
+      setTickets(data?.result?.elements || []);
+      console.log("🎫 부서 티켓 조회", data);
+    } catch (err) {
+      setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTickets();
-  }, [searchTerm, dateRange, currentPage, maxTicketsToShow]);
+  }, [searchTerm, dateRange, currentPage, maxTicketsToShow, status]); // status를 dependency array에 추가
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
@@ -89,17 +91,17 @@ console.log(tickets);
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
-        <h2 className="text-md font-semibold">티켓 조회</h2>
+        <h2 className="text-lg font-semibold">티켓 조회</h2>
 
         {/* 검색 컴포넌트 */}
         <div className="flex items-center space-x-2 ml-4">
-          <Search onSearchChange={handleSearchChange} />
+          <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
         </div>
 
         <div className="ml-auto flex items-center relative">
           {/* 캘린더 선택 */}
           <button
-            className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-4 py-2 rounded-md"
+            className="flex items-center text-sm font-medium text-main-2 hover:text-main-1 px-4 py-2 rounded-md"
             onClick={toggleCalendar}
           >
             <span>{formattedDateRange}</span>
@@ -131,7 +133,20 @@ console.log(tickets);
         page={currentPage}
         searchTerm={searchTerm}
         dateRange={dateRange}
+        status={status}  // status 전달
+        onStatusChange={handleStatusChange} // 상태 변경 함수 전달
       />
+
+      <div className="flex justify-center items-center mt-4 mb-4">
+        <PagePagination
+          totalItemsCount={tickets.length}
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }

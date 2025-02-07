@@ -1,6 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
+import { useRouter } from 'next/navigation'; 
+import { format } from 'date-fns';
+import Button from "@/components/Buttons/Button";
+import { fetchMemberRegisterExcelForm, postMemberRegisterExcelFile } from "@/services/admin";
 
 const AdminMemberEnrollPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -15,6 +19,7 @@ const AdminMemberEnrollPage: React.FC = () => {
   });
 
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -47,7 +52,6 @@ const AdminMemberEnrollPage: React.FC = () => {
       profileImage: formData.profileImage || undefined,
     };
     
-
     console.log("보낼 데이터:", payload); // ✅ 실제 보내는 데이터 확인
 
     try {
@@ -86,6 +90,57 @@ const AdminMemberEnrollPage: React.FC = () => {
     }
   };
 
+// 양식 다운로드 핸들러
+const handleDownloadTemplate = async () => {
+  try {
+    const data = await fetchMemberRegisterExcelForm(); // API 호출
+    const url = window.URL.createObjectURL(data);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "회원등록양식.xlsx"; // 다운로드할 파일 이름
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } catch (error) {
+    console.error("양식 다운로드 중 오류 발생:", error);
+    alert("양식 다운로드 중 오류가 발생했습니다.");
+  }
+};
+
+// 회원 정보 업로드 핸들러
+const handleUploadMembers = async (file: File) => {
+  const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+  
+  if (file.size > MAX_FILE_SIZE) {
+    alert("파일 크기가 5MB를 초과할 수 없습니다.");
+    return;
+  }
+
+  const accessToken = sessionStorage.getItem("accessToken");
+
+  if (!accessToken) {
+    alert("로그인이 필요합니다. 다시 로그인해 주세요.");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await postMemberRegisterExcelFile(formData); // API 호출
+    if (response.isSuccess) {
+      alert("회원 정보가 성공적으로 업로드되었습니다.");
+      router.push('/administer/memberlist'); // 회원 목록 페이지로 라우팅
+    } else {
+      alert(`회원 정보 업로드 실패: ${response.message}`);
+    }
+  } catch (error) {
+    console.error("회원 정보 업로드 중 오류 발생:", error);
+    alert("회원 정보 업로드 중 오류가 발생했습니다.");
+  }
+};
+
+
   return (
     <div className="bg-gray-50 flex justify-center p-8">
       <div className="bg-white shadow-md rounded-lg p-12 w-full max-w-4xl">
@@ -93,6 +148,43 @@ const AdminMemberEnrollPage: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-800 mb-8 text-center">
           회원 등록
         </h1>
+
+        {/* 버튼 추가 */}
+        <div className="flex justify-end mb-4">
+          <Button
+            label={
+              <>
+                양식<br />
+                다운로드
+              </>
+            }
+            onClick={handleDownloadTemplate}
+            color={1} // 파란색
+            className="mr-2"
+          />
+          <Button
+            label={
+              <>
+                회원 정보<br />
+                업로드
+              </>
+            }
+            onClick={() => {
+              const fileInput = document.createElement('input');
+              fileInput.type = 'file';
+              fileInput.accept = '.xlsx, .xls'; // 엑셀 파일(.xlsx 및 .xls) 모두 허용
+              fileInput.onchange = (e) => {
+                const target = e.target as HTMLInputElement; // 타입 단언
+                const file = target.files?.[0]; // 파일 선택
+                if (file) {
+                  handleUploadMembers(file);
+                }
+              };
+              fileInput.click(); // 파일 선택 대화상자 열기
+            }}
+            color={3} // 초록색
+          />
+        </div>
 
         {/* 회원 등록 폼 */}
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
@@ -226,3 +318,4 @@ const AdminMemberEnrollPage: React.FC = () => {
 };
 
 export default AdminMemberEnrollPage;
+

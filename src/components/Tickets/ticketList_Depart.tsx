@@ -21,6 +21,8 @@ type TicketList_DepartProps = {
   page: number;
   searchTerm: string;
   dateRange: { startDate: Date | null; endDate: Date | null };
+  onStatusChange: (status: string) => void;
+  status: string;
 };
 
 export function TicketList_Depart({
@@ -29,15 +31,24 @@ export function TicketList_Depart({
   page,
   searchTerm,
   dateRange,
+  onStatusChange,
 }: TicketList_DepartProps) {
   const statusStyles: Record<string, string> = {
-    REQUEST: 'bg-[#FFE9B6] text-[#D79804]',
-    IN_PROGRESS: 'bg-[#CFE3FF] text-[#3E7DD6]',
-    COMPLETE: 'bg-[#D1EEE2] text-[#3A966F]',
-    CANCEL: 'bg-[#E0E0E0] text-[#767676]',
-    REJECT: 'bg-[#F3CDBE] text-[#DE6231]',
+    REQUEST: 'bg-request text-request',
+    IN_PROGRESS: 'bg-inProgress text-inProgress',
+    COMPLETE: 'bg-complete text-complete',
+    CANCEL: 'bg-cancel text-cancel',
+    REJECT: 'bg-reject text-reject',
   };
 
+  const statusMap: Record<string, string> = {
+    COMPLETE: "COMPLETE",
+    IN_PROGRESS: "IN_PROGRESS",
+    CANCEL: "CANCEL",
+    REJECT: "REJECT",
+    REQUEST: "REQUEST",
+  };
+  
   const [currentPage, setCurrentPage] = useState(page);
   const [activeTab, setActiveTab] = useState('전체');
   const router = useRouter();
@@ -53,6 +64,7 @@ export function TicketList_Depart({
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
+    onStatusChange(statusMap[tab]);
   };
 
   const handleTicketClick = (ticketId: string) => {
@@ -65,14 +77,16 @@ export function TicketList_Depart({
       ticket.ticketSerialNumber.includes(searchTerm) ||
       ticket.userNickname.includes(searchTerm) ||
       ticket.managerNickname.includes(searchTerm);
-
+  
     const matchesDateRange =
       !dateRange.startDate ||
       !dateRange.endDate ||
       (new Date(ticket.requestedDate) >= dateRange.startDate &&
         new Date(ticket.requestedDate) <= dateRange.endDate);
-
-    return matchesSearchTerm && matchesDateRange;
+  
+    const matchesStatus = status === "" || ticket.status === status; // Filter by status
+  
+    return matchesSearchTerm && matchesDateRange && matchesStatus; // Apply status filter here
   });
 
   const displayedTickets = filteredTickets.slice(
@@ -121,7 +135,7 @@ export function TicketList_Depart({
           ))}
         </tbody>
       </table>
-      <div className="flex justify-center items-center mt-4 mb-4">
+      {/* <div className="flex justify-center items-center mt-4 mb-4">
       <PagePagination
           totalItemsCount={filteredTickets.length}
           itemsCountPerPage={maxTicketsToShow}
@@ -129,7 +143,7 @@ export function TicketList_Depart({
           currentPage={currentPage} // 현재 페이지를 전달
           onPageChange={handlePageChange}
         />
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,24 +1,27 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { fetchMyPage } from "@/lib/api/userInfo";
-import { updateMyPage } from "@/lib/api/userInfo"; // API 호출 함수 임포트
+import { fetchMyPage, updateMyPage } from "@/service/user";
 import ProfileSave from "@/components/Profiles/profileSave";
 import ProfileEdit from "@/components/Profiles/profileEdit";
+import useUserStore from "@/stores/userStore"; 
 
 export default function UserProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // 편집 모드 상태
   const [profile, setProfile] = useState<any>(null); // 상태로 프로필 데이터 저장
+  const user = useUserStore((state) => state.user);
+  console.log("현재 로그인된 유저 정보:", user);
 
   useEffect(() => {
-    // 컴포넌트가 마운트될 때 API 호출
-    const memberId = "user.cyw";
+    const memberId = user?.name;
+    if (!memberId) return; 
+  
     fetchMyPage(memberId)
       .then((data) => {
         setProfile(data.result);
-        console.log(data.result);
+        console.log("data", data.result);
       })
       .catch((error) => {
         console.error(error.message);

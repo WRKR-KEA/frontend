@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import { useParams, useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
@@ -11,15 +11,28 @@ import TicketChange from "@/components/Modals/ticketChange";
 import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { ticketDummyData } from "@/data/ticketDummyData";
+import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
+import {fetchComments} from "@/services/user";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
-  const [tickets] = useState(ticketDummyData); // 더미 데이터
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); // 선택된 티켓
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
+  const [logs, setLogs] = useState([]);
+
+  const statusMapping = {
+    REQUEST: "작업요청",
+    CANCEL: "작업취소",
+    IN_PROGRESS: "작업진행",
+    REJECT: "반려",
+    COMPLETE: "작업완료"
+  };
+
+
+  const param = useParams();
 
   const logs = [
     { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
@@ -53,13 +66,99 @@ export default function ManagericketDetailPage() {
     작업취소: "cancelled", // '작업취소' -> 'cancelled'
   };
 
+  useEffect(() => {
+    const id = window.location.pathname.split("/").pop();
+    if (id) {
+      getTicketDetail(id).then(data => {
+        console.log('ticket', data);
+        setSelectedTicket(data);
+      })
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedTicket?.status == "작업요청" || selectedTicket?.status == "취소") return;
+    getComments(selectedTicket).then(data => {
+      console.log('comments:', data)
+      setLogs(data)
+    })
+  }, [selectedTicket])
+
+  const getComments = async (ticket) => {
+    try {
+      const response = await fetchComments(ticket.id);
+      console.log("response:", response)
+      return response.result.comments
+      .map(comment => {
+        if (comment.type === "SYSTEM") {
+          return {
+            log: comment.content
+          }
+        } else {
+          return {
+            message: comment.content,
+            role: comment.type
+          }
+        }
+      })
+    } catch (err) {
+      console.error(err)
+      return []
+    }
+  }
+
+  const getTicketDetail = async (ticketId) => {
+    const response = await fetchManagerTicket(ticketId);
+    console.log("response:", response);
+    const ticket = response.result;
+    return {
+      id: ticket.ticketId,
+      number: "?????",
+      status: statusMapping[ticket.status],
+      type: ticket.category,
+      title: ticket.title,
+      content: ticket.content,
+      requester: ticket.userNickname,
+      handler: ticket.managerNickname,
+      requestDate: ticket.createdAt,
+      acceptDate: ticket.startedAt == null ? "―" : ticket.startedAt,
+      updateDate: ticket.updatedAt == null ? "―" : ticket.updatedAt,
+      completeDate: ticket.completedAt == null ? "―" : ticket.completedAt,
+    }
+  }
+
   const handleCancelTicket = () => {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmCancel = () => {
-    console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가
-    setIsModalOpen(false); // 모달 닫기
+  const confirmCompleteTicket = async () => {
+    if (!param) return;
+
+    try {
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketComplete(param.id);
+      console.log("완료 성공:", result);
+      // alert("티켓이 완료되었습니다.");
+      closeCompleteTicketModal();
+    } catch (error) {
+      console.error("티켓 완료 중 오류 발생:", error);
+      //alert("티켓 완료 중 문제가 발생했습니다.");
+    }
+  };
+
+  const confirmAbortTicket = async () => {
+    if (!param) return;
+
+    try {
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketReject(param.id);
+      console.log("작업 반려 성공:", result);
+      // alert("작업이 반려되었습니다.");
+      closeAbortTicketModal();
+    } catch (error) {
+      console.error("작업 반려 중 오류 발생:", error);
+      //alert("작업 반려 중 문제가 발생했습니다.");
+    }
   };
 
   const closeModal = () => {
@@ -71,9 +170,13 @@ export default function ManagericketDetailPage() {
   }
 
   const handleCompleteTicket = () => {
-    setIsCompleteTicketOpen(true);}; // 작업 완료 모달 열기
+    setIsCompleteTicketOpen(true); // 작업 완료 모달 열기
+  }; 
+
   const handleAbortTicket = () => {
-    setIsAbortTicketOpen(true); };
+    setIsAbortTicketOpen(true); 
+  };
+
   const closeAbortTicketModal = () => {
     setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
   };
@@ -91,7 +194,7 @@ export default function ManagericketDetailPage() {
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "in-progress" 상태일 때만 보이도록 조건 추가 */}
-        {statusMap[selectedTicket.status] === "in-progress" && (
+        {statusMap[selectedTicket.status] === "new" && (
           <div className="flex space-x-2 mt-2">
             <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
             <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
@@ -111,7 +214,7 @@ export default function ManagericketDetailPage() {
 
        {/* 작업 반려 모달 */}
        {isAbortTicketOpen && (
-          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={() => console.log("작업이 반려되었습니다.")} />
+          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={confirmAbortTicket} />
       )}
 
       {/* 담당자 변경 모달 */}
@@ -121,7 +224,7 @@ export default function ManagericketDetailPage() {
 
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (
-        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={() => console.log("작업이 완료되었습니다.")} />
+        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
       )}
     </div>
   );

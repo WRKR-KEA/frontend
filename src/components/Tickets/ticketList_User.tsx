@@ -5,20 +5,22 @@ import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
 import { HighlightText } from "@/components/highlightText";
 import PagePagination from "@/components/pagination";
 
+type Ticket = {
+  id: string;
+  number: string;
+  status: string;
+  title: string;
+  requester: string;
+  requestDate: string;
+  acceptDate: string | null;
+  updateDate: string | null;
+  completeDate: string | null;
+  handler: string;
+  ispinned: boolean;
+};
+
 type TicketList_UserProps = {
-  tickets: Array<{
-    id: string;
-    number: string;
-    status: string;
-    title: string;
-    requester: string;
-    requestDate: string;
-    acceptDate: string | null;
-    updateDate: string | null;
-    completeDate: string | null;
-    handler: string;
-    ispinned: boolean;
-  }>;
+  tickets: Ticket[];
   maxTicketsToShow: number;
   searchTerm: string;
   dateRange: { startDate: Date | null; endDate: Date | null };
@@ -30,12 +32,13 @@ export function TicketList_User({
   searchTerm,
   dateRange,
 }: TicketList_UserProps) {
+  console.log("받은 티켓 데이터:", tickets);
   const statusStyles: Record<string, string> = {
-    작업완료: "bg-[#D1EEE2] text-[#3A966F]",
-    작업진행: "bg-[#CFE3FF] text-[#3E7DD6]",
-    작업취소: "bg-[#E0E0E0] text-[#767676]",
+    완료: "bg-[#D1EEE2] text-[#3A966F]",
+    진행: "bg-[#CFE3FF] text-[#3E7DD6]",
+    취소: "bg-[#E0E0E0] text-[#767676]",
     반려: "bg-[#F3CDBE] text-[#DE6231]",
-    작업요청: "bg-[#FFE9B6] text-[#D79804]",
+    요청: "bg-[#FFE9B6] text-[#D79804]",
   };
 
   const [filterStatus, setFilterStatus] = useState("전체");

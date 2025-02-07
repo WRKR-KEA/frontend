@@ -52,20 +52,20 @@ const AdminMemberEnrollPage: React.FC = () => {
       profileImage: formData.profileImage || undefined,
     };
     
-    console.log("보낼 데이터:", payload);
+    console.log("보낼 데이터:", payload); // ✅ 실제 보내는 데이터 확인
 
     try {
       const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
+          Authorization: `Bearer ${accessToken}`, // ✅ accessToken 추가
         },
         body: JSON.stringify(payload),
       });
 
       const data = await response.json();
-      console.log("서버 응답:", data);
+      console.log("서버 응답:", data); // ✅ 서버 응답 확인
 
       if (response.ok) {
         alert("회원이 성공적으로 등록되었습니다.");

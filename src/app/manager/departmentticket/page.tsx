@@ -18,12 +18,12 @@ export default function DepartmentTicketListPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<any>({
-    startDate: null,
-    endDate: null,
-    key: "selection",
-  });
-  const [status, setStatus] = useState<string | null>(null);
+
+  const [status, setStatus] = useState<string>("");  
+
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus);  
+  };
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -47,37 +47,38 @@ export default function DepartmentTicketListPage() {
     setDateRange(ranges.selection);
   };
 
+  const [dateRange, setDateRange] = useState<any>({
+    startDate: null,
+    endDate: null,
+    key: "selection",
+  });
+  
   const formattedDateRange = dateRange.startDate
-    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(
-        dateRange.endDate,
-        "yyyy.MM.dd"
-      )}`
+    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
-
-    const handleStatusChange = (newStatus: string | null) => {
-      setStatus(newStatus);
-    };
-    
-    const fetchTickets = async () => {
-      setIsLoading(true);
-      setError(null);
-      try {
-        const data = await fetchManagerDepartmentTicket(
-          searchTerm,
-          status,
-          dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null,
-          dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null,
-          currentPage,
-          maxTicketsToShow
-        );
-        setTickets(data?.result?.elements || []);
-        console.log("ticket", tickets);
-      } catch (err) {
-        setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  
+  // dateRange의 startDate와 endDate가 null일 수 있으므로, 이를 처리하는 방식 변경
+  const fetchTickets = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchManagerDepartmentTicket(
+        searchTerm,
+        status,
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined, // null을 undefined로 변경
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined, // null을 undefined로 변경
+        currentPage,
+        maxTicketsToShow
+      );
+      setTickets(data?.result?.elements || []);
+      console.log("ticket", data);
+    } catch (err) {
+      setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
 console.log(tickets);
   useEffect(() => {
     fetchTickets();

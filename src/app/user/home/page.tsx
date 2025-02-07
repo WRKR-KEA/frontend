@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
-import useUserStore from "@/stores/userStore";
 import api from "@/lib/api/axios";
 
 type Ticket = {
@@ -37,7 +36,6 @@ export default function UserHomePage() {
   const maxTicketsToShow = 10;
   const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("REQUEST"); 
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null); // 선택된 티켓 상태
-  const user = useUserStore((state) => state.user);
   const [tickets, setRequestTickets] = useState<Ticket[]>([]); // 요청 티켓
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,7 +80,7 @@ const fetchTickets = async () => {
   useEffect(() => {
     console.log("티켓 데이터:", tickets);
     if (tickets.length > 0 && selectedTicket === null) {
-      const initialStatus = statusMap[tickets[0].status] || "new";
+      const initialStatus = statusMap[tickets[0].status] || "REQUEST";
       setTicketStatus(initialStatus);
       setSelectedTicket(tickets[0]);
       console.log("초기 티켓의 상태:", initialStatus);
@@ -90,7 +88,7 @@ const fetchTickets = async () => {
   }, [tickets, selectedTicket]);
 
   const handleTicketClick = (ticket: Ticket) => {
-    const newStatus = statusMap[ticket.status] || "new";
+    const newStatus = statusMap[ticket.status] || "REQUEST";
     setTicketStatus(newStatus);
     setSelectedTicket(ticket);
     console.log("클릭한 티켓의 상태:", newStatus);

@@ -10,7 +10,6 @@ import { TicketCancel } from "@/components/Modals/ticketCancel";
 import TicketChange from "@/components/Modals/ticketChange";
 import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
-import { ticketDummyData } from "@/data/ticketDummyData";
 import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import {fetchComments} from "@/services/user";
 

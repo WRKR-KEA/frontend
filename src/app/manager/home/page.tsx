@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-// import { TicketList } from "@/components/Tickets/ticketList";
 import useUserStore from "@/stores/userStore";
 import api from "@/lib/api/axios";
 import { TicketList } from "@/components/Tickets/ticektList_Manager";
@@ -35,7 +34,6 @@ const statusMap: Record<string, TicketStatusType> = {
 export default function ManagerHomePage() {
   const maxTicketsToShow = 10;
   const user = useUserStore((state) => state.user);
-  console.log(user);
 
   // 유저 티켓 목록 요청
   const [pinTickets, setPinTickets] = useState<Ticket[]>([]); // 핀 티켓
@@ -48,33 +46,38 @@ export default function ManagerHomePage() {
     setIsLoading(true);
     try {
       const { data } = await api.get("/api/manager/tickets/main");
-      console.log(data);
-      const pinTicketList: Ticket[] = data.result.pinTickets.map((ticket: any) => ({
-        id: ticket.ticketId,
-        number: ticket.ticketSerialNumber,
-        status: ticket.status,
-        title: ticket.title,
-        requester: ticket.userNickname,
-        requestDate: ticket.requestedDate,
-        updateDate: ticket.updatedDate,
-        handler: ticket.managerNickname,
-      }));
 
-      const requestTicketList: Ticket[] = data.result.requestTickets.map((ticket: any) => ({
-        id: ticket.ticketId,
-        number: ticket.ticketSerialNumber,
-        status: ticket.status,
-        title: ticket.title,
-        requester: ticket.userNickname,
-        requestDate: ticket.requestedDate,
-        updateDate: ticket.updatedDate,
-        handler: ticket.managerNickname,
-      }));
+      if (data && data.result) {
+        const pinTicketList: Ticket[] = data.result.pinTickets.map((ticket: any) => ({
+          id: ticket.ticketId,
+          number: ticket.ticketSerialNumber,
+          status: ticket.status,
+          title: ticket.title,
+          requester: ticket.userNickname,
+          requestDate: ticket.requestedDate,
+          updateDate: ticket.updatedDate,
+          handler: ticket.managerNickname,
+        }));
 
-      setPinTickets(pinTicketList);
-      setRequestTickets(requestTicketList);
+        const requestTicketList: Ticket[] = data.result.requestTickets.map((ticket: any) => ({
+          id: ticket.ticketId,
+          number: ticket.ticketSerialNumber,
+          status: ticket.status,
+          title: ticket.title,
+          requester: ticket.userNickname,
+          requestDate: ticket.requestedDate,
+          updateDate: ticket.updatedDate,
+          handler: ticket.managerNickname,
+        }));
+
+        setPinTickets(pinTicketList);
+        setRequestTickets(requestTicketList);
+      } else {
+        throw new Error("Invalid response format");
+      }
 
     } catch (error) {
+      console.error("API 요청 오류:", error);
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
@@ -83,7 +86,7 @@ export default function ManagerHomePage() {
 
   useEffect(() => {
     fetchTickets();
-  }, []);
+  }, []); // 빈 배열로 설정해서 컴포넌트가 처음 렌더링될 때만 실행되도록 함.
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;

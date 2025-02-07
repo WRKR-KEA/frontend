@@ -40,11 +40,11 @@ export function TicketList_User({
   };
 
   const statusMap: Record<string, string> = {
-    완료: "COMPLETE",
-    진행: "IN_PROGRESS",
-    취소: "CANCEL",
-    반려: "REJECT",
-    요청: "REQUEST",
+    COMPLETE: "COMPLETE",
+    IN_PROGRESS: "IN_PROGRESS",
+    CANCEL: "CANCEL",
+    REJECT: "REJECT",
+    REQEUST: "REQUEST",
   };
 
   const [filterStatus, setFilterStatus] = useState("전체");
@@ -58,9 +58,9 @@ export function TicketList_User({
     setCurrentPage(1);
   };
 
-  const handleTicketClick = (ticketId: string) => {
+  const handleTicketClick = (Id: string) => {
     const currentPath = window.location.pathname;
-    router.push(`${currentPath}/${ticketId}`);
+    router.push(`${currentPath}/${Id}`);
   };
 
   const sortedTickets = [...tickets].sort(

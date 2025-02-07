@@ -37,30 +37,18 @@ export async function fetchManagerDepartmentTicket(
   startDate?: string,
   endDate?: string,
   page?: number,
-  size?: number,
-
+  size?: number
 ) {
-  const params = new URLSearchParams();
-
-  if(query) params.append('query', query.toString());
-  if(status) params.append('status', status.toString());
-  if(startDate) params.append('startDate', startDate.toString());
-  if(endDate) params.append('endDate', endDate.toString());
-  if(page) params.append('page', page.toString());
-  if(size) params.append('size', size.toString());
-  if(sortType) params.append('sortType', sortType.toString());
-
   try {
     const { data } = await api.get(
-
-      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`,
-
-    );
+     `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`
+   );
     return data;
   } catch (error) {
-    console.error('부서 전체 티켓 조회 및 검색에 실패했습니다. :', error);
+    console.error("부서 전체 티켓 조회 및 검색에 실패했습니다. :", error);
   }
 }
+
 
 // (GET) 기간별 & 티켓 상태별 티켓 개수 조회
 export async function fetchManagerStatistics(

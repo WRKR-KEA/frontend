@@ -68,7 +68,7 @@ export default function UserTicketListPage() {
         </div>
 
         <div className="ml-auto">
-          <FilterNum onSelectCount={handleSelectCount} />
+          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
 

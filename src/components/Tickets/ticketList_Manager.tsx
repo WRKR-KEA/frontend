@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FilterTab_Manager } from "@/components/Filters/filterTab_Manager";
+import { FilterTab } from "@/components/Filters/filterTab";
 import { useRouter } from "next/navigation";
 import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
 import { HighlightText } from "@/components/highlightText";
@@ -97,7 +97,7 @@ export function TicketList_Manager({
 
   return (
     <div className="bg-white rounded-md shadow-md">
-      <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
+      <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-100 text-left">

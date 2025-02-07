@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import ChangeMemberList from "@/components/changeMemberList";
 import Button from "@/components/Buttons/Button";
 import axios from "axios";
+import AlertModal from "./AlertModal";
+import Modal from "./Modal";
 
 // 담당자 정보를 가져오는 API 요청 함수
 const fetchManagers = async () => {
@@ -51,6 +53,24 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
   const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null); // 선택된 담당자 ID
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
 
   useEffect(() => {
     // 컴포넌트가 마운트되면 API를 호출하여 데이터 가져오기
@@ -74,13 +94,13 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
 
   const handleChange = async () => {
     if (!selectedManagerId) {
-      alert("담당자를 선택해주세요.");
+      showModal("담당자를 선택해주세요.");
       return;
     }
 
     try {
       await changeTicketManager(ticketId, selectedManagerId);
-      alert("변경되었습니다!"); // 변경 동작을 구현
+      showModal("변경되었습니다!"); // 변경 동작을 구현
       closeModal();
     } catch (err: any) {
       setError(err.message);
@@ -111,6 +131,15 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
             <Button label="변경하기" onClick={handleChange} color={1} />
           </div>
         </div>
+        {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
       </div>
     )
   );

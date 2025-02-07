@@ -2,11 +2,35 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api/axios"; 
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function ReissuePasswordPage() {
   const [nickname, setNickname] = useState("");
   const [error, setError] = useState("");
   const router = useRouter();
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},    
+  });
+
+  const showModal = (title: string, btnText='닫기', redirect = false, redirectPath = "") => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+        if (redirect && redirectPath) {
+          router.push(redirectPath);
+        }
+      },
+      redirect,
+      redirectPath,
+    });
+  };
 
   // 닉네임 입력 처리 및 유효성 검사
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -26,7 +50,7 @@ export default function ReissuePasswordPage() {
 
     // 아이디 유효성 검사
     if (error || nickname === "") {
-      alert("유효한 아이디를 입력하세요.");
+      showModal("유효한 아이디를 입력하세요.");
       return;
     }
 
@@ -36,14 +60,13 @@ export default function ReissuePasswordPage() {
       });
 
       if (response.data.isSuccess) {
-        alert("비밀번호 재발급 성공!");
-        router.push("/login");
+        showModal('비밀번호 재발급 성공!', '로그인하기',true,'/login')
       } else {
-        alert(response.data.message || "비밀번호 재발급에 실패했습니다.");
+        showModal(response.data.message || "비밀번호 재발급에 실패했습니다.");
       }
     } catch (err) {
       console.error("비밀번호 재발급 에러:", err);
-      alert("서버와 통신 중 오류가 발생했습니다.");
+      showModal("서버와 통신 중 오류가 발생했습니다.");
     }
   };
 
@@ -95,6 +118,15 @@ export default function ReissuePasswordPage() {
           </button>
         </form>
       </div>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

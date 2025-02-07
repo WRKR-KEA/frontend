@@ -38,7 +38,7 @@ const CategoryManagement: React.FC = () => {
         onClose:()=>{},
     })
 
-    const showModal =(title:string, btnText='닫기'=> {
+    const showModal =(title:string, btnText='닫기')=> {
         setModalState({
             isOpen: true,
             title,

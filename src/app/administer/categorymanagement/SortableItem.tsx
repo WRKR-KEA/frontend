@@ -12,6 +12,7 @@ interface SortableItemProps {
   onEdit: (newName: string) => void;
   onDelete: () => void;
   refetch: () => void;
+  refetchList: () => void;
 }
 
 const SortableItem: React.FC<SortableItemProps> = ({
@@ -20,6 +21,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
   onEdit,
   onDelete,
   refetch,
+  refetchList,
 }) => {
   const {
     attributes,
@@ -152,13 +154,14 @@ const SortableItem: React.FC<SortableItemProps> = ({
             title={modalTitle}
             onClose={handleCloseModal}
             onSave={handleCloseModal}
+            refetchList={refetchList}
           />
         )}
 
         <div className="flex items-center justify-between p-4">
           <div className="flex items-center space-x-4">
-            <div {...attributes} {...listeners} className="cursor-grab">
-              <img src="/hamburg.png" alt="drag" className="w-5" />
+            <div {...attributes} {...listeners} className="">
+              <img src="/hamburg.png" alt="drag" className="w-5 cursor-grab" />
             </div>
             {isEditing ? (
               <input

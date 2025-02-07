@@ -125,9 +125,9 @@ export default function UserTicketDetailPage() {
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
-      <div className="flex justify-between items-center">
-        <h2 className="text-md font-semibold">티켓 상세 정보</h2>
-        <div className="flex space-x-2 mt-2">
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+        <div className="flex space-x-2">
           {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
           {statusMap[selectedTicket.status] === "new" && (
             <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
@@ -140,7 +140,7 @@ export default function UserTicketDetailPage() {
         <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
       </div>
 
-      <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
+      <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
       <TicketComment logs={logs} />
 
       {/* TicketCancel 컴포넌트 */}

@@ -5,12 +5,12 @@ import { FaSearch } from "react-icons/fa";
 import { useMemberListQuery } from "@/hooks/useMemberList";
 import PagePagination from "@/components/pagination";
 import Link from "next/link";
-<<<<<<< HEAD
+
 import UserProfilePage from "../../../../public/userProfileImage.png";
-=======
+
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
->>>>>>> 62ad799ec0fa809f4160ca7af13834ccb255064b
+
 
 export default function AdminMemberListPage() {
   const [activeTab, setActiveTab] = useState("전체"); // 역할 선택 (탭)
@@ -217,17 +217,10 @@ export default function AdminMemberListPage() {
                 </tr>
               ))}
             </tbody>
-<<<<<<< HEAD
 
-
-          </table>
-        </div>
-
-=======
           </table>
 
         
->>>>>>> 62ad799ec0fa809f4160ca7af13834ccb255064b
         {/* ✅ 페이지네이션 추가 */}
         <div className="flex justify-center mt-4">
           <PagePagination
@@ -236,6 +229,7 @@ export default function AdminMemberListPage() {
             onPageChange={handlePageChange}
             pageRangeDisplayed={5}
           />
+
         </div>
       </div>
       {modalState.isOpen && (

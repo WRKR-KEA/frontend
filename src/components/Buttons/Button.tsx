@@ -1,7 +1,7 @@
 import React from 'react';
 
 type ButtonProps = {
-  label: string;
+  label: React.ReactNode; // JSX 요소를 허용하도록 변경(문자열뿐만 아니라 다른 React 요소도 지원)
   onClick: () => void;
   color: 1 | 2 | 3 | 4 | 5; // 색상 옵션: 1=파란색, 2=빨간색, 3=초록색, 4=회색, 5=노란색
   className?: string;

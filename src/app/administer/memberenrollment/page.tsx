@@ -42,7 +42,7 @@ const AdminMemberEnrollPage: React.FC = () => {
     }
 
     const payload = {
-      email: formData.email.trim() || undefined,
+      email: formData.email.trim() || undefined, // 공백 제거
       name: formData.name.trim() || undefined,
       nickname: formData.nickname.trim() || undefined,
       department: formData.department.trim() || undefined,
@@ -69,7 +69,7 @@ const AdminMemberEnrollPage: React.FC = () => {
 
       if (response.ok) {
         alert("회원이 성공적으로 등록되었습니다.");
-        setFormData({
+        setFormData({ // 입력 폼 초기화
           email: "",
           name: "",
           nickname: "",
@@ -145,13 +145,23 @@ const handleUploadMembers = async (file: File) => {
         {/* 버튼 추가 */}
         <div className="flex justify-end mb-4">
           <Button
-            label="양식 다운로드"
+            label={
+              <>
+                양식<br />
+                다운로드
+              </>
+            }
             onClick={handleDownloadTemplate}
             color={1} // 파란색
             className="mr-2"
           />
           <Button
-            label="회원 정보 업로드"
+            label={
+              <>
+                회원 정보<br />
+                업로드
+              </>
+            }
             onClick={() => {
               const fileInput = document.createElement('input');
               fileInput.type = 'file';

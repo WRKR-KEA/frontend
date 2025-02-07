@@ -37,9 +37,9 @@ export async function fetchGuide(cryptoCategoryId: string) {
 }
 
 // (GET) 사용자 마이페이지 조회API
-export async function fetchMyPage(memberId: string) {
+export async function fetchMyPage() {
   try {
-    const { data } = await api.get(`/api/user/my-page/${memberId}`);
+    const { data } = await api.get(`/api/user/my-page`);
     return data;
   } catch (error: any) {
     console.error("Error Response:", error.response?.data || error.message);
@@ -52,12 +52,11 @@ export async function fetchMyPage(memberId: string) {
 
 // (PATCH) 사용자 마이페이지 정보 수정 API
 export async function updateMyPage(
-  memberId: string,
   updateData: { position?: string; phone?: string }
 ) {
   try {
     const { data } = await api.patch(
-      `/api/user/my-page/${memberId}`,
+      `/api/user/my-page`,
       updateData
     );
     return data;

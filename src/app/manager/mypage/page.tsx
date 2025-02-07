@@ -4,21 +4,15 @@ import { useEffect, useState } from "react";
 import { fetchMyPage, updateMyPage } from "@/service/user";
 import ProfileSave from "@/components/Profiles/profileSave";
 import ProfileManagerEdit from "@/components/Profiles/profileManagerEdit";
-import useUserStore from "@/stores/userStore"; 
 
 export default function ManagerProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // 편집 모드 상태
   const [profile, setProfile] = useState<any>(null); // 상태로 프로필 데이터 저장
-  const user = useUserStore((state) => state.user);
-  console.log("현재 로그인된 유저 정보:", user);
 
   useEffect(() => {
-    const memberId = user?.name;
-    if (!memberId) return; 
-  
-    fetchMyPage(memberId)
+    fetchMyPage()
       .then((data) => {
         setProfile(data.result);
         console.log("data", data.result);
@@ -48,7 +42,7 @@ export default function ManagerProfilePage() {
       };
 
       try {
-        await updateMyPage(profile.memberId, updateData); 
+        await updateMyPage(updateData); 
         alert("프로필이 저장되었습니다."); // 성공 메시지
         console.log(updateData);
         setIsEditing(false); // 편집 모드 종료
@@ -150,7 +144,7 @@ export default function ManagerProfilePage() {
 
         {/* 프로필 정보 */}
         {isEditing ? (
-          <ProfileManagerEdit profile={profile} />
+          <ProfileManagerEdit profile={profile} setProfile={setProfile}/>
         ) : (
           <ProfileSave profile={profile} />
         )}

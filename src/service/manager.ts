@@ -3,14 +3,13 @@ import api from "../lib/api/axios";
 export async function fetchManagerTicketList(
   page?: number,
   size?: number,
-  sort?: string,
   status?: string,
   sortType?: string,
   query?: string
 ) {
   try {
     const { data } = await api.get(
-      `/api/manager/tickets?page=${page}&size=${size}&sort=${sort}&status=${status}&sortType=${sortType}&query=${query}`
+      `/api/manager/tickets?page=${page}&size=${size}&status=${status}&sortType=${sortType}&query=${query}`
     );
     return data;
   } catch (error) {
@@ -31,15 +30,23 @@ export async function fetchManagerTicket(ticketId: string) {
 // (GET) 부서 전체 티켓 조회 및 검색
 export async function fetchManagerDepartmentTicket(
   query?: string,
-  status?: string,
-  startDate?: string,
-  endDate?: string,
+  status?: string | null,
+  startDate?: string | null,
+  endDate?: string | null,
   page?: number,
-  size?: number
+  size?: number,
+  sortType?: string,
 ) {
   try {
+    const accessToken = sessionStorage.getItem("accessToken");
     const { data } = await api.get(
-      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`
+      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}&sortType=${sortType}`,
+      {
+        headers: {
+          Accept: "application/json;charset=UTF-8",
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
     );
     return data;
   } catch (error) {

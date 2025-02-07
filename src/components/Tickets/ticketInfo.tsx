@@ -2,23 +2,24 @@ import React from "react";
 
 interface TicketInfoProps {
   ticket: {
-    id: string;
-    number: string;
-    status: string;
-    type: string;
-    title: string;
-    content: string;
-    requester: string;
-    requestDate: string;
-    acceptDate: string | null;
-    updateDate: string | null;
-    completeDate: string | null;
-    handler: string;
+    id: string,
+    number: string,
+    status: string,
+    title: string,
+    requester: string,
+    handler: string,
+    requestDate: string,
+    updateDate: string | null,
+    ticketTimeInfo: {
+      createdAt: string,
+      updatedAt: string | null,
+      startedAt: string | null,
+      endedAt: string | null
+    }
   }
 }
 
 export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
-  // If ticket is undefined, display a loading state or message
   if (!ticket) {
     console.log(ticket);
     return <div>Loading...</div>;
@@ -37,9 +38,9 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
         {/* 두 번째 열 */}
         <div className="space-y-4 text-left">
           <div>생성 일시: {ticket.requestDate}</div>
-          <div>승인 일시: {ticket.acceptDate}</div>
+          <div>승인 일시: {ticket.ticketTimeInfo.startedAt}</div>
           <div>수정 일시: {ticket.updateDate}</div>
-          <div>완료 일시: {ticket.completeDate}</div>
+          <div>완료 일시: {ticket.ticketTimeInfo.endedAt}</div>
         </div>
       </div>
     </div>

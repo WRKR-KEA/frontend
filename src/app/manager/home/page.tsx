@@ -67,7 +67,7 @@ export default function ManagerHomePage() {
         requester: ticket.userNickname,
         requestDate: ticket.requestedDate,
         updateDate: ticket.updatedDate,
-        handler: user?.name,
+        handler: ticket.managerNickname,
       }));
 
       setPinTickets(pinTicketList);

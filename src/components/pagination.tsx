@@ -4,6 +4,7 @@ interface PagePaginationProps {
   totalItemsCount: number;
   itemsCountPerPage: number;
   pageRangeDisplayed: number;
+  currentPage: number; // currentPage prop 추가
   onPageChange: (pageNumber: number) => void;
 }
 
@@ -11,13 +12,12 @@ const PagePagination: React.FC<PagePaginationProps> = ({
   totalItemsCount,
   itemsCountPerPage,
   pageRangeDisplayed,
+  currentPage, // currentPage 사용
   onPageChange,
 }) => {
   const totalPages = Math.ceil(totalItemsCount / itemsCountPerPage);
-  const [currentPage, setCurrentPage] = React.useState(1);
 
   const handleClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
     onPageChange(pageNumber);
   };
 

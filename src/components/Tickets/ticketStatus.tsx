@@ -3,13 +3,13 @@ import { FaCheck, FaExclamationTriangle } from 'react-icons/fa';
 export function TicketStatus({
   status,
 }: {
-  status: 'new' | 'rejected' | 'in-progress' | 'completed' | 'cancelled';
+  status: 'REQUEST' | 'REJECT' | 'IN_PROGRESS' | 'COMPLETE' | 'CANCEL';
 }) {
-  const isRejected = status === 'rejected';
-  const isInProgress = status === 'in-progress';
-  const isCompleted = status === 'completed';
-  const isNew = status === 'new';
-  const isCancelled = status === 'cancelled';
+  const isRejected = status === 'REJECT';
+  const isInProgress = status === 'IN_PROGRESS';
+  const isCompleted = status === 'COMPLETE';
+  const isNew = status === 'REQUEST';
+  const isCancelled = status === 'CANCEL';
 
   return (
     <div className={`bg-white p-4 rounded-md shadow-md flex-1 ${isRejected ? 'bg-opacity-50' : ''}`}>

@@ -5,48 +5,79 @@ import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
 import { Search_manager } from "@/components/search_manager";
-import { fetchManagerTicketList } from "@/service/manager"; // Make sure this is correctly imported
+import api from "@/lib/api/axios";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
-  const [dateRange, setDateRange] = useState({
-    startDate: null,
-    endDate: null,
-    key: "selection",
-  });
+  const [sortOrder, setSortOrder] = useState("NEWEST");
+  const [currentPage, setCurrentPage] = useState(1);
   const [tickets, setTickets] = useState([]);
-  const [sortOrder, setSortOrder] = useState("우선순위 순");
+  const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
+    setCurrentPage(1);
   };
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
+    setCurrentPage(1);
   };
 
   const handleSelectOrder = (order: string) => {
     setSortOrder(order);
+    setCurrentPage(1);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
   };
 
   const fetchTickets = async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const data = await fetchManagerTicketList(
-        1, // Page number (you can adjust this for pagination)
-        20, // Number of tickets per page
-        "createdAt", // Sort by date
-        "REQUEST", // Or any other status you want to filter by
-        "NEWEST", // Sort type (you can adjust this to "OLDEST" or other types)
-        searchTerm // Query for search term
+      const accessToken = sessionStorage.getItem("accessToken");
+      const response = await api.get(
+        `/api/manager/tickets?page=${currentPage}&size=${maxTicketsToShow}&sortType=${sortOrder}&status=IN_PROGRESS&query=${searchTerm}`,
+        {
+          headers: {
+            Accept: "application/json;charset=UTF-8",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
       );
-      console.log("data",data?.result?.requestTickets);
-      setTickets(data?.result?.requestTickets || []); // Set tickets from the response
+  
+      console.log("API 응답 데이터:", response); // 전체 응답 로깅
+      console.log("응답 데이터 바디:", response.data); // 데이터 바디만 로깅
+  
+      const data = response.data;
+  
+      if (data.isSuccess) {
+        const formattedTickets = data.result.elements.map((ticket: any) => ({
+          id: ticket.id,
+          number: ticket.serialNumber,
+          status: ticket.status,
+          title: ticket.title,
+          requester: ticket.requesterName,
+          requestDate: ticket.createdAt,
+          updateDate: ticket.updatedAt,
+          handler: "",
+          ispinned: ticket.isPinned,
+        }));
+  
+        console.log("포맷된 티켓 목록:", formattedTickets); // 변환된 티켓 정보 로깅
+  
+        setTickets(formattedTickets);
+        setTotalPages(data.result.totalPages);
+      } else {
+        throw new Error(data.message);
+      }
     } catch (err) {
+      console.error("API 요청 오류:", err); // 에러 메시지 출력
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
@@ -54,8 +85,8 @@ export default function ManagerTicketListPage() {
   };
 
   useEffect(() => {
-    fetchTickets(); 
-  }, [searchTerm]);
+    fetchTickets();
+  }, [searchTerm, maxTicketsToShow, sortOrder, currentPage]);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
@@ -69,7 +100,7 @@ export default function ManagerTicketListPage() {
           <Search_manager onSearchChange={handleSearchChange} />
         </div>
 
-        <div className="ml-auto flex items-center ">
+        <div className="ml-auto flex items-center">
           <FilterOrder onSelectOrder={handleSelectOrder} />
           <FilterNum onSelectCount={handleSelectCount} />
         </div>
@@ -79,8 +110,9 @@ export default function ManagerTicketListPage() {
         tickets={tickets}
         maxTicketsToShow={maxTicketsToShow}
         searchTerm={searchTerm}
-        dateRange={dateRange}
         sortOrder={sortOrder}
+        currentPage={currentPage}
+        totalPages={totalPages}
       />
     </div>
   );

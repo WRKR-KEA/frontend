@@ -19,9 +19,6 @@ type TicketListProps = {
   maxTicketsToShow: number;
   page: number;
   status?: string;
-  handler?: string;
-  requester?: string;
-  ispinned?: boolean;
   onTicketClick?: (ticket: Ticket) => void;
 };
 
@@ -29,27 +26,24 @@ export function TicketList({
   tickets,
   maxTicketsToShow,
   page,
-  status,
-  handler,
-  requester,
   onTicketClick,
 }: TicketListProps) {
   console.log("받은 티켓 데이터:", tickets);
 
   const statusStyles: Record<string, string> = {
-    작업완료: "bg-[#D1EEE2] text-[#3A966F]",
-    작업진행: "bg-[#CFE3FF] text-[#3E7DD6]",
-    작업취소: "bg-[#E0E0E0] text-[#767676]",
-    반려: "bg-[#F3CDBE] text-[#DE6231]",
-    작업요청: "bg-[#FFE9B6] text-[#D79804]",
+    COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
+    IN_PROGRESS: "bg-[#CFE3FF] text-[#3E7DD6]",
+    CANCEL: "bg-[#E0E0E0] text-[#767676]",
+    REJECT: "bg-[#F3CDBE] text-[#DE6231]",
+    REQUEST: "bg-[#FFE9B6] text-[#D79804]",
   };
 
   const statusMap: Record<string, string> = {
-    요청: "작업요청",
-    반려: "반려",
-    진행: "작업진행",
-    완료: "작업완료",
-    취소: "작업취소",
+    REQUEST: "REQUEST",
+    REJECT: "REJECT",
+    IN_PROGRESS : "IN_PROGRESS",
+    COMPLETE: "COMPLETE",
+    CANCEL: "CANCEL",
   };
 
   // 티켓을 페이지에 맞게 잘라서 표시

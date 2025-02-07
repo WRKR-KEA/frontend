@@ -5,7 +5,7 @@ import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
 import useUserStore from "@/stores/userStore";
-import { useUserTicketListQuery } from "@/hooks/useUserTicket";
+import api from "@/lib/api/axios";
 
 type Ticket = {
   id: string;
@@ -22,46 +22,62 @@ type Ticket = {
 };
 
 // Define the status types more specifically
-type TicketStatusType = "new" | "rejected" | "in-progress" | "completed" | "cancelled";
+type TicketStatusType = "REQUEST" | "REJECT" | "IN_PROGRESS" | "COMPLETE" | "CANCEL";
 
 // 티켓 상태 변환 맵
 const statusMap: Record<string, TicketStatusType> = {
-  요청: "new",
-  반려: "rejected",
-  진행: "in-progress",
-  완료: "completed",
-  취소: "cancelled",
+  REQUEST: "REQUEST",
+  REJECT: "REJECT",
+  IN_PROGRESS : "IN_PROGRESS",
+  COMPLETE: "COMPLETE",
+  CANCEL: "CANCEL",
 };
 
 export default function UserHomePage() {
   const maxTicketsToShow = 10;
-  const [ticketHandler, setTicketHandler] = useState(""); // 필터링 담당자
-  const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("new"); 
+  const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("REQUEST"); 
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null); // 선택된 티켓 상태
   const user = useUserStore((state) => state.user);
-  const ticketRequester = user ? user.name : ""; // 유저가 null일 경우 빈 문자열 처리
+  const [tickets, setRequestTickets] = useState<Ticket[]>([]); // 요청 티켓
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
- 
+// 담당자 메인 페이지 티켓 요청
+const fetchTickets = async () => {
+  setIsLoading(true);
+  try {
+    const { data } = await api.get("/api/user/tickets/main");
+    console.log(data.result.recentTickets);
 
-  // 유저 티켓 리스트 가져오기
-  const { data, isLoading, error } = useUserTicketListQuery({
-    requester: ticketRequester,
-  });
+    const requestTicketList: Ticket[] = data.result.recentTickets.map((ticket: any) => ({
+      id: ticket.ticketId,
+      number: ticket.ticketSerialNumber,
+      status: ticket.status,
+      title: ticket.title,
+      requester: ticket.userNickname,
+      handler: ticket.managerNickname,
+      requestDate: ticket.requestedDate,
+      updateDate: ticket.updatedDate,
+      ticketTimeInfo: {
+          createdAt: ticket.ticketTimeInfo.createdAt,
+          updatedAt: ticket.ticketTimeInfo.updatedAt,
+          startedAt: ticket.ticketTimeInfo.startedAt,
+          endedAt: ticket.ticketTimeInfo.endedAt
+      }
+    }));
 
-  // 티켓 데이터 변환 및 설정
-  const tickets: Ticket[] = data?.elements.map((ticket: any) => ({
-    id: ticket.id,
-    number: ticket.serialNumber,
-    status: ticket.status,
-    title: ticket.title,
-    requester: user?.name,
-    requestDate: ticket.createdAt,
-    acceptDate: ticket.startedAt || null,
-    updateDate: ticket.updatedAt || null,
-    completeDate: null,
-    handler: ticket.managerName,
-    ispinned: false,
-  })) || [];
+    setRequestTickets(requestTicketList);
+    console.log("data",requestTicketList);
+  } catch (error) {
+    setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+  useEffect(() => {
+    fetchTickets();
+  }, []);
 
   useEffect(() => {
     console.log("티켓 데이터:", tickets);
@@ -96,8 +112,6 @@ export default function UserHomePage() {
         maxTicketsToShow={maxTicketsToShow}
         page={1}
         status={ticketStatus}
-        handler={ticketHandler}
-        requester={ticketRequester}
         onTicketClick={handleTicketClick}
       />
     </div>

@@ -5,6 +5,7 @@ import { FaSearch } from "react-icons/fa";
 import { useMemberListQuery } from "@/hooks/useMemberList";
 import PagePagination from "@/components/pagination";
 import Link from "next/link";
+import UserProfilePage from "../../../../public/userProfileImage.png";
 
 export default function AdminMemberListPage() {
   const [activeTab, setActiveTab] = useState("전체"); // 역할 선택 (탭)
@@ -18,7 +19,7 @@ export default function AdminMemberListPage() {
     setCurrentPage(1); // 역할 변경 시 첫 페이지로 이동
   };
 
-  // ✅ 페이지네이션 변경
+  // ✅ 페이지네이션 변경 (추가됨)
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -50,6 +51,8 @@ export default function AdminMemberListPage() {
     role: getRoleQuery(), // 역할 매핑
     query: searchTrigger, // ✅ Enter 입력 시 검색어 적용
   });
+  console.log(members)
+
 
   // ✅ API 응답의 현재 페이지 값으로 currentPage 업데이트
   useEffect(() => {
@@ -108,7 +111,6 @@ export default function AdminMemberListPage() {
     }
   };
 
-
   if (isLoading) return <p>로딩 중...</p>;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
@@ -144,7 +146,7 @@ export default function AdminMemberListPage() {
           ))}
           <button
             onClick={handleDeleteMembers}
-            className="ml-auto px-3 py-2 border-2 border-[#4B5FC2] text-[#4B5FC2] rounded-md hover:bg-[#4B5FC2] hover:text-white transition"
+            className="ml-auto px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
           >
             회원 삭제
           </button>
@@ -174,16 +176,15 @@ export default function AdminMemberListPage() {
                     />
                   </td>
                   <td className="p-3 w-2/12">
-                    <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src={"/userProfileImage.png"}
-                          alt={row.name}
-                          className="w-8 h-8 rounded-full"
-                        />
-                        <span>{row.name}</span>
-                      </div>
-                    </Link>
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={row.avatar || "/userProfileImage.png"} // ✅ 기본 이미지 경로 추가
+                        alt={row.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    
+                      <span>{row.name}</span>
+                    </div>
                   </td>
                   <td className="p-4 w-2/12">{row.department}</td>
                   <td className="p-4 w-2/12">{row.role}</td>
@@ -192,16 +193,18 @@ export default function AdminMemberListPage() {
                 </tr>
               ))}
             </tbody>
+
+
           </table>
         </div>
 
         {/* ✅ 페이지네이션 추가 */}
         <div className="flex justify-center mt-4">
           <PagePagination
-            totalItemsCount={members?.totalElements || 0}
-            itemsCountPerPage={members?.size || 10}
-            pageRangeDisplayed={5}
+            totalPages={members.totalPages}
+            currentPage={currentPage}
             onPageChange={handlePageChange}
+            pageRangeDisplayed={5}
           />
         </div>
       </div>

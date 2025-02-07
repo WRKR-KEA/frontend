@@ -20,7 +20,7 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
-  const [logs, setLogs] = useState([]);
+  // const [logs, setLogs] = useState([]);
 
   const statusMapping = {
     REQUEST: "작업요청",

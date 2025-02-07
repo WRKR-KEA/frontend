@@ -64,7 +64,8 @@ export function TicketList_Manager({
   };
 
   const handleTicketClick = (ticketId: string) => {
-    router.push(`/tickets/${ticketId}`);
+    const currentPath = window.location.pathname;
+    router.push(`${currentPath}/${ticketId}`);
   };
 
   const handlePinClick = async (ticketId: string) => {
@@ -81,16 +82,7 @@ export function TicketList_Manager({
           },
         }
       );
-
-      if (response.data.isSuccess) {
-        setPinnedTickets((prevPinned) => {
-          return prevPinned.includes(ticketId)
-            ? prevPinned.filter((id) => id !== ticketId) // Unpin
-            : [ticketId, ...prevPinned].slice(0, 10); // Pin
-        });
-      } else {
-        console.error("Failed to pin the ticket.");
-      }
+      
     } catch (err) {
       console.error("Error while pinning/unpinning the ticket:", err);
         setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");

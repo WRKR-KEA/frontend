@@ -20,6 +20,7 @@ interface LogEntry {
   status: string;
 }
 
+
 // const mockData: LogEntry[] = Array.from({ length: 100 }, (_, index) => ({
 //   id: index + 1,
 //   timestamp: "2025-01-22T07:51:21.542Z",
@@ -49,6 +50,14 @@ export default function LogPage() {
     endDate: null,
     key: "selection",
   });
+  //enter 키를 눌렀을 때 API 요청
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      console.log("🔍 검색 실행:", searchTerm);
+      setCurrentPage(1); // 검색 시 첫 페이지로 이동
+      loadLogs(); // 🔹 API 요청 실행
+    }
+  };
 
   useEffect(() => {
     loadLogs(); // 🔹[추가] 컴포넌트 마운트 시 로그 불러오기
@@ -163,6 +172,7 @@ export default function LogPage() {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
+                onKeyDown={handleSearchKeyDown}
                 placeholder="닉네임, IP 검색"
                 className="outline-none text-sm"
               />

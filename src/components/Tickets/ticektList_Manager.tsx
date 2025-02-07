@@ -28,8 +28,6 @@ export function TicketList({
   page,
   onTicketClick,
 }: TicketListProps) {
-  console.log("받은 티켓 데이터:", tickets);
-
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
     IN_PROGRESS: "bg-[#CFE3FF] text-[#3E7DD6]",
@@ -56,9 +54,9 @@ export function TicketList({
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-100 text-left">
-            <th className="p-2 w-28 border">티켓 번호</th>
-            <th className="p-2 w-28 border">상태</th>
-            <th className="p-2 w-32 border">제목</th>
+            <th className="p-2 w-24 border">티켓 번호</th>
+            <th className="p-2 w-20 border">상태</th>
+            <th className="p-2 w-40 border">제목</th>
             <th className="p-2 w-24 border">요청자</th>
             <th className="p-2 w-32 border">요청일</th>
             <th className="p-2 w-32 border">최근 업데이트일</th>

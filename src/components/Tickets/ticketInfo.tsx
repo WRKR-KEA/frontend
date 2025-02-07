@@ -10,7 +10,7 @@ interface TicketInfoProps {
     handler: string,
     requestDate: string,
     updateDate: string | null,
-    ticketTimeInfo: {
+    ticketTimeInfo?: { 
       createdAt: string,
       updatedAt: string | null,
       startedAt: string | null,
@@ -38,9 +38,9 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
         {/* 두 번째 열 */}
         <div className="space-y-4 text-left">
           <div>생성 일시: {ticket.requestDate}</div>
-          <div>승인 일시: {ticket.ticketTimeInfo.startedAt}</div>
+          <div>승인 일시: {ticket.ticketTimeInfo?.startedAt}</div>
           <div>수정 일시: {ticket.updateDate}</div>
-          <div>완료 일시: {ticket.ticketTimeInfo.endedAt}</div>
+          <div>완료 일시: {ticket.ticketTimeInfo?.endedAt}</div>
         </div>
       </div>
     </div>

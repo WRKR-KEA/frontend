@@ -1,17 +1,16 @@
 import { useState } from "react";
 
 interface FilterNumProps {
-  onSelectCount: (count: number) => void; // count의 타입을 number로 명시
+  onSelectCount: (count: number) => void;
+  selectedCount: number; // 부모에서 전달받음
 }
 
-export function FilterNum({ onSelectCount }: FilterNumProps) {
+export function FilterNum({ onSelectCount, selectedCount }: FilterNumProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCount, setSelectedCount] = useState(20);
 
   const handleSelect = (count: number) => {
-    setSelectedCount(count);
     onSelectCount(count);
-    setIsOpen(false); // 선택 후 드롭다운 닫기
+    setIsOpen(false);
   };
 
   return (

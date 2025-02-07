@@ -4,21 +4,15 @@ import { useEffect, useState } from "react";
 import { fetchMyPage, updateMyPage } from "@/service/user";
 import ProfileSave from "@/components/Profiles/profileSave";
 import ProfileEdit from "@/components/Profiles/profileEdit";
-import useUserStore from "@/stores/userStore"; 
 
 export default function UserProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false); // 편집 모드 상태
-  const [profile, setProfile] = useState<any>(null); // 상태로 프로필 데이터 저장
-  const user = useUserStore((state) => state.user);
-  console.log("현재 로그인된 유저 정보:", user);
+  const [isEditing, setIsEditing] = useState(false); 
+  const [profile, setProfile] = useState<any>(null); 
 
   useEffect(() => {
-    const memberId = user?.name;
-    if (!memberId) return; 
-  
-    fetchMyPage(memberId)
+    fetchMyPage()
       .then((data) => {
         setProfile(data.result);
         console.log("data", data.result);
@@ -37,7 +31,7 @@ export default function UserProfilePage() {
   };
 
   const toggleEditing = () => {
-    setIsEditing(!isEditing); // 편집 모드 전환
+    setIsEditing(!isEditing); 
   };
 
   const saveProfile = async () => {
@@ -46,21 +40,21 @@ export default function UserProfilePage() {
         position: profile.position,
         phone: profile.phone,
       };
-
+  
       try {
-        await updateMyPage(profile.memberId, updateData); 
+        await updateMyPage(updateData); 
         alert("프로필이 저장되었습니다."); // 성공 메시지
         console.log(updateData);
         setIsEditing(false); // 편집 모드 종료
       } catch (error) {
         console.error("프로필 저장 실패", error);
-        alert("프로필 저장에 실패했습니다."); // 실패 메시지
+        alert("프로필 저장에 실패했습니다.");
       }
     }
   };
 
   if (!profile) {
-    return <div>Loading...</div>; // 프로필 데이터가 로딩 중일 때
+    return <div>로딩 중...</div>; // 프로필 데이터가 로딩 중일 때
   }
 
   return (
@@ -150,7 +144,7 @@ export default function UserProfilePage() {
 
         {/* 프로필 정보 */}
         {isEditing ? (
-          <ProfileEdit profile={profile} />
+          <ProfileEdit profile={profile} setProfile={setProfile} />
         ) : (
           <ProfileSave profile={profile} />
         )}

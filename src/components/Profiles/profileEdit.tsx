@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect,useState } from "react";
 
 type Profile = {
     agitNotification: boolean;
@@ -15,7 +15,7 @@ type Profile = {
     serviceNotification: boolean;
   };
   
-  function ProfileEdit({ profile }: { profile: Profile }) {
+  function ProfileEdit({ profile, setProfile }: { profile: Profile; setProfile: React.Dispatch<React.SetStateAction<Profile>> }) {
     const [editableProfile, setEditableProfile] = useState(profile);
   
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Profile) => {
@@ -24,6 +24,10 @@ type Profile = {
         [field]: e.target.value,
       });
     };
+  
+    useEffect(() => {
+      setProfile(editableProfile);
+    }, [editableProfile, setProfile]);
   
     return (
       <div>

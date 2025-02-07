@@ -121,7 +121,7 @@ console.log(tickets);
               />
             </div>
           )}
-          <FilterNum onSelectCount={handleSelectCount} />
+          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
 

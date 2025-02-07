@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { FilterTab_Manager } from '@/components/Filters/filterTab_Manager';
-import { useRouter } from 'next/navigation';
-import { MdPushPin, MdOutlinePushPin } from 'react-icons/md';
-import { HighlightText } from '@/components/highlightText';
-import PagePagination from '@/components/pagination';
+import React, { useState } from "react";
+import { FilterTab_Manager } from "@/components/Filters/filterTab_Manager";
+import { useRouter } from "next/navigation";
+import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
+import { HighlightText } from "@/components/highlightText";
+import PagePagination from "@/components/pagination";
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -17,11 +17,12 @@ type TicketList_ManagerProps = {
     handler: string;
     ispinned: boolean;
   }>;
+  currentPage: number;
   maxTicketsToShow: number;
   searchTerm: string;
   sortOrder: string;
-  currentPage: number;  // 추가
-  totalPages: number;    // 추가
+  totalPages: number;
+  onStatusChange: (status: string) => void;
 };
 
 export function TicketList_Manager({
@@ -30,15 +31,25 @@ export function TicketList_Manager({
   searchTerm,
   sortOrder,
   totalPages,    
+  onStatusChange,
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
-    작업완료: 'bg-[#D1EEE2] text-[#3A966F]',
-    작업진행: 'bg-[#CFE3FF] text-[#3E7DD6]',
-    작업취소: 'bg-[#E0E0E0] text-[#767676]',
-    반려: 'bg-[#F3CDBE] text-[#DE6231]',
+    COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
+    IN_PROGRESS: "bg-[#CFE3FF] text-[#3E7DD6]",
+    CANCEL: "bg-[#E0E0E0] text-[#767676]",
+    REJECT: "bg-[#F3CDBE] text-[#DE6231]",
+    REQUEST: "bg-[#FFE9B6] text-[#D79804]",
   };
 
-  const [activeTab, setActiveTab] = useState('전체');
+  const statusMap: Record<string, string> = {
+    COMPLETE: "COMPLETE",
+    IN_PROGRESS: "IN_PROGRESS",
+    CANCEL: "CANCEL",
+    REJECT: "REJECT",
+    REQUEST: "REQUEST",
+  };
+
+  const [activeTab, setActiveTab] = useState("전체");
   const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
@@ -46,7 +57,9 @@ export function TicketList_Manager({
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
+    onStatusChange(tab === "전체" ? "" : statusMap[tab]);
   };
+
 
   const handleTicketClick = (ticketId: string) => {
     router.push(`/tickets/${ticketId}`);
@@ -65,25 +78,19 @@ export function TicketList_Manager({
   };
 
   const sortedTickets = [...tickets].sort((a, b) => {
-    if (sortOrder === '최신순') {
+    if (sortOrder === "NEWEST") {
       return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
     }
-    if (sortOrder === '오래된 순') {
+    if (sortOrder === "OLDEST") {
       return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
     }
-    if (sortOrder === '우선순위 순') {
+    if (sortOrder === "") {
       return (b.ispinned ? 1 : 0) - (a.ispinned ? 1 : 0);
     }
     return 0;
   });
 
-  const filteredTickets = sortedTickets.filter(
-    (ticket) =>
-      (ticket.title.includes(searchTerm) || ticket.number.includes(searchTerm)) &&
-      (activeTab === '전체' || ticket.status === activeTab)
-  );
-
-  const displayedTickets = filteredTickets.slice(
+  const displayedTickets = sortedTickets.slice(
     (currentPage - 1) * maxTicketsToShow,
     currentPage * maxTicketsToShow
   );
@@ -98,7 +105,6 @@ export function TicketList_Manager({
             <th className="px-4 py-2 w-36">티켓 번호</th>
             <th className="px-4 py-2 w-24">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
-            <th className="px-4 py-2 w-32">담당자</th>
             <th className="px-4 py-2 w-32">요청자</th>
             <th className="px-4 py-2 w-36">요청일</th>
             <th className="px-4 py-2 w-36">마지막 업데이트</th>
@@ -135,7 +141,6 @@ export function TicketList_Manager({
               <td className="px-4 py-2">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2">{ticket.handler}</td>
               <td className="px-4 py-2">{ticket.requester}</td>
               <td className="px-4 py-2">{ticket.requestDate}</td>
               <td className="px-4 py-2">{ticket.updateDate}</td>
@@ -144,13 +149,14 @@ export function TicketList_Manager({
         </tbody>
       </table>
       <div className="flex justify-center items-center mt-4 mb-4">
-        <PagePagination
-          totalItemsCount={filteredTickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          currentPage={currentPage}
-          onPageChange={handlePageChange}
-        />
+      <PagePagination
+        totalItemsCount={totalPages * maxTicketsToShow} 
+        itemsCountPerPage={maxTicketsToShow}
+        pageRangeDisplayed={5}
+        currentPage={currentPage}
+        totalPages={totalPages} 
+        onPageChange={handlePageChange}
+      />
       </div>
     </div>
   );

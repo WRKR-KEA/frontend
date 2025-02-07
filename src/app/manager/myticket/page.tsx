@@ -16,33 +16,43 @@ export default function ManagerTicketListPage() {
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
-    setCurrentPage(1);
+    setCurrentPage(1);  // Reset to page 1 when changing the count
   };
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
-    setCurrentPage(1);
+    setCurrentPage(1);  // Reset to page 1 when searching
   };
 
   const handleSelectOrder = (order: string) => {
     setSortOrder(order);
-    setCurrentPage(1);
+    setCurrentPage(1);  // Reset to page 1 when changing order
   };
 
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    setCurrentPage(page);  // 페이지 변경 시 currentPage 업데이트
   };
-
+  
+  const handleStatusChange = (status: string) => {
+    setSelectedStatus(status);
+    setCurrentPage(1);  // Reset to page 1 when changing status
+  };
+  useEffect(() => {
+    fetchTickets();
+  }, [searchTerm, maxTicketsToShow, sortOrder, currentPage, selectedStatus]);
+  
+  // Ensure that the `totalPages` is updated correctly when fetching tickets
   const fetchTickets = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       const response = await api.get(
-        `/api/manager/tickets?page=${currentPage}&size=${maxTicketsToShow}&sortType=${sortOrder}&status=IN_PROGRESS&query=${searchTerm}`,
+        `/api/manager/tickets?page=${currentPage}&size=${maxTicketsToShow}&sortType=${sortOrder}&status=${selectedStatus || ""}&query=${searchTerm}`,
         {
           headers: {
             Accept: "application/json;charset=UTF-8",
@@ -50,9 +60,6 @@ export default function ManagerTicketListPage() {
           },
         }
       );
-  
-      console.log("API 응답 데이터:", response); // 전체 응답 로깅
-      console.log("응답 데이터 바디:", response.data); // 데이터 바디만 로깅
   
       const data = response.data;
   
@@ -69,15 +76,15 @@ export default function ManagerTicketListPage() {
           ispinned: ticket.isPinned,
         }));
   
-        console.log("포맷된 티켓 목록:", formattedTickets); // 변환된 티켓 정보 로깅
-  
         setTickets(formattedTickets);
-        setTotalPages(data.result.totalPages);
+        console.log(data);
+        console.log(formattedTickets);
+        setTotalPages(Math.ceil(data.result.totalElements / maxTicketsToShow)); 
       } else {
         throw new Error(data.message);
       }
     } catch (err) {
-      console.error("API 요청 오류:", err); // 에러 메시지 출력
+      console.error("API 요청 오류:", err);
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
@@ -86,7 +93,7 @@ export default function ManagerTicketListPage() {
 
   useEffect(() => {
     fetchTickets();
-  }, [searchTerm, maxTicketsToShow, sortOrder, currentPage]);
+  }, [searchTerm, maxTicketsToShow, sortOrder, currentPage, selectedStatus]);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
@@ -102,7 +109,7 @@ export default function ManagerTicketListPage() {
 
         <div className="ml-auto flex items-center">
           <FilterOrder onSelectOrder={handleSelectOrder} />
-          <FilterNum onSelectCount={handleSelectCount} />
+          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
 
@@ -113,6 +120,7 @@ export default function ManagerTicketListPage() {
         sortOrder={sortOrder}
         currentPage={currentPage}
         totalPages={totalPages}
+        onStatusChange={handleStatusChange} 
       />
     </div>
   );

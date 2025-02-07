@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { TicketList } from "@/components/Tickets/ticketList";
+// import { TicketList } from "@/components/Tickets/ticketList";
 import useUserStore from "@/stores/userStore";
 import api from "@/lib/api/axios";
+import { TicketList } from "@/components/Tickets/ticektList_Manager";
 
 type Ticket = {
   id: string;

@@ -4,7 +4,8 @@ interface PagePaginationProps {
   totalItemsCount: number;
   itemsCountPerPage: number;
   pageRangeDisplayed: number;
-  currentPage: number; // currentPage prop 추가
+  currentPage: number;
+  totalPages: number;
   onPageChange: (pageNumber: number) => void;
 }
 
@@ -12,19 +13,24 @@ const PagePagination: React.FC<PagePaginationProps> = ({
   totalItemsCount,
   itemsCountPerPage,
   pageRangeDisplayed,
-  currentPage, // currentPage 사용
+  currentPage,
+  totalPages,
   onPageChange,
 }) => {
-  const totalPages = Math.ceil(totalItemsCount / itemsCountPerPage);
-
   const handleClick = (pageNumber: number) => {
     onPageChange(pageNumber);
   };
 
-  const renderPageNumbers = () => {
-    const pages: number[] = [];
+  const getStartAndEndPages = () => {
     const startPage = Math.max(1, currentPage - Math.floor(pageRangeDisplayed / 2));
     const endPage = Math.min(totalPages, startPage + pageRangeDisplayed - 1);
+    return { startPage, endPage };
+  };
+
+  // Render the page numbers with dynamic range based on the current page
+  const renderPageNumbers = () => {
+    const { startPage, endPage } = getStartAndEndPages();
+    const pages: number[] = [];
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);

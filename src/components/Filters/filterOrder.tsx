@@ -6,12 +6,12 @@ interface FilterOrderProps {
 
 export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState("우선순위 순");
+  const [selectedOrder, setSelectedOrder] = useState("UPDATED");
 
   const handleSelect = (order: string) => {
     setSelectedOrder(order);
-    onSelectOrder(order); // 선택된 order 값을 부모로 전달
-    setIsOpen(false); // 선택 후 드롭다운 닫기
+    onSelectOrder(order); 
+    setIsOpen(false);
   };
 
   return (
@@ -40,7 +40,7 @@ export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
       {isOpen && (
         <div className="absolute right-0 mr-2 w-28 bg-white border shadow-lg rounded">
           <ul className="space-y-1 p-2">
-            {["최신순", "오래된 순", "우선순위 순"].map((order) => (
+            {["NEWEST", "OLDEST", "UPDATED"].map((order) => (
               <li key={order}>
                 <button
                   className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100"

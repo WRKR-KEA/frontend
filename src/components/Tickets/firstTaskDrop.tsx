@@ -1,20 +1,44 @@
-import { useState } from "react";
+import { useState ,useEffect } from "react";
+import { fetchCategories } from "../../services/user"; // API 호출 함수 가져오기
 
 interface FirstTaskDropProps {
   selectedService: string;
   onServiceChange: (value: string) => void;
+  firstCategories: string[];
 }
 
-export default function FirstTaskDrop({ selectedService, onServiceChange }: FirstTaskDropProps) {
-  const services = [
-    "인프라 (Infrastructure)",
-    "시스템 (System)",
-    "네트워크 (Networking)",
-    "기타 (Others)",
-    "1"
-  ];
-
+export default function FirstTaskDrop({ selectedService, onServiceChange,firstCategories }: FirstTaskDropProps) {
   const [isOpen, setIsOpen] = useState(false); // State to toggle the dropdown visibility
+
+  // useEffect(() => {
+  //   const loadCategories = async () => {
+  //     try {
+  //       const response = await fetchCategories();
+  //       console.log("📌 가져온 카테고리 데이터:", response); // 응답 데이터 확인
+  
+  //       if (!response || typeof response !== "object") {
+  //         console.error("⚠️ 잘못된 응답 형식:", response);
+  //         setCategories([]); // 빈 배열로 초기화
+  //         return;
+  //       }
+  
+  //       if (!response.result || !Array.isArray(response.result.categories)) {
+  //         console.error("⚠️ 'result' 필드가 없거나 배열이 아님:", response);
+  //         setCategories([]); // 빈 배열로 초기화
+  //         return;
+  //       }
+  
+  //       // 정상적인 경우에만 데이터 설정
+  //       setCategories(response.result.categories.map((category: any) => category.name));
+  //     } catch (error) {
+  //       console.error("❌ 카테고리 조회 실패:", error);
+  //       setCategories([]); // 에러 발생 시 빈 배열 설정
+  //     }
+  //   };
+  
+  //   loadCategories();
+  // }, []);
+  
 
   const handleSelect = (service: string) => {
     onServiceChange(service); // Update the selected service
@@ -54,7 +78,7 @@ export default function FirstTaskDrop({ selectedService, onServiceChange }: Firs
       {isOpen && (
         <div className="absolute right-0 mt-1 w-full bg-white border shadow-lg rounded">
           <ul className="space-y-1 p-2">
-            {services.map((service) => (
+            {firstCategories.map((service) => (
               <li key={service}>
                 <button
                   className={`flex items-center w-full text-left px-3 py-2 text-sm ${selectedService === service ? "text-black" : "text-gray-500"} hover:bg-gray-100 hover:text-[#6E61CA]`}

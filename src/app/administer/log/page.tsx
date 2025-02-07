@@ -7,7 +7,8 @@ import { FaSearch } from "react-icons/fa";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
-import { fetchAdminAccessLogs } from "@/services/admin";
+import { fetchAdminAccessLogs, fetchAdminAccessLogsExcel } from "@/services/admin";
+import Button from "@/components/Buttons/Button";
 
 interface LogEntry {
   id: number;
@@ -158,6 +159,39 @@ export default function LogPage() {
     setCurrentPage(1);
   };
 
+  // 엑셀 다운로드 핸들러
+  const handleDownloadExcel = async () => {
+    try {
+      const role =
+        activeTab === "전체"
+          ? undefined
+          : activeTab === "관리자"
+          ? "ADMIN"
+          : activeTab === "담당자"
+          ? "MANAGER"
+          : "USER";
+
+      const data = await fetchAdminAccessLogsExcel(
+        role, // 역할이 빈 문자열이면 undefined로 설정
+        searchTerm || "", // 검색어가 없을 경우 빈 문자열로 설정
+        undefined, // action은 현재 사용하지 않으므로 undefined
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
+      );
+
+      const url = window.URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "로그_리스트.xlsx"; // 다운로드할 파일 이름
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("엑셀 다운로드 중 오류 발생:", error);
+      alert("엑셀 다운로드 중 오류가 발생했습니다.");
+    }
+  };
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between">
@@ -255,6 +289,16 @@ export default function LogPage() {
           ))}
         </tbody>
       </table>
+
+      {/* 다운로드 버튼 추가 */}
+      <div className="flex justify-end mb-4">
+          <Button
+            label="다운로드"
+            onClick={handleDownloadExcel}
+            color={1} // 파란색
+            className="mr-2"
+          />
+      </div>
 
       <div className="flex justify-center items-center mt-4 w-full">
         <PagePagination totalItemsCount={totalElements} itemsCountPerPage={itemsPerPage} pageRangeDisplayed={5} onPageChange={(page) => setCurrentPage(page)} currentPage={currentPage} totalPages={totalPages} />

@@ -3,22 +3,24 @@ import { useState, useEffect } from "react";
 interface SecondTaskDropProps {
   selectedRequestType: string;
   onRequestTypeChange: (value: string) => void;
-  selectedService: string; // Now passing selectedService to adjust options dynamically
+  selectedService: string; 
+  secondCategories:any// Now passing selectedService to adjust options dynamically
 }
 
 export default function SecondTaskDrop({
   selectedRequestType,
   onRequestTypeChange,
   selectedService,
+  secondCategories,
 }: SecondTaskDropProps) {
   const [isOpen, setIsOpen] = useState(false); // State to toggle the dropdown visibility
 
-  const options = [
-    "추가 (Add)",
-    "수정 (Edit)",
-    "삭제 (Delete)",
-    "기타 (Others)"
-  ];
+  // const options = [
+  //   "추가 (Add)",
+  //   "수정 (Edit)",
+  //   "삭제 (Delete)",
+  //   "기타 (Others)"
+  // ];
 
 //   const getSecondTaskOptions = (service: string) => {
 //     switch (service) {
@@ -98,16 +100,16 @@ export default function SecondTaskDrop({
 
       <div className="w-full border-t border-gray-300 mt-2"></div>
 
-      {isOpen && options.length > 0 && (
+      {isOpen && secondCategories.length > 0 && (
         <div className="absolute right-0 mt-1 w-full bg-white border shadow-lg rounded">
           <ul className="space-y-1 p-2">
-            {options.map((option) => (
-              <li key={option}>
+            {secondCategories.map((option) => (
+              <li key={option.categoryId}>
                 <button
                   className={`flex items-center w-full text-left px-3 py-2 text-sm ${selectedRequestType === option ? "text-black" : "text-gray-500"} hover:bg-gray-100 hover:text-[#6E61CA]`}
-                  onClick={() => handleSelect(option)}
+                  onClick={() => handleSelect(option.name)}
                 >
-                  {option}
+                  {option.name}
                 </button>
               </li>
             ))}

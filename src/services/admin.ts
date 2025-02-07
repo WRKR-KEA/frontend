@@ -1,4 +1,4 @@
-import api from "axios.ts 경로";
+import api from "../lib/api/axios";
 
 // (DELETE) 카테고리 삭제
 export async function deleteAdminCategories(categoryId: string) {
@@ -228,5 +228,15 @@ export async function postAdminTemplate(templateData: {
     return data;
   } catch (error) {
     console.error("관리자 템플릿 추가에 실패했습니다. :", error);
+  }
+}
+
+// (GET) 사용자, 관리자 템플릿 조회
+export async function fetchTemplate(categoryId: string) {
+  try {
+    const { data } = await api.get(`/api/user/templates/${categoryId}`);
+    return data;
+  } catch (error) {
+    console.error("❌ 템플릿 조회에 실패했습니다. :", error);
   }
 }

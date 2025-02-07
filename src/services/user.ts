@@ -1,4 +1,4 @@
-import api from "axios.ts 경로";
+import api from "../lib/api/axios";
 
 // (GET) 코멘트 내역 조회
 export async function fetchComments(ticketId: string) {

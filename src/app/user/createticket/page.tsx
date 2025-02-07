@@ -10,6 +10,7 @@ import Button from "@/components/Buttons/Button";
 import { createTicket } from "@/lib/api/userCreateTickets";
 import { fetchCategories, fetchGuide, postTicket } from "@/services/user";
 import { fetchTemplate } from "@/services/admin";
+import AlertModal from "@/components/Modals/AlertModal";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");
@@ -23,6 +24,24 @@ export default function UserCreateTicketPage() {
   const [firstCategories, setFirstCategories] = useState<string[]>([]);
   const [secondCategories, setSecondCategories] = useState<any>();
   const [helpContent, setHelpContent] = useState("");
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},    
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+   
+    });
+  };
 
   const handleServiceChange = (value: string) => {
     setSelectedService(value);
@@ -83,7 +102,7 @@ export default function UserCreateTicketPage() {
   
       if (!result) {
         console.error("⚠️ 티켓 생성 실패: 응답 데이터 없음");
-        alert("티켓 생성에 실패했습니다.");
+        showModal("티켓 생성에 실패했습니다.");
       }
 
       console.log("✅ 티켓 생성 성공:", result);
@@ -92,7 +111,7 @@ export default function UserCreateTicketPage() {
       console.error("❌ 티켓 생성 중 오류 발생:", error);
       console.error("📌 오류 상세 정보:", error.response?.data || error.message);
   
-      alert(
+      showModal(
         error.response?.data?.message ||
         error.message ||
         "티켓 생성 중 문제가 발생했습니다."
@@ -209,6 +228,16 @@ export default function UserCreateTicketPage() {
       {isModalOpen && (
         <Modal onClose={toggleModal}>
           <Help title={helpTitle} content={helpContent}/>
+        </Modal>
+      )}
+
+{modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
         </Modal>
       )}
     </div>

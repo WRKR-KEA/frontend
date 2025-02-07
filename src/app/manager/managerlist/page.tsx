@@ -30,9 +30,10 @@ export default function AdminMemberListPage() {
 
     // ✅ useManagerListQuery 훅 사용
     const { data: members, isLoading, error } = useManagerListQuery({
-        page: currentPage - 1, // ✅ 백엔드가 0부터 시작하면 -1
+        page: currentPage , // ✅ 백엔드가 0부터 시작하면 -1
         size: maxTicketsToShow, // ✅ 한 페이지당 표시할 개수
     });
+
 
     console.log("✅ API 응답:", members);
 
@@ -44,7 +45,7 @@ export default function AdminMemberListPage() {
             {/* ✅ 상단 컨트롤 바 */}
             <div className="flex items-center justify-between">
                 <h2 className="text-md font-semibold">회원 조회</h2>
-                
+
                 <div className="flex items-center space-x-4">
                     <FilterNum onSelectCount={handleSizeChange} /> {/* ✅ 필터 추가 */}
                 </div>
@@ -92,10 +93,10 @@ export default function AdminMemberListPage() {
                 {/* ✅ 페이지네이션 */}
                 <div className="flex justify-center items-center mt-4 w-full">
                     <PagePagination
-                        totalItemsCount={members?.result.totalElements || 0} // 전체 데이터 개수
-                        itemsCountPerPage={maxTicketsToShow} // 한 페이지당 개수
-                        pageRangeDisplayed={5} // 표시할 페이지 개수
-                        onPageChange={handlePageChange} // 페이지 변경 핸들러
+                        totalPages={members?.result.totalPages}
+                        currentPage={members?.result.currentPage}
+                        onPageChange={handlePageChange}
+                        pageRangeDisplayed={5}
                     />
                 </div>
             </div>

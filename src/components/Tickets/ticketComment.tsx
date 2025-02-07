@@ -76,7 +76,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
     }
   };
   return (
-    <div className="bg-gray-50 border border-gray-300 rounded-md p-4 flex flex-col h-[460px]">
+    <div className="bg-component rounded-md p-4 flex flex-col h-[460px]">
       <div
         ref={chatContainerRef}
         className="overflow-y-auto pr-2 flex-1 hide-scrollbar"

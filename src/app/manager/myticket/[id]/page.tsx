@@ -217,9 +217,9 @@ export default function ManagericketDetailPage() {
       )}
 
       {/* 담당자 변경 모달 */}
-      {isChangeModalOpen && (
-          <TicketChange />
-      )}
+      {isChangeModalOpen && selectedTicket && (
+      <TicketChange ticketId={selectedTicket.id} />
+)}
 
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (

@@ -19,7 +19,7 @@ export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
       <button
         onClick={() => handleTabClick("COMPLETE")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "COMPELTE" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "COMPLETE" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 완료
@@ -33,7 +33,7 @@ export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
         작업 진행
       </button>
       <button
-        onClick={() => handleTabClick("REQEUST")}
+        onClick={() => handleTabClick("REQUEST")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
           activeTab === "REQUEST" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}

@@ -44,7 +44,7 @@ export function TicketList_User({
     IN_PROGRESS: "IN_PROGRESS",
     CANCEL: "CANCEL",
     REJECT: "REJECT",
-    REQEUST: "REQUEST",
+    REQUEST: "REQUEST",
   };
 
   const [filterStatus, setFilterStatus] = useState("전체");
@@ -70,13 +70,14 @@ export function TicketList_User({
   const filteredTickets = sortedTickets.filter((ticket) => {
     const matchesSearchTerm =
       ticket.title.includes(searchTerm) ||
-      ticket.handler.includes(searchTerm) ||
+      ticket.handler?.includes(searchTerm) ||
       ticket.number.includes(searchTerm);
     const matchesStatus =
       filterStatus === "전체" || statusMap[ticket.status] === filterStatus;
     return matchesSearchTerm && matchesStatus;
   });
 
+  const totalPages = Math.ceil(filteredTickets.length / maxTicketsToShow);
   const displayedTickets = filteredTickets.slice(
     (currentPage - 1) * maxTicketsToShow,
     currentPage * maxTicketsToShow
@@ -139,6 +140,7 @@ export function TicketList_User({
           itemsCountPerPage={maxTicketsToShow}
           pageRangeDisplayed={5}
           currentPage={currentPage}
+          totalPages={totalPages}
           onPageChange={handlePageChange}
         />
       </div>

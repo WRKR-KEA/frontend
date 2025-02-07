@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
@@ -20,78 +20,81 @@ type Ticket = {
   ispinned: boolean;
 };
 
-// Define the status types more specifically
 type TicketStatusType = "REQUEST" | "REJECT" | "IN_PROGRESS" | "COMPLETE" | "CANCEL";
 
-// 티켓 상태 변환 맵
 const statusMap: Record<string, TicketStatusType> = {
   REQUEST: "REQUEST",
   REJECT: "REJECT",
-  IN_PROGRESS : "IN_PROGRESS",
+  IN_PROGRESS: "IN_PROGRESS",
   COMPLETE: "COMPLETE",
   CANCEL: "CANCEL",
 };
 
 export default function UserHomePage() {
   const maxTicketsToShow = 10;
-  const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("REQUEST"); 
-  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null); // 선택된 티켓 상태
-  const [tickets, setRequestTickets] = useState<Ticket[]>([]); // 요청 티켓
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("REQUEST");
+  const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const [tickets, setRequestTickets] = useState<Ticket[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-// 담당자 메인 페이지 티켓 요청
-const fetchTickets = async () => {
-  setIsLoading(true);
-  try {
-    const { data } = await api.get("/api/user/tickets/main");
-    console.log(data.result.recentTickets);
+  // 🌟 API 요청이 한 번만 실행되도록 useRef 사용
+  const hasFetched = useRef(false);
 
-    const requestTicketList: Ticket[] = data.result.recentTickets.map((ticket: any) => ({
-      id: ticket.ticketId,
-      number: ticket.ticketSerialNumber,
-      status: ticket.status,
-      title: ticket.title,
-      requester: ticket.userNickname,
-      handler: ticket.managerNickname,
-      requestDate: ticket.requestedDate,
-      updateDate: ticket.updatedDate,
-      ticketTimeInfo: {
+  // 🌟 담당자 메인 페이지 티켓 요청 (Strict Mode에서도 두 번 실행 방지)
+  const fetchTickets = async () => {
+    if (hasFetched.current) return; // 두 번째 실행 방지
+    hasFetched.current = true;
+
+    setIsLoading(true);
+    try {
+      const { data } = await api.get("/api/user/tickets/main");
+      console.log("🌈 받아온 데이터:", data.result.recentTickets);
+
+      const requestTicketList: Ticket[] = data.result.recentTickets.map((ticket: any) => ({
+        id: ticket.ticketId,
+        number: ticket.ticketSerialNumber,
+        status: ticket.status,
+        title: ticket.title,
+        requester: ticket.userNickname,
+        handler: ticket.managerNickname,
+        requestDate: ticket.requestedDate,
+        updateDate: ticket.updatedDate,
+        ticketTimeInfo: {
           createdAt: ticket.ticketTimeInfo.createdAt,
           updatedAt: ticket.ticketTimeInfo.updatedAt,
           startedAt: ticket.ticketTimeInfo.startedAt,
-          endedAt: ticket.ticketTimeInfo.endedAt
-      }
-    }));
+          endedAt: ticket.ticketTimeInfo.endedAt,
+        },
+      }));
 
-    setRequestTickets(requestTicketList);
-    console.log("data",requestTicketList);
-  } catch (error) {
-    setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
-  } finally {
-    setIsLoading(false);
-  }
-};
+      setRequestTickets(requestTicketList);
+    } catch (error) {
+      setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
     fetchTickets();
   }, []);
 
+  // 🌟 selectedTicket이 없을 때만 초기 상태 설정 (두 번 실행 방지)
   useEffect(() => {
-    console.log("티켓 데이터:", tickets);
     if (tickets.length > 0 && selectedTicket === null) {
       const initialStatus = statusMap[tickets[0].status] || "REQUEST";
       setTicketStatus(initialStatus);
       setSelectedTicket(tickets[0]);
-      console.log("초기 티켓의 상태:", initialStatus);
+      console.log("🌈 초기 티켓의 상태:", initialStatus);
     }
-  }, [tickets, selectedTicket]);
+  }, [tickets]);
 
   const handleTicketClick = (ticket: Ticket) => {
     const newStatus = statusMap[ticket.status] || "REQUEST";
     setTicketStatus(newStatus);
     setSelectedTicket(ticket);
-    console.log("클릭한 티켓의 상태:", newStatus);
+    console.log("🌈 클릭한 티켓의 상태:", newStatus);
   };
 
   if (isLoading) return <div>로딩 중...</div>;
@@ -114,4 +117,4 @@ const fetchTickets = async () => {
       />
     </div>
   );
-} 
+}

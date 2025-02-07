@@ -9,6 +9,8 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { fetchAdminAccessLogs, fetchAdminAccessLogsExcel } from "@/services/admin";
 import Button from "@/components/Buttons/Button";
+import { fetchAdminAccessLogs } from "@/services/admin";
+import { format } from 'date-fns';
 
 interface LogEntry {
   id: number;
@@ -62,7 +64,7 @@ export default function LogPage() {
 
   useEffect(() => {
     loadLogs(); // 🔹[추가] 컴포넌트 마운트 시 로그 불러오기
-  }, [activeTab,currentPage, itemsPerPage]);
+  }, [activeTab,currentPage,itemsPerPage,dateRange]);
 
   const loadLogs = async () => {
     try {
@@ -81,9 +83,9 @@ export default function LogPage() {
         itemsPerPage,
         role,
         searchTerm,
-        undefined
-        , dateRange.startDate?.toISOString()
-        , dateRange.endDate?.toISOString()
+        undefined,
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
       );
 
       console.log("📌 가져온 로그 데이터:", response);
@@ -155,7 +157,7 @@ export default function LogPage() {
   };
 
   const handleTabClick = (tabName: string) => {
-    setActiveTab(tabName);  
+    setActiveTab(tabName);
     setCurrentPage(1);
   };
 

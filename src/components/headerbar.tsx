@@ -16,7 +16,6 @@ export default function Headerbar() {
     const [notificationData, setNotificationData] = useState<any[]>([]); // notificationData 상태 추가
 
 
-
     // 사이드바 열고 닫기 함수
     const toggleSidebar = () => {
         setIsSidebarOpen((prev) => !prev);
@@ -91,19 +90,12 @@ export default function Headerbar() {
         try {
             const response = await api.get(`${process.env.NEXT_PUBLIC_BASE_URL}api/user/notifications`);
             let notificationData = response.data.result;
-            console.log(notificationData[0].content)
-            console.log(notificationData[0].timeAgo)
             setNotificationData(notificationData); // notificationData 상태 업데이트
         } catch (error) {
             console.error("알람 에러:", error);
             alert("서버와 통신 중 오류가 발생했습니다.");
         }
     };
-
-    // 페이지가 로드될 때 알림 데이터 가져오기
-    useEffect(() => {
-        getNotification();
-    }, []);
 
 
     return (
@@ -129,7 +121,8 @@ export default function Headerbar() {
                 <ul className="flex space-x-4">
                     {/* 알림 아이콘 */}
                     <li className="relative">
-                        <svg className="cursor-pointer" onClick={() => toggleModal("notification")} width="24" height="24" viewBox="0 0 24 24" fill="none">
+                        {/*현재 API하나로 댓글/티켓 둘다 불러와서, UI상 하나만 확인해도 모든 알람이 읽음 처리 됨 */}
+                        <svg className="cursor-pointer" onClick={() => {toggleModal("notification");getNotification()}} width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M20.7927 16.6444C20.2723 15.7481 19.4989 13.2122 19.4989 9.89999C19.4989 7.91087 18.7087 6.00322 17.3022 4.59669C15.8957 3.19017 13.988 2.39999 11.9989 2.39999C10.0098 2.39999 8.10214 3.19017 6.69561 4.59669C5.28909 6.00322 4.49891 7.91087 4.49891 9.89999C4.49891 13.2131 3.72454 15.7481 3.20423 16.6444C3.07135 16.8722 3.00091 17.1311 3.00001 17.3948C2.9991 17.6586 3.06776 17.9179 3.19907 18.1467C3.33037 18.3755 3.51968 18.5656 3.74789 18.6978C3.9761 18.8301 4.23515 18.8998 4.49891 18.9H8.32485C8.49789 19.7467 8.95806 20.5077 9.62754 21.0542C10.297 21.6007 11.1347 21.8992 11.9989 21.8992C12.8631 21.8992 13.7008 21.6007 14.3703 21.0542C15.0398 20.5077 15.4999 19.7467 15.673 18.9H19.4989C19.7626 18.8996 20.0215 18.8298 20.2496 18.6975C20.4777 18.5651 20.6669 18.375 20.7981 18.1463C20.9292 17.9176 20.9978 17.6583 20.9969 17.3946C20.9959 17.1309 20.9255 16.8722 20.7927 16.6444ZM11.9989 20.4C11.5337 20.3999 11.0801 20.2555 10.7003 19.9869C10.3205 19.7183 10.0333 19.3386 9.87829 18.9H14.1195C13.9645 19.3386 13.6773 19.7183 13.2975 19.9869C12.9178 20.2555 12.4641 20.3999 11.9989 20.4ZM4.49891 17.4C5.22079 16.1587 5.99891 13.2825 5.99891 9.89999C5.99891 8.30869 6.63105 6.78257 7.75627 5.65735C8.88149 4.53214 10.4076 3.89999 11.9989 3.89999C13.5902 3.89999 15.1163 4.53214 16.2416 5.65735C17.3668 6.78257 17.9989 8.30869 17.9989 9.89999C17.9989 13.2797 18.7752 16.1559 19.4989 17.4H4.49891Z"
                                 fill="black"/>
@@ -143,20 +136,18 @@ export default function Headerbar() {
                                 <ul className="space-y-4">
                                     {/* 알림 아이템 1 */}
                                     {notificationData
-                                        .filter((item) => item.type === "COMMENT") // 필터링
-                                            .map((notification) => (
-                                                <li key={notification.notificationId} className="flex items-center space-x-3">
-                                                    <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                                    <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-semibold">{notification.content}</p>
-                                                        <p className="text-xs text-gray-500">{notification.timeAgo}</p>
-                                                    </div>
-                                                </li>
-                                            )
-                                        )
-                                    }
+                                    .filter((item) => item.type === "COMMENT") // 필터링
+                                    .map((notification) => (
+                                        <li key={notification.notificationId} className={`flex items-center space-x-3 ${notification.isRead ? 'bg-grey-50 p-3 rounded' : 'bg-blue-200 p-3 rounded'}`}>
+                                            <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+                                                <img src="/adminProfile.png" alt="알림 아이콘" className="" />
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold">{notification.content}</p>
+                                                <p className="text-xs text-gray-500">{notification.timeAgo}</p>
+                                            </div>
+                                        </li>
+                                    ))}
                                 </ul>
                             </div>
                         )}
@@ -182,7 +173,7 @@ export default function Headerbar() {
                                     {notificationData
                                         .filter((item) => item.type === "TICKET") // 필터링
                                             .map((notification) => (
-                                                <li key={notification.notificationId} className="flex items-center space-x-3">
+                                                <li key={notification.notificationId} className={`flex items-center space-x-3 ${notification.isRead ? 'bg-grey-50 p-3 rounded' : 'bg-blue-200 p-3 rounded'}`}>
                                                     <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
                                                     <img src="/adminProfile.png" alt="알림 아이콘" className="" />
                                                     </div>

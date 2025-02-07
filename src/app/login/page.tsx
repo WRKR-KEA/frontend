@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import useUserStore from "@/stores/userStore";
 import axios, { AxiosInstance } from "axios";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function LoginPage() {
   const [nickname, setNickname] = useState("");
@@ -10,7 +12,24 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const router = useRouter();
   const setUser = useUserStore((state) => state.setUser);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
 
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
   // 닉네임 입력 처리
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
@@ -41,7 +60,7 @@ export default function LoginPage() {
     e.preventDefault();
 
     if (nickname === "" || password === "") {
-      alert("닉네임과 비밀번호를 입력하세요.");
+      showModal("닉네임과 비밀번호를 입력하세요.");
       return;
     }
 
@@ -53,7 +72,7 @@ export default function LoginPage() {
 
       // ✅ 서버 응답 메시지 alert
       if (response.data.message) {
-        alert(response.data.message);
+        showModal(response.data.message);
       }
 
       // ✅ 토큰 저장
@@ -77,10 +96,11 @@ export default function LoginPage() {
 
       // 임시 비밀번호인 경우 변경 페이지로 이동
       if (response.data.result.isTempPassword) {
-        alert("최초 로그인 시 비밀번호 변경이 필요합니다.");
+        showModal("최초 로그인 시 비밀번호 변경이 필요합니다.")
         router.push("/changepassword"); 
       } else {
-        // ✅ 로그인 성공 후 페이지 리다이렉트
+        // 로그인 성공 시 리다이렉트
+        showModal("로그인 성공!");
         switch (response.data.result.role) {
           case "USER":
             router.push("/user/home");
@@ -98,9 +118,9 @@ export default function LoginPage() {
 
       // ✅ 서버 응답 메시지가 있으면 alert 표시
       if (err.response?.data?.message) {
-        alert(err.response.data.message);
+        showModal(err.response.data.message);
       } else {
-        alert("서버와 통신 중 오류가 발생했습니다.");
+        showModal("서버와 통신 중 오류가 발생했습니다.");
       }
 
       setError("서버와 통신 중 오류가 발생했습니다.");
@@ -196,6 +216,15 @@ export default function LoginPage() {
           </div>
         </form>
       </div>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

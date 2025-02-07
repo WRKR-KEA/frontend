@@ -9,6 +9,7 @@ const fetchGuide = async (categoryId: string) => {
     throw new Error("Access token is missing. Please log in again.");
   }
 
+
   const response = await axios.get(
     `http://172.16.211.53:8080/api/user/guide/${categoryId}`, // ✅ API 경로 변경
     {
@@ -17,7 +18,7 @@ const fetchGuide = async (categoryId: string) => {
       },
     }
   );
-  console.log(response)
+  console.log("가이드응답!",response)
   return response.data; // 필요한 데이터만 반환
 };
 

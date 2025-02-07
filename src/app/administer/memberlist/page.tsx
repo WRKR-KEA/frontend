@@ -6,11 +6,36 @@ import { useMemberListQuery } from "@/hooks/useMemberList";
 import PagePagination from "@/components/pagination";
 import Link from "next/link";
 
+import UserProfilePage from "../../../../public/userProfileImage.png";
+
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
+
+
 export default function AdminMemberListPage() {
   const [activeTab, setActiveTab] = useState("전체"); // 역할 선택 (탭)
   const [currentPage, setCurrentPage] = useState(1); // 페이지네이션
   const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
   const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},    
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+   
+    });
+  };
+
 
   // ✅ 역할 선택 시 role 변경 (탭 클릭)
   const handleTabClick = (tabName: string) => {
@@ -18,7 +43,7 @@ export default function AdminMemberListPage() {
     setCurrentPage(1); // 역할 변경 시 첫 페이지로 이동
   };
 
-  // ✅ 페이지네이션 변경
+  // ✅ 페이지네이션 변경 (추가됨)
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
   };
@@ -50,13 +75,15 @@ export default function AdminMemberListPage() {
     role: getRoleQuery(), // 역할 매핑
     query: searchTrigger, // ✅ Enter 입력 시 검색어 적용
   });
+  console.log(members)
+
 
   // ✅ API 응답의 현재 페이지 값으로 currentPage 업데이트
   useEffect(() => {
-    if (members?.data?.result?.currentPage) {
-      setCurrentPage(members?.data?.result?.currentPage);
+    if (members?.result?.currentPage) {
+      setCurrentPage(members.result.currentPage);
     }
-  }, [members?.data?.result?.currentPage]);
+  }, [members?.result?.currentPage]);
 
   // ✅ 선택된 유저 ID 리스트
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -71,16 +98,20 @@ export default function AdminMemberListPage() {
   // ✅ 선택한 유저 삭제 API 호출
   const handleDeleteMembers = async () => {
     if (selectedMembers.length === 0) {
-      alert("삭제할 회원을 선택해주세요.");
+      showModal("삭제할 회원을 선택해주세요.");
       return;
     }
 
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        showModal("로그인이 필요합니다.");
         return;
       }
+
+      // ✅ 확인을 눌렀을 때만 삭제 진행
+      const isConfirmed = confirm("정말로 삭제하시겠습니까?");
+      if (!isConfirmed) return;
 
       const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
         method: "DELETE",
@@ -95,11 +126,12 @@ export default function AdminMemberListPage() {
         throw new Error("회원 삭제 실패");
       }
 
-      alert("선택한 회원이 삭제되었습니다.");
+      showModal("선택한 회원이 삭제되었습니다.");
       setSelectedMembers([]);
       refetch();
     } catch (error) {
       console.error("❌ 삭제 요청 실패:", error);
+      alert("회원 삭제 중 오류가 발생했습니다.");
     }
   };
 
@@ -130,16 +162,15 @@ export default function AdminMemberListPage() {
             <button
               key={tab}
               onClick={() => handleTabClick(tab)}
-              className={`w-32 text-center py-3 font-semibold ${
-                activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500"
-              }`}
+              className={`w-32 text-center py-3 font-semibold ${activeTab === tab ? "border-b-2 border-black text-black" : "text-gray-500"
+                }`}
             >
               {tab}
             </button>
           ))}
           <button
             onClick={handleDeleteMembers}
-            className="ml-auto px-3 py-2 border-2 border-[#4B5FC2] text-[#4B5FC2] rounded-md hover:bg-[#4B5FC2] hover:text-white transition"
+            className="ml-auto px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
           >
             회원 삭제
           </button>
@@ -165,19 +196,19 @@ export default function AdminMemberListPage() {
                       type="checkbox"
                       checked={selectedMembers.includes(row.memberId)}
                       onChange={() => handleCheckboxChange(row.memberId)}
+                      className="w-4 h-4 accent-[#4B5FC2] cursor-pointer rounded-md border-2 border-gray-400 transition-all duration-200 checked:bg-[#4B5FC2] checked:border-transparent focus:ring-2 focus:ring-[#4B5FC2] focus:outline-none"
                     />
                   </td>
                   <td className="p-3 w-2/12">
-                    <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
-                      <div className="flex items-center space-x-3">
-                        <img
-                          src={"/userProfileImage.png"}
-                          alt={row.name}
-                          className="w-8 h-8 rounded-full"
-                        />
-                        <span>{row.name}</span>
-                      </div>
-                    </Link>
+                    <div className="flex items-center space-x-3">
+                      <img
+                        src={row.avatar || "/userProfileImage.png"} // ✅ 기본 이미지 경로 추가
+                        alt={row.name}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                    
+                      <span>{row.name}</span>
+                    </div>
                   </td>
                   <td className="p-4 w-2/12">{row.department}</td>
                   <td className="p-4 w-2/12">{row.role}</td>
@@ -186,19 +217,31 @@ export default function AdminMemberListPage() {
                 </tr>
               ))}
             </tbody>
+
           </table>
+
         
-          {/* ✅ 페이지네이션 추가 */}
-          <div className="flex justify-center mt-4">
-            <PagePagination
-              totalItemsCount={members?.totalElements || 0}
-              itemsCountPerPage={members?.size || 10}
-              pageRangeDisplayed={5}
-              onPageChange={handlePageChange}
-            />
-          </div>
+        {/* ✅ 페이지네이션 추가 */}
+        <div className="flex justify-center mt-4">
+          <PagePagination
+            totalPages={members.totalPages}
+            currentPage={currentPage}
+            onPageChange={handlePageChange}
+            pageRangeDisplayed={5}
+          />
+
         </div>
       </div>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
+    </div>
     </div>
   );
 }

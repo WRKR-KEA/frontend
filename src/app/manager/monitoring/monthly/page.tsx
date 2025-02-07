@@ -61,6 +61,7 @@ export default function Dashboard() {
   const fetchTicketData = async (date: string) => {
     try {
       const data = await getTicketStatusSummery('MONTHLY', date);
+      console.log("티켓 데이타", data)
       setTicketStatusSummery(data);
     } catch (error) {
       console.error('API 요청 실패:', error);

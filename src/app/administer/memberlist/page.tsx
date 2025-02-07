@@ -186,15 +186,17 @@ export default function AdminMemberListPage() {
                 </tr>
               ))}
             </tbody>
+          </table>
         
-        {/* ✅ 페이지네이션 추가 */}
-        <div className="flex justify-center mt-4">
-          <PagePagination
-            totalItemsCount={members?.totalElements || 0}
-            itemsCountPerPage={members?.size || 10}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageChange}
-          />
+          {/* ✅ 페이지네이션 추가 */}
+          <div className="flex justify-center mt-4">
+            <PagePagination
+              totalItemsCount={members?.totalElements || 0}
+              itemsCountPerPage={members?.size || 10}
+              pageRangeDisplayed={5}
+              onPageChange={handlePageChange}
+            />
+          </div>
         </div>
       </div>
     </div>

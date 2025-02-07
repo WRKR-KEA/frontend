@@ -1,9 +1,11 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation"; // 수정된 import
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import path from "path";
 import userStore from "@/stores/userStore"; // ✅ zustand 스토어 import
+import axios from "axios";
+import api from "@/lib/api/axios";
 
 export default function Headerbar() {
     const pathname = usePathname(); // 현재 경로 가져오기
@@ -11,6 +13,9 @@ export default function Headerbar() {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true); // 사이드바 상태 관리
     const router = useRouter(); // ✅ 페이지 이동을 위한 useRouter
     const { setUser } = userStore(); // ✅ zustand에서 setUser 가져오기
+    const [notificationData, setNotificationData] = useState<any[]>([]); // notificationData 상태 추가
+
+
 
     // 사이드바 열고 닫기 함수
     const toggleSidebar = () => {
@@ -81,6 +86,25 @@ export default function Headerbar() {
         router.push("/login");
     };
 
+    // getNotification 함수
+    const getNotification = async () => {
+        try {
+            const response = await api.get(`${process.env.NEXT_PUBLIC_BASE_URL}api/user/notifications`);
+            let notificationData = response.data.result;
+            console.log(notificationData[0].content)
+            console.log(notificationData[0].timeAgo)
+            setNotificationData(notificationData); // notificationData 상태 업데이트
+        } catch (error) {
+            console.error("알람 에러:", error);
+            alert("서버와 통신 중 오류가 발생했습니다.");
+        }
+    };
+
+    // 페이지가 로드될 때 알림 데이터 가져오기
+    useEffect(() => {
+        getNotification();
+    }, []);
+
 
     return (
         <header
@@ -114,45 +138,21 @@ export default function Headerbar() {
                                 {/* 알림 리스트 */}
                                 <ul className="space-y-4">
                                     {/* 알림 아이템 1 */}
-                                    <li className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-800 font-semibold">새 메시지가 도착했습니다.</p>
-                                            <p className="text-xs text-gray-500">10분 전</p>
-                                        </div>
-                                    </li>
-                                    {/* 알림 아이템 2 */}
-                                    <li className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-800 font-semibold">작업이 완료되었습니다.</p>
-                                            <p className="text-xs text-gray-500">1시간 전</p>
-                                        </div>
-                                    </li>
-                                    {/* 알림 아이템 3 */}
-                                    <li className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-800 font-semibold">시스템 점검 및 AS가 완료되었습니다.</p>
-                                            <p className="text-xs text-gray-500">2시간 전</p>
-                                        </div>
-                                    </li>
-                                    {/* 알림 아이템 4 */}
-                                    <li className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-800 font-semibold">긴급 공지가 있습니다.</p>
-                                            <p className="text-xs text-gray-500">어제</p>
-                                        </div>
-                                    </li>
+                                    {notificationData
+                                        .filter((item) => item.type === "COMMENT") // 필터링
+                                            .map((notification) => (
+                                                <li key={notification.notificationId} className="flex items-center space-x-3">
+                                                    <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+                                                    <img src="/adminProfile.png" alt="알림 아이콘" className="" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold">{notification.content}</p>
+                                                        <p className="text-xs text-gray-500">{notification.timeAgo}</p>
+                                                    </div>
+                                                </li>
+                                            )
+                                        )
+                                    }
                                 </ul>
                             </div>
                         )}
@@ -174,37 +174,21 @@ export default function Headerbar() {
                                 {/* 알림 리스트 */}
                                 <ul className="space-y-4">
                                     {/* 알림 아이템 1 */}
-                                    <li className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-800 font-semibold">라이언님이 티켓을 발행했습니다.</p>
-                                            <p className="text-xs text-gray-500">46분 전</p>
-                                        </div>
-                                    </li>
-                                    {/* 알림 아이템 2 */}
-                                    <li className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-800 font-semibold">무지님이 티켓을 발행했습니다.</p>
-                                            <p className="text-xs text-gray-500">1시간 전</p>
-                                        </div>
-                                    </li>
-                                    {/* 알림 아이템 3 */}
-                                    <li className="flex items-center space-x-3">
-                                        <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                                            <img src="/adminProfile.png" alt="알림 아이콘" className="" />
-                                        </div>
-                                        <div>
-                                            <p className="text-sm text-gray-800 font-semibold">어피치님이 티켓 발행을 취소했습니다.</p>
-                                            <p className="text-xs text-gray-500">2시간 전</p>
-                                        </div>
-                                    </li>
-                                    {/* 알림 아이템 4 */}
-
+                                    {notificationData
+                                        .filter((item) => item.type === "TICKET") // 필터링
+                                            .map((notification) => (
+                                                <li key={notification.notificationId} className="flex items-center space-x-3">
+                                                    <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
+                                                    <img src="/adminProfile.png" alt="알림 아이콘" className="" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold">{notification.content}</p>
+                                                        <p className="text-xs text-gray-500">{notification.timeAgo}</p>
+                                                    </div>
+                                                </li>
+                                            )
+                                        )
+                                    }
                                 </ul>
                             </div>
                         )}

@@ -18,7 +18,30 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
     const editorRef = useRef<Editor>(null);
     const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
 
+<<<<<<< HEAD
     if (!isOpen) return null;
+=======
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
+
+  if (!isOpen) return null;
+>>>>>>> 62ad799ec0fa809f4160ca7af13834ccb255064b
 
     console.log("가이드 모달 - 카테고리 ID:", categoryId);
 
@@ -37,7 +60,16 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
     const handleSave = async () => {
         if (!editorRef.current) return;
 
+<<<<<<< HEAD
         const editorContent = editorRef.current.getInstance().getMarkdown();
+=======
+    try {
+      const accessToken = sessionStorage.getItem("accessToken");
+      if (!accessToken) {
+        showModal("로그인이 필요합니다.");
+        return;
+      }
+>>>>>>> 62ad799ec0fa809f4160ca7af13834ccb255064b
 
         try {
             const accessToken = sessionStorage.getItem("accessToken");
@@ -86,8 +118,17 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         }
     };
 
+<<<<<<< HEAD
     if (isLoading) {
         return <div>불러오는 중...</div>;
+=======
+      showModal("가이드가 성공적으로 저장되었습니다.");
+      refetch();
+      onClose();
+    } catch (error) {
+      console.error("❌ 가이드 저장 오류:", error);
+      showModal("가이드를 저장하는 중 오류가 발생했습니다.");
+>>>>>>> 62ad799ec0fa809f4160ca7af13834ccb255064b
     }
 
     return (
@@ -130,7 +171,53 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
                 </div>
             </div>
         </div>
+<<<<<<< HEAD
     );
+=======
+
+        {/* Toast UI Editor */}
+        <div className="p-4">
+          <Editor
+            ref={editorRef}
+            initialValue={initialMarkdown} // ✅ 수정: 문자열이 아닐 경우 빈 문자열로 설정
+            previewStyle="vertical"
+            height="500px"
+            initialEditType="wysiwyg"
+            useCommandShortcut={true}
+          />
+        </div>
+        <FileBox/>
+
+        {/* Modal Footer */}
+        <div className="p-4 flex justify-end space-x-2">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-semibold rounded-md hover:bg-gray-400 transition-all"
+          >
+            취소
+          </button>
+          <button
+            onClick={handleSave}
+            className="px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md hover:bg-blue-600 transition-all"
+          >
+            {!data ? "추가" : "저장"}
+          </button>
+        </div>
+        
+      </div>
+
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
+    </div>
+  );
+>>>>>>> 62ad799ec0fa809f4160ca7af13834ccb255064b
 };
 
 export default GuideModal;

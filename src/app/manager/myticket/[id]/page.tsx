@@ -12,6 +12,8 @@ import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import {fetchComments} from "@/services/user";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -21,6 +23,26 @@ export default function ManagericketDetailPage() {
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
   const [logs, setLogs] = useState([]);
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
+
+  const param = useParams();
 
   const statusMapping = {
     REQUEST: "작업요청",
@@ -29,32 +51,6 @@ export default function ManagericketDetailPage() {
     REJECT: "반려",
     COMPLETE: "작업완료"
   };
-
-
-  const param = useParams();
-
-  const logs = [
-    { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
-    { message: "안녕하세요, 티켓 관련해서 문의 드립니다.", role: "admin" },
-    { message: "티켓 세부 사항 설명 드리겠습니다.", role: "admin" },
-    { message: "질문을 작성하였습니다.", role: "user" },
-    { log: "담당자가 콘으로 변경되었습니다.", role: "admin" },
-    { log: "담당자가 라이언으로 변경되었습니다.", role: "admin" },
-    { message: "세부 사항을 알려주셔서 감사합니다.", role: "user" },
-    { message: "티켓을 처리해 드리겠습니다.", role: "admin" },
-    { message: "감사합니다.", role: "admin" },
-    { message: "감사합니다.", role: "user" },
-  ];
-
-  useEffect(() => {
-    const id = window.location.pathname.split("/").pop();
-    if (id) {
-      const numericId = parseInt(id, 10); 
-      const ticket = tickets.find((ticket) => ticket.id === numericId.toString()); 
-      console.log(numericId, tickets[numericId - 1]); 
-      setSelectedTicket(tickets[numericId - 1]);
-    }
-  }, [tickets]);
 
    // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
@@ -137,11 +133,11 @@ export default function ManagericketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(param.id);
       console.log("완료 성공:", result);
-      // alert("티켓이 완료되었습니다.");
+
       closeCompleteTicketModal();
     } catch (error) {
       console.error("티켓 완료 중 오류 발생:", error);
-      //alert("티켓 완료 중 문제가 발생했습니다.");
+
     }
   };
 
@@ -152,11 +148,11 @@ export default function ManagericketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketReject(param.id);
       console.log("작업 반려 성공:", result);
-      // alert("작업이 반려되었습니다.");
+
       closeAbortTicketModal();
     } catch (error) {
       console.error("작업 반려 중 오류 발생:", error);
-      //alert("작업 반려 중 문제가 발생했습니다.");
+
     }
   };
 
@@ -189,12 +185,12 @@ export default function ManagericketDetailPage() {
   };
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
-      <div className="flex justify-between items-center">
-        <h2 className="text-md font-semibold">티켓 상세 정보</h2>
+      <div className="flex justify-between items-center mb-2">
+        <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "in-progress" 상태일 때만 보이도록 조건 추가 */}
         {statusMap[selectedTicket.status] === "new" && (
-          <div className="flex space-x-2 mt-2">
+          <div className="flex space-x-2">
             <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
             <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
             <Button label="작업 완료" onClick={handleCompleteTicket} color={3} />
@@ -208,8 +204,8 @@ export default function ManagericketDetailPage() {
        <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
       </div>
 
-      <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment logs={logs} />
+      <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
+      <TicketComment logs={logs} ticketId={selectedTicket.id} />
 
        {/* 작업 반려 모달 */}
        {isAbortTicketOpen && (
@@ -224,6 +220,15 @@ export default function ManagericketDetailPage() {
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (
         <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
+      )}
+        {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
       )}
     </div>
   );

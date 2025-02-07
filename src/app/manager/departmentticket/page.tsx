@@ -91,17 +91,17 @@ export default function DepartmentTicketListPage() {
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
-        <h2 className="text-md font-semibold">티켓 조회</h2>
+        <h2 className="text-lg font-semibold">티켓 조회</h2>
 
         {/* 검색 컴포넌트 */}
         <div className="flex items-center space-x-2 ml-4">
-          <Search onSearchChange={handleSearchChange} />
+          <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
         </div>
 
         <div className="ml-auto flex items-center relative">
           {/* 캘린더 선택 */}
           <button
-            className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-4 py-2 rounded-md"
+            className="flex items-center text-sm font-medium text-main-2 hover:text-main-1 px-4 py-2 rounded-md"
             onClick={toggleCalendar}
           >
             <span>{formattedDateRange}</span>

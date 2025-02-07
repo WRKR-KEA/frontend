@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { FilterTab } from "@/components/Filters/filterTab";
 import { useRouter } from "next/navigation";
 import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
 import { HighlightText } from "@/components/highlightText";
 import PagePagination from "@/components/pagination";
+import { FilterTab_Manager } from "../Filters/filterTab_Manager";
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -97,7 +97,7 @@ export function TicketList_Manager({
 
   return (
     <div className="bg-white rounded-md shadow-md">
-      <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
+      <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-100 text-left">

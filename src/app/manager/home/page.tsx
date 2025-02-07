@@ -41,43 +41,43 @@ export default function ManagerHomePage() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  // 담당자 메인 페이지 티켓 요청
   const fetchTickets = async () => {
     setIsLoading(true);
     try {
       const { data } = await api.get("/api/manager/tickets/main");
-
-      if (data && data.result) {
-        const pinTicketList: Ticket[] = data.result.pinTickets.map((ticket: any) => ({
-          id: ticket.ticketId,
-          number: ticket.ticketSerialNumber,
-          status: ticket.status,
-          title: ticket.title,
-          requester: ticket.userNickname,
-          requestDate: ticket.requestedDate,
-          updateDate: ticket.updatedDate,
-          handler: ticket.managerNickname,
-        }));
-
-        const requestTicketList: Ticket[] = data.result.requestTickets.map((ticket: any) => ({
-          id: ticket.ticketId,
-          number: ticket.ticketSerialNumber,
-          status: ticket.status,
-          title: ticket.title,
-          requester: ticket.userNickname,
-          requestDate: ticket.requestedDate,
-          updateDate: ticket.updatedDate,
-          handler: ticket.managerNickname,
-        }));
-
-        setPinTickets(pinTicketList);
-        setRequestTickets(requestTicketList);
-      } else {
+      
+      console.log("🌈 API 응답 데이터:", data);
+      if (!data || !data.result) {
         throw new Error("Invalid response format");
       }
-
+  
+      const pinTicketList: Ticket[] = data.result.pinTickets?.map((ticket: any) => ({
+        id: ticket.ticketId,
+        number: ticket.ticketSerialNumber,
+        status: ticket.status,
+        title: ticket.title,
+        requester: ticket.userNickname,
+        requestDate: ticket.requestedDate,
+        updateDate: ticket.updatedDate,
+        handler: ticket.managerNickname,
+      })) || []; // 값이 없을 경우 빈 배열 할당
+  
+      const requestTicketList: Ticket[] = data.result.requestTickets?.map((ticket: any) => ({
+        id: ticket.ticketId,
+        number: ticket.ticketSerialNumber,
+        status: ticket.status,
+        title: ticket.title,
+        requester: ticket.userNickname,
+        requestDate: ticket.requestedDate,
+        updateDate: ticket.updatedDate,
+        handler: ticket.managerNickname,
+      })) || [];
+  
+      setPinTickets(pinTicketList);
+      setRequestTickets(requestTicketList);
+  
     } catch (error) {
-      console.error("API 요청 오류:", error);
+      console.error("🚨 API 요청 오류:", error);
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);

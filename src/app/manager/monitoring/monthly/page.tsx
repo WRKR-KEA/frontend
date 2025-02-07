@@ -121,7 +121,7 @@ export default function Dashboard() {
         <div className="relative">
           {/* 달력 버튼 */}
           <button
-            className="flex items-center text-sm font-medium text-[#6E61CA] px-4 py-2 rounded-md"
+            className="flex items-center text-sm font-medium text-main-2 hover:text-main-1 px-4 py-2 rounded-md"
             onClick={toggleCalendar}
           >
             <span>{formattedDate}</span>

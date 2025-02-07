@@ -99,12 +99,12 @@ export default function UserHomePage() {
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
-      <h2 className="text-md font-semibold">최근 티켓 조회</h2>
+      <h2 className="text-lg font-semibold">최근 티켓 조회</h2>
       <div className="flex space-x-6">
         {selectedTicket && <TicketInfo ticket={selectedTicket} />}
         <TicketStatus status={ticketStatus} />
       </div>
-      <h2 className="text-md font-semibold">최근 티켓 현황</h2>
+      <h2 className="text-lg font-semibold">최근 티켓 현황</h2>
       <TicketList
         tickets={tickets}
         maxTicketsToShow={maxTicketsToShow}

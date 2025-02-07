@@ -1,7 +1,7 @@
 export function HighlightText({ text, highlight }: { text: string; highlight: string }) {
-    if (!highlight) return <span>{text}</span>;
-  
-    const parts = text.split(new RegExp(`(${highlight})`, 'gi'));
+  if (!text) return <span>{text || ""}</span>; // 🔹 null일 경우 빈 문자열로 처리
+
+  const parts = text.split(new RegExp(`(${highlight})`, "gi"));
   
     return (
       <>

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
-import { Search_manager } from "@/components/search_manager";
+import { Search } from "@/components/search";
 import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
 
@@ -74,6 +74,7 @@ export default function ManagerTicketListPage() {
         }));
 
         setTickets(formattedTickets);
+        console.log("🍉 담당 티켓 정보", formattedTickets);
         setTotalPages(Math.ceil(data.result.totalElements / maxTicketsToShow));
       } else {
         throw new Error(data.message);
@@ -97,19 +98,19 @@ export default function ManagerTicketListPage() {
   if (error) return <div>{error}</div>;
 
   return (
-    <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
-      <div className="flex items-center">
-        <h2 className="text-md font-semibold">티켓 조회</h2>
+      <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
+        <div className="flex items-center">
+          <h2 className="text-lg font-semibold">티켓 조회</h2>
 
-        <div className="flex items-center space-x-2 ml-4">
-          <Search_manager onSearchChange={handleSearchChange} />
-        </div>
+          <div className="flex items-center space-x-2 ml-4">
+            <Search onSearchChange={handleSearchChange} placeHolder="제목, 티켓번호"/>
+          </div>
 
-        <div className="ml-auto flex items-center">
-          <FilterOrder onSelectOrder={handleSelectOrder} />
-          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
+          <div className="ml-auto flex items-center">
+            <FilterOrder onSelectOrder={handleSelectOrder}/>
+            <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow}/>
+          </div>
         </div>
-      </div>
 
       <TicketList_Manager
         tickets={tickets}
@@ -119,7 +120,7 @@ export default function ManagerTicketListPage() {
         currentPage={currentPage}
         totalPages={totalPages}
         onStatusChange={handleStatusChange}
-        onPageChange={handlePageChange}  
+        onPageChange={handlePageChange}
       />
       <div className="flex justify-center items-center mt-4 mb-4">
         <PagePagination

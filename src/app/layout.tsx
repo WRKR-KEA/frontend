@@ -94,25 +94,9 @@ export default function RootLayout({
     }
   }, []);
 
-  // 😎로딩 컴포넌트
-  const LoadingScreen = () => (
-    <div className=" flex items-center justify-center bg-white ">
-      Loading...
-    </div>
-  );
+  
 
-  // 😎권한 체크 중일 때는 아무것도 렌더링하지 않음
-  if (isChecking) {
-    return (
-      <html lang="kr">
-        <body>
-          <Suspense fallback={<LoadingScreen />}>
-            <LoadingScreen />
-          </Suspense>
-        </body>
-      </html>
-    );
-  }
+  
 
   return (
     <html lang="ko" >
@@ -128,6 +112,8 @@ export default function RootLayout({
           {/* 메인 콘텐츠 */}
           <main className="flex-1 overflow-y-auto bg-white">
             <QueryClientProvider client={queryClient}>
+
+              
               {children}
             </QueryClientProvider>
           </main>

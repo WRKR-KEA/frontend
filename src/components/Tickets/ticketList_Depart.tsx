@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { FilterTab } from '@/components/Filters/filterTab';
 import { useRouter } from 'next/navigation';
 import { HighlightText } from '@/components/highlightText';
-import PagePagination from '@/components/pagination';
 
 type Ticket = {
   ticketId: string;
@@ -34,19 +33,19 @@ export function TicketList_Depart({
   onStatusChange,
 }: TicketList_DepartProps) {
   const statusStyles: Record<string, string> = {
-    REQUEST: 'bg-[#FFE9B6] text-[#D79804]',
-    IN_PROGRESS: 'bg-[#CFE3FF] text-[#3E7DD6]',
-    COMPLETE: 'bg-[#D1EEE2] text-[#3A966F]',
-    CANCEL: 'bg-[#E0E0E0] text-[#767676]',
-    REJECT: 'bg-[#F3CDBE] text-[#DE6231]',
+    REQUEST: 'bg-request text-request',
+    IN_PROGRESS: 'bg-inProgress text-inProgress',
+    COMPLETE: 'bg-complete text-complete',
+    CANCEL: 'bg-cancel text-cancel',
+    REJECT: 'bg-reject text-reject',
   };
 
   const statusMap: Record<string, string> = {
-    COMPLETE: "COMPLETE",
-    IN_PROGRESS: "IN_PROGRESS",
-    CANCEL: "CANCEL",
-    REJECT: "REJECT",
-    REQUEST: "REQUEST",
+    REQUEST: "작업 요청",
+    CANCEL: "취소",
+    IN_PROGRESS : "작업 진행",
+    REJECT: "반려",
+    COMPLETE: "작업 완료",
   };
   
   const [currentPage, setCurrentPage] = useState(page);
@@ -64,11 +63,12 @@ export function TicketList_Depart({
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
-    onStatusChange(statusMap[tab]);
+    onStatusChange(tab);
   };
 
   const handleTicketClick = (ticketId: string) => {
-    router.push(`/tickets/${ticketId}`);
+    const currentPath = window.location.pathname;
+    router.push(`${currentPath}/${ticketId}`);
   };
 
   const filteredTickets = tickets.filter((ticket) => {
@@ -99,51 +99,42 @@ export function TicketList_Depart({
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="px-4 py-2 w-36">티켓 번호</th>
-            <th className="px-4 py-2 w-24">상태</th>
+          <tr className="bg-gray-6 text-left border-b border-gray-4">
+            <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
+            <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
-            <th className="px-4 py-2 w-32">요청자</th>
-            <th className="px-4 py-2 w-32">담당자</th>
-            <th className="px-4 py-2 w-36">요청일</th>
-            <th className="px-4 py-2 w-36">마지막 업데이트</th>
+            <th className="px-4 py-2 w-32 min-w-32">요청자</th>
+            <th className="px-4 py-2 w-32 min-w-32">담당자</th>
+            <th className="px-4 py-2 w-44 min-w-44">요청일</th>
+            <th className="px-4 py-2 w-44 min-w-44">최근 변경일</th>
           </tr>
         </thead>
         <tbody>
           {displayedTickets.map((ticket) => (
             <tr
               key={ticket.ticketId}
-              className="border-t cursor-pointer"
+              className="border-t border-gray-5 cursor-pointer"
               onClick={() => handleTicketClick(ticket.ticketId)}
             >
               <td className="px-4 py-2">
                 <HighlightText text={ticket.ticketSerialNumber} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2">
-                <span className={`rounded-md px-2 py-1 text-sm ${statusStyles[ticket.status]}`}>
-                  {ticket.status}
+              <td className="px-4 py-2 text-center">
+                <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
+                  {statusMap[ticket.status]}
                 </span>
               </td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2">{ticket.userNickname}</td>
-              <td className="px-4 py-2">{ticket.managerNickname}</td>
+              <td className="px-4 py-2 truncate">{ticket.userNickname}</td>
+              <td className="px-4 py-2 truncate">{ticket.managerNickname}</td>
               <td className="px-4 py-2">{ticket.requestedDate}</td>
               <td className="px-4 py-2">{ticket.updatedDate}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      {/* <div className="flex justify-center items-center mt-4 mb-4">
-      <PagePagination
-          totalItemsCount={filteredTickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          currentPage={currentPage} // 현재 페이지를 전달
-          onPageChange={handlePageChange}
-        />
-      </div> */}
     </div>
   );
 }

@@ -93,13 +93,13 @@ export default function ManagerHomePage() {
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
-      <h2 className="text-md font-semibold">고정 티켓 조회</h2>
+      <h2 className="text-lg font-semibold">고정 티켓 조회</h2>
       <TicketList
         tickets={pinTickets}
         maxTicketsToShow={maxTicketsToShow}
         page={1}
       />
-      <h2 className="text-md font-semibold">최근 티켓 현황</h2>
+      <h2 className="text-lg font-semibold">최근 티켓 현황</h2>
       <TicketList
         tickets={requestTickets}
         maxTicketsToShow={maxTicketsToShow}

@@ -4,12 +4,32 @@ import { useEffect, useState } from "react";
 import { fetchMyPage, updateMyPage } from "@/service/user";
 import ProfileSave from "@/components/Profiles/profileSave";
 import ProfileManagerEdit from "@/components/Profiles/profileManagerEdit";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function ManagerProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false); // 편집 모드 상태
   const [profile, setProfile] = useState<any>(null); // 상태로 프로필 데이터 저장
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},    
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+   
+    });
+  };
 
   useEffect(() => {
     fetchMyPage()
@@ -43,12 +63,12 @@ export default function ManagerProfilePage() {
 
       try {
         await updateMyPage(updateData); 
-        alert("프로필이 저장되었습니다."); // 성공 메시지
+        showModal("프로필이 저장되었습니다."); // 성공 메시지
         console.log(updateData);
         setIsEditing(false); // 편집 모드 종료
       } catch (error) {
         console.error("프로필 저장 실패", error);
-        alert("프로필 저장에 실패했습니다."); // 실패 메시지
+        showModal("프로필 저장에 실패했습니다."); // 실패 메시지
       }
     }
   };
@@ -183,6 +203,15 @@ export default function ManagerProfilePage() {
           </button>
         )}
       </div>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

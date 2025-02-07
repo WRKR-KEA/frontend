@@ -17,6 +17,25 @@ interface GuideModalProps {
 const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave }) => {
   const editorRef = useRef<Editor>(null);
 
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
+
   if (!isOpen) return null;
 
   console.log("가이드 모달 - 카테고리 ID:", categoryId);
@@ -36,7 +55,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        showModal("로그인이 필요합니다.");
         return;
       }
 
@@ -74,12 +93,12 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         }
       }
 
-      alert("가이드가 성공적으로 저장되었습니다.");
+      showModal("가이드가 성공적으로 저장되었습니다.");
       refetch();
       onClose();
     } catch (error) {
       console.error("❌ 가이드 저장 오류:", error);
-      alert("가이드를 저장하는 중 오류가 발생했습니다.");
+      showModal("가이드를 저장하는 중 오류가 발생했습니다.");
     }
   };
 
@@ -125,6 +144,16 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         </div>
         
       </div>
+
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

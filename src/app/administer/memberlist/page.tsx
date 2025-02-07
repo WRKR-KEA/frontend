@@ -5,12 +5,33 @@ import { FaSearch } from "react-icons/fa";
 import { useMemberListQuery } from "@/hooks/useMemberList";
 import PagePagination from "@/components/pagination";
 import Link from "next/link";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function AdminMemberListPage() {
   const [activeTab, setActiveTab] = useState("전체"); // 역할 선택 (탭)
   const [currentPage, setCurrentPage] = useState(1); // 페이지네이션
   const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
   const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},    
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+   
+    });
+  };
+
 
   // ✅ 역할 선택 시 role 변경 (탭 클릭)
   const handleTabClick = (tabName: string) => {
@@ -71,14 +92,14 @@ export default function AdminMemberListPage() {
   // ✅ 선택한 유저 삭제 API 호출
   const handleDeleteMembers = async () => {
     if (selectedMembers.length === 0) {
-      alert("삭제할 회원을 선택해주세요.");
+      showModal("삭제할 회원을 선택해주세요.");
       return;
     }
 
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        showModal("로그인이 필요합니다.");
         return;
       }
 
@@ -95,7 +116,7 @@ export default function AdminMemberListPage() {
         throw new Error("회원 삭제 실패");
       }
 
-      alert("선택한 회원이 삭제되었습니다.");
+      showModal("선택한 회원이 삭제되었습니다.");
       setSelectedMembers([]);
       refetch();
     } catch (error) {
@@ -197,6 +218,15 @@ export default function AdminMemberListPage() {
           />
         </div>
       </div>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

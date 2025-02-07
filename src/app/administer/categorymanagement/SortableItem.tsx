@@ -39,6 +39,25 @@ const SortableItem: React.FC<SortableItemProps> = ({
   const [modalType, setModalType] = useState<"guide" | "template" | null>(null); // ✅ 모달 타입 추가
   const [modalTitle, setModalTitle] = useState("");
 
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
+
   const style = {
     transform: CSS.Transform.toString(transform),
     transition,
@@ -49,7 +68,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
   // ✅ 카테고리 수정 함수
   const handleSave = async () => {
     if (!editValue.trim()) {
-      alert("이름을 입력해주세요.");
+      showModal("이름을 입력해주세요.");
       return;
     }
 
@@ -72,12 +91,12 @@ const SortableItem: React.FC<SortableItemProps> = ({
         throw new Error("카테고리 수정 실패");
       }
 
-      alert("카테고리가 성공적으로 수정되었습니다.");
+      showModal("카테고리가 성공적으로 수정되었습니다.");
       setIsEditing(false);
       refetch();
     } catch (error) {
       console.error("❌ 카테고리 수정 오류:", error);
-      alert("카테고리를 수정하는 중 오류가 발생했습니다.");
+      showModal("카테고리를 수정하는 중 오류가 발생했습니다.");
     }
   };
 
@@ -104,11 +123,11 @@ const SortableItem: React.FC<SortableItemProps> = ({
         throw new Error("카테고리 삭제 실패");
       }
 
-      alert("카테고리가 성공적으로 삭제되었습니다.");
+      showModal("카테고리가 성공적으로 삭제되었습니다.");
       refetch();
     } catch (error) {
       console.error("❌ 카테고리 삭제 오류:", error);
-      alert("카테고리를 삭제하는 중 오류가 발생했습니다.");
+      showModal("카테고리를 삭제하는 중 오류가 발생했습니다.");
     }
   };
 
@@ -227,6 +246,15 @@ const SortableItem: React.FC<SortableItemProps> = ({
             </div>
           )}
         </div>
+        {modalState.isOpen && (
+          <Modal onClose={modalState.onClose}>
+            <AlertModal
+              title={modalState.title}
+              onClick={modalState.onClose}
+              btnText={modalState.btnText}
+            />
+          </Modal>
+        )}
       </li>
     </>
   );

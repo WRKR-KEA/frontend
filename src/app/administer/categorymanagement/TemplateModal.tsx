@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import { useTemplateQuery } from "@/hooks/useTemplate"; // ✅ 템플릿 데이터 가져오는 쿼리
@@ -16,6 +16,31 @@ interface TemplateModalProps {
 const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title, onClose, refetchList }) => {
   const editorRef = useRef<Editor>(null);
 
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
+
+  if (!isOpen) return null;
+
+  console.log("템플릿 모달 - 카테고리 ID:", categoryId);
+  const { data, isLoading, isError, refetch } = useTemplateQuery(categoryId);
+
+  console.log("템플릿 쿼리 결과:", data);
   const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
   const templateId = data?.result.templateId;
 
@@ -31,14 +56,14 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
     const editorContent = editorRef.current.getInstance().getMarkdown().trim(); // ✅ 공백 제거 후 확인
 
     if (editorContent === "") {
-      alert("⚠ 공백은 작성할 수 없습니다. 내용을 입력해주세요.");
+      showModal("⚠ 공백은 작성할 수 없습니다. 내용을 입력해주세요.");
       return;
     }
 
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        showModal("로그인이 필요합니다.");
         return;
       }
 
@@ -63,12 +88,12 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
 
       if (!response.ok) throw new Error("템플릿 저장 실패");
 
-      await refetch(); 
-      alert("✅ 템플릿이 성공적으로 저장되었습니다.");
-      onClose(); 
+      await refetch();
+      showModal("✅ 템플릿이 성공적으로 저장되었습니다.");
+      onClose();
     } catch (error) {
       console.error("❌ 템플릿 저장 오류:", error);
-      alert("⚠ 템플릿을 저장하는 중 오류가 발생했습니다.");
+      showModal("⚠ 템플릿을 저장하는 중 오류가 발생했습니다.");
     }
 };
 
@@ -76,7 +101,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
   // ✅ 템플릿 삭제 함수
   const handleDelete = async () => {
     if (!templateId) {
-      alert("템플릿 ID를 찾을 수 없습니다.");
+      showModal("템플릿 ID를 찾을 수 없습니다.");
       return;
     }
 
@@ -85,7 +110,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        showModal("로그인이 필요합니다.");
         return;
       }
 
@@ -98,13 +123,15 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
 
       if (!response.ok) throw new Error("템플릿 삭제 실패");
 
+      showModal("템플릿이 성공적으로 저장되었습니다.");
       // await refetchList()
       refetch()
-      alert("템플릿이 성공적으로 삭제되었습니다.");
+      showModal("템플릿이 성공적으로 삭제되었습니다.");
       onClose(); // ✅ 모달 닫기
     } catch (error) {
-      console.error("❌ 템플릿 삭제 오류:", error);
-      alert("템플릿을 삭제하는 중 오류가 발생했습니다.");
+      console.error("❌ 템플릿 저장 오류:", error);
+      showModal("템플릿을 저장하는 중 오류가 발생했습니다.");
+
     }
   };
 

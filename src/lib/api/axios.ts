@@ -3,7 +3,6 @@
 
 import axios, { AxiosInstance } from 'axios';
 
-const BASE_URL = 'http://172.16.211.53:8080';
 const accessToken = sessionStorage.getItem('accessToken');
 
 const apiConfig = {

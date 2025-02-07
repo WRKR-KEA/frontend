@@ -1,18 +1,78 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import dynamic from "next/dynamic";
-import { ApexOptions } from "apexcharts"; // ApexOptions 타입 가져오기
-import { Calendar } from "react-date-range";
-import "react-date-range/dist/styles.css"; // 기본 스타일
-import "react-date-range/dist/theme/default.css"; // 테마 스타일
-import "./custom-datepicker.css"; // 커스터마이징된 CSS
-const Chart = dynamic(() => import("react-apexcharts"), { ssr: false });
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { ApexOptions } from 'apexcharts'; // ApexOptions 타입 가져오기
+import { Calendar } from 'react-date-range';
+import 'react-date-range/dist/styles.css'; // 기본 스타일
+import 'react-date-range/dist/theme/default.css'; // 테마 스타일
+import './custom-datepicker.css';
+import {
+  fetchManagerStatistics,
+  getTicketStatusSummery,
+  postManagerStatistics,
+} from '@/services/manager'; // 커스터마이징된 CSS
+const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 
 export default function DailyMonitoring() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date()); // 단일 날짜 상태
+  const year = selectedDate.getFullYear();
+  const month = String(selectedDate.getMonth() + 1).padStart(2, '0'); // 월은 0부터 시작하므로 +1 필요
+  const day = String(selectedDate.getDate()).padStart(2, '0');
 
+  const formattedDate = `${year}-${month}-${day}`;
+  const [ticketStatusSummery, setTicketStatusSummery] = useState({
+    total: 0,
+    completed: 0,
+    rejected: 0,
+    inProgress: 0,
+    date: '',
+  });
+  const [ticketCountByCategory, setTicketCountByCategory] = useState({});
+  const fetchTicketCountByCategory = async (date: string) => {
+    try {
+      const data = await postManagerStatistics('DAILY', { date });
+      setTicketCountByCategory(data);
+      // console.log('카테고리별', ticketCountByCategory);
+    } catch (error) {
+      console.error('API 요청 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTicketCountByCategory(formattedDate);
+  }, [formattedDate]);
+
+  const [barChartData, setBarChardData] = useState({});
+
+  const fetchBarChartData = async (date: string) => {
+    try {
+      const data = await fetchManagerStatistics({ date }, 'DAILY', '');
+      setBarChardData(data);
+      // console.log(data);
+    } catch (error) {
+      console.error('API 요청 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchBarChartData(formattedDate);
+  }, [formattedDate]);
+
+  const [TicketDate, setTicketData] = useState({});
+  const fetchTicketData = async (date: string) => {
+    try {
+      const data = await getTicketStatusSummery('DAILY', date);
+      setTicketStatusSummery(data);
+    } catch (error) {
+      console.error('API 요청 실패:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchTicketData(formattedDate);
+  }, [formattedDate]);
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
   };
@@ -22,36 +82,35 @@ export default function DailyMonitoring() {
     setIsCalendarOpen(false); // 날짜 선택 후 달력 닫기
   };
 
-  const formattedDate = selectedDate.toLocaleDateString();
 
   const lineChartOptions: ApexOptions = {
     chart: {
-      id: "tickets-line-chart",
+      id: 'tickets-line-chart',
     },
     xaxis: {
       categories: Array.from({ length: 24 }, (_, i) => `${i}:00`),
     },
     stroke: {
-      curve: "smooth",
+      curve: 'smooth',
     },
-    colors: ["#F56C6C"],
+    colors: ['#F56C6C'],
   };
 
   const lineChartSeries = [
     {
-      name: "발행된 티켓 수",
+      name: '발행된 티켓 수',
       data: [100, 200, 150, 300, 500, 400, 600, 800, 1000, 1200, 1500, 1800, 2000, 1700, 1500, 1300, 1100, 1000, 900, 800, 700, 1600, 500, 400],
     },
   ];
 
   const donutChartOptions: ApexOptions = {
     chart: {
-      type: "donut",
+      type: 'donut',
     },
-    labels: ["햄버거", "도넛", "아이스크림", "캔디"],
-    colors: ["#2D2D2D", "#AEDAFF", "#A7E9AF", "#FFB5B5"],
+    labels: ['햄버거', '도넛', '아이스크림', '캔디'],
+    colors: ['#2D2D2D', '#AEDAFF', '#A7E9AF', '#FFB5B5'],
     legend: {
-      position: "right",
+      position: 'right',
     },
   };
 
@@ -92,19 +151,23 @@ export default function DailyMonitoring() {
 
       {/* 통계 카드 */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <div className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
+        <div
+          className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-lg text-gray-800 mb-2">일간 전체 티켓</h3>
           <p className="text-2xl font-bold text-blue-600">1,006</p>
         </div>
-        <div className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
+        <div
+          className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-lg text-gray-800 mb-2">일간 처리 완료된 티켓</h3>
           <p className="text-2xl font-bold text-blue-600">700</p>
         </div>
-        <div className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
+        <div
+          className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-lg text-gray-800 mb-2">일간 반려된 티켓</h3>
           <p className="text-2xl font-bold text-blue-600">98</p>
         </div>
-        <div className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
+        <div
+          className="bg-gradient-to-b from-blue-100 to-blue-200 p-6 rounded-lg shadow-md text-center">
           <h3 className="text-lg text-gray-800 mb-2">일간 처리중 티켓</h3>
           <p className="text-2xl font-bold text-blue-600">108</p>
         </div>

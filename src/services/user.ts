@@ -1,4 +1,4 @@
-import api from "../lib/api/axios";
+import api from "@/lib/api/axios";
 
 // (GET) 코멘트 내역 조회
 export async function fetchComments(ticketId: string) {
@@ -13,16 +13,34 @@ export async function fetchComments(ticketId: string) {
 // (POST) 코멘트 작성
 export async function postComment(
   ticketId: string,
-  postData: { content: string }
+  content: string,
+  attachments: string[] = [],
 ) {
   try {
+    const formData = new FormData();
+
+    // 기본 파라미터 설정
+    const params = new URLSearchParams({
+      content: content,
+    });
+
+    // attachments가 있을 때만 추가
+    if (attachments.length > 0) {
+      params.append('attachments', JSON.stringify(attachments));
+    }
+
     const { data } = await api.post(
-      `/api/user/tickets/${ticketId}/comments`,
-      postData
+      `/api/user/tickets/${ticketId}/comments?${params}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      },
     );
     return data;
   } catch (error) {
-    console.error("코멘트 작성에 실패했습니다. :", error);
+    console.error('코멘트 작성에 실패했습니다. :', error);
   }
 }
 

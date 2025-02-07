@@ -31,7 +31,7 @@ export default function LoginPage() {
   
   const api: AxiosInstance = axios.create({
     baseURL: server,
-    withCredentials: true, // 쿠키를 포함한 인증 정보를 서버에 전송
+    withCredentials: true, // 쿠키를 포함한 인증 정보를 서버에 전s송
     headers: {
       "Content-Type": "application/json",
     },

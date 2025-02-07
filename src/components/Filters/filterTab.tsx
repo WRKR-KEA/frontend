@@ -17,41 +17,41 @@ export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
         전체
       </button>
       <button
-        onClick={() => handleTabClick("작업완료")}
+        onClick={() => handleTabClick("COMPLETE")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업완료" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "COMPLETE" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 완료
       </button>
       <button
-        onClick={() => handleTabClick("작업진행")}
+        onClick={() => handleTabClick("IN_PROGRESS")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업진행" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "IN_PROGRESS" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 진행
       </button>
       <button
-        onClick={() => handleTabClick("작업요청")}
+        onClick={() => handleTabClick("REQUEST")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업요청" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "REQUEST" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 요청
       </button>
       <button
-        onClick={() => handleTabClick("반려")}
+        onClick={() => handleTabClick("REJECT")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "반려" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "REJECT" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 반려
       </button>
       <button
-        onClick={() => handleTabClick("작업취소")}
+        onClick={() => handleTabClick("CANCEL")}
         className={`w-24 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "작업취소" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "CANCEL" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         작업 취소

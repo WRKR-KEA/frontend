@@ -3,15 +3,16 @@
 import React, { useState } from "react";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import GuideModal from "./GuideModal"; // ✅ 도움말 모달
+import TemplateModal from "./TemplateModal"; // ✅ 템플릿 모달
 
 interface SortableItemProps {
   categoryId: number;
   name: string;
   onEdit: (newName: string) => void;
   onDelete: () => void;
-  onTemplate: () => void;
-  onHelp: () => void;
   refetch: () => void;
+  refetchList: () => void;
 }
 
 const SortableItem: React.FC<SortableItemProps> = ({
@@ -19,9 +20,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
   name,
   onEdit,
   onDelete,
-  onTemplate,
-  onHelp,
   refetch,
+  refetchList,
 }) => {
   const {
     attributes,
@@ -35,6 +35,9 @@ const SortableItem: React.FC<SortableItemProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editValue, setEditValue] = useState(name);
   const [isHovered, setIsHovered] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalType, setModalType] = useState<"guide" | "template" | null>(null); // ✅ 모달 타입 추가
+  const [modalTitle, setModalTitle] = useState("");
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -109,83 +112,123 @@ const SortableItem: React.FC<SortableItemProps> = ({
     }
   };
 
-  return (
-    <li
-      ref={setNodeRef} // ✅ `li` 요소에 `setNodeRef` 적용
-      style={style}
-      className="bg-gray-50 border border-gray-200 rounded-md hover:shadow transition-shadow relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      <div className="flex items-center justify-between p-4">
-        <div className="flex items-center space-x-4">
-          <div {...attributes} {...listeners} className="cursor-grab">
-            <img src="/hamburg.png" alt="drag" className="w-5" />
-          </div>
-          {isEditing ? (
-            <input
-              type="text"
-              value={editValue}
-              onChange={(e) => setEditValue(e.target.value)}
-              className="border rounded px-2 py-1 text-gray-700"
-              autoFocus
-            />
-          ) : (
-            <span className="text-lg font-semibold text-gray-700 pointer-events-none">
-              {name}
-            </span>
-          )}
-        </div>
+  // ✅ 모달 열기 함수 (도움말 / 템플릿)
+  const handleOpenModal = (type: "guide" | "template") => {
+    setIsHovered(false);
+    setModalType(type);
+    setModalTitle(`${name} - ${type === "guide" ? "도움말" : "템플릿"}`);
+    setIsModalOpen(true);
+  };
 
-        {isHovered && !isDragging && (
-          <div className="absolute right-4 flex space-x-2 bg-white p-1 rounded shadow-md">
+  // ✅ 모달 닫기 함수
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setIsHovered(false); // ✅ 모달 닫힐 때 hover 초기화
+    setModalType(null);
+  };
+
+  return (
+    <>
+      <li
+        ref={setNodeRef}
+        style={style}
+        className="bg-gray-50 border border-gray-200 rounded-md hover:shadow transition-shadow relative"
+        onMouseEnter={() => !isModalOpen && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* ✅ 모달 (도움말 / 템플릿) */}
+        {isModalOpen && modalType === "guide" && (
+          <GuideModal
+            categoryId={categoryId.toString()}
+            isOpen={isModalOpen}
+            title={modalTitle}
+            onClose={handleCloseModal}
+            onSave={handleCloseModal}
+          />
+        )}
+
+        {isModalOpen && modalType === "template" && (
+          <TemplateModal
+            categoryId={categoryId.toString()}
+            isOpen={isModalOpen}
+            title={modalTitle}
+            onClose={handleCloseModal}
+            onSave={handleCloseModal}
+            refetchList={refetchList}
+          />
+        )}
+
+        <div className="flex items-center justify-between p-4">
+          <div className="flex items-center space-x-4">
+            <div {...attributes} {...listeners} className="">
+              <img src="/hamburg.png" alt="drag" className="w-5 cursor-grab" />
+            </div>
             {isEditing ? (
-              <>
-                <button
-                  onClick={handleSave}
-                  className="px-3 py-1 bg-green-50 text-green-500 text-sm rounded-md hover:bg-green-100"
-                >
-                  저장
-                </button>
-                <button
-                  onClick={() => setIsEditing(false)}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  취소
-                </button>
-              </>
+              <input
+                type="text"
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                className="border rounded px-2 py-1 text-gray-700"
+                autoFocus
+              />
             ) : (
-              <>
-                <button
-                  onClick={onHelp}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  도움말
-                </button>
-                <button
-                  onClick={onTemplate}
-                  className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
-                >
-                  템플릿
-                </button>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="px-3 py-1 bg-blue-50 text-blue-500 text-sm rounded-md hover:bg-blue-100"
-                >
-                  수정
-                </button>
-                <button
-                  onClick={handleCategoryDelete}
-                  className="px-3 py-1 bg-red-50 text-red-500 text-sm rounded-md hover:bg-red-100"
-                >
-                  삭제
-                </button>
-              </>
+              <span className="text-lg font-semibold text-gray-700 pointer-events-none">
+                {name}
+              </span>
             )}
           </div>
-        )}
-      </div>
-    </li>
+
+          {/* ✅ 모달이 열려있지 않을 때만 버튼 표시 */}
+          {isHovered && !isDragging && !isModalOpen && (
+            <div className="absolute right-4 flex space-x-2 bg-white p-1 rounded shadow-md">
+              {isEditing ? (
+                <>
+                  <button
+                    onClick={handleSave}
+                    className="px-3 py-1 bg-green-50 text-green-500 text-sm rounded-md hover:bg-green-100"
+                  >
+                    저장
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(false)}
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    취소
+                  </button>
+                </>
+              ) : (
+                <>
+                  <button
+                    onClick={() => handleOpenModal("guide")}
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    도움말
+                  </button>
+                  <button
+                    onClick={() => handleOpenModal("template")}
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                  >
+                    템플릿
+                  </button>
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="px-3 py-1 bg-blue-50 text-blue-500 text-sm rounded-md hover:bg-blue-100"
+                  >
+                    수정
+                  </button>
+                  <button
+                    onClick={handleCategoryDelete}
+                    className="px-3 py-1 bg-red-50 text-red-500 text-sm rounded-md hover:bg-red-100"
+                  >
+                    삭제
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      </li>
+    </>
   );
 };
 

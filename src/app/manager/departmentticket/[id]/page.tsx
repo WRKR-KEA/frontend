@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import {useParams, useRouter} from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
 import { TicketAccept } from "@/components/Modals/ticketAccept";
-import {fetchComments} from "@/services/user";
-import {fetchManagerTicket} from "@/services/manager";
+import { updateManagerTicketApprove, fetchManagerTicket } from "@/services/manager";
+import { useCommentList } from '@/hooks/useCommentList';
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -17,73 +17,60 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
-  const [logs, setLogs] = useState([]);
+  const [ticketId, setTicketId] = useState('');
+  const param = useParams();
 
   const statusMapping = {
-    REQUEST: "작업요청",
-    CANCEL: "작업취소",
-    IN_PROGRESS: "작업진행",
-    REJECT: "반려",
-    COMPLETE: "작업완료"
+    REQUEST: '작업요청',
+    CANCEL: '작업취소',
+    IN_PROGRESS: '작업진행',
+    REJECT: '반려',
+    COMPLETE: '작업완료',
   };
 
   // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
-    작업요청: "new", // '작업요청' -> 'new'
-    반려: "rejected", // '반려' -> 'rejected'
-    작업진행: "in-progress", // '작업진행' -> 'in-progress'
-    작업완료: "completed", // '작업완료' -> 'completed'
-    작업취소: "cancelled", // '작업취소' -> 'cancelled'
+    작업요청: 'new', // '작업요청' -> 'new'
+    반려: 'rejected', // '반려' -> 'rejected'
+    작업진행: 'in-progress', // '작업진행' -> 'in-progress'
+    작업완료: 'completed', // '작업완료' -> 'completed'
+    작업취소: 'cancelled', // '작업취소' -> 'cancelled'
   };
 
+  // ticketId가 있을 때만 댓글 조회
+  const { data: commentData } = useCommentList({ ticketId });
+
+  console.log('티켓 ID:', ticketId);
+  console.log('댓글 데이터:', commentData);
+  const logs =
+    commentData?.result?.comments?.map((comment) => {
+      if (comment.type === 'SYSTEM') {
+        return { log: comment.content };
+      }
+      return {
+        message: comment.content,
+        role: comment.type,
+        createdAt: comment.createdAt,
+      };
+    }) || [];
+
   useEffect(() => {
-    const id = window.location.pathname.split("/").pop();
+    const id = window.location.pathname.split('/').pop();
     if (id) {
-      getTicketDetail(id).then(data => {
+      setTicketId(id); // 티켓 ID 설정
+      getTicketDetail(id).then((data) => {
         console.log('ticket', data);
         setSelectedTicket(data);
-      })
+      });
     }
   }, []);
 
-  useEffect(() => {
-    if (selectedTicket?.status == "작업요청" || selectedTicket?.status == "취소") return;
-    getComments(selectedTicket).then(data => {
-      console.log('comments:', data)
-      setLogs(data)
-    })
-  }, [selectedTicket])
-
-  const getComments = async (ticket) => {
-    try {
-      const response = await fetchComments(ticket.id);
-      console.log("response:", response)
-      return response.result.comments
-          .map(comment => {
-            if (comment.type === "SYSTEM") {
-              return {
-                log: comment.content
-              }
-            } else {
-              return {
-                message: comment.content,
-                role: comment.type
-              }
-            }
-          })
-    } catch (err) {
-      console.error(err)
-      return []
-    }
-  }
-
-  const getTicketDetail = async (ticketId) => {
+  const getTicketDetail = async (ticketId: string) => {
     const response = await fetchManagerTicket(ticketId);
-    console.log("response:", response);
     const ticket = response.result;
     return {
       id: ticket.ticketId,
-      number: "?????",
+      number: '?????',
       status: statusMapping[ticket.status],
       type: ticket.category,
       title: ticket.title,
@@ -91,19 +78,29 @@ export default function ManagericketDetailPage() {
       requester: ticket.userNickname,
       handler: ticket.managerNickname,
       requestDate: ticket.createdAt,
-      acceptDate: ticket.startedAt == null ? "―" : ticket.startedAt,
-      updateDate: ticket.updatedAt == null ? "―" : ticket.updatedAt,
-      completeDate: ticket.completedAt == null ? "―" : ticket.completedAt,
-    }
-  }
+      acceptDate: ticket.startedAt == null ? '―' : ticket.startedAt,
+      updateDate: ticket.updatedAt == null ? '―' : ticket.updatedAt,
+      completeDate: ticket.completedAt == null ? '―' : ticket.completedAt,
+    };
+  };
 
   const handleAcceptTicket = () => {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmAccept = () => {
-    console.log("작업이 승인되었습니다."); 
-    setIsModalOpen(false); // 모달 닫기
+  const confirmAccept = async () => {
+    try {
+
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketApprove([param.id]);
+      console.log("작업 승인 성공:", result);
+
+      //alert("작업이 승인되었습니다.");
+      setIsModalOpen(false); // 모달 닫기
+    } catch (error) {
+      console.error("작업 승인 중 오류 발생:", error);
+      // alert("작업 승인 중 문제가 발생했습니다.");
+    }
   };
 
   const closeModal = () => {
@@ -115,9 +112,11 @@ export default function ManagericketDetailPage() {
   }
 
   const handleCompleteTicket = () => {
-    setIsCompleteTicketOpen(true);}; // 작업 완료 모달 열기
+    setIsCompleteTicketOpen(true);
+  }; // 작업 완료 모달 열기
   const handleAbortTicket = () => {
-    setIsAbortTicketOpen(true); };
+    setIsAbortTicketOpen(true);
+  };
   const closeAbortTicketModal = () => {
     setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
   };
@@ -137,19 +136,25 @@ export default function ManagericketDetailPage() {
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
         {statusMap[selectedTicket.status] === "new" && (
-            <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
+          <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
           )}    </div>
       </div>
 
       <div className="flex space-x-6">
         <TicketInfo ticket={selectedTicket} />
-       <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
+        <TicketStatus
+          status={statusMap[selectedTicket.status] || selectedTicket.status}
+        />
       </div>
 
       <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment logs={logs} />
+      <TicketComment logs={logs} ticketId={selectedTicket.id} />
 
-      <TicketAccept isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmAccept} />
+      <TicketAccept
+        isOpen={isModalOpen}
+        onClose={closeModal}
+        onConfirm={confirmAccept}
+      />
     </div>
   );
 }

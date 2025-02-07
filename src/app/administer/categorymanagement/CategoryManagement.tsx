@@ -170,11 +170,12 @@ const CategoryManagement: React.FC = () => {
 
     return (
         <div className="bg-gray-100 py-10 px-6">
+            
             <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
                 <h1 className="text-2xl font-bold mb-6 text-gray-800">카테고리 관리</h1>
 
                 {isLoading ? (
-                    <p>🔄 로딩 중...</p>
+                    <p></p>
                 ) : isError ? (
                     <p>❌ 오류 발생</p>
                 ) : (
@@ -185,7 +186,7 @@ const CategoryManagement: React.FC = () => {
                         onDragEnd={handleDragEnd}
                     >
                         <SortableContext items={categories.map((c) => c.categoryId)}>
-                            <ul className="space-y-4">
+                            <ul className="space-y-2">
                                 {categories.map((category) => (
                                     <SortableItem
                                         key={category.categoryId}
@@ -194,6 +195,7 @@ const CategoryManagement: React.FC = () => {
                                         refetch={refetch}
                                         onHelp={onHelp}
                                         onTemplate={onTemplate}
+                                        refetchList={refetch}
                                     />
                                 ))}
                             </ul>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import FirstTaskDrop from "@/components/Tickets/firstTaskDrop";
 import SecondTaskDrop from "@/components/Tickets/secondTaskDrop";
 import Help from "@/components/Modals/Help";
@@ -8,40 +8,84 @@ import Modal from "@/components/Modals/Modal";
 import Template from "@/components/Tickets/Template";
 import Button from "@/components/Buttons/Button";
 import { createTicket } from "@/lib/api/userCreateTickets";
+import { fetchCategories, fetchGuide, postTicket } from "@/services/user";
+import { fetchTemplate } from "@/services/admin";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");
   const [selectedRequestType, setSelectedRequestType] = useState("2차 카테고리를 선택해주세요.");
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [helpContent, setHelpContent] = useState("");
+  const [helpTitle, setHelpTitle] = useState("");
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [isTicketCreated, setIsTicketCreated] = useState(false); // 티켓 생성 여부
+  const [categories, setCategories] = useState<any[]>([]);
+  const [firstCategories, setFirstCategories] = useState<string[]>([]);
+  const [secondCategories, setSecondCategories] = useState<any>();
+  const [helpContent, setHelpContent] = useState("");
 
   const handleServiceChange = (value: string) => {
     setSelectedService(value);
+    setSecondCategories(categories.filter((category) => category.name === value)[0]);
   };
 
   const handleRequestTypeChange = (value: string) => {
     setSelectedRequestType(value);
+    getTemplate(secondCategories?.categoryId);
   };
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+
+  useEffect(() => {
+      const loadCategories = async () => {
+        try {
+          const response = await fetchCategories();
+          console.log("📌 가져온 카테고리 데이터:", response); // 응답 데이터 확인
+    
+          if (!response || typeof response !== "object") {
+            console.error("⚠️ 잘못된 응답 형식:", response);
+            setCategories([]); // 빈 배열로 초기화
+            return;
+          }
+    
+          if (!response.result || !Array.isArray(response.result.categories)) {
+            console.error("⚠️ 'result' 필드가 없거나 배열이 아님:", response);
+            setCategories([]); // 빈 배열로 초기화
+            return;
+          }
+    
+          // 정상적인 경우에만 데이터 설정
+          setCategories(response.result.categories);
+          setFirstCategories(response.result.categories.map((category: any) => category.name));
+        } catch (error) {
+          console.error("❌ 카테고리 조회 실패:", error);
+          setCategories([]); // 에러 발생 시 빈 배열 설정
+        }
+      };
+    
+      loadCategories();
+    }, []);
+    
   const handleCreate = async () => {
     try {
       const ticketData = {
         title: title || "Default Title",
         content: content || "Default Content",
-        categoryId: selectedService,
+        categoryId: secondCategories?.childCategories.find((category: any) => category.name === selectedRequestType)?.categoryId,
       };
       console.log("📌 요청 데이터:", ticketData);
   
-      const userId = 22; // 예시 사용자 ID
-      const result = await createTicket(userId, ticketData);
+      const result = await postTicket(ticketData);
+      console.log("📌 티켓 생성 결과:", result);
   
+      if (!result) {
+        console.error("⚠️ 티켓 생성 실패: 응답 데이터 없음");
+        alert("티켓 생성에 실패했습니다.");
+      }
+
       console.log("✅ 티켓 생성 성공:", result);
       setIsTicketCreated(true); // 생성 완료 상태로 변경
     } catch (error: any) {
@@ -56,12 +100,47 @@ export default function UserCreateTicketPage() {
     }
   };
 
-  const updateHelpContent = (service: string) => {
-    if (service !== "1차 카테고리를 선택해주세요.") {
-      setHelpContent(`${service}`);
+  const updateHelpContent = async (service: string) => {
+    if (service === "1차 카테고리를 선택해주세요.") return;
+  
+    try {
+      const response = await fetchGuide(secondCategories?.categoryId);
+      console.log("📌 가져온 도움말 데이터:", response);
+  
+      if (!response || !response.result || !response.result.content) {
+        console.warn("⚠️ 도움말 내용이 없습니다.");
+        setHelpTitle(`${service}`);
+        setHelpContent("해당 카테고리의 도움말이 없습니다.");
+      } else {
+        setHelpTitle(`${service} 도움말`);
+        setHelpContent(response.result.content);
+      }
+  
+      setIsModalOpen(true);
+    } catch (error) {
+      console.error("❌ 도움말 조회 실패:", error);
+      setHelpTitle(`${service} 도움말`);
+      setHelpContent("도움말을 불러오는 중 오류가 발생했습니다.");
       setIsModalOpen(true);
     }
   };
+
+  const getTemplate = async (categoryId: string) => {
+    try {
+      const response = await fetchTemplate(categoryId);
+      console.log("📌 가져온 템플릿 데이터:", response);
+      
+      if (!response.result.content) {
+        console.warn("⚠️ 템플릿 내용이 없습니다.");
+        setContent("템플릿 내용이 없습니다.");
+      } else {
+        setContent(response.result.content);
+      }
+    } catch (error) {
+      console.error("❌ 템플릿 조회 실패:", error);
+      setContent("템플릿을 불러오는 중 오류가 발생했습니다.");
+    }
+  }
 
   const isHelpButtonVisible = selectedService !== "1차 카테고리를 선택해주세요.";
   const isReadyToShow =
@@ -102,6 +181,7 @@ export default function UserCreateTicketPage() {
             <FirstTaskDrop
               selectedService={selectedService}
               onServiceChange={handleServiceChange}
+              firstCategories={firstCategories}
             />
           </div>
 
@@ -111,6 +191,7 @@ export default function UserCreateTicketPage() {
               selectedRequestType={selectedRequestType}
               onRequestTypeChange={handleRequestTypeChange}
               selectedService={selectedService}
+              secondCategories={secondCategories?.childCategories}
             />
           </div>
         </div>
@@ -127,7 +208,7 @@ export default function UserCreateTicketPage() {
 
       {isModalOpen && (
         <Modal onClose={toggleModal}>
-          <Help content={helpContent} />
+          <Help title={helpTitle} content={helpContent}/>
         </Modal>
       )}
     </div>

@@ -4,43 +4,47 @@ interface PagePaginationProps {
   totalItemsCount: number;
   itemsCountPerPage: number;
   pageRangeDisplayed: number;
+  currentPage: number;
+  totalPages: number;
   onPageChange: (pageNumber: number) => void;
 }
 
 const PagePagination: React.FC<PagePaginationProps> = ({
-  totalItemsCount,
-  itemsCountPerPage,
   pageRangeDisplayed,
+  currentPage,
+  totalPages,
   onPageChange,
 }) => {
-  const totalPages = Math.ceil(totalItemsCount / itemsCountPerPage);
-  const [currentPage, setCurrentPage] = React.useState(1);
-
   const handleClick = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
     onPageChange(pageNumber);
   };
 
-  const renderPageNumbers = () => {
-    const pages: number[] = [];
+  const getStartAndEndPages = () => {
     const startPage = Math.max(1, currentPage - Math.floor(pageRangeDisplayed / 2));
     const endPage = Math.min(totalPages, startPage + pageRangeDisplayed - 1);
+    return { startPage, endPage };
+  };
+
+  // Render the page numbers with dynamic range based on the current page
+  const renderPageNumbers = () => {
+    const { startPage, endPage } = getStartAndEndPages();
+    const pages: number[] = [];
 
     for (let i = startPage; i <= endPage; i++) {
       pages.push(i);
     }
 
-    return pages.map((page) => (
+    return pages.map((pageNumber) => (
       <button
-        key={page}
-        onClick={() => handleClick(page)}
+        key={pageNumber}
+        onClick={() => handleClick(pageNumber)}
         className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
-          currentPage === page
+          currentPage === pageNumber
             ? "bg-[#4F507F] text-white"
             : "text-black hover:bg-[#9192AE]"
         }`}
       >
-        {page}
+        {pageNumber}
       </button>
     ));
   };

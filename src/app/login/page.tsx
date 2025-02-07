@@ -31,7 +31,7 @@ export default function LoginPage() {
   
   const api: AxiosInstance = axios.create({
     baseURL: server,
-    withCredentials: true, // 쿠키를 포함한 인증 정보를 서버에 전송
+    withCredentials: true, // 쿠키를 포함한 인증 정보를 서버에 전s송
     headers: {
       "Content-Type": "application/json",
     },
@@ -50,6 +50,11 @@ export default function LoginPage() {
       const response = await api.post("/api/auth/login", { nickname, password });
 
       console.log("로그인 성공:", response);
+
+      // ✅ 서버 응답 메시지 alert
+      if (response.data.message) {
+        alert(response.data.message);
+      }
 
       // ✅ 토큰 저장
       if (response.data.result?.accessToken && response.data.result?.refreshToken) {
@@ -72,11 +77,10 @@ export default function LoginPage() {
 
       // 임시 비밀번호인 경우 변경 페이지로 이동
       if (response.data.result.isTempPassword) {
-        alert("최초 로그인 시 비밀번호 변경이 필요합니다.")
+        alert("최초 로그인 시 비밀번호 변경이 필요합니다.");
         router.push("/changepassword"); 
       } else {
-        // 로그인 성공 시 리다이렉트
-        alert("로그인 성공!");
+        // ✅ 로그인 성공 후 페이지 리다이렉트
         switch (response.data.result.role) {
           case "USER":
             router.push("/user/home");
@@ -89,11 +93,20 @@ export default function LoginPage() {
             break;
         }
       }
-    } catch (err) {
+    } catch (err: any) {
       console.error("로그인 에러:", err);
+
+      // ✅ 서버 응답 메시지가 있으면 alert 표시
+      if (err.response?.data?.message) {
+        alert(err.response.data.message);
+      } else {
+        alert("서버와 통신 중 오류가 발생했습니다.");
+      }
+
       setError("서버와 통신 중 오류가 발생했습니다.");
     }
-  };
+};
+
 
   // 비밀번호 재발급 페이지로 이동
   const handleForgotPassword = () => {

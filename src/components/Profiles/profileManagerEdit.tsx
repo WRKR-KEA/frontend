@@ -1,3 +1,5 @@
+import { useEffect,useState } from "react";
+
 type Profile = {
     name: string;
     department: string;
@@ -8,7 +10,20 @@ type Profile = {
     phone: string;
   };
   
-  function ProfileManagerEdit({ profile }: { profile: Profile }) {
+   function ProfileManagerEdit({ profile, setProfile }: { profile: Profile; setProfile: React.Dispatch<React.SetStateAction<Profile>> }) {
+      const [editableProfile, setEditableProfile] = useState(profile);
+    
+      const handleChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof Profile) => {
+        setEditableProfile({
+          ...editableProfile,
+          [field]: e.target.value,
+        });
+      };
+    
+      useEffect(() => {
+        setProfile(editableProfile);
+      }, [editableProfile, setProfile]);
+    
     return (
       <div>
         {/* 프로필 정보 */}
@@ -115,7 +130,7 @@ type Profile = {
               <input
                 type="text"
                 value={profile.role}
-                onChange={(e) => console.log(e.target.value)} 
+                onChange={(e) =>handleChange(e, 'role')} 
                 style={{
                   background: "#FAF0CA", 
                   border: "1px solid #ddd",
@@ -140,7 +155,7 @@ type Profile = {
               <input
                 type="text"
                 value={profile.phone}
-                onChange={(e) => console.log(e.target.value)} // You can handle the value update here
+                onChange={(e) => handleChange(e, 'phone')}  // You can handle the value update here
                 style={{
                   background: "#FAF0CA", // 수정 가능 시 강조 색상
                   border: "1px solid #ddd",
@@ -164,7 +179,7 @@ type Profile = {
               <input
                 type="text"
                 value={profile.position}
-                onChange={(e) => console.log(e.target.value)} 
+                onChange={(e) => handleChange(e, 'position')} 
                 style={{
                   background: "#FAF0CA", 
                   border: "1px solid #ddd",

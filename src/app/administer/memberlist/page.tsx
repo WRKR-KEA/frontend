@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FaSearch } from "react-icons/fa";
 import { useMemberListQuery } from "@/hooks/useMemberList";
 import PagePagination from "@/components/pagination";
@@ -50,6 +50,13 @@ export default function AdminMemberListPage() {
     role: getRoleQuery(), // 역할 매핑
     query: searchTrigger, // ✅ Enter 입력 시 검색어 적용
   });
+
+  // ✅ API 응답의 현재 페이지 값으로 currentPage 업데이트
+  useEffect(() => {
+    if (members?.data?.result?.currentPage) {
+      setCurrentPage(members?.data?.result?.currentPage);
+    }
+  }, [members?.data?.result?.currentPage]);
 
   // ✅ 선택된 유저 ID 리스트
   const [selectedMembers, setSelectedMembers] = useState<string[]>([]);
@@ -179,9 +186,7 @@ export default function AdminMemberListPage() {
                 </tr>
               ))}
             </tbody>
-          </table>
-        </div>
-
+        
         {/* ✅ 페이지네이션 추가 */}
         <div className="flex justify-center mt-4">
           <PagePagination

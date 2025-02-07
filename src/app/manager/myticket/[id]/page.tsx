@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import { useParams, useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
@@ -10,8 +10,8 @@ import { TicketCancel } from "@/components/Modals/ticketCancel";
 import TicketChange from "@/components/Modals/ticketChange";
 import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
+import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import {fetchComments} from "@/services/user";
-import {fetchManagerTicket} from "@/services/manager";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -30,7 +30,33 @@ export default function ManagericketDetailPage() {
     COMPLETE: "작업완료"
   };
 
-  // 티켓 상태 변환 맵
+
+  const param = useParams();
+
+  const logs = [
+    { log: "담당자가 어피치로 변경되었습니다.", role: "admin" },
+    { message: "안녕하세요, 티켓 관련해서 문의 드립니다.", role: "admin" },
+    { message: "티켓 세부 사항 설명 드리겠습니다.", role: "admin" },
+    { message: "질문을 작성하였습니다.", role: "user" },
+    { log: "담당자가 콘으로 변경되었습니다.", role: "admin" },
+    { log: "담당자가 라이언으로 변경되었습니다.", role: "admin" },
+    { message: "세부 사항을 알려주셔서 감사합니다.", role: "user" },
+    { message: "티켓을 처리해 드리겠습니다.", role: "admin" },
+    { message: "감사합니다.", role: "admin" },
+    { message: "감사합니다.", role: "user" },
+  ];
+
+  useEffect(() => {
+    const id = window.location.pathname.split("/").pop();
+    if (id) {
+      const numericId = parseInt(id, 10); 
+      const ticket = tickets.find((ticket) => ticket.id === numericId.toString()); 
+      console.log(numericId, tickets[numericId - 1]); 
+      setSelectedTicket(tickets[numericId - 1]);
+    }
+  }, [tickets]);
+
+   // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
     작업요청: "new", // '작업요청' -> 'new'
     반려: "rejected", // '반려' -> 'rejected'
@@ -104,9 +130,34 @@ export default function ManagericketDetailPage() {
     setIsModalOpen(true); // 모달 열기
   };
 
-  const confirmCancel = () => {
-    console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가
-    setIsModalOpen(false); // 모달 닫기
+  const confirmCompleteTicket = async () => {
+    if (!param) return;
+
+    try {
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketComplete(param.id);
+      console.log("완료 성공:", result);
+      // alert("티켓이 완료되었습니다.");
+      closeCompleteTicketModal();
+    } catch (error) {
+      console.error("티켓 완료 중 오류 발생:", error);
+      //alert("티켓 완료 중 문제가 발생했습니다.");
+    }
+  };
+
+  const confirmAbortTicket = async () => {
+    if (!param) return;
+
+    try {
+      // TODO: 타입 오류 해결
+      const result = await updateManagerTicketReject(param.id);
+      console.log("작업 반려 성공:", result);
+      // alert("작업이 반려되었습니다.");
+      closeAbortTicketModal();
+    } catch (error) {
+      console.error("작업 반려 중 오류 발생:", error);
+      //alert("작업 반려 중 문제가 발생했습니다.");
+    }
   };
 
   const closeModal = () => {
@@ -118,9 +169,13 @@ export default function ManagericketDetailPage() {
   }
 
   const handleCompleteTicket = () => {
-    setIsCompleteTicketOpen(true);}; // 작업 완료 모달 열기
+    setIsCompleteTicketOpen(true); // 작업 완료 모달 열기
+  }; 
+
   const handleAbortTicket = () => {
-    setIsAbortTicketOpen(true); };
+    setIsAbortTicketOpen(true); 
+  };
+
   const closeAbortTicketModal = () => {
     setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
   };
@@ -138,7 +193,7 @@ export default function ManagericketDetailPage() {
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "in-progress" 상태일 때만 보이도록 조건 추가 */}
-        {statusMap[selectedTicket.status] === "in-progress" && (
+        {statusMap[selectedTicket.status] === "new" && (
           <div className="flex space-x-2 mt-2">
             <Button label="작업 반려" onClick={handleAbortTicket} color={2} />
             <Button label="담당자 변경" onClick={toggleChangeModal} color={1} />
@@ -158,17 +213,17 @@ export default function ManagericketDetailPage() {
 
        {/* 작업 반려 모달 */}
        {isAbortTicketOpen && (
-          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={() => console.log("작업이 반려되었습니다.")} />
+          <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={confirmAbortTicket} />
       )}
 
       {/* 담당자 변경 모달 */}
-      {isChangeModalOpen && (
-          <TicketChange />
-      )}
+      {isChangeModalOpen && selectedTicket && (
+      <TicketChange ticketId={selectedTicket.id} />
+)}
 
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (
-        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={() => console.log("작업이 완료되었습니다.")} />
+        <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
       )}
     </div>
   );

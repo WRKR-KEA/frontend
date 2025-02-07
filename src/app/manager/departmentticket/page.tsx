@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
@@ -8,22 +8,20 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
-import { ticketDummyData } from "@/data/ticketDummyData";
+import { fetchManagerDepartmentTicket } from "@/services/manager";
+import PagePagination from "@/components/pagination";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-
-  // 캘린더 상태 관리
+  const [tickets, setTickets] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [dateRange, setDateRange] = useState<any>({
-    startDate: null,
-    endDate: null,
-    key: "selection",
-  });
-
-  const [tickets, setTickets] = useState(ticketDummyData); 
+  const [totalPages, setTotalPages] = useState(1);
+  const [status, setStatus] = useState<string>("");  
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -31,7 +29,7 @@ export default function DepartmentTicketListPage() {
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
-    setCurrentPage(1); // 페이지 수 초기화
+    setCurrentPage(1); // 페이지 초기화
   };
 
   const handlePageChange = (pageNumber: number) => {
@@ -47,12 +45,48 @@ export default function DepartmentTicketListPage() {
     setDateRange(ranges.selection);
   };
 
+  const [dateRange, setDateRange] = useState<any>({
+    startDate: null,
+    endDate: null,
+    key: "selection",
+  });
+  
   const formattedDateRange = dateRange.startDate
-    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(
-        dateRange.endDate,
-        "yyyy.MM.dd"
-      )}`
+    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
+  
+  const handleStatusChange = (status: string) => {
+    setStatus(status);
+    setCurrentPage(1);  // Reset to page 1 when changing status
+  };
+
+  const fetchTickets = async () => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await fetchManagerDepartmentTicket(
+        searchTerm,
+        status,
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined, 
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined, 
+        currentPage,
+        maxTicketsToShow
+      );
+      setTickets(data?.result?.elements || []);
+      console.log("🎫 부서 티켓 조회", data);
+    } catch (err) {
+      setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTickets();
+  }, [searchTerm, dateRange, currentPage, maxTicketsToShow, status]); // status를 dependency array에 추가
+
+  if (isLoading) return <div>로딩 중...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
@@ -67,7 +101,7 @@ export default function DepartmentTicketListPage() {
         <div className="ml-auto flex items-center relative">
           {/* 캘린더 선택 */}
           <button
-            className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-4 py-2 rounded-md "
+            className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-4 py-2 rounded-md"
             onClick={toggleCalendar}
           >
             <span>{formattedDateRange}</span>
@@ -89,19 +123,29 @@ export default function DepartmentTicketListPage() {
               />
             </div>
           )}
-          <FilterNum onSelectCount={handleSelectCount} />
+          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
 
       <TicketList_Depart
+        tickets={tickets}
         maxTicketsToShow={maxTicketsToShow}
         page={currentPage}
         searchTerm={searchTerm}
         dateRange={dateRange}
+        status={status}  // status 전달
+        onStatusChange={handleStatusChange} // 상태 변경 함수 전달
       />
 
-      <div className="flex justify-center items-center mt-4">
-        {/* 페이지네이션 컴포넌트가 이제 TicketList_Depart 내에 포함되어 있으므로, 이 부분을 제거하거나 적절히 수정해 주세요. */}
+      <div className="flex justify-center items-center mt-4 mb-4">
+        <PagePagination
+          totalItemsCount={tickets.length}
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );

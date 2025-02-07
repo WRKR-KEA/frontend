@@ -43,10 +43,7 @@ export default function UserHomePage() {
 
   // 🌟 담당자 메인 페이지 티켓 요청 (Strict Mode에서도 두 번 실행 방지)
   const fetchTickets = async () => {
-    if (hasFetched.current) return; // 두 번째 실행 방지
-    hasFetched.current = true;
-
-    setIsLoading(true);
+    setIsLoading(true);  // 데이터 로딩 상태 시작
     try {
       const { data } = await api.get("/api/user/tickets/main");
       console.log("🌈 받아온 데이터:", data.result.recentTickets);
@@ -72,13 +69,13 @@ export default function UserHomePage() {
     } catch (error) {
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
-      setIsLoading(false);
+      setIsLoading(false);  // 데이터 로딩 상태 끝
     }
   };
 
   useEffect(() => {
-    fetchTickets();
-  }, []);
+    fetchTickets();  // 페이지 처음 로드 시 티켓 데이터 가져오기
+  }, []);  // 빈 배열을 두 번째 인자로 넣어 첫 렌더링 시만 실행되도록 함
 
   // 🌟 selectedTicket이 없을 때만 초기 상태 설정 (두 번 실행 방지)
   useEffect(() => {
@@ -88,7 +85,7 @@ export default function UserHomePage() {
       setSelectedTicket(tickets[0]);
       console.log("🌈 초기 티켓의 상태:", initialStatus);
     }
-  }, [tickets]);
+  }, [tickets, selectedTicket]);
 
   const handleTicketClick = (ticket: Ticket) => {
     const newStatus = statusMap[ticket.status] || "REQUEST";
@@ -98,7 +95,7 @@ export default function UserHomePage() {
   };
 
   if (isLoading) return <div>로딩 중...</div>;
-  if (error) return <div>티켓 정보를 불러오는 중 오류가 발생했습니다.</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">

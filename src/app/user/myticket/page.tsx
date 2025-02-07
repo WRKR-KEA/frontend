@@ -7,6 +7,7 @@ import { Search } from "@/components/search";
 import useUserStore from "@/stores/userStore";
 import { useUserTicketListQuery } from "@/hooks/useUserTicket";
 import api from "@/lib/api/axios";
+import PagePagination from "@/components/pagination";
 
 type Ticket = {
   id: string;
@@ -30,12 +31,18 @@ export default function UserTicketListPage() {
   const ticketRequester = user ? user.name : ""; // 유저가 null일 경우 빈 문자열 처리
   const [tickets, setTickets] = useState<Ticket[]>([]); // 요청 티켓
   const [error, setError] = useState<string | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   // 유저 티켓 리스트 가져오기
   const { data} = useUserTicketListQuery({
     requester: ticketRequester,
   });
 
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);  // Update currentPage based on the selected page number
+  };
+  
   // 담당자 메인 페이지 티켓 요청
 const fetchTickets = async () => {
   try {
@@ -95,6 +102,16 @@ const fetchTickets = async () => {
         maxTicketsToShow={maxTicketsToShow}
         searchTerm={searchTerm}
       />
+      <div className="flex justify-center items-center mt-4 mb-4">
+        <PagePagination
+          totalItemsCount={tickets.length}
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+    </div>
     </div>
   );
 }

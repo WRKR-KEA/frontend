@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
 import { HighlightText } from "@/components/highlightText";
-import PagePagination from "@/components/pagination";
 import { FilterTab_Manager } from "../Filters/filterTab_Manager";
+import api from "@/lib/api/axios";
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -23,6 +23,7 @@ type TicketList_ManagerProps = {
   sortOrder: string;
   totalPages: number;
   onStatusChange: (status: string) => void;
+  onPageChange: (page: number) => void;
 };
 
 export function TicketList_Manager({
@@ -30,8 +31,9 @@ export function TicketList_Manager({
   maxTicketsToShow,
   searchTerm,
   sortOrder,
-  totalPages,    
+  totalPages,
   onStatusChange,
+  onPageChange,
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
@@ -57,24 +59,40 @@ export function TicketList_Manager({
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
-    onStatusChange(tab = statusMap[tab]);
+    onStatusChange(statusMap[tab]);
   };
-
 
   const handleTicketClick = (ticketId: string) => {
     router.push(`/tickets/${ticketId}`);
   };
 
-  const handlePinClick = (ticketId: string) => {
-    setPinnedTickets((prevPinned) =>
-      prevPinned.includes(ticketId)
-        ? prevPinned.filter((id) => id !== ticketId)
-        : [ticketId, ...prevPinned].slice(0, 10)
-    );
-  };
+  const handlePinClick = async (ticketId: string) => {
+    try {
+      const accessToken = sessionStorage.getItem("accessToken");
+      const response = await api.patch(
+        "/api/manager/tickets/pin",
+        {
+          ticketId: ticketId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+      if (response.data.isSuccess) {
+        setPinnedTickets((prevPinned) => {
+          return prevPinned.includes(ticketId)
+            ? prevPinned.filter((id) => id !== ticketId) // Unpin
+            : [ticketId, ...prevPinned].slice(0, 10); // Pin
+        });
+      } else {
+        console.error("Failed to pin the ticket.");
+      }
+    } catch (err) {
+      console.error("Error while pinning/unpinning the ticket:", err);
+    }
   };
 
   const sortedTickets = [...tickets].sort((a, b) => {
@@ -148,16 +166,6 @@ export function TicketList_Manager({
           ))}
         </tbody>
       </table>
-      <div className="flex justify-center items-center mt-4 mb-4">
-      <PagePagination
-        totalItemsCount={tickets.length} 
-        itemsCountPerPage={maxTicketsToShow}
-        pageRangeDisplayed={5}
-        currentPage={currentPage}
-        totalPages={totalPages} 
-        onPageChange={handlePageChange}
-      />
-      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
 import { fetchManagerDepartmentTicket } from "@/services/manager";
+import PagePagination from "@/components/pagination";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -18,12 +19,9 @@ export default function DepartmentTicketListPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-
+  const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState<string>("");  
-
-  const handleStatusChange = (newStatus: string) => {
-    setStatus(newStatus);  
-  };
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -57,7 +55,11 @@ export default function DepartmentTicketListPage() {
     ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
   
-  // dateRange의 startDate와 endDate가 null일 수 있으므로, 이를 처리하는 방식 변경
+  const handleStatusChange = (status: string) => {
+    setStatus(status);
+    setCurrentPage(1);  // Reset to page 1 when changing status
+  };
+
   const fetchTickets = async () => {
     setIsLoading(true);
     setError(null);
@@ -65,24 +67,23 @@ export default function DepartmentTicketListPage() {
       const data = await fetchManagerDepartmentTicket(
         searchTerm,
         status,
-        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined, // null을 undefined로 변경
-        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined, // null을 undefined로 변경
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined, 
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined, 
         currentPage,
         maxTicketsToShow
       );
       setTickets(data?.result?.elements || []);
-      console.log("ticket", data);
+      console.log("🎫 부서 티켓 조회", data);
     } catch (err) {
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
   };
-  
-console.log(tickets);
+
   useEffect(() => {
     fetchTickets();
-  }, [searchTerm, dateRange, currentPage, maxTicketsToShow]);
+  }, [searchTerm, dateRange, currentPage, maxTicketsToShow, status]); // status를 dependency array에 추가
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
@@ -132,7 +133,20 @@ console.log(tickets);
         page={currentPage}
         searchTerm={searchTerm}
         dateRange={dateRange}
+        status={status}  // status 전달
+        onStatusChange={handleStatusChange} // 상태 변경 함수 전달
       />
+
+      <div className="flex justify-center items-center mt-4 mb-4">
+        <PagePagination
+          totalItemsCount={tickets.length}
+          itemsCountPerPage={maxTicketsToShow}
+          pageRangeDisplayed={5}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
+      </div>
     </div>
   );
 }

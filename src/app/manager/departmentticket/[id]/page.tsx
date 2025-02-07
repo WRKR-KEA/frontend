@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import {useParams, useRouter} from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
 import { TicketAccept } from "@/components/Modals/ticketAccept";
-import { ticketDummyData } from "@/data/ticketDummyData";
 import { updateManagerTicketApprove, fetchManagerTicket } from "@/services/manager";
-import {fetchComments} from "@/services/user";
+import { useCommentList } from '@/hooks/useCommentList';
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -18,9 +17,8 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
-  
-  const param =useParams();
-  const [logs, setLogs] = useState([]);
+  const [ticketId, setTicketId] = useState('');
+  const param = useParams();
 
   const statusMapping = {
     REQUEST: '작업요청',

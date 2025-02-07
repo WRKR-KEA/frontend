@@ -17,6 +17,7 @@ const fetchGuide = async (categoryId: string) => {
       },
     }
   );
+  console.log(response)
   return response.data; // 필요한 데이터만 반환
 };
 

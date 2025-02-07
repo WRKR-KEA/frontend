@@ -57,7 +57,7 @@ export function TicketList_Manager({
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
     setCurrentPage(1);
-    onStatusChange(tab === "전체" ? "" : statusMap[tab]);
+    onStatusChange(tab = statusMap[tab]);
   };
 
 
@@ -84,7 +84,7 @@ export function TicketList_Manager({
     if (sortOrder === "OLDEST") {
       return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
     }
-    if (sortOrder === "") {
+    if (sortOrder === "UPDATED") {
       return (b.ispinned ? 1 : 0) - (a.ispinned ? 1 : 0);
     }
     return 0;
@@ -150,7 +150,7 @@ export function TicketList_Manager({
       </table>
       <div className="flex justify-center items-center mt-4 mb-4">
       <PagePagination
-        totalItemsCount={totalPages * maxTicketsToShow} 
+        totalItemsCount={tickets.length} 
         itemsCountPerPage={maxTicketsToShow}
         pageRangeDisplayed={5}
         currentPage={currentPage}

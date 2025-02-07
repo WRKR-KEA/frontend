@@ -10,7 +10,7 @@ import api from "@/lib/api/axios";
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
-  const [sortOrder, setSortOrder] = useState("NEWEST");
+  const [sortOrder, setSortOrder] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [tickets, setTickets] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
@@ -36,7 +36,7 @@ export default function ManagerTicketListPage() {
   const handlePageChange = (page: number) => {
     setCurrentPage(page);  // 페이지 변경 시 currentPage 업데이트
   };
-  
+
   const handleStatusChange = (status: string) => {
     setSelectedStatus(status);
     setCurrentPage(1);  // Reset to page 1 when changing status
@@ -45,7 +45,6 @@ export default function ManagerTicketListPage() {
     fetchTickets();
   }, [searchTerm, maxTicketsToShow, sortOrder, currentPage, selectedStatus]);
   
-  // Ensure that the `totalPages` is updated correctly when fetching tickets
   const fetchTickets = async () => {
     setIsLoading(true);
     setError(null);
@@ -91,7 +90,7 @@ export default function ManagerTicketListPage() {
     }
   };
 
-  useEffect(() => {
+    useEffect(() => {
     fetchTickets();
   }, [searchTerm, maxTicketsToShow, sortOrder, currentPage, selectedStatus]);
 

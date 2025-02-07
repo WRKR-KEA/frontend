@@ -41,13 +41,33 @@ export async function fetchManagerDepartmentTicket(
   try {
     const { data } = await api.get(
      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`
-   );
+    );
     return data;
   } catch (error) {
     console.error("부서 전체 티켓 조회 및 검색에 실패했습니다. :", error);
   }
 }
 
+
+// (GET) 부서 전체 티켓 조회 및 검색 결과 엑셀 다운로드
+export async function fetchManagerDepartmentTicketExcel(
+  query?: string,
+  status?: string,
+  startDate?: string,
+  endDate?: string
+) {
+  try {
+    const { data } = await api.get(
+      `/api/manager/tickets/department/excel?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}`, {
+        responseType: 'blob',
+      }
+    );
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("부서 전체 티켓 조회 및 검색 결과 엑셀 다운로드에 실패했습니다. :", error);
+  }
+}
 
 // (GET) 기간별 & 티켓 상태별 티켓 개수 조회
 export async function fetchManagerStatistics(

@@ -37,9 +37,9 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
           </div>
           <div className="space-y-4 text-left w-52 min-w-52">
             <div className="text-sm">생성 일시: {ticket.requestDate}</div>
-            <div className="text-sm">승인 일시: {ticket.ticketTimeInfo.startedAt}</div>
+            <div className="text-sm">승인 일시: {ticket.ticketTimeInfo?.startedAt}</div>
             <div className="text-sm">수정 일시: {ticket.updateDate}</div>
-            <div className="text-sm">완료 일시: {ticket.ticketTimeInfo.endedAt}</div>
+            <div className="text-sm">완료 일시: {ticket.ticketTimeInfo?.endedAt}</div>
           </div>
         </div>
       </div>

@@ -157,6 +157,24 @@ export async function postTicket(ticketData: {
   }
 }
 
+
+// (GET) 매니저 홈 티켓 목록 조회
+export async function fetchManagerTickets() {
+  const accessToken = sessionStorage.getItem("accessToken");
+  try {
+    const { data } = await api.get(`/api/manager/tickets/main`, {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error("티켓 정보를 불러오는 중 오류가 발생했습니다. :", error);
+    throw error;
+  }
+}
+
 // (POST) 로그인은 세부 내용을 몰라서 제가 건들지 못할거같네요 'ㅅ'
 
 // (PATCH) 비밀번호 재설정

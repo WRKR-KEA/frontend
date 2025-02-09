@@ -42,8 +42,6 @@ export default function ManagericketDetailPage() {
 
     });
   };
-
-  const param = useParams();
   const [ticketId, setTicketId] = useState('');
 
   const statusMapping = {

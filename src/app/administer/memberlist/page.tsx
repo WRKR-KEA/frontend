@@ -32,7 +32,6 @@ export default function AdminMemberListPage() {
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
       },
-
     });
   };
 

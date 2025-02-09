@@ -10,45 +10,17 @@ interface TemplateModalProps {
   isOpen: boolean;
   title: string;
   onClose: () => void;
-  refetchList: () => void;
+  refetchList: ()=> void;
+  showModal:()=> void;
 }
 
-const TemplateModal: React.FC<TemplateModalProps> = ({
-  categoryId,
-  isOpen,
-  title,
-  onClose,
-  refetchList,
-}) => {
+const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title, onClose, showModal }) => {
   const editorRef = useRef<Editor>(null);
 
-  const [modalState, setModalState] = useState({
-    isOpen: false,
-    title: "",
-    btnText: "",
-    onClose: () => {},
-  });
-
-  const showModal = (title: string, btnText = "닫기") => {
-    setModalState({
-      isOpen: true,
-      title,
-      btnText,
-      onClose: () => {
-        setModalState((prev) => ({ ...prev, isOpen: false }));
-      },
-    });
-  };
 
   if (!isOpen) return null;
 
-  console.log("템플릿 모달 - 카테고리 ID:", categoryId);
-
-  // Corrected: Remove the duplicate use of `data`, `isLoading`, `isFetching`, etc.
   const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
-
-  console.log("템플릿 쿼리 결과:", data);
-
   const templateId = data?.result.templateId;
 
   useEffect(() => {
@@ -65,7 +37,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
     const editorContent = editorRef.current.getInstance().getMarkdown().trim(); // ✅ 공백 제거 후 확인
 
     if (editorContent === "") {
-      showModal("⚠ 공백은 작성할 수 없습니다. 내용을 입력해주세요.");
+      showModal("공백은 작성할 수 없습니다. 내용을 입력해주세요.");
       return;
     }
 
@@ -97,8 +69,9 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
 
       if (!response.ok) throw new Error("템플릿 저장 실패");
 
-      await refetch();
-      showModal("✅ 템플릿이 성공적으로 저장되었습니다.");
+      showModal("템플릿이 성공적으로 저장되었습니다.", "확인", () => {
+        refetch(); 
+      });
       onClose();
     } catch (error) {
       console.error("❌ 템플릿 저장 오류:", error);
@@ -134,8 +107,11 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
 
       if (!response.ok) throw new Error("템플릿 삭제 실패");
 
-      showModal("템플릿이 성공적으로 삭제되었습니다.");
-      refetch();
+    
+      // await refetchList()
+      showModal("템플릿이 성공적으로 저장되었습니다.", "확인", () => {
+        refetch(); 
+      });
       onClose(); // ✅ 모달 닫기
     } catch (error) {
       console.error("❌ 템플릿 저장 오류:", error);

@@ -3,6 +3,8 @@
 import React, { useEffect, useState } from "react";
 import { useCategoryListQuery } from "@/hooks/useCategoryList";
 import SortableItem from "./SortableItem";
+import Modal from "@/components/Modals/Modal";
+import AlertModal from "@/components/Modals/AlertModal";
 import {
     DndContext,
     closestCenter,
@@ -38,16 +40,17 @@ const CategoryManagement: React.FC = () => {
         onClose:()=>{},
     })
 
-    const showModal =(title:string, btnText='닫기')=> {
+    const showModal = (title: string, btnText='닫기') => {
         setModalState({
-            isOpen: true,
-            title,
-            btnText,
-            onClose: () => {
-                setModalState({ ...prev, isOpen: false });
-            },
+          isOpen: true,
+          title,
+          btnText,
+          onClose: () => {
+            setModalState(prev => ({ ...prev, isOpen: false }));
+          },
+    
         });
-    };
+      };
 
     useEffect(() => {
         if (categoryData?.result?.categories) {
@@ -133,15 +136,18 @@ const CategoryManagement: React.FC = () => {
             if (!response.ok) {
                 throw new Error("카테고리 생성 실패");
             }
-
+            await refetch();
+            
             showModal("새로운 카테고리가 추가되었습니다.");
-            refetch();
+            
         } catch (error) {
             console.error("❌ 카테고리 추가 오류:", error);
             showModal("카테고리를 추가하는 중 오류가 발생했습니다.");
         }
     };
 
+
+    
 
     const updateCategoryOrder = async (isAlert: boolean) => {
         if (!categories.length) return; // 카테고리가 없으면 실행하지 않음
@@ -252,11 +258,10 @@ const CategoryManagement: React.FC = () => {
                 </button>
             </div>
             {modalState.isOpen && (
-                <Modal onClosed={modalState.onClose}>
+                <Modal onClose={modalState.onClose}>
                     <AlertModal
                         title={modalState.title}
-                        message={modalState.message}
-                        onClosed={modalState.onClose}
+                        onClick={modalState.onClose}
                         />
                 </Modal>
             )}

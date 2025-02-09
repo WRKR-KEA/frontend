@@ -3,7 +3,15 @@
 
 import axios, { AxiosInstance } from 'axios';
 
-const accessToken = sessionStorage.getItem('accessToken');
+const getAccessToken = () => {
+  if (typeof window !== "undefined") {
+    return sessionStorage.getItem("accessToken");
+  }
+  return null;
+};
+
+const accessToken = getAccessToken(); // ✅ 안전하게 호출
+
 
 const apiConfig = {
   backend: {

@@ -40,11 +40,11 @@ export function TicketList_User({
   };
 
   const statusMap: Record<string, string> = {
-    COMPLETE: "COMPLETE",
-    IN_PROGRESS: "IN_PROGRESS",
-    CANCEL: "CANCEL",
-    REJECT: "REJECT",
-    REQUEST: "REQUEST",
+    REQUEST: "작업 요청",
+    CANCEL: "취소",
+    IN_PROGRESS : "작업 진행",
+    REJECT: "반려",
+    COMPLETE: "작업 완료",
   };
 
   const [filterStatus, setFilterStatus] = useState("전체");
@@ -73,7 +73,7 @@ export function TicketList_User({
       ticket.handler?.includes(searchTerm) ||
       ticket.number.includes(searchTerm);
     const matchesStatus =
-      filterStatus === "전체" || statusMap[ticket.status] === filterStatus;
+      filterStatus === "전체" || ticket.status === filterStatus;
     return matchesSearchTerm && matchesStatus;
   });
 
@@ -93,40 +93,39 @@ export function TicketList_User({
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="px-4 py-2 w-36">티켓 번호</th>
-            <th className="px-4 py-2 w-24">상태</th>
+          <tr className="bg-gray-6 text-left border-b border-gray-4">
+            <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
+            <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
-            <th className="px-4 py-2 w-32">담당자</th>
-            <th className="px-4 py-2 w-32">요청자</th>
-            <th className="px-4 py-2 w-36">요청일</th>
-            <th className="px-4 py-2 w-36">마지막 업데이트</th>
+            <th className="px-4 py-2 w-32 min-w-32">담당자</th>
+            <th className="px-4 py-2 w-32 min-w-32">요청자</th>
+            <th className="px-4 py-2 w-44 min-w-44">요청일</th>
+            <th className="px-4 py-2 w-44 min-w-44">최근 변경일</th>
           </tr>
         </thead>
         <tbody>
           {displayedTickets.map((ticket) => {
-            const localizedStatus = statusMap[ticket.status] || ticket.status;
             return (
               <tr
                 key={ticket.id}
-                className="border-t cursor-pointer"
+                className="border-t border-gray-5 cursor-pointer"
                 onClick={() => handleTicketClick(ticket.id)}
               >
                 <td className="px-4 py-2">
                   <HighlightText text={ticket.number} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2">
-                  <span className={`rounded-md px-2 py-1 text-sm ${statusStyles[localizedStatus]}`}>
-                    {localizedStatus}
+                <td className="px-4 py-2 text-center">
+                  <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
+                    {statusMap[ticket.status]}
                   </span>
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 truncate">
                   <HighlightText text={ticket.title} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 truncate">
                   <HighlightText text={ticket.handler} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2">{ticket.requester}</td>
+                <td className="px-4 py-2 truncate">{ticket.requester}</td>
                 <td className="px-4 py-2">{ticket.requestDate}</td>
                 <td className="px-4 py-2">{ticket.updateDate}</td>
               </tr>
@@ -134,16 +133,6 @@ export function TicketList_User({
           })}
         </tbody>
       </table>
-      {/* <div className="flex justify-center items-center mt-4 mb-4">
-        <PagePagination
-          totalItemsCount={filteredTickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div> */}
     </div>
   );
 }

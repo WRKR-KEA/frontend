@@ -272,3 +272,46 @@ export async function fetchTemplate(categoryId: string) {
     console.error("❌ 템플릿 조회에 실패했습니다. :", error);
   }
 }
+
+// (GET) 회원 접속 로그 조회
+export async function fetchAdminAccessLogs(
+  page: number,
+  size: number,
+  role?: string,
+  query?: string,
+  action?: string,
+  startDate?: string,
+  endDate?: string,
+) {
+  try {
+    const { data } = await api.get(`/api/admin/access-logs`, {
+      params: { page, size, role, query, action, startDate, endDate },
+    });
+
+    return data;
+  } catch (error) {
+    console.error("❌ 회원 접속 로그 조회에 실패했습니다. :", error);
+    return null;
+  }
+}
+
+// (GET) 회원 접속 로그 엑셀 파일 다운로드
+export async function fetchAdminAccessLogsExcel(
+  role?: string,
+  query?: string,
+  action?: string,
+  startDate?: string,
+  endDate?: string,
+) {
+  try {
+    const { data } = await api.get(`/api/admin/access-logs/excel?query=${query}&role=${role}&action=${action}&startDate=${startDate}&endDate=${endDate}`, {
+      responseType: 'blob',
+    }
+  );
+
+    return data;
+  } catch (error) {
+    console.error("❌ 회원 접속 로그 조회 엑셀 다운로드에 실패했습니다. :", error);
+    return null;
+  }
+}

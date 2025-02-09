@@ -8,8 +8,9 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
-import { fetchManagerDepartmentTicket } from "@/services/manager";
+import { fetchManagerDepartmentTicket, fetchManagerDepartmentTicketExcel } from "@/services/manager";
 import PagePagination from "@/components/pagination";
+import Button from "@/components/Buttons/Button";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -50,7 +51,7 @@ export default function DepartmentTicketListPage() {
     endDate: null,
     key: "selection",
   });
-  
+
   const formattedDateRange = dateRange.startDate
     ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
@@ -80,6 +81,30 @@ export default function DepartmentTicketListPage() {
       setIsLoading(false);
     }
   };
+
+    // 엑셀 다운로드 핸들러
+    const handleDownloadExcel = async () => {
+      try {
+        const data = await fetchManagerDepartmentTicketExcel(
+          searchTerm,
+          status,
+          dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
+          dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
+        );
+  
+        const url = window.URL.createObjectURL(data);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "부서_티켓_조회.xlsx"; // 다운로드할 파일 이름
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+      } catch (error) {
+        console.error("엑셀 다운로드 중 오류 발생:", error);
+        alert("엑셀 다운로드 중 오류가 발생했습니다.");
+      }
+    };
+  
 
   useEffect(() => {
     fetchTickets();
@@ -118,7 +143,7 @@ export default function DepartmentTicketListPage() {
                 editableDateInputs={true}
                 onChange={handleDateChange}
                 moveRangeOnFirstSelection={false}
-                ranges={[dateRange]}
+                ranges={[dateRange]} // startDate와 endDate를 여기서 설정
                 rangeColors={["#6E61CA"]}
               />
             </div>
@@ -136,6 +161,16 @@ export default function DepartmentTicketListPage() {
         status={status}  // status 전달
         onStatusChange={handleStatusChange} // 상태 변경 함수 전달
       />
+
+      {/* 다운로드 버튼 추가 */}
+      <div className="flex justify-end mb-4">
+          <Button
+            label="다운로드"
+            onClick={handleDownloadExcel}
+            color={1} // 파란색
+            className="mr-2"
+          />
+      </div>
 
       <div className="flex justify-center items-center mt-4 mb-4">
         <PagePagination

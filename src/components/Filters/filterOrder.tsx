@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface FilterOrderProps {
-  onSelectOrder: (order: string) => void; // order의 타입을 string으로 명시
+  onSelectOrder: (order: string) => void;
 }
 
 export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
@@ -10,7 +10,7 @@ export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
 
   const handleSelect = (order: string) => {
     setSelectedOrder(order);
-    onSelectOrder(order); 
+    onSelectOrder(order);
     setIsOpen(false);
   };
 
@@ -38,7 +38,7 @@ export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mr-2 w-28 bg-white border shadow-lg rounded">
+        <div className="absolute right-0 mr-2 w-28 bg-white border shadow-lg rounded z-50">
           <ul className="space-y-1 p-2">
             {["NEWEST", "OLDEST", "UPDATED"].map((order) => (
               <li key={order}>

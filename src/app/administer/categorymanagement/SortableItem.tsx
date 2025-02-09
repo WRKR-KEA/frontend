@@ -5,7 +5,8 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import GuideModal from "./GuideModal"; // ✅ 도움말 모달
 import TemplateModal from "./TemplateModal"; // ✅ 템플릿 모달
-
+import Modal from "@/components/Modals/Modal";
+import AlertModal from "@/components/Modals/AlertModal";
 interface SortableItemProps {
   categoryId: number;
   name: string;
@@ -46,17 +47,18 @@ const SortableItem: React.FC<SortableItemProps> = ({
     onClose: () => {},
   });
 
-  const showModal = (title: string, btnText='닫기') => {
+  const showModal = (title: string, btnText = "닫기", onCloseCallback?: () => void) => {
     setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
-        setModalState(prev => ({ ...prev, isOpen: false }));
+        setModalState((prev) => ({ ...prev, isOpen: false }));
+        if (onCloseCallback) onCloseCallback(); // ✅ 모달 닫힌 후 실행할 콜백 함수 실행
       },
-
     });
   };
+  
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -123,8 +125,10 @@ const SortableItem: React.FC<SortableItemProps> = ({
         throw new Error("카테고리 삭제 실패");
       }
 
-      showModal("카테고리가 성공적으로 삭제되었습니다.");
-      refetch();
+      
+      showModal("카테고리가 성공적으로 삭제되었습니다.", "확인", () => {
+        refetch(); // ✅ 모달이 닫힌 후 refetch 실행
+      });
     } catch (error) {
       console.error("❌ 카테고리 삭제 오류:", error);
       showModal("카테고리를 삭제하는 중 오류가 발생했습니다.");
@@ -163,6 +167,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
             title={modalTitle}
             onClose={handleCloseModal}
             onSave={handleCloseModal}
+            showModal={showModal}
           />
         )}
 
@@ -174,6 +179,8 @@ const SortableItem: React.FC<SortableItemProps> = ({
             onClose={handleCloseModal}
             onSave={handleCloseModal}
             refetchList={refetchList}
+            showModal={showModal}
+          
           />
         )}
 

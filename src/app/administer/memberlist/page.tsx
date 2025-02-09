@@ -36,9 +36,6 @@ export default function AdminMemberListPage() {
     });
   };
 
-  const [searchInput, setSearchInput] = useState(''); // 검색 입력 필드
-  const [searchTrigger, setSearchTrigger] = useState(''); // ✅ Enter 입력 후 실행할 검색어
-
   // ✅ 역할 선택 시 role 변경 (탭 클릭)
   const handleTabClick = (tabName: string) => {
     setActiveTab(tabName);
@@ -109,9 +106,6 @@ export default function AdminMemberListPage() {
         return;
       }
 
-      const response = await fetch('http://172.16.211.53:8080/api/admin/members', {
-        method: 'DELETE',
-      // ✅ 확인을 눌렀을 때만 삭제 진행
       const isConfirmed = confirm("정말로 삭제하시겠습니까?");
       if (!isConfirmed) return;
 
@@ -226,10 +220,11 @@ export default function AdminMemberListPage() {
         {/* ✅ 페이지네이션 추가 */}
         <div className="flex justify-center mt-4">
           <PagePagination
-            totalItemsCount={members?.totalElements || 0}
+            totalPages={members?.totalPages || 10}
             itemsCountPerPage={members?.size || 10}
             pageRangeDisplayed={5}
             onPageChange={handlePageChange}
+            currentPage={members?.currentPage}
           />
         </div>
       </div>

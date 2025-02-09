@@ -108,11 +108,11 @@ export default function Headerbar() {
                 <svg className="mr-4 cursor-pointer" onClick={toggleSidebar} width="24" height="24" viewBox="0 0 24 24" fill="none">
                     <path
                         d="M22 11C22 7.229 22 5.343 20.828 4.172C19.656 3.001 17.771 3 14 3H10C6.229 3 4.343 3 3.172 4.172C2.001 5.344 2 7.229 2 11V13C2 16.771 2 18.657 3.172 19.828C4.344 20.999 6.229 21 10 21H14C17.771 21 19.657 21 20.828 19.828C21.999 18.656 22 16.771 22 13V11Z"
-                        stroke="black" stroke-width="1.5"/>
-                    <path d="M18.5 10H12.5M17.5 14H13.5" stroke="black" stroke-width="1.5"
-                          stroke-linecap="round"/>
-                    <path opacity="0.5" d="M9 21V3" stroke="black" stroke-width="1.5"
-                          stroke-linecap="round"/>
+                        stroke="black" strokeWidth="1.5"/>
+                    <path d="M18.5 10H12.5M17.5 14H13.5" stroke="black" strokeWidth="1.5"
+                          strokeLinecap="round"/>
+                    <path opacity="0.5" d="M9 21V3" stroke="black" strokeWidth="1.5"
+                          strokeLinecap="round"/>
                 </svg>
 
                 {pageTitle}
@@ -158,9 +158,9 @@ export default function Headerbar() {
                         <svg className="cursor-pointer" onClick={() => toggleModal("ticket")} width="24" height="24" viewBox="0 0 24 24" fill="none">
                             <path
                                 d="M2 12C2 8.229 2 6.343 3.172 5.172C4.344 4.001 6.229 4 10 4H14C17.771 4 19.657 4 20.828 5.172C21.999 6.344 22 8.229 22 12C22 15.771 22 17.657 20.828 18.828C19.656 19.999 17.771 20 14 20H10C6.229 20 4.343 20 3.172 18.828C2.001 17.656 2 15.771 2 12Z"
-                                stroke="black" stroke-width="1.5"/>
+                                stroke="black" strokeWidth="1.5"/>
                             <path opacity="0.5" d="M10 16H6M14 16H12.5M2 10H22" stroke="black"
-                                  stroke-width="1.5" stroke-linecap="round"/>
+                                  strokeWidth="1.5" strokeLinecap="round"/>
                         </svg>
                         {activeModal === "ticket" && (
                             <div className="absolute right-[-23px] top-8 w-80 bg-white border rounded-md shadow-lg p-4 z-10">

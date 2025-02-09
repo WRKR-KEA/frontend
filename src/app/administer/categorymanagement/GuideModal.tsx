@@ -12,9 +12,10 @@ interface GuideModalProps {
   title: string;
   onClose: () => void;
   onSave: (editorContent: string) => void;
+  showModal:()=> void;
 }
 
-const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave }) => {
+const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {
   const editorRef = useRef<Editor>(null);
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
 
@@ -23,11 +24,11 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
   console.log("가이드 모달 - 카테고리 ID:", categoryId);
 
   const { data, isLoading, isError, refetch } = useGuideQuery(categoryId);
-  const guideId = data?.result.guideId;
+  const guideId = data?.result?.guideId;
   console.log("가이드 쿼리 결과:", data);
 
   // ✅ initialValue 값이 null 또는 undefined면 빈 문자열("")을 넣어줌
-  const initialMarkdown = typeof data?.result.content === "string" ? data.result.content : "";
+  const initialMarkdown = typeof data?.result.content === "string" ? data.result.content : "도움말을 입력하세요";
 
   // ✅ 파일 업로드 처리 함수
   const handleFileUpload = (uploadedFiles: File[]) => {
@@ -46,9 +47,19 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         return;
       }
 
-      const requestBody = JSON.stringify({
-        content: editorContent,
-        attachments: attachments.map((file) => file.name), // ✅ 파일 이름만 첨부
+      // ✅ Multipart FormData 생성
+      const formData = new FormData();
+
+      // ✅ 가이드 내용 JSON 데이터 추가 (Blob 형태로 변환)
+      const guideData = JSON.stringify({ content: editorContent });
+      formData.append(
+        "guideCreateRequest",
+        new Blob([guideData], { type: "application/json" })
+      );
+
+      // ✅ 첨부 파일 추가 (여러 개 가능)
+      attachments.forEach((file) => {
+        formData.append("attachments", file);
       });
 
       const method = data ? "PATCH" : "POST";
@@ -59,10 +70,9 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
       const response = await fetch(url, {
         method,
         headers: {
-          "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: requestBody,
+        body: formData, // ✅ JSON + 파일을 함께 전송 (multipart/form-data)
       });
 
       if (!response.ok) {
@@ -77,6 +87,45 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
       alert("가이드를 저장하는 중 오류가 발생했습니다.");
     }
   };
+
+
+  // 가이드 삭제 함수
+  const handleDelete = async () => {
+    if (!guideId) {
+      showModal("도움말 ID를 찾을 수 없습니다.");
+      return;
+    }
+
+    if (!confirm("정말 이 도움말을을 삭제하시겠습니까?")) return;
+
+    try {
+      const accessToken = sessionStorage.getItem("accessToken");
+      if (!accessToken) {
+        showModal("로그인이 필요합니다.");
+        return;
+      }
+
+      const response = await fetch(`http://172.16.211.53:8080/api/admin/guide/${guideId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      if (!response.ok) throw new Error("템플릿 삭제 실패");
+
+      showModal("가이드가 성공적으로 삭제되었습니다.", "확인", () => {
+        refetch(); 
+      });
+      onClose(); // ✅ 모달 닫기
+    } catch (error) {
+      console.error("❌ 템플릿 삭제 오류:", error);
+      showModal("가이드를 삭제하는 중 오류가 발생했습니다.");
+
+    }
+  };
+
+
 
   if (isLoading) {
     return <div>불러오는 중...</div>;
@@ -106,7 +155,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         <FileBox onFileUpload={handleFileUpload} />
 
         {/* Modal Footer */}
-        <div className="p-4 flex justify-end space-x-2">
+        <div className="p-4 border-t flex justify-end space-x-2">
           <button
             onClick={onClose}
             className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-semibold rounded-md hover:bg-gray-400 transition-all"
@@ -119,6 +168,14 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
           >
             {!data ? "추가" : "저장"}
           </button>
+          {data?.result.guideId && (
+            <button
+              onClick={handleDelete}
+              className="px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600 transition-all"
+            >
+              삭제
+            </button>
+          )}
         </div>
       </div>
     </div>

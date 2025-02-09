@@ -105,14 +105,14 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M22 13V12C22 8.229 22 6.343 20.828 5.172C19.656 4.001 17.771 4 14 4H10C6.229 4 4.343 4 3.172 5.172C2.001 6.344 2 8.229 2 12C2 15.771 2 17.657 3.172 18.828C4.344 19.999 6.229 20 10 20H13"
-                                            stroke="white" stroke-width="1.5"
-                                            stroke-linecap="round"/>
+                                            stroke="white" strokeWidth="1.5"
+                                            strokeLinecap="round"/>
                                         <path opacity="0.4" d="M10 16H6M2 10H22" stroke="white"
-                                              stroke-width="1.5" stroke-linecap="round"/>
+                                              strokeWidth="1.5" strokeLinecap="round"/>
                                         <path
                                             d="M15.2727 17.4545H18.5454M18.5454 17.4545H21.8182M18.5454 17.4545V20.7272M18.5454 17.4545V14.1818"
-                                            stroke="white" stroke-width="1.5"
-                                            stroke-linecap="round"/>
+                                            stroke="white" strokeWidth="1.5"
+                                            strokeLinecap="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -130,15 +130,15 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M22 13V12C22 8.229 22 6.343 20.828 5.172C19.656 4.001 17.771 4 14 4H10C6.229 4 4.343 4 3.172 5.172C2.001 6.344 2 8.229 2 12C2 15.771 2 17.657 3.172 18.828C4.344 19.999 6.229 20 10 20H13"
-                                            stroke="white" stroke-width="1.5"
-                                            stroke-linecap="round"/>
+                                            stroke="white" strokeWidth="1.5"
+                                            strokeLinecap="round"/>
                                         <path opacity="0.4" d="M10 16H6M2 10H22" stroke="white"
-                                              stroke-width="1.5" stroke-linecap="round"/>
+                                              strokeWidth="1.5" strokeLinecap="round"/>
                                         <path
                                             d="M18 20C19.6569 20 21 18.6569 21 17C21 15.3431 19.6569 14 18 14C16.3431 14 15 15.3431 15 17C15 18.6569 16.3431 20 18 20Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path d="M20.5 19.5L21.5 20.5" stroke="white"
-                                              stroke-width="1.5" stroke-linecap="round"/>
+                                              strokeWidth="1.5" strokeLinecap="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -156,17 +156,17 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M9 10C11.2091 10 13 8.20914 13 6C13 3.79086 11.2091 2 9 2C6.79086 2 5 3.79086 5 6C5 8.20914 6.79086 10 9 10Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path opacity="0.5"
                                               d="M12.5 4.341C12.8564 3.8041 13.3761 3.39621 13.9823 3.17772C14.5886 2.95922 15.249 2.94173 15.866 3.12784C16.4829 3.31394 17.0235 3.69375 17.4078 4.21104C17.7921 4.72833 17.9995 5.3556 17.9995 6C17.9995 6.6444 17.7921 7.27167 17.4078 7.78896C17.0235 8.30625 16.4829 8.68606 15.866 8.87216C15.249 9.05827 14.5886 9.04078 13.9823 8.82228C13.3761 8.60379 12.8564 8.1959 12.5 7.659"
-                                              stroke="white" stroke-width="1.5"/>
+                                              stroke="white" strokeWidth="1.5"/>
                                         <path
                                             d="M9 21C12.866 21 16 19.2091 16 17C16 14.7909 12.866 13 9 13C5.13401 13 2 14.7909 2 17C2 19.2091 5.13401 21 9 21Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path opacity="0.5"
                                               d="M18 14C19.754 14.385 21 15.359 21 16.5C21 17.53 19.986 18.423 18.5 18.87"
-                                              stroke="white" stroke-width="1.5"
-                                              stroke-linecap="round"/>
+                                              stroke="white" strokeWidth="1.5"
+                                              strokeLinecap="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -210,10 +210,10 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M2 12C2 8.229 2 6.343 3.172 5.172C4.344 4.001 6.229 4 10 4H14C17.771 4 19.657 4 20.828 5.172C21.999 6.344 22 8.229 22 12C22 15.771 22 17.657 20.828 18.828C19.656 19.999 17.771 20 14 20H10C6.229 20 4.343 20 3.172 18.828C2.001 17.656 2 15.771 2 12Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path opacity="0.5" d="M10 16H6M14 16H12.5M2 10H22"
-                                              stroke="white" stroke-width="1.5"
-                                              stroke-linecap="round"/>
+                                              stroke="white" strokeWidth="1.5"
+                                              strokeLinecap="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -267,17 +267,17 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M9 11C10.1046 11 11 10.1046 11 9C11 7.89543 10.1046 7 9 7C7.89543 7 7 7.89543 7 9C7 10.1046 7.89543 11 9 11Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path
                                             d="M13 15C13 16.105 13 17 9 17C5 17 5 16.105 5 15C5 13.895 6.79 13 9 13C11.21 13 13 13.895 13 15Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path opacity="0.5"
                                               d="M2 12C2 8.229 2 6.343 3.172 5.172C4.344 4.001 6.229 4 10 4H14C17.771 4 19.657 4 20.828 5.172C21.999 6.344 22 8.229 22 12C22 15.771 22 17.657 20.828 18.828C19.656 19.999 17.771 20 14 20H10C6.229 20 4.343 20 3.172 18.828C2.001 17.656 2 15.771 2 12Z"
-                                              stroke="white" stroke-width="1.5"/>
+                                              stroke="white" strokeWidth="1.5"/>
                                         <path d="M19 12H15M19 9H14" stroke="white"
-                                              stroke-width="1.5" stroke-linecap="round"/>
+                                              strokeWidth="1.5" strokeLinecap="round"/>
                                         <path opacity="0.9" d="M19 15H16" stroke="white"
-                                              stroke-width="1.5" stroke-linecap="round"/>
+                                              strokeWidth="1.5" strokeLinecap="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -294,11 +294,11 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path opacity="0.5"
                                               d="M2 12C2 7.286 2 4.929 3.464 3.464C4.93 2 7.286 2 12 2C16.714 2 19.071 2 20.535 3.464C22 4.93 22 7.286 22 12C22 16.714 22 19.071 20.535 20.535C19.072 22 16.714 22 12 22C7.286 22 4.929 22 3.464 20.535C2 19.072 2 16.714 2 12Z"
-                                              stroke="white" stroke-width="1.5"/>
+                                              stroke="white" strokeWidth="1.5"/>
                                         <path
                                             d="M7 14L9.293 11.707C9.48053 11.5195 9.73484 11.4142 10 11.4142C10.2652 11.4142 10.5195 11.5195 10.707 11.707L12.293 13.293C12.4805 13.4805 12.7348 13.5858 13 13.5858C13.2652 13.5858 13.5195 13.4805 13.707 13.293L17 10M17 10V12.5M17 10H14.5"
-                                            stroke="white" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round"/>
+                                            stroke="white" strokeWidth="1.5" strokeLinecap="round"
+                                            strokeLinejoin="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -346,10 +346,10 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M12 10C14.2091 10 16 8.20914 16 6C16 3.79086 14.2091 2 12 2C9.79086 2 8 3.79086 8 6C8 8.20914 9.79086 10 12 10Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path
                                             d="M20 17.5C20 19.985 20 22 12 22C4 22 4 19.985 4 17.5C4 15.015 7.582 13 12 13C16.418 13 20 15.015 20 17.5Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -370,17 +370,17 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M9 10C11.2091 10 13 8.20914 13 6C13 3.79086 11.2091 2 9 2C6.79086 2 5 3.79086 5 6C5 8.20914 6.79086 10 9 10Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path opacity="0.5"
                                               d="M12.5 4.341C12.8564 3.8041 13.3761 3.39621 13.9823 3.17772C14.5886 2.95922 15.249 2.94173 15.866 3.12784C16.4829 3.31394 17.0235 3.69375 17.4078 4.21104C17.7921 4.72833 17.9995 5.3556 17.9995 6C17.9995 6.6444 17.7921 7.27167 17.4078 7.78896C17.0235 8.30625 16.4829 8.68606 15.866 8.87216C15.249 9.05827 14.5886 9.04078 13.9823 8.82228C13.3761 8.60379 12.8564 8.1959 12.5 7.659"
-                                              stroke="white" stroke-width="1.5"/>
+                                              stroke="white" strokeWidth="1.5"/>
                                         <path
                                             d="M9 21C12.866 21 16 19.2091 16 17C16 14.7909 12.866 13 9 13C5.13401 13 2 14.7909 2 17C2 19.2091 5.13401 21 9 21Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path opacity="0.5"
                                               d="M18 14C19.754 14.385 21 15.359 21 16.5C21 17.53 19.986 18.423 18.5 18.87"
-                                              stroke="white" stroke-width="1.5"
-                                              stroke-linecap="round"/>
+                                              stroke="white" strokeWidth="1.5"
+                                              strokeLinecap="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -429,13 +429,13 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M2.5 17.5C2.5 15.614 2.5 14.672 3.086 14.086C3.672 13.5 4.614 13.5 6.5 13.5C8.386 13.5 9.328 13.5 9.914 14.086C10.5 14.672 10.5 15.614 10.5 17.5C10.5 19.386 10.5 20.328 9.914 20.914C9.328 21.5 8.386 21.5 6.5 21.5C4.614 21.5 3.672 21.5 3.086 20.914C2.5 20.328 2.5 19.386 2.5 17.5ZM13.5 6.5C13.5 4.614 13.5 3.672 14.086 3.086C14.672 2.5 15.614 2.5 17.5 2.5C19.386 2.5 20.328 2.5 20.914 3.086C21.5 3.672 21.5 4.614 21.5 6.5C21.5 8.386 21.5 9.328 20.914 9.914C20.328 10.5 19.386 10.5 17.5 10.5C15.614 10.5 14.672 10.5 14.086 9.914C13.5 9.328 13.5 8.386 13.5 6.5Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path
                                             d="M2.5 6.5C2.5 5.43913 2.92143 4.42172 3.67157 3.67157C4.42172 2.92143 5.43913 2.5 6.5 2.5C7.56087 2.5 8.57828 2.92143 9.32843 3.67157C10.0786 4.42172 10.5 5.43913 10.5 6.5C10.5 7.56087 10.0786 8.57828 9.32843 9.32843C8.57828 10.0786 7.56087 10.5 6.5 10.5C5.43913 10.5 4.42172 10.0786 3.67157 9.32843C2.92143 8.57828 2.5 7.56087 2.5 6.5Z"
-                                            stroke="white" stroke-width="1.5"/>
+                                            stroke="white" strokeWidth="1.5"/>
                                         <path opacity="0.5"
                                               d="M13.5 17.5C13.5 16.4391 13.9214 15.4217 14.6716 14.6716C15.4217 13.9214 16.4391 13.5 17.5 13.5C18.5609 13.5 19.5783 13.9214 20.3284 14.6716C21.0786 15.4217 21.5 16.4391 21.5 17.5C21.5 18.5609 21.0786 19.5783 20.3284 20.3284C19.5783 21.0786 18.5609 21.5 17.5 21.5C16.4391 21.5 15.4217 21.0786 14.6716 20.3284C13.9214 19.5783 13.5 18.5609 13.5 17.5Z"
-                                              stroke="white" stroke-width="1.5"/>
+                                              stroke="white" strokeWidth="1.5"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
@@ -455,8 +455,8 @@ export default function Sidebar({ user }: SidebarProps) {
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
                                             d="M4 12H4.01M4 6H4.01M4 18H4.01M8 18H10M8 12H10M8 6H10M14 6H20M14 12H20M14 18H20"
-                                            stroke="white" stroke-width="1.5" stroke-linecap="round"
-                                            stroke-linejoin="round"/>
+                                            stroke="white" strokeWidth="1.5" strokeLinecap="round"
+                                            strokeLinejoin="round"/>
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">

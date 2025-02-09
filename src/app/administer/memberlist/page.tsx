@@ -32,7 +32,6 @@ export default function AdminMemberListPage() {
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
       },
-
     });
   };
 
@@ -109,8 +108,6 @@ export default function AdminMemberListPage() {
         return;
       }
 
-      const response = await fetch('http://172.16.211.53:8080/api/admin/members', {
-        method: 'DELETE',
       // ✅ 확인을 눌렀을 때만 삭제 진행
       const isConfirmed = confirm("정말로 삭제하시겠습니까?");
       if (!isConfirmed) return;

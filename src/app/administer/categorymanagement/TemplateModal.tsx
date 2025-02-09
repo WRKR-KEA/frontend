@@ -37,9 +37,6 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
 
   if (!isOpen) return null;
 
-  console.log("템플릿 모달 - 카테고리 ID:", categoryId);
-  const { data, isLoading, isError, refetch } = useTemplateQuery(categoryId);
-
   console.log("템플릿 쿼리 결과:", data);
   const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
   const templateId = data?.result.templateId;
@@ -123,7 +120,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
 
       if (!response.ok) throw new Error("템플릿 삭제 실패");
 
-      showModal("템플릿이 성공적으로 저장되었습니다.");
+    
       // await refetchList()
       refetch()
       showModal("템플릿이 성공적으로 삭제되었습니다.");

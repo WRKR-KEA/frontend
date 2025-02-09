@@ -9,6 +9,8 @@ import Button from "@/components/Buttons/Button";
 import { TicketAccept } from "@/components/Modals/ticketAccept";
 import { updateManagerTicketApprove, fetchManagerTicket } from "@/services/manager";
 import { useCommentList } from '@/hooks/useCommentList';
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -19,6 +21,24 @@ export default function ManagericketDetailPage() {
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
   const [ticketId, setTicketId] = useState('');
   const param = useParams();
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},    
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+   
+    });
+  };
 
   const statusMapping = {
     REQUEST: '작업요청',
@@ -95,11 +115,11 @@ export default function ManagericketDetailPage() {
       const result = await updateManagerTicketApprove([param.id]);
       console.log("작업 승인 성공:", result);
 
-      //alert("작업이 승인되었습니다.");
+      
       setIsModalOpen(false); // 모달 닫기
     } catch (error) {
       console.error("작업 승인 중 오류 발생:", error);
-      // alert("작업 승인 중 문제가 발생했습니다.");
+      
     }
   };
 
@@ -155,6 +175,15 @@ export default function ManagericketDetailPage() {
         onClose={closeModal}
         onConfirm={confirmAccept}
       />
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

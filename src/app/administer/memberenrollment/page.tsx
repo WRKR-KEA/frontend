@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import Button from "@/components/Buttons/Button";
 import { fetchMemberRegisterExcelForm, postMemberRegisterExcelFile } from "@/services/admin";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 const AdminMemberEnrollPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +19,24 @@ const AdminMemberEnrollPage: React.FC = () => {
     role: "",
     profileImage: "",
   });
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText:'',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+    });
+  };
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
@@ -36,7 +56,7 @@ const AdminMemberEnrollPage: React.FC = () => {
     const accessToken = sessionStorage.getItem("accessToken");
 
     if (!accessToken) {
-      alert("로그인이 필요합니다. 다시 로그인해 주세요.");
+      showModal("로그인이 필요합니다. 다시 로그인해 주세요.");
       setLoading(false);
       return;
     }
@@ -68,7 +88,7 @@ const AdminMemberEnrollPage: React.FC = () => {
       console.log("서버 응답:", data); // ✅ 서버 응답 확인
 
       if (response.ok) {
-        alert("회원이 성공적으로 등록되었습니다.");
+        showModal("회원이 성공적으로 등록되었습니다.");
         setFormData({ // 입력 폼 초기화
           email: "",
           name: "",
@@ -80,11 +100,11 @@ const AdminMemberEnrollPage: React.FC = () => {
           profileImage: "",
         });
       } else {
-        alert(`회원 등록 실패: ${data.message || "서버에서 요청을 거부했습니다."}`);
+        showModal(`회원 등록 실패: ${data.message || "서버에서 요청을 거부했습니다."}`);
       }
     } catch (error) {
       console.error("회원 등록 중 오류 발생:", error);
-      alert("회원 등록 중 오류가 발생했습니다.");
+      showModal("회원 등록 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
@@ -103,7 +123,7 @@ const handleDownloadTemplate = async () => {
     a.remove();
   } catch (error) {
     console.error("양식 다운로드 중 오류 발생:", error);
-    alert("양식 다운로드 중 오류가 발생했습니다.");
+    showModal("양식 다운로드 중 오류가 발생했습니다.");
   }
 };
 
@@ -112,14 +132,14 @@ const handleUploadMembers = async (file: File) => {
   const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
   
   if (file.size > MAX_FILE_SIZE) {
-    alert("파일 크기가 5MB를 초과할 수 없습니다.");
+    showModal("파일 크기가 5MB를 초과할 수 없습니다.");
     return;
   }
 
   const accessToken = sessionStorage.getItem("accessToken");
 
   if (!accessToken) {
-    alert("로그인이 필요합니다. 다시 로그인해 주세요.");
+    showModal("로그인이 필요합니다. 다시 로그인해 주세요.");
     return;
   }
 
@@ -129,14 +149,14 @@ const handleUploadMembers = async (file: File) => {
   try {
     const response = await postMemberRegisterExcelFile(formData); // API 호출
     if (response.isSuccess) {
-      alert("회원 정보가 성공적으로 업로드되었습니다.");
+      showModal("회원 정보가 성공적으로 업로드되었습니다.");
       router.push('/administer/memberlist'); // 회원 목록 페이지로 라우팅
     } else {
-      alert(`회원 정보 업로드 실패: ${response.message}`);
+      showModal(`회원 정보 업로드 실패: ${response.message}`);
     }
   } catch (error) {
     console.error("회원 정보 업로드 중 오류 발생:", error);
-    alert("회원 정보 업로드 중 오류가 발생했습니다.");
+    showModal("회원 정보 업로드 중 오류가 발생했습니다.");
   }
 };
 
@@ -313,6 +333,15 @@ const handleUploadMembers = async (file: File) => {
           </div>
         </form>
       </div>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

@@ -10,43 +10,52 @@ interface TemplateModalProps {
   isOpen: boolean;
   title: string;
   onClose: () => void;
-  refetchList: ()=> void;
+  refetchList: () => void;
 }
 
-const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title, onClose, refetchList }) => {
+const TemplateModal: React.FC<TemplateModalProps> = ({
+  categoryId,
+  isOpen,
+  title,
+  onClose,
+  refetchList,
+}) => {
   const editorRef = useRef<Editor>(null);
 
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    btnText:'',
+    btnText: "",
     onClose: () => {},
   });
 
-  const showModal = (title: string, btnText='닫기') => {
+  const showModal = (title: string, btnText = "닫기") => {
     setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
-        setModalState(prev => ({ ...prev, isOpen: false }));
+        setModalState((prev) => ({ ...prev, isOpen: false }));
       },
-
     });
   };
 
   if (!isOpen) return null;
 
   console.log("템플릿 모달 - 카테고리 ID:", categoryId);
-  const { data, isLoading, isError, refetch } = useTemplateQuery(categoryId);
+
+  // Corrected: Remove the duplicate use of `data`, `isLoading`, `isFetching`, etc.
+  const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
 
   console.log("템플릿 쿼리 결과:", data);
-  const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
+
   const templateId = data?.result.templateId;
 
   useEffect(() => {
     if (!isFetching && editorRef.current) {
-      editorRef.current.getInstance().setMarkdown(data?.result.content || "템플릿 내용을 입력하세요.");
+      editorRef.current.getInstance().setMarkdown(
+        data?.result.content || "템플릿 내용을 입력하세요."
+      );
     }
   }, [isFetching, data]);
 
@@ -95,8 +104,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
       console.error("❌ 템플릿 저장 오류:", error);
       showModal("⚠ 템플릿을 저장하는 중 오류가 발생했습니다.");
     }
-};
-
+  };
 
   // ✅ 템플릿 삭제 함수
   const handleDelete = async () => {
@@ -114,28 +122,28 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
         return;
       }
 
-      const response = await fetch(`http://172.16.211.53:8080/api/admin/templates/${templateId}`, {
-        method: "DELETE",
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await fetch(
+        `http://172.16.211.53:8080/api/admin/templates/${templateId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
 
       if (!response.ok) throw new Error("템플릿 삭제 실패");
 
-      showModal("템플릿이 성공적으로 저장되었습니다.");
-      // await refetchList()
-      refetch()
       showModal("템플릿이 성공적으로 삭제되었습니다.");
+      refetch();
       onClose(); // ✅ 모달 닫기
     } catch (error) {
       console.error("❌ 템플릿 저장 오류:", error);
-      showModal("템플릿을 저장하는 중 오류가 발생했습니다.");
-
+      showModal("템플릿을 삭제하는 중 오류가 발생했습니다.");
     }
   };
 
-  if (isLoading) return <div></div>;
+  if (isLoading) return <div>Loading...</div>;
 
   return (
     <div className="pt-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

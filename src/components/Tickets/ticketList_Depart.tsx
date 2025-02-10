@@ -31,6 +31,7 @@ export function TicketList_Depart({
   searchTerm,
   dateRange,
   onStatusChange,
+  status,
 }: TicketList_DepartProps) {
   const statusStyles: Record<string, string> = {
     REQUEST: 'bg-request text-request',
@@ -41,15 +42,14 @@ export function TicketList_Depart({
   };
 
   const statusMap: Record<string, string> = {
-    REQUEST: "작업 요청",
-    CANCEL: "취소",
-    IN_PROGRESS : "작업 진행",
-    REJECT: "반려",
-    COMPLETE: "작업 완료",
+    REQUEST: "REQUEST",
+    CANCEL: "CANCEL",
+    IN_PROGRESS : "IN_PROGRESS",
+    REJECT: "REJECT",
+    COMPLETE: "COMPLETE",
   };
-  
   const [currentPage, setCurrentPage] = useState(page);
-  const [activeTab, setActiveTab] = useState('전체');
+  const [activeTab, setActiveTab] = useState(status);
   const router = useRouter();
 
   useEffect(() => {

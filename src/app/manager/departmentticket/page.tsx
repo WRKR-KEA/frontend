@@ -159,7 +159,7 @@ export default function DepartmentTicketListPage() {
         page={currentPage}
         searchTerm={searchTerm}
         dateRange={dateRange}
-        status={status}  // status 전달
+        status={status || ""} 
         onStatusChange={handleStatusChange} // 상태 변경 함수 전달
       />
 

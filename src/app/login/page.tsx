@@ -42,7 +42,7 @@ export default function LoginPage() {
 
   const apiConfig = {
     backend: {
-      baseURL: process.env.NEXT_PUBLIC_BASE_URL || "http://172.16.211.53:8080",
+      baseURL: process.env.NEXT_PUBLIC_BASE_URL
     },
   };
   

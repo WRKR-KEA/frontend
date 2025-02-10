@@ -29,6 +29,5 @@ export const useGuideQuery = (categoryId: string) => {
     queryFn: () => fetchGuide(categoryId),
     enabled: !!categoryId, // ✅ categoryId가 있을 때만 실행
     retry: false, // ✅ 실패 시 재시도 비활성화 (필요 시 true)
-    staleTime: 5 * 60 * 1000, // ✅ 5분 동안 데이터 캐싱
   });
 };

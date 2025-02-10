@@ -12,7 +12,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments }) => {
   const [fileUrls, setFileUrls] = useState<string[]>([]); // ✅ 기존 파일 URL 저장
   const [isDragging, setIsDragging] = useState(false);
 
-  console.log("attachments", attachments)
+  console.log("attachments", attachments);
 
   // ✅ 컴포넌트 마운트 시 attachments를 fileUrls 상태에 저장
   useEffect(() => {
@@ -53,6 +53,11 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments }) => {
     }
   };
 
+  // ✅ URL에서 파일명만 추출하는 함수
+  const extractFileName = (url: string) => {
+    return decodeURIComponent(url.split("/").pop()?.split("?")[0] || "파일");
+  };
+
   return (
     <div className="w-full max-w-2xl mx-auto">
       <div
@@ -83,7 +88,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments }) => {
           {fileUrls.map((url, index) => (
             <li key={`url-${index}`} className="flex justify-between items-center border-b last:border-none p-2">
               <a href={url} target="_blank" rel="noopener noreferrer" className="text-blue-500 text-sm">
-                {url.split("/").pop()} {/* 파일명만 표시 */}
+                {extractFileName(url)} {/* 파일명만 표시 */}
               </a>
               <button
                 className="text-red-500 hover:text-red-700 text-xs"

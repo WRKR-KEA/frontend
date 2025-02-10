@@ -170,9 +170,8 @@ export default function UserCreateTicketPage() {
     return (
       <div
         className="flex justify-center items-center min-h-screen"
-        style={{ backgroundColor: "#252E66" }}
       >
-        <h1 className="text-white text-lg font-semibold">✨티켓 생성이 완료되었습니다!</h1>
+        <h1 className="text-#252E66 text-lg font-semibold">✨티켓 생성이 완료되었습니다!</h1>
       </div>
     );
   }
@@ -180,42 +179,44 @@ export default function UserCreateTicketPage() {
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col min-h-screen justify-between">
       <div>
-        <div className="flex items-center justify-between">
           <h2 className="text-md font-semibold w-60 mb-4">티켓 생성</h2>
-          {isHelpButtonVisible && (
+  
+        <div className="flex items-start space-x-8 mb-5">
+          <div className="flex flex-col items-start w-80">
+          <div className="flex items-start space-x-48">
+            <label>업무 분류</label>
+            {selectedService !== "1차 카테고리를 선택해주세요." && (
             <button
-              className="flex items-center justify-center space-x-2 text-[#6E61CA] hover:text-[#5A50A8]"
+              className="flex items-center justify-center text-[#6E61CA] hover:text-[#5A50A8] mt-0.5 ml-2"
               onClick={() => updateHelpContent(selectedService)}
             >
-              <span className="text-sm font-medium">도움말</span>
+              <span className="text-sm font-medium mr-1">도움말</span>
               <img src="/helpIcon.png" alt="Help Icon" className="w-4 h-4" />
             </button>
           )}
-        </div>
-
-        <div className="flex justify-center items-start space-x-16 mb-5">
-          <div className="flex flex-col items-start w-80">
-            <label>업무 분류</label>
+          </div>
             <FirstTaskDrop
               selectedService={selectedService}
               onServiceChange={handleServiceChange}
               firstCategories={firstCategories}
             />
           </div>
-
-          <div className="flex flex-col items-start w-80">
-            <label>업무</label>
-            <SecondTaskDrop
-              selectedRequestType={selectedRequestType}
-              onRequestTypeChange={handleRequestTypeChange}
-              selectedService={selectedService}
-              secondCategories={secondCategories?.childCategories}
-            />
-          </div>
+  
+          {selectedService !== "1차 카테고리를 선택해주세요." && (
+            <div className="flex flex-col items-start w-80">
+              <label>업무</label>
+              <SecondTaskDrop
+                selectedRequestType={selectedRequestType}
+                onRequestTypeChange={handleRequestTypeChange}
+                selectedService={selectedService}
+                secondCategories={secondCategories?.childCategories}
+              />
+            </div>
+          )}
         </div>
       </div>
-
-      {isReadyToShow && (
+  
+      {selectedService !== "1차 카테고리를 선택해주세요." && selectedRequestType !== "2차 카테고리를 선택해주세요." && (
         <>
           <Template title={title} content={content} setTitle={setTitle} setContent={setContent} />
           <div className="flex justify-center">
@@ -223,14 +224,14 @@ export default function UserCreateTicketPage() {
           </div>
         </>
       )}
-
+  
       {isModalOpen && (
         <Modal onClose={toggleModal}>
-          <Help title={helpTitle} content={helpContent}/>
+          <Help title={helpTitle} content={helpContent} />
         </Modal>
       )}
-
-{modalState.isOpen && (
+  
+      {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>
           <AlertModal 
             title={modalState.title} 

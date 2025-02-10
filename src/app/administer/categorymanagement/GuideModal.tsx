@@ -15,7 +15,7 @@ interface GuideModalProps {
   showModal:()=> void;
 }
 
-const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {
+const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal, refetchList }) => {
   const editorRef = useRef<Editor>(null);
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
 
@@ -132,7 +132,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
 
 
   if (isLoading) {
-    return <div>불러오는 중...</div>;
+    return <div></div>;
   }
 
   return (

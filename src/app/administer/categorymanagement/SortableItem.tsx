@@ -168,6 +168,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
             onClose={handleCloseModal}
             onSave={handleCloseModal}
             showModal={showModal}
+            refetchList={refetchList}
           />
         )}
 

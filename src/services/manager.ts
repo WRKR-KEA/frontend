@@ -177,3 +177,21 @@ export async function getTicketStatusSummery(
     console.error('티켓 상태별 요약 조회에 실패했습니다. :', error);
   }
 }
+
+
+// (GET) 매니저 홈 티켓 목록 조회
+export async function fetchManagerTickets() {
+  const accessToken = sessionStorage.getItem("accessToken");
+  try {
+    const { data } = await api.get(`/api/manager/tickets/main`, {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error("티켓 정보를 불러오는 중 오류가 발생했습니다. :", error);
+    throw error;
+  }
+}

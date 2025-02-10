@@ -1,21 +1,67 @@
+@import url("https://cdn.jsdelivr.net/npm/pretendard@latest/dist/web/static/pretendard.css");
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  font-family: "Pretendard", sans-serif;
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: "Pretendard", sans-serif;
+}
+
+
+@layer base {
+  body {
+    min-width: 1024px;
+    font-family: 'Pretendard';
+    overflow-wrap: break-word;
+    font-family: "Pretendard", sans-serif;
+  }
+}
+
+/* 스크롤바 숨기기 */
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera*/
+}
+
+:root {
+  --main-1: #252e66;
+  --main-2: #4f507f;
+  --main-3: #c8c9dc;
+  --sub-1: #f4c62e;
+  --sub-2: #ffe368;
+  --sub-3: #ffeeac;
+  --accent-1: #df4b38;
+  --accent-2: #f8d0cb;
+
+  --black: #000;
+  --gray-1: #121212;
+  --gray-2: #595959;
+  --gray-3: #767676;
+  --gray-4: #bdbdbd;
+  --gray-5: #e0e0e0;
+  --gray-6: #f3f3f3;
+  --white: #fff;
+  --component: #f9f9fa;
+
+  --request: #d79804;
+  --request-bg: #ffe9b6;
+  --cancel: var(--gray-2);
+  --cancel-bg: var(--gray-5);
+  --in-progress: #3e7dd6;
+  --in-progress-bg: #cfe3ff;
+  --reject: #de6231;
+  --reject-bg: #f3cdbe;
+  --complete: #2c9066;
+  --complete-bg: #d1eee2;
 }

@@ -23,7 +23,7 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
-  
+
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -54,13 +54,12 @@ export default function ManagericketDetailPage() {
 
   const param = useParams();
 
-   // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
-    작업요청: "new", // '작업요청' -> 'new'
-    반려: "rejected", // '반려' -> 'rejected'
-    작업진행: "in-progress", // '작업진행' -> 'in-progress'
-    작업완료: "completed", // '작업완료' -> 'completed'
-    작업취소: "cancelled", // '작업취소' -> 'cancelled'
+    작업요청: "REQUEST", 
+    반려: "REJECT", 
+    작업진행: "IN_PROGRESS", 
+    작업완료: "COMPLETE", 
+    작업취소: "CANCEL", 
   };
 
   const { data: commentData } = useCommentList({ ticketId });
@@ -76,7 +75,7 @@ export default function ManagericketDetailPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedTicket?.status == "작업요청" || selectedTicket?.status == "취소") return;
+    if (selectedTicket?.status == "REQUEST" || selectedTicket?.status == "CANCEL") return;
   }, [selectedTicket])
 
   console.log('티켓 ID:', ticketId);
@@ -107,9 +106,10 @@ export default function ManagericketDetailPage() {
   const getTicketDetail = async (ticketId) => {
     const response = await fetchManagerTicket(ticketId);
     const ticket = response.result;
+    console.log('ticke!!!!', ticket);
     return {
       id: ticket.ticketId,
-      number: "?????",
+      number: ticket.ticketSerialNumber,
       status: statusMapping[ticket.status],
       type: ticket.category,
       title: ticket.title,

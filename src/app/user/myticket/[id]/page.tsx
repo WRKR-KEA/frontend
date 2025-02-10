@@ -106,7 +106,7 @@ export default function UserTicketDetailPage() {
 
     setSelectedTicket((prevTicket: any) => ({
       ...prevTicket,
-      status: "작업취소", // 상태 업데이트
+      status: "CANCEL", // 상태 업데이트
     }));
 
     console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가

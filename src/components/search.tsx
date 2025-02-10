@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { FaSearch } from "react-icons/fa";
 
 interface SearchProps {
   placeHolder: string;
@@ -8,7 +7,7 @@ interface SearchProps {
 
 export const Search = ({ placeHolder, onSearchChange}: SearchProps) => {
   const [searchInput, setSearchInput] = useState("");
-
+  console.log(searchInput);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     onSearchChange(e.target.value);

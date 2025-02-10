@@ -81,6 +81,7 @@ const fetchTickets = async () => {
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
+    console.log("🔍 검색어:", term);
   };
 
   return (

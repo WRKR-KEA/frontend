@@ -97,7 +97,7 @@ export default function DepartmentTicketListPage() {
         const url = window.URL.createObjectURL(data);
         const a = document.createElement("a");
         a.href = url;
-        a.download = "부서_티켓_조회.xlsx"; // 다운로드할 파일 이름
+        a.download = "부서_티켓_조회.xlsx"; 
         document.body.appendChild(a);
         a.click();
         a.remove();
@@ -106,11 +106,10 @@ export default function DepartmentTicketListPage() {
         alert("엑셀 다운로드 중 오류가 발생했습니다.");
       }
     };
-  
 
   useEffect(() => {
     fetchTickets();
-  }, [searchTerm, dateRange, currentPage, maxTicketsToShow, status]);
+  }, [dateRange, currentPage, maxTicketsToShow, status]);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;

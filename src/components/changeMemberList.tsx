@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 
 interface Member {
-  id: string; // 각 멤버에 고유 ID를 추가
-  avatar: string;
-  name: string;
-  subject: string;
-  phone: string;
-  tickets: number;
+  memberId: string; 
+  nickname: string;
+  position: string;
+  phoneNumber: string;
+  ticketAmount: number;
 }
 
 interface ChangeMemberListProps {
   data: Member[];
-  onSelectManager: (managerId: string) => void; // 담당자 선택 시 호출할 함수
+  onSelectManager: (managerId: string) => void; 
 }
 
 const ChangeMemberList: React.FC<ChangeMemberListProps> = ({ data, onSelectManager }) => {
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
+  console.log(data);
 
   const handleCheckboxChange = (index: number, managerId: string) => {
     // 선택된 행을 토글하고, 선택된 담당자의 ID를 부모로 전달
@@ -44,29 +44,24 @@ const ChangeMemberList: React.FC<ChangeMemberListProps> = ({ data, onSelectManag
             </tr>
           </thead>
           <tbody>
-            {data.map((row, index) => (
+            {data.map((Member, index) => (
               <tr
-                key={row.id} // 고유한 ID 사용
+                key={Member.memberId} 
                 className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}
               >
                 <td className="p-3">
                   <input
                     type="checkbox"
                     checked={selectedRowIndex === index}
-                    onChange={() => handleCheckboxChange(index, row.id)} // 담당자 ID 전달
+                    onChange={() => handleCheckboxChange(index, Member.memberId)} 
                   />
                 </td>
                 <td className="p-3 flex items-center space-x-3">
-                  <img
-                    src={row.avatar}
-                    alt={row.name}
-                    className="w-8 h-8 rounded-full"
-                  />
-                  <span>{row.name}</span>
+                  <span>{Member.nickname}</span>
                 </td>
-                <td className="p-4">{row.subject}</td>
-                <td className="p-4">{row.phone}</td>
-                <td className="p-4">{row.tickets}</td>
+                <td className="p-4">{Member.position}</td>
+                <td className="p-4">{Member.phoneNumber}</td>
+                <td className="p-4">{Member.ticketAmount}</td>
               </tr>
             ))}
           </tbody>

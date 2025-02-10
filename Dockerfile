@@ -5,13 +5,12 @@ FROM node:18
 WORKDIR /app
 
 # 3. 빌드 시점 환경 변수 설정
-ARG NEXT_PUBLIC_BASE_URL
+ARG NEXT_PUBLIC_BASE_URL=http://172.16.211.53:8080
 ARG NEXT_DISABLE_SSR=1
 
 # 4. 환경 변수 설정 (런타임에서도 유지)
 ENV NEXT_PUBLIC_BASE_URL=${NEXT_PUBLIC_BASE_URL}
 ENV NEXT_DISABLE_SSR=${NEXT_DISABLE_SSR}
-ENV NODE_ENV=production
 
 # 5. 의존성 파일 복사
 COPY package.json package-lock.json ./

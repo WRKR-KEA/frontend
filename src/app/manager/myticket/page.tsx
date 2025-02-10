@@ -18,6 +18,7 @@ export default function ManagerTicketListPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [status, setStatus] = useState<string>("");  
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
@@ -26,7 +27,8 @@ export default function ManagerTicketListPage() {
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
-    setCurrentPage(1);  // Reset to page 1 when searching
+    setCurrentPage(1); 
+    console.log("🔍 검색어:", term);
   };
 
   const handleSelectOrder = (order: string) => {
@@ -40,10 +42,11 @@ export default function ManagerTicketListPage() {
 
   const handleStatusChange = (status: string) => {
     setSelectedStatus(status);
+    setStatus(status);
     setCurrentPage(1);  // Reset to page 1 when changing status
   };
 
-  const fetchTickets = useCallback(async () => {
+  const fetchTickets  = async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -72,10 +75,10 @@ export default function ManagerTicketListPage() {
           handler: "",
           ispinned: ticket.isPinned,
         }));
-
+        console.log("🍉 api 정보", response);
         setTickets(formattedTickets);
         console.log("🍉 담당 티켓 정보", formattedTickets);
-        setTotalPages(Math.ceil(data.result.totalElements / maxTicketsToShow));
+        setTotalPages(response.data.result.totalPages);
       } else {
         throw new Error(data.message);
       }
@@ -84,15 +87,11 @@ export default function ManagerTicketListPage() {
     } finally {
       setIsLoading(false);
     }
-  }, [currentPage, maxTicketsToShow, sortOrder, selectedStatus, searchTerm]);
+  };
 
   useEffect(() => {
     fetchTickets();
-  }, [fetchTickets]); // Re-fetch tickets whenever fetchTickets is updated
-
-  useEffect(() => {
-    fetchTickets(); // Ensure data is fetched whenever currentPage changes
-  }, [currentPage]);
+  }, [currentPage, maxTicketsToShow, sortOrder, selectedStatus]);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;
@@ -119,6 +118,7 @@ export default function ManagerTicketListPage() {
         sortOrder={sortOrder}
         currentPage={currentPage}
         totalPages={totalPages}
+        status={status || ""} 
         onStatusChange={handleStatusChange}
         onPageChange={handlePageChange}
       />

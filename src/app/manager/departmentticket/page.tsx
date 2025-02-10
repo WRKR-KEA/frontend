@@ -40,6 +40,7 @@ export default function DepartmentTicketListPage() {
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
+    setCurrentPage(1);
     console.log("🔍 검색어:", term);
   };
 

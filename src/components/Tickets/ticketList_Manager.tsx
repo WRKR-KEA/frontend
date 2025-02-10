@@ -24,6 +24,7 @@ type TicketList_ManagerProps = {
   totalPages: number;
   onStatusChange: (status: string) => void;
   onPageChange: (page: number) => void;
+  status: string;
 };
 
 export function TicketList_Manager({
@@ -34,6 +35,7 @@ export function TicketList_Manager({
   totalPages,
   onStatusChange,
   onPageChange,
+  status,
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-complete text-complete",
@@ -51,11 +53,11 @@ export function TicketList_Manager({
     COMPLETE: "작업 완료",
   };
 
-  const [activeTab, setActiveTab] = useState("전체");
   const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState(status);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);

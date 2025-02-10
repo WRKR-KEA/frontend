@@ -91,8 +91,8 @@ export default function UserCreateTicketPage() {
   const handleCreate = async () => {
     try {
       const ticketData = {
-        title: title || "Default Title",
-        content: content || "Default Content",
+        title: title,
+        content: content || "",
         categoryId: secondCategories?.childCategories.find((category: any) => category.name === selectedRequestType)?.categoryId,
       };
       console.log("📌 요청 데이터:", ticketData);
@@ -157,7 +157,6 @@ export default function UserCreateTicketPage() {
       }
     } catch (error) {
       console.error("❌ 템플릿 조회 실패:", error);
-      setContent("템플릿을 불러오는 중 오류가 발생했습니다.");
     }
   }
 
@@ -220,7 +219,7 @@ export default function UserCreateTicketPage() {
         <>
           <Template title={title} content={content} setTitle={setTitle} setContent={setContent} />
           <div className="flex justify-center">
-            <Button label="작업 승인" onClick={handleCreate} color={1} />
+            <Button label="티켓 요청" onClick={handleCreate} color={1} />
           </div>
         </>
       )}

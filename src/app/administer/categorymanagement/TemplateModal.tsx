@@ -54,7 +54,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({
   useEffect(() => {
     if (!isFetching && editorRef.current) {
       editorRef.current.getInstance().setMarkdown(
-        data?.result.content || "템플릿 내용을 입력하세요."
+        data?.result.content
       );
     }
   }, [isFetching, data]);

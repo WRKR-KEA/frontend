@@ -76,7 +76,7 @@ export function TicketList_Depart({
       ticket.title.includes(searchTerm) ||
       ticket.ticketSerialNumber.includes(searchTerm) ||
       ticket.userNickname.includes(searchTerm) ||
-      ticket.managerNickname.includes(searchTerm);
+      ticket.managerNickname?.includes(searchTerm);
   
     const matchesDateRange =
       !dateRange.startDate ||

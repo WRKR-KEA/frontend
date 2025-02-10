@@ -25,11 +25,11 @@ export default function UserTicketDetailPage() {
 
   // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
-    작업요청: "new", // '작업요청' -> 'new'
-    반려: "rejected", // '반려' -> 'rejected'
-    작업진행: "in-progress", // '작업진행' -> 'in-progress'
-    작업완료: "completed", // '작업완료' -> 'completed'
-    작업취소: "cancelled", // '작업취소' -> 'cancelled'
+    작업요청: "REQUEST", 
+    반려: "REJECT", 
+    작업진행: "IN_PROGRESS", 
+    작업완료: "COMPLETE", 
+    작업취소: "CANCEL", 
   };
 
   useEffect(() => {
@@ -141,7 +141,7 @@ export default function UserTicketDetailPage() {
       </div>
 
       <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment logs={logs} />
+      <TicketComment ticketId={selectedTicket.id} logs={logs}/>
 
       {/* TicketCancel 컴포넌트 */}
       <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />

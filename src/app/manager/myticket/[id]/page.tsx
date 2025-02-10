@@ -53,7 +53,7 @@ export default function ManagericketDetailPage() {
   };
 
   const param = useParams();
-  
+
   const statusMap: Record<string, string> = {
     작업요청: "REQUEST", 
     반려: "REJECT", 
@@ -106,9 +106,10 @@ export default function ManagericketDetailPage() {
   const getTicketDetail = async (ticketId) => {
     const response = await fetchManagerTicket(ticketId);
     const ticket = response.result;
+    console.log('ticke!!!!', ticket);
     return {
       id: ticket.ticketId,
-      number: "?????",
+      number: ticket.ticketSerialNumber,
       status: statusMapping[ticket.status],
       type: ticket.category,
       title: ticket.title,

@@ -74,8 +74,12 @@ export default function UserHomePage() {
   };
 
   useEffect(() => {
-    fetchTickets();  // 페이지 처음 로드 시 티켓 데이터 가져오기
-  }, []);  // 빈 배열을 두 번째 인자로 넣어 첫 렌더링 시만 실행되도록 함
+    const timer = setTimeout(() => {
+      fetchTickets();
+    }, 1); 
+  
+    return () => clearTimeout(timer); 
+  }, []);
 
   // 🌟 selectedTicket이 없을 때만 초기 상태 설정 (두 번 실행 방지)
   useEffect(() => {

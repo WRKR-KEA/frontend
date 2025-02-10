@@ -59,7 +59,7 @@ export default function DepartmentTicketListPage() {
   
   const handleStatusChange = (status: string) => {
     setStatus(status);
-    setCurrentPage(1);  // Reset to page 1 when changing status
+    setCurrentPage(1);  
   };
 
   const fetchTickets = async () => {
@@ -69,12 +69,13 @@ export default function DepartmentTicketListPage() {
       const data = await fetchManagerDepartmentTicket(
         searchTerm,
         status,
-        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined, 
-        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined, 
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null, 
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null, 
         currentPage,
         maxTicketsToShow
       );
       setTickets(data?.result?.elements || []);
+      setTotalPages(data?.result?.totalPages || []);
       console.log("🎫 부서 티켓 조회", data);
     } catch (err) {
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
@@ -109,7 +110,7 @@ export default function DepartmentTicketListPage() {
 
   useEffect(() => {
     fetchTickets();
-  }, [searchTerm, dateRange, currentPage, maxTicketsToShow, status]); // status를 dependency array에 추가
+  }, [searchTerm, dateRange, currentPage, maxTicketsToShow, status]);
 
   if (isLoading) return <div>로딩 중...</div>;
   if (error) return <div>{error}</div>;

@@ -40,7 +40,7 @@ export function TicketList_Depart({
     CANCEL: 'bg-cancel text-cancel',
     REJECT: 'bg-reject text-reject',
   };
-
+console.log("받은 티켓 데이터:",tickets);
   const statusMap: Record<string, string> = {
     REQUEST: "REQUEST",
     CANCEL: "CANCEL",
@@ -89,11 +89,6 @@ export function TicketList_Depart({
     return matchesSearchTerm && matchesDateRange && matchesStatus; // Apply status filter here
   });
 
-  const displayedTickets = filteredTickets.slice(
-    (currentPage - 1) * maxTicketsToShow,
-    currentPage * maxTicketsToShow
-  );
-
   return (
     <div className="bg-white rounded-md shadow-md">
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
@@ -110,7 +105,7 @@ export function TicketList_Depart({
           </tr>
         </thead>
         <tbody>
-          {displayedTickets.map((ticket) => (
+          {filteredTickets.map((ticket) => (
             <tr
               key={ticket.ticketId}
               className="border-t border-gray-5 cursor-pointer"

@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { fetchMyPage, updateMyPage } from "@/service/user";
 import ProfileSave from "@/components/Profiles/profileSave";
-import ProfileManagerEdit from "@/components/Profiles/profileManagerEdit";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import ProfileEdit from "@/components/Profiles/profileEdit";
 
 export default function ManagerProfilePage() {
   const [emailNotifications, setEmailNotifications] = useState(false);
@@ -164,7 +164,7 @@ export default function ManagerProfilePage() {
 
         {/* 프로필 정보 */}
         {isEditing ? (
-          <ProfileManagerEdit profile={profile} setProfile={setProfile}/>
+          <ProfileEdit profile={profile} setProfile={setProfile}/>
         ) : (
           <ProfileSave profile={profile} />
         )}

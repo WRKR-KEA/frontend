@@ -102,11 +102,11 @@ export function TicketList_Depart({
           <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
-            <th className="px-4 py-2 w-80">제목</th>
-            <th className="px-4 py-2 w-32 min-w-32">요청자</th>
-            <th className="px-4 py-2 w-32 min-w-32">담당자</th>
-            <th className="px-4 py-2 w-44 min-w-44">요청일</th>
-            <th className="px-4 py-2 w-44 min-w-44">최근 변경일</th>
+            <th className="px-4 py-2 w-76">제목</th>
+            <th className="px-4 py-2 w-28 min-w-32 text-center">담당자</th>
+            <th className="px-4 py-2 w-28 min-w-32 text-center">요청자</th>
+            <th className="px-4 py-2 w-32 min-w-32 text-center">요청일시</th>
+            <th className="px-4 py-2 w-32 min-w-32 text-center">최근 변경일시</th>
           </tr>
         </thead>
         <tbody>
@@ -116,21 +116,21 @@ export function TicketList_Depart({
               className="border-t border-gray-5 cursor-pointer"
               onClick={() => handleTicketClick(ticket.ticketId)}
             >
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 w-20 ">
                 <HighlightText text={ticket.ticketSerialNumber} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 text-center">
+              <td className="px-4 py-2 w-24 text-center">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
                   {statusMap[ticket.status]}
                 </span>
               </td>
-              <td className="px-4 py-2 truncate">
+              <td className="px-4 py-2 w-76 truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 truncate">{ticket.userNickname}</td>
-              <td className="px-4 py-2 truncate">{ticket.managerNickname}</td>
-              <td className="px-4 py-2">{ticket.requestedDate}</td>
-              <td className="px-4 py-2">{ticket.updatedDate}</td>
+              <td className="px-4 py-2 w-28 text-center truncate">{ticket.managerNickname}</td>
+              <td className="px-4 py-2 w-28 text-center truncate">{ticket.userNickname}</td>
+              <td className="px-4 py-2 w-32 text-center">{ticket.requestedDate}</td>
+              <td className="px-4 py-2 w-32 text-center">{ticket.updatedDate}</td>
             </tr>
           ))}
         </tbody>

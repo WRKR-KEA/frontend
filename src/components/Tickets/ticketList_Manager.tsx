@@ -140,8 +140,8 @@ export function TicketList_Manager({
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
             <th className="px-4 py-2 w-32 min-w-32">요청자</th>
-            <th className="px-4 py-2 w-44 min-w-44">요청일</th>
-            <th className="px-4 py-2 w-44 min-w-44">최근 변경일</th>
+            <th className="px-4 py-2 w-44 min-w-44">요청일시</th>
+            <th className="px-4 py-2 w-44 min-w-44">최근 변경일시</th>
           </tr>
         </thead>
         <tbody>

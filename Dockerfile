@@ -15,7 +15,6 @@ COPY . .
 
 # 6. 환경 변수 설정하여 SSR 비활성화 후 빌드
 ENV NEXT_DISABLE_SSR=1
-ENV NEXT_PUBLIC_BASE_URL=http://172.16.211.53:8080/
 
 # 7. 애플리케이션 빌드
 RUN npm run build

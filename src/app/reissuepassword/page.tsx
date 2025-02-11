@@ -4,9 +4,11 @@ import { useRouter } from "next/navigation";
 import api from "@/lib/api/axios";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import axios from "axios";
 
 export default function ReissuePasswordPage() {
   const [nickname, setNickname] = useState("");
+  const [memberId, setMemberId] = useState("")
   const [authCode, setAuthCode] = useState(""); // 인증번호 상태 추가
   const [error, setError] = useState("");
   const [isAuthSent, setIsAuthSent] = useState(false); // 인증번호 입력 필드 표시 여부
@@ -16,7 +18,7 @@ export default function ReissuePasswordPage() {
     isOpen: false,
     title: "",
     btnText: "닫기",
-    onClose: () => {},
+    onClose: () => { },
   });
 
   const showModal = (title: string, btnText = "닫기", redirect = false, redirectPath = "") => {
@@ -59,17 +61,28 @@ export default function ReissuePasswordPage() {
     }
 
     try {
-      const response = await api.post("/api/members/auth-code", { nickname });
+      const response = await axios.post(
+        "http://172.16.211.53:8080/api/members/password/code", // ✅ 엔드포인트 직접 입력
+        { nickname }, // ✅ 요청 데이터
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // withCredentials: true, // ✅ 토큰이 필요 없다면 제거
+        }
+      );
+      console.log(response)
 
       if (response.data.isSuccess) {
-        setIsAuthSent(true); // 인증번호 입력 필드 표시
+        setIsAuthSent(true); // 인증번호 입력창 활성화
+        setMemberId(response?.data.result.memberId)
         showModal("인증번호가 전송되었습니다.", "확인");
       } else {
         showModal(response.data.message || "인증번호 요청 실패");
       }
     } catch (err) {
       console.error("인증번호 요청 에러:", err);
-      showModal("서버와 통신 중 오류가 발생했습니다.");
+      showModal(err?.response.data.message);
     }
   };
 
@@ -83,10 +96,18 @@ export default function ReissuePasswordPage() {
     }
 
     try {
-      const response = await api.patch("/api/members/password/reissue", {
-        nickname,
-        authCode,
-      });
+      const response = await axios.patch(
+        "http://172.16.211.53:8080/api/members/password/reissue", // ✅ 엔드포인트 직접 입력
+        { 
+          memberId, 
+          verificationCode:authCode, 
+        }, // ✅ 요청 데이터
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
 
       if (response.data.isSuccess) {
         showModal("비밀번호 재발급 성공!", "로그인하기", true, "/login");
@@ -95,7 +116,7 @@ export default function ReissuePasswordPage() {
       }
     } catch (err) {
       console.error("비밀번호 재발급 에러:", err);
-      showModal("서버와 통신 중 오류가 발생했습니다.");
+      showModal(err?.response.data.message);
     }
   };
 
@@ -119,7 +140,7 @@ export default function ReissuePasswordPage() {
       {/* 비밀번호 재발급 박스 */}
       <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
         <h2 className="text-3xl font-bold mb-2">비밀번호 재발급</h2>
-        <p className="text-sm text-gray-600 mb-6">재발급받을 아이디를 입력하세요.</p>
+        <p className="text-sm text-gray-600 mb-6">재발급받을 닉네임을 입력하세요.</p>
 
         {/* 인증번호 요청 폼 */}
         <form onSubmit={handleVerifyAndReissuePassword}>
@@ -130,7 +151,7 @@ export default function ReissuePasswordPage() {
               value={nickname}
               onChange={handleNicknameChange}
               className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="아이디를 입력하세요"
+              placeholder="닉네임을 입력하세요"
               disabled={isAuthSent} // 인증번호 입력 후 닉네임 수정 불가
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
@@ -140,8 +161,11 @@ export default function ReissuePasswordPage() {
             // 인증번호 받기 버튼
             <button
               type="button"
-              className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
+              className={`w-full bg-[#252E66] text-white py-3 rounded-md font-semibold
+                 ${nickname ? "bg-[#252E66] text-white hover:bg-[#1F2557]" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}
               onClick={handleRequestAuthCode}
+              disabled={!nickname}
+
             >
               인증번호 받기
             </button>
@@ -164,7 +188,7 @@ export default function ReissuePasswordPage() {
                 type="submit"
                 className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
               >
-                확인
+                비밀번호 재발급
               </button>
             </>
           )}

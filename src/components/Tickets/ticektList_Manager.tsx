@@ -43,8 +43,11 @@ export function TicketList({
   const displayedTickets = tickets.slice(startIndex, endIndex);
   const router = useRouter();
 
-  const handleTicketClick = (ticketId: string) => {
-    router.push(`/manager/myticket/${ticketId}`);
+  const handleTicketClick = (ticket: Ticket) => {
+    if (ticket.status === "REQUEST") 
+      router.push(`/manager/departmentticket/${ticket.id}`);
+    else
+      router.push(`/manager/myticket/${ticket.id}`);
   };
 
   return (
@@ -65,7 +68,7 @@ export function TicketList({
             <tr
               key={ticket.id}
               className="border-b cursor-pointer hover:bg-gray-100"
-              onClick={() => handleTicketClick(ticket.id)}
+              onClick={() => handleTicketClick(ticket)}
             >
               <td className="p-2 border">{ticket.number}</td>
               <td className="p-2 border">

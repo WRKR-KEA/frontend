@@ -112,7 +112,7 @@ export default function ManagericketDetailPage() {
 
     try {
       // TODO: 타입 오류 해결
-      const result = await updateManagerTicketComplete(param.id);
+      const result = await updateManagerTicketComplete(ticketId);
       console.log("완료 성공:", result);
 
       closeCompleteTicketModal();
@@ -127,7 +127,7 @@ export default function ManagericketDetailPage() {
 
     try {
       // TODO: 타입 오류 해결
-      const result = await updateManagerTicketReject(param.id);
+      const result = await updateManagerTicketReject(ticketId);
       console.log("작업 반려 성공:", result);
 
       closeAbortTicketModal();

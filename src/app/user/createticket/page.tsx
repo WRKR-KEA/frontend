@@ -43,7 +43,13 @@ export default function UserCreateTicketPage() {
 
   const handleServiceChange = (value: string) => {
     setSelectedService(value);
-    setSecondCategories(categories.filter((category) => category.name === value)[0]);
+    const selectedCategory = categories.find((category) => category.name === value);
+    setSecondCategories(selectedCategory);
+    
+    // 첫 번째 카테고리가 변경되면 템플릿을 불러옴
+    if (selectedCategory) {
+      getTemplate(selectedCategory.categoryId);
+    }
   };
 
   const handleRequestTypeChange = (value: string) => {

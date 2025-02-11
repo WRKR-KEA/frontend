@@ -162,8 +162,9 @@ export default function ManagericketDetailPage() {
   };
 
   const toggleChangeModal = () => {
-    setIsChangeModalOpen((prev) => !prev); // 담당자 변경 모달 열고 닫기
+    setIsChangeModalOpen((prev) => !prev); 
   };
+
   return (
     <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex space-x-6">

@@ -9,6 +9,8 @@ import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
 import { TicketCancel } from "@/components/Modals/ticketCancel";
 import {fetchComments, fetchTicketDetail, updateTicket} from "@/services/user";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 export default function UserTicketDetailPage() {
   const router = useRouter();
@@ -80,6 +82,27 @@ export default function UserTicketDetailPage() {
     setIsModalOpen(true); 
   };
 
+  const [modalState, setModalState] = useState({
+      isOpen: false,
+      title: "",
+      btnText:'',
+      onClose: () => {},
+    });
+  
+    const showModal = (title: string, btnText='닫기') => {
+      setModalState({
+        isOpen: true,
+        title,
+        btnText,
+        onClose: () => {
+          setModalState(prev => ({ ...prev, isOpen: false }));
+        },
+  
+      });
+    };
+
+  const [countdown, setCountdown] = useState(1);
+  
   const confirmCancel = async () => {
     const response = await updateTicket(selectedTicket.id);
 
@@ -92,10 +115,19 @@ export default function UserTicketDetailPage() {
       status: "CANCEL",
     }));
 
-    console.log("작업이 취소되었습니다."); 
-    setIsModalOpen(false);
+    console.log("요청이 취소되었습니다."); 
+    showModal("요청이 취소되었습니다."); 
 
-    router.push("/user/myticket");
+    const timer = setInterval(() => {
+      setCountdown((prev) => (prev !== null ? prev - 1 : null));
+    }, 1000);
+    
+    setTimeout(() => {
+      clearInterval(timer);
+      router.push("/user/myticket");
+    }, 1000);
+
+    setIsModalOpen(false);
   };
 
   const closeModal = () => {
@@ -134,6 +166,15 @@ export default function UserTicketDetailPage() {
 
       {/* TicketCancel 컴포넌트 */}
       <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

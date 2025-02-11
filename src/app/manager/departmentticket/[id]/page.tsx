@@ -143,7 +143,7 @@ export default function ManagericketDetailPage() {
           <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
           <div className="mt-[-12px]">
           {selectedTicket.status === "REQUEST" && (
-          <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
+          <Button label="요청 승인" onClick={handleAcceptTicket} color={1} />
           )}  
           </div>
         </div>

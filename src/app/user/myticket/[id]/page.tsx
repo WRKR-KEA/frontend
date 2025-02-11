@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation"; // app 디렉터리에서 적합한 useRouter 가져오기
+import { useRouter } from "next/navigation"; 
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
@@ -11,17 +11,9 @@ import {fetchComments, fetchTicketDetail, updateTicket} from "@/services/user";
 
 export default function UserTicketDetailPage() {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
-  const [selectedTicket, setSelectedTicket] = useState<any | null>(null); // 선택된 티켓
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [logs, setLogs] = useState([]);
-
-  const statusMapping = {
-    REQUEST: 'REQUEST',
-    CANCEL: 'CANCEL',
-    IN_PROGRESS: 'IN_PROGRESS',
-    REJECT: 'REJECT',
-    COMPLETE: 'COMPLETE',
-  };
 
   const statusMap: Record<string, string> = {
     REQUEST: "REQUEST", 
@@ -74,12 +66,11 @@ export default function UserTicketDetailPage() {
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchTicketDetail(ticketId);
-    console.log("response:", response);
     const ticket = response.result;
     return {
       id: ticket.id,
       number: ticket.ticketSerialNumber,
-      status: statusMapping[ticket.status],
+      status: ticket.status,
       type: ticket.category,
       title: ticket.title,
       content: ticket.content,
@@ -93,7 +84,7 @@ export default function UserTicketDetailPage() {
   }
 
   const handleCancelTicket = () => {
-    setIsModalOpen(true); // 모달 열기
+    setIsModalOpen(true); 
   };
 
   const confirmCancel = async () => {
@@ -105,21 +96,21 @@ export default function UserTicketDetailPage() {
 
     setSelectedTicket((prevTicket: any) => ({
       ...prevTicket,
-      status: "CANCEL", // 상태 업데이트
+      status: "CANCEL",
     }));
 
-    console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가
-    setIsModalOpen(false); // 모달 닫기
+    console.log("작업이 취소되었습니다."); 
+    setIsModalOpen(false);
 
     router.push("/myticket");
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // 모달 닫기
+    setIsModalOpen(false); 
   };
 
   if (!selectedTicket) {
-    return <div>티켓 정보를 불러오는 중입니다...</div>; // 데이터 로딩 처리
+    return <div>티켓 정보를 불러오는 중입니다...</div>; 
   }
 
   return (
@@ -127,8 +118,7 @@ export default function UserTicketDetailPage() {
       <div className="flex justify-between items-center mb-2">
         <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2">
-          {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
-          {statusMap[selectedTicket.status] === "new" && (
+          {statusMap[selectedTicket.status] === "REQUEST" && (
             <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
           )}
         </div>

@@ -59,14 +59,14 @@ export default function ReissuePasswordPage() {
     }
 
     try {
-      const response = await api.post("/api/members/auth-code", { nickname });
+      // const response = await api.post("/api/members/auth-code", { nickname });
 
-      if (response.data.isSuccess) {
-        setIsAuthSent(true); // 인증번호 입력 필드 표시
-        showModal("인증번호가 전송되었습니다.", "확인");
-      } else {
-        showModal(response.data.message || "인증번호 요청 실패");
-      }
+      // if (response.data.isSuccess) {
+        setIsAuthSent(true); // 인증번호 입력창 활성화
+      //   showModal("인증번호가 전송되었습니다.", "확인");
+      // } else {
+      //   showModal(response.data.message || "인증번호 요청 실패");
+      // }
     } catch (err) {
       console.error("인증번호 요청 에러:", err);
       showModal("서버와 통신 중 오류가 발생했습니다.");
@@ -119,7 +119,7 @@ export default function ReissuePasswordPage() {
       {/* 비밀번호 재발급 박스 */}
       <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
         <h2 className="text-3xl font-bold mb-2">비밀번호 재발급</h2>
-        <p className="text-sm text-gray-600 mb-6">재발급받을 아이디를 입력하세요.</p>
+        <p className="text-sm text-gray-600 mb-6">재발급받을 닉네임을 입력하세요.</p>
 
         {/* 인증번호 요청 폼 */}
         <form onSubmit={handleVerifyAndReissuePassword}>
@@ -130,7 +130,7 @@ export default function ReissuePasswordPage() {
               value={nickname}
               onChange={handleNicknameChange}
               className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="아이디를 입력하세요"
+              placeholder="닉네임을 입력하세요"
               disabled={isAuthSent} // 인증번호 입력 후 닉네임 수정 불가
             />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
@@ -140,8 +140,11 @@ export default function ReissuePasswordPage() {
             // 인증번호 받기 버튼
             <button
               type="button"
-              className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
+              className={`w-full bg-[#252E66] text-white py-3 rounded-md font-semibold
+                 ${nickname ? "bg-[#252E66] text-white hover:bg-[#1F2557]" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}
               onClick={handleRequestAuthCode}
+              disabled={!nickname}
+              
             >
               인증번호 받기
             </button>
@@ -164,7 +167,7 @@ export default function ReissuePasswordPage() {
                 type="submit"
                 className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
               >
-                확인
+                비밀번호 재발급
               </button>
             </>
           )}

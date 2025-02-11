@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
@@ -20,35 +20,34 @@ export default function ManagerTicketListPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [status, setStatus] = useState<string>("");
 
-  const searchInputRef = useRef<HTMLInputElement | null>(null); // 검색창에 대한 ref 추가
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  const handleSelectCount = (count: number) => {
+  const handleSelectCount = useCallback((count: number) => {
     setMaxTicketsToShow(count);
-    setCurrentPage(1);  // Reset to page 1 when changing the count
-  };
+    setCurrentPage(1);
+  }, []);
 
-  const handleSearchChange = (term: string) => {
-    setSearchTerm(term);  // 검색어 상태 업데이트
-    setCurrentPage(1);  // Reset to page 1 when search term changes
-    console.log("🔍 검색어:", term);
-  };
+  const handleSearchChange = useCallback((term: string) => {
+    setSearchTerm(term);
+    setCurrentPage(1);
+  }, []);
 
-  const handleSelectOrder = (order: string) => {
+  const handleSelectOrder = useCallback((order: string) => {
     setSortOrder(order);
-    setCurrentPage(1);  // Reset to page 1 when changing order
-  };
+    setCurrentPage(1);
+  }, []);
 
-  const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber); 
-  };
+  const handlePageChange = useCallback((pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  }, []);
 
-  const handleStatusChange = (status: string) => {
+  const handleStatusChange = useCallback((status: string) => {
     setSelectedStatus(status);
     setStatus(status);
-    setCurrentPage(1);  
-  };
+    setCurrentPage(1);
+  }, []);
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
@@ -66,20 +65,19 @@ export default function ManagerTicketListPage() {
       const data = response.data;
 
       if (data.isSuccess) {
-        const formattedTickets = data.result.elements.map((ticket: any) => ({
-          id: ticket.id,
-          number: ticket.serialNumber,
-          status: ticket.status,
-          title: ticket.title,
-          requester: ticket.requesterNickname,
-          requestDate: ticket.createdAt,
-          updateDate: ticket.updatedAt,
-          handler: "",
-          ispinned: ticket.isPinned,
-        }));
-        console.log("🍉 api 정보", response);
-        setTickets(formattedTickets);
-        console.log("🍉 담당 티켓 정보", formattedTickets);
+        setTickets(
+          data.result.elements.map((ticket: any) => ({
+            id: ticket.id,
+            number: ticket.serialNumber,
+            status: ticket.status,
+            title: ticket.title,
+            requester: ticket.requesterNickname,
+            requestDate: ticket.createdAt,
+            updateDate: ticket.updatedAt,
+            handler: "",
+            ispinned: ticket.isPinned,
+          }))
+        );
         setTotalPages(response.data.result.totalPages);
       } else {
         throw new Error(data.message);
@@ -89,14 +87,11 @@ export default function ManagerTicketListPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [currentPage, maxTicketsToShow, sortOrder, selectedStatus, searchTerm]);
 
   useEffect(() => {
     fetchTickets();
-  }, [currentPage, maxTicketsToShow, sortOrder, selectedStatus, searchTerm]); 
-
-  if (isLoading) return <div></div>;
-  if (error) return <div>{error}</div>;
+  }, [fetchTickets]);
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
@@ -117,7 +112,6 @@ export default function ManagerTicketListPage() {
         </div>
       </div>
   
-      {/* isLoading 상태일 때 기존 UI를 유지하고, 티켓 목록만 로딩 표시 */}
       <div className="relative min-h-[200px]">
         {isLoading && (
           <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-60">

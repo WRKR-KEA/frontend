@@ -23,7 +23,7 @@ const fetchTemplate = async (categoryId: string) => {
 // ✅ React Query 훅 생성
 export const useTemplateQuery = (categoryId: string) => {
   return useQuery({
-    queryKey: ["member_detail", categoryId], // 캐싱 키에 categoryId 포함
+    queryKey: ["template_detail", categoryId], // 캐싱 키에 categoryId 포함
     queryFn: () => fetchTemplate(categoryId),
     enabled: !!categoryId, // categoryId가 있을 때만 쿼리 실행
     retry: false, // 요청 실패 시 재시도 비활성화 (필요에 따라 조정 가능)

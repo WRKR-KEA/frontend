@@ -11,6 +11,7 @@ import { updateManagerTicketApprove, fetchManagerTicket } from "@/services/manag
 import { useCommentList } from '@/hooks/useCommentList';
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import TicketRequest from "@/components/Tickets/ticketRequest";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -40,38 +41,21 @@ export default function ManagericketDetailPage() {
     });
   };
 
-  const statusMapping = {
-    REQUEST: '작업요청',
-    CANCEL: '작업취소',
-    IN_PROGRESS: '작업진행',
-    REJECT: '반려',
-    COMPLETE: '작업완료',
-  };
-
-  const statusMap: Record<string, string> = {
-    작업요청: "REQUEST", 
-    반려: "REJECT", 
-    작업진행: "IN_PROGRESS", 
-    작업완료: "COMPLETE", 
-    작업취소: "CANCEL", 
-  };
-
   // ticketId가 있을 때만 댓글 조회
   const { data: commentData } = useCommentList({ ticketId });
 
   console.log('티켓 ID:', ticketId);
   console.log('댓글 데이터:', commentData);
-  const logs =
-    commentData?.result?.comments?.map((comment) => {
-      if (comment.type === 'SYSTEM') {
-        return { log: comment.content };
-      }
-      return {
-        message: comment.content,
-        role: comment.type,
-        createdAt: comment.createdAt,
-      };
-    }) || [];
+  const logs = commentData?.result?.comments?.map((comment) => {
+    if (comment.type === 'SYSTEM') {
+      return { log: comment.content };
+    }
+    return {
+      message: comment.content,
+      role: comment.type as "MANAGER" | "USER", 
+      createdAt: comment.createdAt,
+    };
+  }) || [];
 
   useEffect(() => {
     const id = window.location.pathname.split('/').pop();
@@ -89,8 +73,8 @@ export default function ManagericketDetailPage() {
     const ticket = response.result;
     return {
       id: ticket.ticketId,
-      number: '?????',
-      status: statusMapping[ticket.status],
+      number: ticket.ticketSerialNumber,
+      status: ticket.status,
       type: ticket.category,
       title: ticket.title,
       content: ticket.content,
@@ -110,7 +94,6 @@ export default function ManagericketDetailPage() {
   const confirmAccept = async () => {
     try {
 
-      // TODO: 타입 오류 해결
       const result = await updateManagerTicketApprove([param.id]);
       console.log("작업 승인 성공:", result);
 
@@ -149,26 +132,29 @@ export default function ManagericketDetailPage() {
   };
 
   return (
-    <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
-      <div className="flex justify-between items-center">
-        <h2 className="text-md font-semibold">티켓 상세 정보</h2>
-        <div className="flex space-x-2 mt-2">
-        {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
-        {statusMap[selectedTicket.status] === "new" && (
-          <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
-          )}    </div>
+    <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
+    <div className="flex space-x-6">
+      <div className="flex-1 mt-4">
+        <TicketRequest ticket={selectedTicket} />
       </div>
-
-      <div className="flex space-x-6">
+      <div className="flex-1">
+      <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+          <div className="mt-[-12px]">
+          {selectedTicket.status === "REQUEST" && (
+          <Button label="요청 승인" onClick={handleAcceptTicket} color={1} />
+          )}  
+          </div>
+        </div>
+      </div>
         <TicketInfo ticket={selectedTicket} />
-        <TicketStatus
-          status={statusMap[selectedTicket.status] || selectedTicket.status}
-        />
+        <TicketStatus status={selectedTicket.status} />
+        <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
+        <TicketComment ticketId={selectedTicket.id} logs={logs}/>
       </div>
-
-      <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment logs={logs} ticketId={selectedTicket.id} />
-
+    </div>
+    
       <TicketAccept
         isOpen={isModalOpen}
         onClose={closeModal}

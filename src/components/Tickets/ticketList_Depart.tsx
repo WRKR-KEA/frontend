@@ -31,6 +31,7 @@ export function TicketList_Depart({
   searchTerm,
   dateRange,
   onStatusChange,
+  status,
 }: TicketList_DepartProps) {
   const statusStyles: Record<string, string> = {
     REQUEST: 'bg-request text-request',
@@ -39,17 +40,10 @@ export function TicketList_Depart({
     CANCEL: 'bg-cancel text-cancel',
     REJECT: 'bg-reject text-reject',
   };
+console.log("받은 티켓 데이터:",tickets);
 
-  const statusMap: Record<string, string> = {
-    REQUEST: "작업 요청",
-    CANCEL: "취소",
-    IN_PROGRESS : "작업 진행",
-    REJECT: "반려",
-    COMPLETE: "작업 완료",
-  };
-  
   const [currentPage, setCurrentPage] = useState(page);
-  const [activeTab, setActiveTab] = useState('전체');
+  const [activeTab, setActiveTab] = useState(status);
   const router = useRouter();
 
   useEffect(() => {
@@ -89,18 +83,13 @@ export function TicketList_Depart({
     return matchesSearchTerm && matchesDateRange && matchesStatus; // Apply status filter here
   });
 
-  const displayedTickets = filteredTickets.slice(
-    (currentPage - 1) * maxTicketsToShow,
-    currentPage * maxTicketsToShow
-  );
-
   return (
-    <div className="bg-white rounded-md shadow-md">
+    <div className="bg-white rounded-md">
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
+            <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-76">제목</th>
             <th className="px-4 py-2 w-28 min-w-32 text-center">담당자</th>
@@ -110,18 +99,18 @@ export function TicketList_Depart({
           </tr>
         </thead>
         <tbody>
-          {displayedTickets.map((ticket) => (
+          {filteredTickets.map((ticket) => (
             <tr
               key={ticket.ticketId}
               className="border-t border-gray-5 cursor-pointer"
               onClick={() => handleTicketClick(ticket.ticketId)}
             >
-              <td className="px-4 py-2 w-20 ">
+              <td className="px-4 py-2 w-20 text-center">
                 <HighlightText text={ticket.ticketSerialNumber} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 w-24 text-center">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
-                  {statusMap[ticket.status]}
+                  {ticket.status}
                 </span>
               </td>
               <td className="px-4 py-2 w-76 truncate">

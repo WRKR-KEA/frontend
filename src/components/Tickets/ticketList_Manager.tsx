@@ -4,6 +4,8 @@ import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
 import { HighlightText } from "@/components/highlightText";
 import { FilterTab_Manager } from "../Filters/filterTab_Manager";
 import api from "@/lib/api/axios";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -24,6 +26,7 @@ type TicketList_ManagerProps = {
   totalPages: number;
   onStatusChange: (status: string) => void;
   onPageChange: (page: number) => void;
+  status: string;
 };
 
 export function TicketList_Manager({
@@ -34,6 +37,7 @@ export function TicketList_Manager({
   totalPages,
   onStatusChange,
   onPageChange,
+  status,
 }: TicketList_ManagerProps) {
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-complete text-complete",
@@ -43,19 +47,11 @@ export function TicketList_Manager({
     REQUEST: "bg-request text-request",
   };
 
-  const statusMap: Record<string, string> = {
-    REQUEST: "작업 요청",
-    CANCEL: "취소",
-    IN_PROGRESS : "작업 진행",
-    REJECT: "반려",
-    COMPLETE: "작업 완료",
-  };
-
-  const [activeTab, setActiveTab] = useState("전체");
   const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const router = useRouter();
+  const [activeTab, setActiveTab] = useState(status);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
@@ -68,15 +64,29 @@ export function TicketList_Manager({
     router.push(`${currentPath}/${ticketId}`);
   };
 
+    const [modalState, setModalState] = useState({
+      isOpen: false,
+      title: "",
+      btnText: '',
+      onClose: () => {},
+    });
+  
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+   
+    });
+  };
+
   const handlePinClick = async (ticketId: string, currentPinStatus: boolean) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken");
-  
-      if (!currentPinStatus && pinnedTickets.length >= 10) {
-        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
-        setTimeout(() => setErrorMessage(null), 3000);
-        return; 
-      }
   
       const response = await api.patch(
         "/api/manager/tickets/pin",
@@ -100,9 +110,8 @@ export function TicketList_Manager({
       });
     } catch (err) {
       console.error("Error while pinning/unpinning the ticket:", err);
-        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
-        setTimeout(() => setErrorMessage(null), 3000); // Hide the message after 3 seconds
-
+      showModal("핀 고정은 최대 10개까지 가능합니다.");
+      setTimeout(() => setErrorMessage(null), 1000); 
     }
   };
 
@@ -119,13 +128,9 @@ export function TicketList_Manager({
     return 0;
   });
 
-  const displayedTickets = sortedTickets.slice(
-    (currentPage - 1) * maxTicketsToShow,
-    currentPage * maxTicketsToShow
-  );
 
   return (
-    <div className="bg-white rounded-md shadow-md relative">
+    <div className="bg-white rounded-md relative">
       {errorMessage && (
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-[#DF4B38] text-white p-4 rounded-md text-center w-1/2 z-50 animate-fade-out">
           {errorMessage}
@@ -136,16 +141,16 @@ export function TicketList_Manager({
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="px-4 py-2 w-8 min-w-8"></th>
-            <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
+            <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
-            <th className="px-4 py-2 w-32 min-w-32">요청자</th>
-            <th className="px-4 py-2 w-44 min-w-44">요청일시</th>
-            <th className="px-4 py-2 w-44 min-w-44">최근 변경일시</th>
+            <th className="px-4 py-2 w-32 min-w-32 text-center">요청자</th>
+            <th className="px-4 py-2 w-44 min-w-44 text-center">요청일시</th>
+            <th className="px-4 py-2 w-44 min-w-44 text-center">최근 변경일시</th>
           </tr>
         </thead>
         <tbody>
-          {displayedTickets.map((ticket) => (
+          {sortedTickets.map((ticket) => (
             <tr
               key={ticket.id}
               className="border-t border-gray-5 cursor-pointer"
@@ -164,24 +169,33 @@ export function TicketList_Manager({
                   <MdOutlinePushPin className="text-gray-4" size={20} />
                 )}
               </td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 text-center">
                 <HighlightText text={ticket.number} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 text-center">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
-                  {statusMap[ticket.status]}
+                  {ticket.status}
                 </span>
               </td>
               <td className="px-4 py-2 truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 truncate">{ticket.requester}</td>
-              <td className="px-4 py-2">{ticket.requestDate}</td>
-              <td className="px-4 py-2">{ticket.updateDate}</td>
+              <td className="px-4 py-2 truncate text-center">{ticket.requester}</td>
+              <td className="px-4 py-2 text-center">{ticket.requestDate}</td>
+              <td className="px-4 py-2 text-center">{ticket.updateDate}</td>
             </tr>
           ))}
         </tbody>
       </table>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

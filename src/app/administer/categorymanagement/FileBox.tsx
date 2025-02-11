@@ -5,12 +5,30 @@ import React, { useEffect, useState } from "react";
 interface FileBoxProps {
   onFileUpload: (files: File[]) => void; // ✅ 부모 컴포넌트에 파일 전달
   attachments: string[]; // ✅ 기존 파일 URL 리스트 추가
+
+  setDeleteAttachments: (deletedUrls: string[]) => void; // ✅ 삭제된 파일 URL 저장 함수
 }
 
-const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments }) => {
+const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteAttachments }) => {
+
   const [files, setFiles] = useState<File[]>([]);
   const [fileUrls, setFileUrls] = useState<string[]>([]); // ✅ 기존 파일 URL 저장
   const [isDragging, setIsDragging] = useState(false);
+  const [deletedUrls, setDeletedUrls] = useState<string[]>([]); // ✅ 삭제된 URL 저장
+
+  console.log("attachments", attachments);
+
+  // ✅ 컴포넌트 마운트 시 attachments를 fileUrls 상태에 저장
+  useEffect(() => {
+    if (attachments?.length > 0) {
+      setFileUrls(attachments);
+    }
+  }, [attachments]);
+
+  // ✅ 파일 삭제될 때마다 부모 컴포넌트에 삭제된 URL 전달
+  useEffect(() => {
+    setDeleteAttachments(deletedUrls);
+  }, [deletedUrls, setDeleteAttachments]);
 
   console.log("attachments", attachments);
 
@@ -44,8 +62,12 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments }) => {
   // ✅ 파일 삭제 (업로드된 파일 & 기존 URL 파일 처리)
   const handleRemoveFile = (index: number, isUrl = false) => {
     if (isUrl) {
+
+      const deletedFileUrl = fileUrls[index];
       const updatedUrls = fileUrls.filter((_, i) => i !== index);
       setFileUrls(updatedUrls);
+      setDeletedUrls((prev) => [...prev, deletedFileUrl]); // ✅ 삭제된 파일 URL 저장
+
     } else {
       const updatedFiles = files.filter((_, i) => i !== index);
       setFiles(updatedFiles);

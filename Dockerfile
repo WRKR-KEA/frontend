@@ -13,7 +13,7 @@ RUN npm install --legacy-peer-deps
 # 5. 전체 프로젝트 파일 복사
 COPY . .
 
-# 6. 환경 변수 설정하여 SSR 비활성화 후 빌드
+# 6. 환경변수 설정
 ARG NEXT_PUBLIC_BASE_URL
 ENV NEXT_PUBLIC_BASE_URL=http://wrkr-backend.tickety.co.kr
 

@@ -25,9 +25,12 @@ const fetchGuide = async (categoryId: string) => {
 // ✅ React Query 훅 생성
 export const useGuideQuery = (categoryId: string) => {
   return useQuery({
-    queryKey: ["guide_detail", categoryId], // ✅ 가이드 캐싱 키 설정
+    queryKey: ["guide_detail", categoryId],
     queryFn: () => fetchGuide(categoryId),
-    enabled: !!categoryId, // ✅ categoryId가 있을 때만 실행
-    retry: false, // ✅ 실패 시 재시도 비활성화 (필요 시 true)
+    enabled: !!categoryId,
+    retry: false,
+    staleTime: 0, // ✅ 데이터가 즉시 만료됨 (항상 최신 데이터 가져옴)
+    cacheTime: 0, // ✅ 캐시된 데이터를 사용하지 않음
+    refetchOnMount: true, // ✅ 모달을 다시 열 때마다 데이터 새로고침
   });
 };

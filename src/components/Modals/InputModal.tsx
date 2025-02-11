@@ -1,45 +1,47 @@
-import React, { useState } from 'react';
-import InputModal from './InputModal';
+import React, { useEffect, useState } from "react";
 
-interface NameInputModalProps {
-  onClose: () => void;
-  onSubmit: (name: string) => void;
+interface InputModalProps {
+    title: string;
+    content?: string;
+    onClick?: () => void;
+    btnText?: string;
+    setCategoryName: (value: string) => void;
+    handleAddCategory: () => void;
 }
 
-export default function NameInputModal({ onClose, onSubmit }: NameInputModalProps) {
-  const [name, setName] = useState('');
+export default function InputModal({ title, content, onClick, btnText, setCategoryName, handleAddCategory }: InputModalProps) {
+    const [inputValue, setInputValue] = useState("");
 
-  const handleSubmit = () => {
-    if (name.trim()) {
-      onSubmit(name);
-      onClose();
-    }
-  };
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value;
 
-  return (
-    <InputModal onClose={onClose}>
-      <h2 className="text-lg font-semibold mb-4">이름을 입력하세요</h2>
-      <input
-        type="text"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-        placeholder="이름을 입력하세요"
-      />
-      <div className="flex justify-end mt-4">
-        <button
-          onClick={onClose}
-          className="mr-2 px-4 py-2 bg-gray-300 rounded hover:bg-gray-400 transition"
-        >
-          취소
-        </button>
-        <button
-          onClick={handleSubmit}
-          className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition"
-        >
-          확인
-        </button>
-      </div>
-    </InputModal>
-  );
+        setInputValue(newValue); // 즉시 업데이트
+        setCategoryName(newValue)
+    };
+
+    // useEffect(() => {
+    //     setCategoryName(inputValue); // 부모 상태도 즉시 업데이트
+    // }, [inputValue])
+
+    return (
+        <div className="flex flex-col items-center gap-3.5 pb-4">
+            <h2 className="text-lg font-bold pt-6">{title}</h2>
+            <input
+                type="text"
+                placeholder="입력하세요..."
+                value={inputValue}
+                onChange={handleInputChange}
+                className=" px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+            <button
+                onClick={() => {
+                    handleAddCategory()
+                    onClick()
+                }}
+                className="self-center bg-gray-600 max-w-fit px-8 py-2 text-white rounded-md"
+            >
+                {btnText || "확인"}
+            </button>
+        </div>
+    );
 }

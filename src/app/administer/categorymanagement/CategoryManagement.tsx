@@ -19,6 +19,7 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
+import InputModal from "@/components/Modals/InputModal";
 
 interface Category {
     categoryId: number;
@@ -32,25 +33,46 @@ const CategoryManagement: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState<Category | null>(null); // ✅ 드래그 중인 아이템
     const [templateOpen, setTemplateOpen] = useState(false)
     const [helpOpen, setHelpOpen] = useState(false)
+    const [categoryName, setCategoryName] = useState("")
 
     const [modalState, setModalState] = useState({
         isOpen: false,
         title: "",
         btnText: "",
-        onClose:()=>{},
+        onClose: () => { },
     })
 
-    const showModal = (title: string, btnText='닫기') => {
+    const [inputModalState, setInputModalState] = useState({
+        isOpen: false,
+        title: "",
+        btnText: "",
+        onClose: () => { },
+    })
+
+    const showModal = (title: string, btnText = '닫기') => {
         setModalState({
-          isOpen: true,
-          title,
-          btnText,
-          onClose: () => {
-            setModalState(prev => ({ ...prev, isOpen: false }));
-          },
-    
+            isOpen: true,
+            title,
+            btnText,
+            onClose: () => {
+                setModalState(prev => ({ ...prev, isOpen: false }));
+            },
         });
-      };
+    };
+
+    const showInputModal = (title: string, btnText = '닫기') => {
+        setInputModalState({
+            isOpen: true,
+            title,
+            btnText,
+            onClose: () => {
+                setInputModalState(prev => ({ ...prev, isOpen: false }));
+            },
+            
+
+        });
+    };
+
 
     useEffect(() => {
         if (categoryData?.result?.categories) {
@@ -104,18 +126,14 @@ const CategoryManagement: React.FC = () => {
 
     // ✅ 카테고리 추가 함수
     const handleAddCategory = async () => {
-        const newName = prompt("새로운 카테고리 이름을 입력하세요:");
-        showModal("카테고리 이름을 입력하세요", "추가")
+        try {
 
-
-        if (!newName) {
+        if (categoryName === "") {
             showModal("카테고리 이름을 입력해주세요.");
             return;
         }
 
         const newSeq = categories.length + 1;
-
-        try {
             const accessToken = sessionStorage.getItem("accessToken");
 
             const response = await fetch(
@@ -126,7 +144,7 @@ const CategoryManagement: React.FC = () => {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${accessToken}`,
                     },
-                    body: JSON.stringify({ name: newName, seq: newSeq }),
+                    body: JSON.stringify({ name: categoryName, seq: newSeq }),
                 }
             );
 
@@ -134,12 +152,12 @@ const CategoryManagement: React.FC = () => {
                 throw new Error("카테고리 생성 실패");
             }
             await refetch();
-            
+
             showModal("새로운 카테고리가 추가되었습니다.");
-            
+
         } catch (error) {
             console.error("❌ 카테고리 추가 오류:", error);
-            showModal("카테고리를 추가하는 중 오류가 발생했습니다.");
+            showModal(error);
         }
     };
 
@@ -205,7 +223,7 @@ const CategoryManagement: React.FC = () => {
                                         key={category.categoryId}
                                         categoryId={category.categoryId}
                                         name={category.name}
-                                        
+
                                         onHelp={onHelp}
                                         onTemplate={onTemplate}
                                         refetchList={refetch}
@@ -240,20 +258,31 @@ const CategoryManagement: React.FC = () => {
 
                 <button
                     className="w-full mt-6 px-6 py-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
-                    onClick={handleAddCategory}
+                    onClick={()=>showInputModal("카테고리 이름을 입력하세요", "추가")}
                 >
                     카테고리 추가
                 </button>
             </div>
             {modalState.isOpen && (
-                <Modal onClose={modalState.onClose}>
+                <Modal onClose={modalState.onClose2}>
                     <AlertModal
                         title={modalState.title}
                         onClick={modalState.onClose}
-                        />
+                    />
                 </Modal>
             )}
-        
+
+            {inputModalState.isOpen && (
+                <Modal onClose={inputModalState.onClose}>
+                    <InputModal
+                        title={inputModalState.title}
+                        onClick={inputModalState.onClose}
+                        setCategoryName={setCategoryName}
+                        handleAddCategory={handleAddCategory}
+                    />
+                </Modal>
+            )}
+
         </div>
     );
 };

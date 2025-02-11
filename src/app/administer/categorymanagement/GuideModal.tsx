@@ -3,7 +3,7 @@
 import React, { useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
-import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 가이드 데이터 가져오는 쿼리
+import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 도움말이데이터 가져오는 쿼리
 import FileBox from "./FileBox";
 import { useQueryClient } from "@tanstack/react-query"; // ✅ React Query 클라이언트 가져오기
 
@@ -23,11 +23,11 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
   const [deleteAttachments, setDeleteAttachments] = useState([])
   if (!isOpen) return null;
 
-  console.log("가이드 모달 - 카테고리 ID:", categoryId);
+  console.log("도움말이모달 - 카테고리 ID:", categoryId);
 
   const { data, isLoading, isError, refetch } = useGuideQuery(categoryId);
   const guideId = data?.result?.guideId;
-  console.log("가이드 쿼리 결과:", data);
+  console.log("도움말이쿼리 결과:", data);
 
   // ✅ initialValue 값이 null 또는 undefined면 빈 문자열("")을 넣어줌
   const initialMarkdown = typeof data?.result.content === "string" ? data.result.content : "도움말을 입력하세요";
@@ -81,29 +81,29 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
       });
   
       if (!response.ok) {
-        throw new Error("가이드 저장 실패");
+        throw new Error("도움말 저장 실패");
       }
   
-      showModal("가이드가 성공적으로 저장되었습니다.");
+      showModal("도움말이 성공적으로 저장되었습니다.");
      
       refetch();
       onClose();
     } catch (error) {
-      console.error("❌ 가이드 저장 오류:", error);
-      showModal("가이드를 저장하는 중 오류가 발생했습니다.");
+      console.error("❌ 도움말이저장 오류:", error);
+      showModal("도움말을 저장하는 중 오류가 발생했습니다.");
     }
   };
   
 
 
-  // 가이드 삭제 함수
+  // 도움말이삭제 함수
   const handleDelete = async () => {
     if (!guideId) {
       showModal("도움말 ID를 찾을 수 없습니다.");
       return;
     }
 
-    if (!confirm("정말 이 도움말을을 삭제하시겠습니까?")) return;
+    if (!confirm("정말 이 도움말을 삭제하시겠습니까?")) return;
 
     try {
       const accessToken = sessionStorage.getItem("accessToken");
@@ -119,16 +119,16 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         },
       });
 
-      if (!response.ok) throw new Error("템플릿 삭제 실패");
+      if (!response.ok) throw new Error("도움말 삭제 실패");
 
-      showModal("가이드가 성공적으로 삭제되었습니다.", "확인", () => {
+      showModal("도움말이 성공적으로 삭제되었습니다.", "확인", () => {
         refetch(); 
       });
       queryClient.setQueryData(["guide_detail", categoryId], null);
       onClose(); // ✅ 모달 닫기
     } catch (error) {
       console.error("❌ 템플릿 삭제 오류:", error);
-      showModal("가이드를 삭제하는 중 오류가 발생했습니다.");
+      showModal("도움말을 삭제하는 중 오류가 발생했습니다.");
 
     }
   };

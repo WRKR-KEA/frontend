@@ -111,7 +111,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
 
     
       // await refetchList()
-      showModal("템플릿이 성공적으로 저장되었습니다.", "확인", () => {
+      showModal("템플릿이 삭제되었습니다.", "확인", () => {
         refetch(); 
       });
       queryClient.setQueryData(["template_detail", categoryId], null);
@@ -122,7 +122,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
     }
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <div></div>;
 
   return (
     <div className="pt-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

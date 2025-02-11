@@ -1,10 +1,12 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import FirstTaskDrop from "@/components/Tickets/firstTaskDrop";
 import SecondTaskDrop from "@/components/Tickets/secondTaskDrop";
 import Help from "@/components/Modals/Help";
-import Modal from "@/components/Modals/ModalHelp";
+import ModalHelp from "@/components/Modals/ModalHelp";
+import Modal from "@/components/Modals/Modal";
 import Template from "@/components/Tickets/Template";
 import Button from "@/components/Buttons/Button";
 import { fetchCategories, fetchGuide, postTicket } from "@/services/user";
@@ -23,6 +25,8 @@ export default function UserCreateTicketPage() {
   const [firstCategories, setFirstCategories] = useState<string[]>([]);
   const [secondCategories, setSecondCategories] = useState<any>();
   const [helpContent, setHelpContent] = useState("");
+  const [countdown, setCountdown] = useState(1);
+  const router = useRouter();
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -96,24 +100,36 @@ export default function UserCreateTicketPage() {
       const ticketData = {
         title: title,
         content: content || "",
-        categoryId: secondCategories?.childCategories.find((category: any) => category.name === selectedRequestType)?.categoryId,
+        categoryId: secondCategories?.childCategories.find(
+          (category: any) => category.name === selectedRequestType
+        )?.categoryId,
       };
+  
       console.log("📌 요청 데이터:", ticketData);
-
       const result = await postTicket(ticketData);
       console.log("📌 티켓 생성 결과:", result);
-
+  
       if (!result) {
         console.error("⚠️ 티켓 생성 실패: 응답 데이터 없음");
         showModal("티켓 생성에 실패했습니다.");
+        return;
       }
-
+  
       console.log("✅ 티켓 생성 성공:", result);
       setIsTicketCreated(true); // 생성 완료 상태로 변경
+      setCountdown(1); // 카운트다운 시작
+      showModal("티켓 생성이 완료되었습니다.");
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+  
+      setTimeout(() => {
+        clearInterval(timer);
+        router.push("/user/home");
+      }, 1000);
     } catch (error: any) {
       console.error("❌ 티켓 생성 중 오류 발생:", error);
       console.error("📌 오류 상세 정보:", error.response?.data || error.message);
-
       showModal(
         error.response?.data?.message ||
         error.message ||
@@ -174,15 +190,6 @@ export default function UserCreateTicketPage() {
     selectedRequestType !== "2차 카테고리를 선택해주세요." &&
     title.trim() !== "" && // 제목이 공백이 아니어야 함
     content.trim() !== ""; // 내용이 공백이 아니어야 함
-
-  if (isTicketCreated) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <h1 className="text-#252E66 text-lg font-semibold">✨티켓 생성이 완료되었습니다!</h1>
-      </div>
-    );
-  }
-
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col justify-between">
       <div>
@@ -233,9 +240,9 @@ export default function UserCreateTicketPage() {
           )}
 
       {isModalOpen && (
-        <Modal onClose={toggleModal}>
+        <ModalHelp onClose={toggleModal}>
           <Help title={helpTitle} content={helpContent} />
-        </Modal>
+        </ModalHelp>
       )}
 
       {modalState.isOpen && (

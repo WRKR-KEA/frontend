@@ -19,18 +19,6 @@ type Ticket = {
   ispinned: boolean;
 };
 
-// Define the status types more specifically
-type TicketStatusType = "new" | "rejected" | "in-progress" | "completed" | "cancelled";
-
-// 티켓 상태 변환 맵
-const statusMap: Record<string, TicketStatusType> = {
-  요청: "new",
-  반려: "rejected",
-  진행: "in-progress",
-  완료: "completed",
-  취소: "cancelled",
-};
-
 export default function ManagerHomePage() {
   const maxTicketsToShow = 10;
   const user = useUserStore((state) => state.user);

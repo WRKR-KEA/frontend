@@ -21,8 +21,14 @@ export async function fetchManagerTicketList(
 
 // (GET) 티켓 상세 조회
 export async function fetchManagerTicket(ticketId: string) {
+  const accessToken = sessionStorage.getItem("accessToken");
   try {
-    const { data } = await api.get(`/api/manager/tickets/${ticketId}`);
+    const { data } = await api.get(`/api/manager/tickets/${ticketId}`, {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return data;
   } catch (error) {
     console.error('티켓 상세 조회에 실패했습니다. :', error);

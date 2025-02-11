@@ -41,13 +41,7 @@ export function TicketList_Depart({
     REJECT: 'bg-reject text-reject',
   };
 console.log("받은 티켓 데이터:",tickets);
-  const statusMap: Record<string, string> = {
-    REQUEST: "REQUEST",
-    CANCEL: "CANCEL",
-    IN_PROGRESS : "IN_PROGRESS",
-    REJECT: "REJECT",
-    COMPLETE: "COMPLETE",
-  };
+
   const [currentPage, setCurrentPage] = useState(page);
   const [activeTab, setActiveTab] = useState(status);
   const router = useRouter();
@@ -90,12 +84,12 @@ console.log("받은 티켓 데이터:",tickets);
   });
 
   return (
-    <div className="bg-white rounded-md shadow-md">
+    <div className="bg-white rounded-md">
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
+            <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-76">제목</th>
             <th className="px-4 py-2 w-28 min-w-32 text-center">담당자</th>
@@ -111,12 +105,12 @@ console.log("받은 티켓 데이터:",tickets);
               className="border-t border-gray-5 cursor-pointer"
               onClick={() => handleTicketClick(ticket.ticketId)}
             >
-              <td className="px-4 py-2 w-20 ">
+              <td className="px-4 py-2 w-20 text-center">
                 <HighlightText text={ticket.ticketSerialNumber} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 w-24 text-center">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
-                  {statusMap[ticket.status]}
+                  {ticket.status}
                 </span>
               </td>
               <td className="px-4 py-2 w-76 truncate">

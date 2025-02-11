@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation"; 
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
+import TicketRequest from "@/components/Tickets/ticketRequest";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
@@ -116,7 +117,6 @@ export default function UserTicketDetailPage() {
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex justify-between items-center mb-2">
-        <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2">
           {statusMap[selectedTicket.status] === "REQUEST" && (
             <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
@@ -125,12 +125,20 @@ export default function UserTicketDetailPage() {
       </div>
 
       <div className="flex space-x-6">
-        <TicketInfo ticket={selectedTicket} />
-        <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
-      </div>
+        {/* 왼쪽에 새로운 TicketRequest 컴포넌트 추가 */}
+        <div className="flex-1">
+          <TicketRequest ticket={selectedTicket} />
+        </div>
 
-      <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment ticketId={selectedTicket.id} logs={logs}/>
+        {/* 오른쪽에 기존 TicketInfo, TicketStatus, TicketComment 컴포넌트 배치 */}
+        <div className="flex-1">
+        <h2 className="text-lg font-semibold mb-2">티켓 상세 정보</h2>
+          <TicketInfo ticket={selectedTicket} />
+          <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
+          <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
+          <TicketComment ticketId={selectedTicket.id} logs={logs}/>
+        </div>
+      </div>
 
       {/* TicketCancel 컴포넌트 */}
       <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />

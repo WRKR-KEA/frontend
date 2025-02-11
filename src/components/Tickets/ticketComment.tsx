@@ -1,5 +1,5 @@
 import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
-import { FiPaperclip, FiSend } from 'react-icons/fi';
+import { FiPaperclip, FiSend, FiClock } from 'react-icons/fi';
 import useUserStore from '@/stores/userStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { postComment } from '@/services/user';
@@ -123,15 +123,27 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
         ))}
       </div>
 
-      <div className="flex space-x-4 items-center mt-2">
-        <label htmlFor="file-upload" className="cursor-pointer">
+      <div className="flex space-x-2 items-center mt-2">
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <button
+              className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl"
+              type="button"
+            >
+              <FiPaperclip className="text-xl text-gray-600" />
+            </button>
+          </label>
+          <input
+            id="file-upload"
+            type="file"
+            className="hidden"
+            onChange={handleFileChange}
+          />
           <button
-            className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl"
+            className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl"
             type="button"
           >
-            <FiPaperclip className="text-xl text-gray-600" />
+            <FiClock className="text-xl text-red-600" />
           </button>
-        </label>
         <input
           id="file-upload"
           type="file"

@@ -109,7 +109,7 @@ export default function UserTicketDetailPage() {
   return (
     <div className="pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex space-x-6">
-        <div className="flex-1 mt-5">
+        <div className="flex-1 mt-4">
           <TicketRequest ticket={selectedTicket} />
         </div>
 

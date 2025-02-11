@@ -4,6 +4,8 @@ import { MdPushPin, MdOutlinePushPin } from "react-icons/md";
 import { HighlightText } from "@/components/highlightText";
 import { FilterTab_Manager } from "../Filters/filterTab_Manager";
 import api from "@/lib/api/axios";
+import AlertModal from "@/components/Modals/AlertModal";
+import Modal from "@/components/Modals/Modal";
 
 type TicketList_ManagerProps = {
   tickets: Array<{
@@ -62,15 +64,29 @@ export function TicketList_Manager({
     router.push(`${currentPath}/${ticketId}`);
   };
 
+    const [modalState, setModalState] = useState({
+      isOpen: false,
+      title: "",
+      btnText: '',
+      onClose: () => {},
+    });
+  
+
+  const showModal = (title: string, btnText='닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+   
+    });
+  };
+
   const handlePinClick = async (ticketId: string, currentPinStatus: boolean) => {
     try {
       const accessToken = sessionStorage.getItem("accessToken");
-  
-      if (!currentPinStatus && pinnedTickets.length >= 10) {
-        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
-        setTimeout(() => setErrorMessage(null), 3000);
-        return; 
-      }
   
       const response = await api.patch(
         "/api/manager/tickets/pin",
@@ -94,9 +110,8 @@ export function TicketList_Manager({
       });
     } catch (err) {
       console.error("Error while pinning/unpinning the ticket:", err);
-        setErrorMessage("핀 고정은 최대 10개까지 가능합니다.");
-        setTimeout(() => setErrorMessage(null), 3000); // Hide the message after 3 seconds
-
+      showModal("핀 고정은 최대 10개까지 가능합니다.");
+      setTimeout(() => setErrorMessage(null), 1000); 
     }
   };
 
@@ -172,6 +187,15 @@ export function TicketList_Manager({
           ))}
         </tbody>
       </table>
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal 
+            title={modalState.title} 
+            onClick={modalState.onClose} 
+            btnText={modalState.btnText}
+          />
+        </Modal>
+      )}
     </div>
   );
 }

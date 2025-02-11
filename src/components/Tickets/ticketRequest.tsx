@@ -50,7 +50,7 @@ export default function TicketRequest({ ticket }: TicketRequestProps) {
 
   return (
     <div className="flex flex-col">
-      <h2 className="text-lg font-semibold mb-6">요청 내용</h2>
+      <h2 className="text-lg font-semibold mb-4">요청 내용</h2>
       <div className="bg-component p-4 rounded-md">
         <h3 className="text-lg font-bold mb-2">{ticket.title}</h3>
         <hr className="border-t-2 border-main-2 my-2" /> 

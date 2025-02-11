@@ -25,7 +25,7 @@ export default function UserCreateTicketPage() {
   const [firstCategories, setFirstCategories] = useState<string[]>([]);
   const [secondCategories, setSecondCategories] = useState<any>();
   const [helpContent, setHelpContent] = useState("");
-  const [countdown, setCountdown] = useState(3);
+  const [countdown, setCountdown] = useState(1);
   const router = useRouter();
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -117,8 +117,8 @@ export default function UserCreateTicketPage() {
   
       console.log("✅ 티켓 생성 성공:", result);
       setIsTicketCreated(true); // 생성 완료 상태로 변경
-      setCountdown(3); // 카운트다운 시작
-  
+      setCountdown(1); // 카운트다운 시작
+      showModal("티켓 생성이 완료되었습니다.");
       const timer = setInterval(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null));
       }, 1000);
@@ -126,7 +126,7 @@ export default function UserCreateTicketPage() {
       setTimeout(() => {
         clearInterval(timer);
         router.push("/user/home");
-      }, 3000);
+      }, 1000);
     } catch (error: any) {
       console.error("❌ 티켓 생성 중 오류 발생:", error);
       console.error("📌 오류 상세 정보:", error.response?.data || error.message);
@@ -190,18 +190,6 @@ export default function UserCreateTicketPage() {
     selectedRequestType !== "2차 카테고리를 선택해주세요." &&
     title.trim() !== "" && // 제목이 공백이 아니어야 함
     content.trim() !== ""; // 내용이 공백이 아니어야 함
-
-    if (isTicketCreated) {
-      return (
-        <div className="flex flex-col justify-center items-center min-h-screen">
-          <h1 className="text-[#252E66] text-lg font-semibold mb-1">
-            ✨티켓 생성이 완료되었습니다!
-          </h1>
-          <p className="text-lg font-bold text-[#252E66]">{countdown}</p>
-        </div>
-      );
-    }
-
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col justify-between">
       <div>

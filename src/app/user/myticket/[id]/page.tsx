@@ -115,24 +115,22 @@ export default function UserTicketDetailPage() {
   }
 
   return (
-    <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
-      <div className="flex justify-between items-center mb-2">
-        <div className="flex space-x-2">
-          {statusMap[selectedTicket.status] === "REQUEST" && (
-            <Button label="작업 취소" onClick={handleCancelTicket} color={2} />
-          )}
-        </div>
-      </div>
-
+    <div className="pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex space-x-6">
-        {/* 왼쪽에 새로운 TicketRequest 컴포넌트 추가 */}
-        <div className="flex-1">
+        <div className="flex-1 mt-5">
           <TicketRequest ticket={selectedTicket} />
         </div>
 
         {/* 오른쪽에 기존 TicketInfo, TicketStatus, TicketComment 컴포넌트 배치 */}
         <div className="flex-1">
-        <h2 className="text-lg font-semibold mb-2">티켓 상세 정보</h2>
+        <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
+          <div className="flex justify-between items-center">
+            <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+            {statusMap[selectedTicket.status] === "REQUEST" && (
+              <Button label="요청 취소" onClick={handleCancelTicket} color={6} />
+            )}
+          </div>
+        </div>
           <TicketInfo ticket={selectedTicket} />
           <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
           <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>

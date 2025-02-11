@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
@@ -21,7 +21,7 @@ export default function DepartmentTicketListPage() {
   const [error, setError] = useState<string | null>(null);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
-  const [status, setStatus] = useState<string>("");  
+  const [status, setStatus] = useState<string>("");
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -29,18 +29,17 @@ export default function DepartmentTicketListPage() {
 
   const handleSelectCount = (count: number) => {
     setMaxTicketsToShow(count);
-    setCurrentPage(1); // 페이지 초기화
+    setCurrentPage(1);
   };
 
   const handlePageChange = (pageNumber: number) => {
     setCurrentPage(pageNumber);
-    window.scrollTo(0, 0); // 페이지 변경 시 스크롤 맨 위로 이동
+    window.scrollTo(0, 0);
   };
 
   const handleSearchChange = (term: string) => {
     setSearchTerm(term);
     setCurrentPage(1);
-    console.log("🔍 검색어:", term);
   };
 
   const handleDateChange = (ranges: any) => {
@@ -56,86 +55,75 @@ export default function DepartmentTicketListPage() {
   const formattedDateRange = dateRange.startDate
     ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
-  
+
   const handleStatusChange = (status: string) => {
     setStatus(status);
-    setCurrentPage(1);  
+    setCurrentPage(1);
   };
 
-  const fetchTickets = async () => {
+  const fetchTickets = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
       const data = await fetchManagerDepartmentTicket(
         searchTerm,
         status,
-        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null, 
-        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null, 
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null,
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null,
         currentPage,
         maxTicketsToShow
       );
       setTickets(data?.result?.elements || []);
       setTotalPages(data?.result?.totalPages || []);
-      console.log("🎫 부서 티켓 조회", data);
     } catch (err) {
       setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [searchTerm, status, dateRange, currentPage, maxTicketsToShow]);
 
-    // 엑셀 다운로드 핸들러
-    const handleDownloadExcel = async () => {
-      try {
-        const data = await fetchManagerDepartmentTicketExcel(
-          searchTerm,
-          status,
-          dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
-          dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
-        );
-  
-        const url = window.URL.createObjectURL(data);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = "부서_티켓_조회.xlsx"; 
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-      } catch (error) {
-        console.error("엑셀 다운로드 중 오류 발생:", error);
-        alert("엑셀 다운로드 중 오류가 발생했습니다.");
-      }
-    };
+  const handleDownloadExcel = async () => {
+    try {
+      const data = await fetchManagerDepartmentTicketExcel(
+        searchTerm,
+        status,
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
+      );
+
+      const url = window.URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "부서_티켓_조회.xlsx";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    } catch (error) {
+      console.error("엑셀 다운로드 중 오류 발생:", error);
+      alert("엑셀 다운로드 중 오류가 발생했습니다.");
+    }
+  };
 
   useEffect(() => {
     fetchTickets();
-  }, [dateRange, currentPage, maxTicketsToShow, status]);
-
-  if (isLoading) return <div></div>;
-  if (error) return <div>{error}</div>;
+  }, [fetchTickets]);
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
         <h2 className="text-lg font-semibold">티켓 조회</h2>
 
-        {/* 검색 컴포넌트 */}
         <div className="flex items-center space-x-2 ml-4">
           <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
         </div>
 
         <div className="ml-auto flex items-center relative">
-          {/* 캘린더 선택 */}
           <button
             className="flex items-center text-sm font-medium text-main-2 hover:text-main-1 px-4 py-2 rounded-md"
             onClick={toggleCalendar}
           >
             <span>{formattedDateRange}</span>
-            <img
-              src="/calendarIcon.png"
-              alt="Calendar Icon"
-              className="w-5 h-5 ml-2 mb-1"
-            />
+            <img src="/calendarIcon.png" alt="Calendar Icon" className="w-5 h-5 ml-2 mb-1" />
           </button>
 
           {isCalendarOpen && (
@@ -144,7 +132,7 @@ export default function DepartmentTicketListPage() {
                 editableDateInputs={true}
                 onChange={handleDateChange}
                 moveRangeOnFirstSelection={false}
-                ranges={[dateRange]} // startDate와 endDate를 여기서 설정
+                ranges={[dateRange]}
                 rangeColors={["#6E61CA"]}
               />
             </div>
@@ -153,24 +141,25 @@ export default function DepartmentTicketListPage() {
         </div>
       </div>
 
-      <TicketList_Depart
-        tickets={tickets}
-        maxTicketsToShow={maxTicketsToShow}
-        page={currentPage}
-        searchTerm={searchTerm}
-        dateRange={dateRange}
-        status={status || ""} 
-        onStatusChange={handleStatusChange} // 상태 변경 함수 전달
-      />
+      <div className="relative min-h-[200px]">
+        {isLoading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-60">
+            <span className="text-gray-500">로딩 중...</span>
+          </div>
+        )}
+        <TicketList_Depart
+          tickets={tickets}
+          maxTicketsToShow={maxTicketsToShow}
+          page={currentPage}
+          searchTerm={searchTerm}
+          dateRange={dateRange}
+          status={status || ""}
+          onStatusChange={handleStatusChange}
+        />
+      </div>
 
-      {/* 다운로드 버튼 추가 */}
       <div className="flex justify-end mb-4">
-          <Button
-            label="다운로드"
-            onClick={handleDownloadExcel}
-            color={1} // 파란색
-            className="mr-2"
-          />
+        <Button label="다운로드" onClick={handleDownloadExcel} color={1} className="mr-2" />
       </div>
 
       <div className="flex justify-center items-center mt-4 mb-4">

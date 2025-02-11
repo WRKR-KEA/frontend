@@ -13,10 +13,6 @@ RUN npm install --legacy-peer-deps
 # 5. 전체 프로젝트 파일 복사
 COPY . .
 
-# 6. 환경 변수 설정하여 SSR 비활성화 후 빌드
-ARG NEXT_PUBLIC_BASE_URL
-ENV NEXT_PUBLIC_BASE_URL=http://172.16.211.53:8080
-
 # 7. 애플리케이션 빌드
 RUN npm run build
 

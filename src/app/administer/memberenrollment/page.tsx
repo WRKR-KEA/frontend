@@ -78,6 +78,7 @@ const AdminMemberEnrollPage: React.FC = () => {
     if (formData.profileImageFile) {
       formDataToSend.append("profileImage", formData.profileImageFile);
     }
+    
 
     try {
       const response = await fetch("http://172.16.211.53:8080/api/admin/members", {

@@ -29,7 +29,6 @@ export function TicketList_User({
   maxTicketsToShow,
   searchTerm,
 }: TicketList_UserProps) {
-  console.log("받은 티켓 데이터:", tickets);
 
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-complete text-complete",

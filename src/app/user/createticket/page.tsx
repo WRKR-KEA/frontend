@@ -7,7 +7,6 @@ import Help from "@/components/Modals/Help";
 import Modal from "@/components/Modals/Modal";
 import Template from "@/components/Tickets/Template";
 import Button from "@/components/Buttons/Button";
-import { createTicket } from "@/lib/api/userCreateTickets";
 import { fetchCategories, fetchGuide, postTicket } from "@/services/user";
 import { fetchTemplate } from "@/services/admin";
 import AlertModal from "@/components/Modals/AlertModal";

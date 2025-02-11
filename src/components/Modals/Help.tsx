@@ -1,15 +1,18 @@
 import React from "react";
+import ReactMarkdown from "react-markdown";
 
 interface HelpProps {
   title: string;
   content: string;
 }
 
-const Help: React.FC<HelpProps> = ({ title: title, content: content }) => {
+const Help: React.FC<HelpProps> = ({ title, content }) => {
   return (
     <div>
       <h2 className="text-lg font-bold">{title}</h2>
-      <p className="text-sm mt-2">{content}</p>
+      <div className="text-sm mt-2">
+        <ReactMarkdown>{content}</ReactMarkdown>
+      </div>
     </div>
   );
 };

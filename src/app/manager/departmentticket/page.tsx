@@ -22,7 +22,6 @@ export default function DepartmentTicketListPage() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState<string>("");  
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -112,7 +111,7 @@ export default function DepartmentTicketListPage() {
     fetchTickets();
   }, [dateRange, currentPage, maxTicketsToShow, status]);
 
-  if (isLoading) return <div>로딩 중...</div>;
+  if (isLoading) return <div></div>;
   if (error) return <div>{error}</div>;
 
   return (

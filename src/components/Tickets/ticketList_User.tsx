@@ -47,8 +47,8 @@ export function TicketList_User({
     COMPLETE: "작업 완료",
   };
 
-  const [filterStatus, setFilterStatus] = useState("전체");
-  const [activeTab, setActiveTab] = useState("전체");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [activeTab, setActiveTab] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
@@ -73,7 +73,7 @@ export function TicketList_User({
       ticket.handler?.includes(searchTerm) ||
       ticket.number.includes(searchTerm);
     const matchesStatus =
-      filterStatus === "전체" || ticket.status === filterStatus;
+      filterStatus === "" || ticket.status === filterStatus;
     return matchesSearchTerm && matchesStatus;
   });
 

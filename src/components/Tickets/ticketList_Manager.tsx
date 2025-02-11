@@ -121,10 +121,6 @@ export function TicketList_Manager({
     return 0;
   });
 
-  const displayedTickets = sortedTickets.slice(
-    (currentPage - 1) * maxTicketsToShow,
-    currentPage * maxTicketsToShow
-  );
 
   return (
     <div className="bg-white rounded-md shadow-md relative">
@@ -147,7 +143,7 @@ export function TicketList_Manager({
           </tr>
         </thead>
         <tbody>
-          {displayedTickets.map((ticket) => (
+          {sortedTickets.map((ticket) => (
             <tr
               key={ticket.id}
               className="border-t border-gray-5 cursor-pointer"

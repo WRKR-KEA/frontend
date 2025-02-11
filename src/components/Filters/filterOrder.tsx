@@ -2,11 +2,12 @@ import { useState } from "react";
 
 interface FilterOrderProps {
   onSelectOrder: (order: string) => void;
+  sortOrder: string;
 }
 
-export function FilterOrder({ onSelectOrder }: FilterOrderProps) {
+export function FilterOrder({ onSelectOrder, sortOrder }: FilterOrderProps) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedOrder, setSelectedOrder] = useState("UPDATED");
+  const [selectedOrder, setSelectedOrder] = useState(sortOrder);
 
   const handleSelect = (order: string) => {
     setSelectedOrder(order);

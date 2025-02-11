@@ -94,7 +94,6 @@ export default function ManagericketDetailPage() {
   const confirmAccept = async () => {
     try {
 
-      // TODO: 타입 오류 해결
       const result = await updateManagerTicketApprove([param.id]);
       console.log("작업 승인 성공:", result);
 
@@ -133,7 +132,7 @@ export default function ManagericketDetailPage() {
   };
 
   return (
-    <div className="pl-6 pr-6 pb-4 flex flex-col">
+    <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
     <div className="flex space-x-6">
       <div className="flex-1 mt-4">
         <TicketRequest ticket={selectedTicket} />
@@ -142,9 +141,11 @@ export default function ManagericketDetailPage() {
       <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
         <div className="flex justify-between items-center">
           <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+          <div className="mt-[-12px]">
           {selectedTicket.status === "REQUEST" && (
           <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
           )}  
+          </div>
         </div>
       </div>
         <TicketInfo ticket={selectedTicket} />

@@ -66,7 +66,7 @@ export default function ManagericketDetailPage() {
         return { log: comment.content };
       }
       return {
-        message: comment.content,
+        message: comment.content || comment.attachments,
         role: comment.type,
         createdAt: comment.createdAt,
       };
@@ -165,7 +165,7 @@ export default function ManagericketDetailPage() {
     setIsChangeModalOpen((prev) => !prev); // 담당자 변경 모달 열고 닫기
   };
   return (
-    <div className="pl-6 pr-6 pb-4 flex flex-col">
+    <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex space-x-6">
         <div className="flex-1 mt-4">
           <TicketRequest ticket={selectedTicket} />
@@ -175,7 +175,7 @@ export default function ManagericketDetailPage() {
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
             {selectedTicket.status === "IN_PROGRESS" && (
-              <div className="flex space-x-3 mt-2">
+              <div className="flex space-x-3 mt-[-12px]">
                 <Button label="요청 반려" onClick={handleAbortTicket} color={7} />
                 <Button label="담당자 변경" onClick={toggleChangeModal} color={6} />
                 <Button label="작업 완료" onClick={handleCompleteTicket} color={1} />

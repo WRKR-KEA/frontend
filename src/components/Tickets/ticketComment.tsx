@@ -3,7 +3,7 @@ import { FiPaperclip, FiSend, FiClock } from 'react-icons/fi';
 import useUserStore from '@/stores/userStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { postComment } from '@/services/user';
-import { formatTime } from '@/app/utils/formatTime'
+import { formatTime } from '@/app/utils/formatTime';
 
 interface Log {
   log?: string;
@@ -22,8 +22,9 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false); 
+  const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // 채팅 내용이 변경될 때마다 스크롤을 최하단으로 이동
   useEffect(() => {
@@ -37,33 +38,39 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
     logs?.length === 0 ? [{ log: '소통 내역이 없습니다.' }] : logs;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      setFile(file);
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile) {
+      setFile(selectedFile);
     }
+  };
+
+  const handleFileUploadClick = () => {
+    fileInputRef.current?.click();
   };
 
   const handleSendMessage = async () => {
     if (!message.trim() && !file) return;
-    if (isLoading) return; // 이미 전송 중이면 return
+    if (isLoading) return;
 
     try {
       setIsLoading(true);
 
-      // 텍스트 메시지 전송
-      if (message.trim()) {
-        await postComment(ticketId, message);
-      }
+      // 파일 배열 생성
+      const attachments: File[] = file ? [file] : [];
+
+      // 메시지와 파일 전송
+      await postComment(ticketId, message, attachments);
 
       // 성공 시 쿼리 무효화
       queryClient.refetchQueries({
         queryKey: ['comments', { ticketId }],
-      }); // 마치 실시간 채팅처럼 보이게
+      });
 
       // 입력 필드 초기화
       setMessage('');
       setFile(null);
     } catch (error) {
+      console.error('메시지 전송 실패:', error);
     } finally {
       setIsLoading(false);
     }
@@ -75,6 +82,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
       handleSendMessage();
     }
   };
+
   return (
     <div className="bg-component rounded-md p-4 flex flex-col h-[460px]">
       <div
@@ -124,32 +132,26 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
       </div>
 
       <div className="flex space-x-2 items-center mt-2">
-          <label htmlFor="file-upload" className="cursor-pointer">
-            <button
-              className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl"
-              type="button"
-            >
-              <FiPaperclip className="text-xl text-gray-600" />
-            </button>
-          </label>
-          <input
-            id="file-upload"
-            type="file"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-          <button
-            className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl"
-            type="button"
-          >
-            <FiClock className="text-xl text-red-600" />
-          </button>
+        <button
+          onClick={handleFileUploadClick}
+          className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl"
+          type="button"
+        >
+          <FiPaperclip className="text-xl text-gray-600" />
+        </button>
         <input
-          id="file-upload"
+          ref={fileInputRef}
           type="file"
           className="hidden"
           onChange={handleFileChange}
         />
+
+        <button
+          className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl"
+          type="button"
+        >
+          <FiClock className="text-xl text-red-600" />
+        </button>
 
         <input
           type="text"
@@ -169,6 +171,12 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
           <FiSend className="text-xl" />
         </button>
       </div>
+
+      {file && (
+        <div className="text-sm text-gray-500 mt-1">
+          첨부 파일: {file.name}
+        </div>
+      )}
     </div>
   );
 };

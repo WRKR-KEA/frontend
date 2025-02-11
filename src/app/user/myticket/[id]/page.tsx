@@ -95,7 +95,7 @@ export default function UserTicketDetailPage() {
     console.log("작업이 취소되었습니다."); 
     setIsModalOpen(false);
 
-    router.push("/myticket");
+    router.push("/user/myticket");
   };
 
   const closeModal = () => {
@@ -107,7 +107,7 @@ export default function UserTicketDetailPage() {
   }
 
   return (
-    <div className="pl-6 pr-6 pb-4 flex flex-col">
+    <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
       <div className="flex space-x-6">
         <div className="flex-1 mt-4">
           <TicketRequest ticket={selectedTicket} />
@@ -118,9 +118,11 @@ export default function UserTicketDetailPage() {
         <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+            <div className="mt-[-12px]">
             {selectedTicket.status === "REQUEST" && (
               <Button label="요청 취소" onClick={handleCancelTicket} color={6} />
             )}
+            </div>
           </div>
         </div>
           <TicketInfo ticket={selectedTicket} />

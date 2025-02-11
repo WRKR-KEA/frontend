@@ -15,7 +15,7 @@ COPY . .
 
 # 6. 환경 변수 설정하여 SSR 비활성화 후 빌드
 ARG NEXT_PUBLIC_BASE_URL
-ENV NEXT_PUBLIC_BASE_URL=http://wrkr-backendservice-service:8080
+ENV NEXT_PUBLIC_BASE_URL=http://wrkr-backend.tickety.co.kr
 
 # 7. 애플리케이션 빌드
 RUN npm run build

@@ -160,11 +160,13 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         </div>
 
         {/* ✅ 파일 업로드 영역 추가 */}
+
         <FileBox 
           onFileUpload={handleFileUpload} 
           attachments={data?.result?.attachmentUrls} 
           setDeleteAttachments={setDeleteAttachments}
         />
+
 
         {/* Modal Footer */}
         <div className="p-4 border-t flex justify-end space-x-2">

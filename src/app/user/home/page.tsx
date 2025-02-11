@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
-import api from "@/lib/api/axios";
+import { fetchUserTickets } from "@/service/user";
 
 type Ticket = {
   id: string;
@@ -45,8 +45,8 @@ export default function UserHomePage() {
   const fetchTickets = async () => {
     setIsLoading(true);  // 데이터 로딩 상태 시작
     try {
-      const { data } = await api.get("/api/user/tickets/main");
-      console.log("🌈 받아온 데이터:", data.result.recentTickets);
+     const data = await fetchUserTickets();
+             console.log("🌈 API 응답 데이터:", data);
 
       const requestTicketList: Ticket[] = data.result.recentTickets.map((ticket: any) => ({
         id: ticket.ticketId,
@@ -74,8 +74,12 @@ export default function UserHomePage() {
   };
 
   useEffect(() => {
-    fetchTickets();  // 페이지 처음 로드 시 티켓 데이터 가져오기
-  }, []);  // 빈 배열을 두 번째 인자로 넣어 첫 렌더링 시만 실행되도록 함
+    const timer = setTimeout(() => {
+      fetchTickets();
+    }, 1); 
+  
+    return () => clearTimeout(timer); 
+  }, []);
 
   // 🌟 selectedTicket이 없을 때만 초기 상태 설정 (두 번 실행 방지)
   useEffect(() => {

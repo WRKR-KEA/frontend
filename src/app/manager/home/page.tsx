@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import useUserStore from "@/stores/userStore";
 import { TicketList } from "@/components/Tickets/ticektList_Manager";
-import { fetchManagerTickets } from "@/service/user";
+import { fetchManagerTickets } from "@/services/manager";
 
 type Ticket = {
   id: string;

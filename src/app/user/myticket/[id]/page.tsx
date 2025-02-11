@@ -25,27 +25,27 @@ export default function UserTicketDetailPage() {
 
   // 티켓 상태 변환 맵
   const statusMap: Record<string, string> = {
-    작업요청: "new", // '작업요청' -> 'new'
-    반려: "rejected", // '반려' -> 'rejected'
-    작업진행: "in-progress", // '작업진행' -> 'in-progress'
-    작업완료: "completed", // '작업완료' -> 'completed'
-    작업취소: "cancelled", // '작업취소' -> 'cancelled'
+    작업요청: "REQUEST", 
+    반려: "REJECT", 
+    작업진행: "IN_PROGRESS", 
+    작업완료: "COMPLETE", 
+    작업취소: "CANCEL", 
   };
 
   useEffect(() => {
     const id = window.location.pathname.split("/").pop();
     if (id) {
       getTicketDetail(id).then(data => {
-        console.log('ticket', data);
+        console.log('🎫 티켓 데이터', data);
         setSelectedTicket(data);
       })
     }
   }, []);
 
   useEffect(() => {
-    if (selectedTicket?.status == "작업요청" || selectedTicket?.status == "취소") return;
+    if (selectedTicket?.status == "REQUEST" || selectedTicket?.status == "CANCEL") return;
     getComments(selectedTicket).then(data => {
-      console.log('comments:', data)
+      console.log('🐽 코멘트 데이터:', data)
       setLogs(data)
     })
   }, [selectedTicket])
@@ -53,7 +53,7 @@ export default function UserTicketDetailPage() {
   const getComments = async (ticket) => {
     try {
       const response = await fetchComments(ticket.id);
-      console.log("response:", response)
+      console.log("🐦 코멘트 응답 데이터:", response, ticket.id)
       return response.result.comments
       .map(comment => {
         if (comment.type === "SYSTEM") {
@@ -106,7 +106,7 @@ export default function UserTicketDetailPage() {
 
     setSelectedTicket((prevTicket: any) => ({
       ...prevTicket,
-      status: "작업취소", // 상태 업데이트
+      status: "CANCEL", // 상태 업데이트
     }));
 
     console.log("작업이 취소되었습니다."); // 실제 작업 취소 로직 추가
@@ -141,7 +141,7 @@ export default function UserTicketDetailPage() {
       </div>
 
       <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment logs={logs} />
+      <TicketComment ticketId={selectedTicket.id} logs={logs}/>
 
       {/* TicketCancel 컴포넌트 */}
       <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />

@@ -34,6 +34,10 @@ export default function AdminMemberListPage() {
         size: maxTicketsToShow, // ✅ 한 페이지당 표시할 개수
     });
 
+    const handleSelectCount = (count: number) => {
+        setMaxTicketsToShow(count);
+        setCurrentPage(1); // 페이지 초기화
+      };
 
     console.log("✅ API 응답:", members);
 
@@ -47,7 +51,7 @@ export default function AdminMemberListPage() {
                 <h2 className="text-md font-semibold">회원 조회</h2>
 
                 <div className="flex items-center space-x-4">
-                    <FilterNum onSelectCount={handleSizeChange} /> {/* ✅ 필터 추가 */}
+                <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
                 </div>
             </div>
 
@@ -92,11 +96,13 @@ export default function AdminMemberListPage() {
 
                 {/* ✅ 페이지네이션 */}
                 <div className="flex justify-center items-center mt-4 w-full">
-                    <PagePagination
-                        totalPages={members?.result.totalPages}
-                        currentPage={members?.result.currentPage}
-                        onPageChange={handlePageChange}
-                        pageRangeDisplayed={5}
+                <PagePagination
+                    totalItemsCount={members.result.elements.length}
+                    itemsCountPerPage={maxTicketsToShow}
+                    pageRangeDisplayed={5}
+                    currentPage={currentPage}
+                    totalPages={members.result.totalPages}
+                    onPageChange={handlePageChange}
                     />
                 </div>
             </div>

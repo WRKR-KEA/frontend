@@ -9,9 +9,9 @@ export function FilterTab_Manager({ activeTab, handleTabClick }: FilterTab_Manag
   return (
     <div className="flex border-gray-200 w-full items-center">
       <button
-        onClick={() => handleTabClick("전체")}
+        onClick={() => handleTabClick("")}
         className={`w-20 text-center py-3 px-4 font-semibold text-sm ${
-          activeTab === "전체" ? "border-b-2 border-black text-black" : "text-gray-500"
+          activeTab === "" ? "border-b-2 border-black text-black" : "text-gray-500"
         }`}
       >
         전체

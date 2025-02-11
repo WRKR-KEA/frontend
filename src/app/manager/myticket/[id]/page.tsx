@@ -45,23 +45,20 @@ export default function ManagericketDetailPage() {
   const [ticketId, setTicketId] = useState('');
 
   const statusMapping = {
-    REQUEST: "작업요청",
-    CANCEL: "작업취소",
-    IN_PROGRESS: "작업진행",
-    REJECT: "반려",
-    COMPLETE: "작업완료"
+    REQUEST: 'REQUEST',
+    CANCEL: 'CANCEL',
+    IN_PROGRESS: 'IN_PROGRESS',
+    REJECT: 'REJECT',
+    COMPLETE: 'COMPLETE',
   };
-
-  const param = useParams();
 
   const statusMap: Record<string, string> = {
-    작업요청: "REQUEST", 
-    반려: "REJECT", 
-    작업진행: "IN_PROGRESS", 
-    작업완료: "COMPLETE", 
-    작업취소: "CANCEL", 
+    REQUEST: "REQUEST", 
+    REJECT: "REJECT", 
+    IN_PROGRESS: "IN_PROGRESS", 
+    COMPLETE: "COMPLETE", 
+    CANCEL: "CANCEL", 
   };
-
   const { data: commentData } = useCommentList({ ticketId });
 
   useEffect(() => {

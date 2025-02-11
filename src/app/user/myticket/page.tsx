@@ -5,7 +5,6 @@ import { TicketList_User } from "@/components/Tickets/ticketList_User";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
 import useUserStore from "@/stores/userStore";
-import { useUserTicketListQuery } from "@/hooks/useUserTicket";
 import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
 
@@ -26,61 +25,65 @@ type Ticket = {
 export default function UserTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const user = useUserStore((state) => state.user);
-  const ticketRequester = user ? user.name : ""; // 유저가 null일 경우 빈 문자열 처리
-  const [tickets, setTickets] = useState<Ticket[]>([]); // 요청 티켓
-  const [error, setError] = useState<string | null>(null);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
 
-  // 유저 티켓 리스트 가져오기
-  const { data} = useUserTicketListQuery({
-    requester: ticketRequester,
-  });
+  const user = useUserStore((state) => state.user);
+  const ticketRequester = user ? user.name : "";
+
+  // Fetch tickets on page load or when page or ticket count changes
+  useEffect(() => {
+    const fetchTickets = async () => {
+      try {
+        const accessToken = sessionStorage.getItem("accessToken");
+        const response = await api.get("/api/user/tickets", {
+          params: {
+            page: currentPage,
+            size: maxTicketsToShow,
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const { elements, totalPages } = response.data.result;
+
+        const requestTicketList: Ticket[] = elements.map((ticket: any) => ({
+          id: ticket.id,
+          number: ticket.serialNumber,
+          status: ticket.status,
+          title: ticket.title,
+          requester: ticket.managerName, 
+          handler: ticket.managerName, 
+          requestDate: ticket.createdAt,
+          updateDate: ticket.updatedAt,
+          acceptDate: ticket.startedAt,
+          completeDate: ticket.endAt, 
+          ispinned: false, 
+        }));
+
+        setTickets(requestTicketList);
+        console.log(response);
+        setTotalPages(totalPages);
+      } catch (error) {
+        console.error("Error fetching tickets:", error);
+      }
+    };
+
+    fetchTickets();
+  }, [currentPage, maxTicketsToShow]); // Run effect when page or maxTicketsToShow changes
 
   const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber);  // Update currentPage based on the selected page number
+    setCurrentPage(pageNumber); // Update the current page
   };
-  
-  // 담당자 메인 페이지 티켓 요청
-const fetchTickets = async () => {
-  try {
-    const { data } = await api.get("/api/user/tickets/main");
-    const requestTicketList: Ticket[] = data.result.recentTickets.map((ticket: any) => ({
-      id: ticket.ticketId,
-      number: ticket.ticketSerialNumber,
-      status: ticket.status,
-      title: ticket.title,
-      requester: ticket.userNickname,
-      handler: ticket.managerNickname,
-      requestDate: ticket.requestedDate,
-      updateDate: ticket.updatedDate,
-      ticketTimeInfo: {
-          createdAt: ticket.ticketTimeInfo.createdAt,
-          updatedAt: ticket.ticketTimeInfo.updatedAt,
-          startedAt: ticket.ticketTimeInfo.startedAt,
-          endedAt: ticket.ticketTimeInfo.endedAt
-      }
-    }));
-
-    setTickets(requestTicketList);
-    console.log("🌈티켓 데이터",requestTicketList);
-  } catch (error) {
-    setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
-  }
-};
-
-  useEffect(() => {
-    fetchTickets();
-  }, []);
 
   const handleSelectCount = (count: number) => {
-    setMaxTicketsToShow(count);
+    setMaxTicketsToShow(count); // Update the number of tickets to show per page
   };
 
   const handleSearchChange = (term: string) => {
-    setSearchTerm(term);
+    setSearchTerm(term); // Update the search term
   };
 
   return (
@@ -97,11 +100,8 @@ const fetchTickets = async () => {
         </div>
       </div>
 
-      <TicketList_User
-        tickets={tickets}
-        maxTicketsToShow={maxTicketsToShow}
-        searchTerm={searchTerm}
-      />
+      <TicketList_User tickets={tickets} maxTicketsToShow={maxTicketsToShow} searchTerm={searchTerm} />
+      
       <div className="flex justify-center items-center mt-4 mb-4">
         <PagePagination
           totalItemsCount={tickets.length}
@@ -111,7 +111,7 @@ const fetchTickets = async () => {
           totalPages={totalPages}
           onPageChange={handlePageChange}
         />
-    </div>
+      </div>
     </div>
   );
 }

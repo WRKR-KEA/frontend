@@ -16,6 +16,7 @@ interface SidebarProps {
     user: User | null; // ✅ user를 props로 받음 (null일 수도 있음)
 }
 
+
 export default function Sidebar({ user }: SidebarProps) {
     const pathname = usePathname(); // 현재 경로 가져오기
     const [isTicketManagementOpen, setIsTicketManagementOpen] = useState(false);
@@ -34,6 +35,15 @@ export default function Sidebar({ user }: SidebarProps) {
         setActiveModal((prev) => (prev === modalType ? null : modalType));
     };
 
+    const handleLogoClick = () => {
+        if (user.role === "USER") {
+            router.push("/user/home");
+        } else if (user.role === "MANAGER") {
+            router.push("/manager/home");
+        } else if (user.role === "ADMIN") {
+            router.push("/administer/memberlist");
+        }
+    };
 
     const excludedPaths = ["/login", "/changepassword", "/locked", "/passwordchangemodal"];
     const isLoginPage = excludedPaths.includes(pathname);
@@ -470,7 +480,7 @@ export default function Sidebar({ user }: SidebarProps) {
             </div>
 
             {/* 하단 브랜드명 */}
-            <div className="mb-5 flex justify-center">
+            <div className="mb-5 flex justify-center cursor-pointer" onClick={handleLogoClick}>
                 <svg width="96" height="32" viewBox="0 0 96 32" fill="none">
                     <path
                         d="M88.6667 10.4575V20.8761C88.6667 23.1707 88.085 24.8761 86.9218 25.9924C85.7585 27.1087 84.0678 27.6668 81.8498 27.6668C80.671 27.6668 79.5543 27.5195 78.4995 27.225C77.4603 26.9304 76.584 26.504 75.8705 25.9459L77.313 23.3412C77.8403 23.7754 78.484 24.1164 79.244 24.3645C80.0041 24.6126 80.7718 24.7366 81.5474 24.7366C82.7572 24.7366 83.6413 24.4575 84.1997 23.8994C84.758 23.3412 85.0372 22.4885 85.0372 21.3412V20.9226C84.5719 21.3878 84.0213 21.7443 83.3854 21.9924C82.7494 22.2405 82.067 22.3645 81.338 22.3645C79.6939 22.3645 78.391 21.8994 77.4293 20.9691C76.4677 20.0234 75.9868 18.6126 75.9868 16.7366V10.4575H79.6163V16.2017C79.6163 18.2327 80.4616 19.2482 82.1523 19.2482C83.0209 19.2482 83.7188 18.9691 84.2462 18.411C84.7735 17.8374 85.0372 16.9924 85.0372 15.8761V10.4575H88.6667Z"

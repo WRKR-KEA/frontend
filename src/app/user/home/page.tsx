@@ -38,10 +38,7 @@ export default function UserHomePage() {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // 🌟 API 요청이 한 번만 실행되도록 useRef 사용
-  const hasFetched = useRef(false);
-
-  // 🌟 담당자 메인 페이지 티켓 요청 (Strict Mode에서도 두 번 실행 방지)
+   useEffect(() => {
   const fetchTickets = async () => {
     setIsLoading(true);  // 데이터 로딩 상태 시작
     try {
@@ -73,13 +70,8 @@ export default function UserHomePage() {
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      fetchTickets();
-    }, 1); 
-  
-    return () => clearTimeout(timer); 
-  }, []);
+  fetchTickets();
+}, []);
 
   // 🌟 selectedTicket이 없을 때만 초기 상태 설정 (두 번 실행 방지)
   useEffect(() => {

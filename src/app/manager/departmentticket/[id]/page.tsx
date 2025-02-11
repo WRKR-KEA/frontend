@@ -11,6 +11,7 @@ import { updateManagerTicketApprove, fetchManagerTicket } from "@/services/manag
 import { useCommentList } from '@/hooks/useCommentList';
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import TicketRequest from "@/components/Tickets/ticketRequest";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
@@ -38,22 +39,6 @@ export default function ManagericketDetailPage() {
       },
    
     });
-  };
-
-  const statusMapping = {
-    REQUEST: 'REQUEST',
-    CANCEL: 'CANCEL',
-    IN_PROGRESS: 'IN_PROGRESS',
-    REJECT: 'REJECT',
-    COMPLETE: 'COMPLETE',
-  };
-
-  const statusMap: Record<string, string> = {
-    REQUEST: "REQUEST", 
-    REJECT: "REJECT", 
-    IN_PROGRESS: "IN_PROGRESS", 
-    COMPLETE: "COMPLETE", 
-    CANCEL: "CANCEL", 
   };
 
   // ticketId가 있을 때만 댓글 조회
@@ -89,7 +74,7 @@ export default function ManagericketDetailPage() {
     return {
       id: ticket.ticketId,
       number: ticket.ticketSerialNumber,
-      status: statusMapping[ticket.status],
+      status: ticket.status,
       type: ticket.category,
       title: ticket.title,
       content: ticket.content,
@@ -153,7 +138,7 @@ export default function ManagericketDetailPage() {
         <h2 className="text-md font-semibold">티켓 상세 정보</h2>
         <div className="flex space-x-2 mt-2">
         {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
-        {statusMap[selectedTicket.status] === "new" && (
+        {selectedTicket.status === "new" && (
           <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
           )}    </div>
       </div>
@@ -161,7 +146,7 @@ export default function ManagericketDetailPage() {
       <div className="flex space-x-6">
         <TicketInfo ticket={selectedTicket} />
         <TicketStatus
-          status={statusMap[selectedTicket.status] || selectedTicket.status}
+          status={selectedTicket.status}
         />
       </div>
 

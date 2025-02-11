@@ -15,7 +15,7 @@ COPY . .
 
 # 6. 환경변수 설정
 ARG NEXT_PUBLIC_BASE_URL
-ENV NEXT_PUBLIC_BASE_URL=http://172.16.211.53:8080
+ENV NEXT_PUBLIC_BASE_URL=http://61.109.238.238:8080
 
 # 7. 애플리케이션 빌드
 RUN npm run build

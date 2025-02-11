@@ -25,7 +25,7 @@ export default function Modal({ onClose, children }: ModalProps) {
         <div className="flex min-h-full items-center justify-center p-4">
           <div
             className={`
-              bg-white p-4  rounded shadow-lg w-96 relative
+              bg-white p-4  rounded shadow-lg w-[800px] h-[600px] relative ml-48
               transform transition-all duration-300 ease-in-out
               ${isShowing ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}
             `}

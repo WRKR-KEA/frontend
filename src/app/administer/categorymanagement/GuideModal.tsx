@@ -1,10 +1,11 @@
 "use client";
-
+import { useQueryClient } from "@tanstack/react-query";
 import React, { useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 가이드 데이터 가져오는 쿼리
 import FileBox from "./FileBox";
+import { QueryClient } from "@tanstack/react-query";
 
 interface GuideModalProps {
   categoryId: string;
@@ -18,7 +19,7 @@ interface GuideModalProps {
 const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal, refetchList }) => {
   const editorRef = useRef<Editor>(null);
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
-
+  const queryClient = useQueryClient(); // ✅ queryClient 가져오기
   if (!isOpen) return null;
 
   console.log("가이드 모달 - 카테고리 ID:", categoryId);
@@ -35,7 +36,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
     setAttachments(uploadedFiles); // 파일 리스트 업데이트
   };
 
-  const handleSave = async () => {
+  const handleCreate = async () => {
     if (!editorRef.current) return;
   
     const editorContent = editorRef.current.getInstance().getMarkdown();
@@ -50,28 +51,19 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
       // ✅ Multipart FormData 생성
       const formData = new FormData();
   
-      // ✅ `data` 유무에 따라 다른 요청 데이터 추가
-      const requestData = JSON.stringify(
-        data ? { content: editorContent, guideId } : { content: editorContent }
-      );
-  
-      formData.append(
-        data ? "guideUpdateRequest" : "guideCreateRequest",
-        new Blob([requestData], { type: "application/json" })
-      );
+      // ✅ 새 가이드 생성 요청 데이터 추가
+      const requestData = JSON.stringify({ content: editorContent });
+      formData.append("guideCreateRequest", new Blob([requestData], { type: "application/json" }));
   
       // ✅ 첨부 파일 추가 (여러 개 가능)
       attachments.forEach((file) => {
         formData.append("attachments", file);
       });
   
-      const method = data ? "PATCH" : "POST";
-      const url = data
-        ? `http://172.16.211.53:8080/api/admin/guide/${guideId}`
-        : `http://172.16.211.53:8080/api/admin/guide/${categoryId}`;
+      const url = `http://172.16.211.53:8080/api/admin/guide/${categoryId}`;
   
       const response = await fetch(url, {
-        method,
+        method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
@@ -79,15 +71,63 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
       });
   
       if (!response.ok) {
-        throw new Error("가이드 저장 실패");
+        throw new Error("가이드 생성 실패");
       }
   
-      alert("가이드가 성공적으로 저장되었습니다.");
+      alert("가이드가 성공적으로 생성되었습니다.");
       refetch();
       onClose();
     } catch (error) {
-      console.error("❌ 가이드 저장 오류:", error);
-      alert("가이드를 저장하는 중 오류가 발생했습니다.");
+      console.error("❌ 가이드 생성 오류:", error);
+      alert("가이드를 생성하는 중 오류가 발생했습니다.");
+    }
+  };
+  
+  const handleEdit = async () => {
+    if (!editorRef.current) return;
+  
+    const editorContent = editorRef.current.getInstance().getMarkdown();
+  
+    try {
+      const accessToken = sessionStorage.getItem("accessToken");
+      if (!accessToken) {
+        alert("로그인이 필요합니다.");
+        return;
+      }
+  
+      // ✅ Multipart FormData 생성
+      const formData = new FormData();
+  
+      // ✅ 기존 가이드 수정 요청 데이터 추가
+      const requestData = JSON.stringify({ content: editorContent, guideId });
+      formData.append("guideUpdateRequest", new Blob([requestData], { type: "application/json" }));
+  
+      // ✅ 첨부 파일 추가 (여러 개 가능)
+      attachments.forEach((file) => {
+        formData.append("attachments", file);
+      });
+  
+      const url = `http://172.16.211.53:8080/api/admin/guide/${guideId}`;
+  
+      const response = await fetch(url, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: formData, // ✅ JSON + 파일을 함께 전송 (multipart/form-data)
+      });
+  
+      if (!response.ok) {
+        throw new Error("가이드 수정 실패");
+      }
+  
+      alert("가이드가 성공적으로 수정되었습니다.");
+      refetch();
+      
+      onClose();
+    } catch (error) {
+      console.error("❌ 가이드 수정 오류:", error);
+      alert("가이드를 수정하는 중 오류가 발생했습니다.");
     }
   };
   
@@ -115,12 +155,16 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      
 
       if (!response.ok) throw new Error("템플릿 삭제 실패");
 
-      showModal("가이드가 성공적으로 삭제되었습니다.", "확인", () => {
-        refetch(); 
-      });
+// ✅ 캐시 데이터 직접 업데이트하여 삭제 효과
+    queryClient.setQueryData(["guide_detail", categoryId], null);
+  
+      showModal("가이드가 성공적으로 삭제되었습니다.", "확인");
+    
+      await refetch();
       onClose(); // ✅ 모달 닫기
     } catch (error) {
       console.error("❌ 템플릿 삭제 오류:", error);
@@ -128,7 +172,6 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
 
     }
   };
-
 
 
   if (isLoading) {
@@ -167,7 +210,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
             취소
           </button>
           <button
-            onClick={handleSave}
+            onClick={!data? handleCreate : handleEdit}
             className="px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md hover:bg-blue-600 transition-all"
           >
             {!data ? "추가" : "저장"}

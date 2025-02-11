@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import { useTemplateQuery } from "@/hooks/useTemplate"; // ✅ 템플릿 데이터 가져오는 쿼리
+import { useQueryClient } from "@tanstack/react-query"; // ✅ React Query 클라이언트 가져오기
 
 interface TemplateModalProps {
   categoryId: string;
@@ -17,7 +18,7 @@ interface TemplateModalProps {
 const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title, onClose, showModal }) => {
   const editorRef = useRef<Editor>(null);
 
-
+  const queryClient = useQueryClient(); // ✅ queryClient 가져오기
   if (!isOpen) return null;
 
   const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
@@ -72,6 +73,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
       showModal("템플릿이 성공적으로 저장되었습니다.", "확인", () => {
         refetch(); 
       });
+      
       onClose();
     } catch (error) {
       console.error("❌ 템플릿 저장 오류:", error);
@@ -112,6 +114,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
       showModal("템플릿이 성공적으로 저장되었습니다.", "확인", () => {
         refetch(); 
       });
+      queryClient.setQueryData(["template_detail", categoryId], null);
       onClose(); // ✅ 모달 닫기
     } catch (error) {
       console.error("❌ 템플릿 저장 오류:", error);

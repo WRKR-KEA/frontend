@@ -37,14 +37,6 @@ export function TicketList({
     REQUEST: "bg-[#FFE9B6] text-[#D79804]",
   };
 
-  const statusMap: Record<string, string> = {
-    REQUEST: "REQUEST",
-    REJECT: "REJECT",
-    IN_PROGRESS : "IN_PROGRESS",
-    COMPLETE: "COMPLETE",
-    CANCEL: "CANCEL",
-  };
-
   // 티켓을 페이지에 맞게 잘라서 표시
   const startIndex = (page - 1) * maxTicketsToShow;
   const endIndex = startIndex + maxTicketsToShow;
@@ -79,7 +71,7 @@ export function TicketList({
               <td className="p-2 border">
                 <span
                   className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${
-                    statusStyles[statusMap[ticket.status]] || ""
+                    statusStyles[ticket.status] || ""
                   }`}
                 >
                   {ticket.status}

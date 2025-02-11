@@ -29,7 +29,7 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
             {/*TODO: type으로 변경*/}
             <div className="text-sm truncate">업무: {ticket.title}</div>
             <div className="text-sm truncate">요청자: {ticket.requester}</div>
-            <div className="text-sm truncate">처리자: {ticket.handler || '―'}</div>
+            <div className="text-sm truncate">담당자: {ticket.handler || '―'}</div>
           </div>
           <div className="space-y-4 text-left w-52 min-w-52">
             <div className="text-sm">요청 일시: {ticket.requestDate}</div>

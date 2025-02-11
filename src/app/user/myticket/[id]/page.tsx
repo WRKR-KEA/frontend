@@ -16,14 +16,6 @@ export default function UserTicketDetailPage() {
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [logs, setLogs] = useState([]);
 
-  const statusMap: Record<string, string> = {
-    REQUEST: "REQUEST", 
-    REJECT: "REJECT", 
-    IN_PROGRESS: "IN_PROGRESS", 
-    COMPLETE: "COMPLETE", 
-    CANCEL: "CANCEL", 
-  };
-
   useEffect(() => {
     const id = window.location.pathname.split("/").pop();
     if (id) {
@@ -126,13 +118,13 @@ export default function UserTicketDetailPage() {
         <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
-            {statusMap[selectedTicket.status] === "REQUEST" && (
+            {selectedTicket.status === "REQUEST" && (
               <Button label="요청 취소" onClick={handleCancelTicket} color={6} />
             )}
           </div>
         </div>
           <TicketInfo ticket={selectedTicket} />
-          <TicketStatus status={statusMap[selectedTicket.status] || selectedTicket.status} />
+          <TicketStatus status={selectedTicket.status || selectedTicket.status} />
           <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
           <TicketComment ticketId={selectedTicket.id} logs={logs}/>
         </div>

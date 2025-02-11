@@ -45,14 +45,6 @@ export function TicketList_Manager({
     REQUEST: "bg-request text-request",
   };
 
-  const statusMap: Record<string, string> = {
-    REQUEST: "작업 요청",
-    CANCEL: "취소",
-    IN_PROGRESS : "작업 진행",
-    REJECT: "반려",
-    COMPLETE: "작업 완료",
-  };
-
   const [pinnedTickets, setPinnedTickets] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -123,7 +115,7 @@ export function TicketList_Manager({
 
 
   return (
-    <div className="bg-white rounded-md shadow-md relative">
+    <div className="bg-white rounded-md relative">
       {errorMessage && (
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 bg-[#DF4B38] text-white p-4 rounded-md text-center w-1/2 z-50 animate-fade-out">
           {errorMessage}
@@ -134,12 +126,12 @@ export function TicketList_Manager({
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="px-4 py-2 w-8 min-w-8"></th>
-            <th className="px-4 py-2 w-20 min-w-20">티켓 번호</th>
+            <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
-            <th className="px-4 py-2 w-32 min-w-32">요청자</th>
-            <th className="px-4 py-2 w-44 min-w-44">요청일시</th>
-            <th className="px-4 py-2 w-44 min-w-44">최근 변경일시</th>
+            <th className="px-4 py-2 w-32 min-w-32 text-center">요청자</th>
+            <th className="px-4 py-2 w-44 min-w-44 text-center">요청일시</th>
+            <th className="px-4 py-2 w-44 min-w-44 text-center">최근 변경일시</th>
           </tr>
         </thead>
         <tbody>
@@ -162,20 +154,20 @@ export function TicketList_Manager({
                   <MdOutlinePushPin className="text-gray-4" size={20} />
                 )}
               </td>
-              <td className="px-4 py-2">
+              <td className="px-4 py-2 text-center">
                 <HighlightText text={ticket.number} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 text-center">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
-                  {statusMap[ticket.status]}
+                  {ticket.status}
                 </span>
               </td>
               <td className="px-4 py-2 truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 truncate">{ticket.requester}</td>
-              <td className="px-4 py-2">{ticket.requestDate}</td>
-              <td className="px-4 py-2">{ticket.updateDate}</td>
+              <td className="px-4 py-2 truncate text-center">{ticket.requester}</td>
+              <td className="px-4 py-2 text-center">{ticket.requestDate}</td>
+              <td className="px-4 py-2 text-center">{ticket.updateDate}</td>
             </tr>
           ))}
         </tbody>

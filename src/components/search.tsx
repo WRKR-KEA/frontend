@@ -28,7 +28,7 @@ export const Search = ({ placeHolder, onSearchChange}: SearchProps) => {
             value={searchInput}
             onChange={handleInputChange}
             placeholder={placeHolder} //
-            className="outline-none text-sm w-64"
+            className="outline-none text-sm w-32"
         />
       </div>
   );

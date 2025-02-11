@@ -157,12 +157,11 @@ export async function postTicket(ticketData: {
   }
 }
 
-
-// (GET) 매니저 홈 티켓 목록 조회
-export async function fetchManagerTickets() {
+// (GET) 유저 홈 티켓 목록 조회
+export async function fetchUserTickets() {
   const accessToken = sessionStorage.getItem("accessToken");
   try {
-    const { data } = await api.get(`/api/manager/tickets/main`, {
+    const { data } = await api.get(`/api/user/tickets/main`, {
       headers: {
         Accept: "application/json;charset=UTF-8",
         Authorization: `Bearer ${accessToken}`,

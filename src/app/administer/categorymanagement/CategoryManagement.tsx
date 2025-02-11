@@ -215,7 +215,7 @@ const CategoryManagement: React.FC = () => {
                                         key={category.categoryId}
                                         categoryId={category.categoryId}
                                         name={category.name}
-                                        refetch={refetch}
+                                        
                                         onHelp={onHelp}
                                         onTemplate={onTemplate}
                                         refetchList={refetch}

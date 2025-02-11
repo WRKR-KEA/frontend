@@ -15,7 +15,7 @@ interface GuideModalProps {
   showModal:()=> void;
 }
 
-const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {
+const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal, refetchList }) => {
   const editorRef = useRef<Editor>(null);
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
 
@@ -37,36 +37,39 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
 
   const handleSave = async () => {
     if (!editorRef.current) return;
-
+  
     const editorContent = editorRef.current.getInstance().getMarkdown();
-
+  
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
         alert("로그인이 필요합니다.");
         return;
       }
-
+  
       // ✅ Multipart FormData 생성
       const formData = new FormData();
-
-      // ✅ 가이드 내용 JSON 데이터 추가 (Blob 형태로 변환)
-      const guideData = JSON.stringify({ content: editorContent });
-      formData.append(
-        "guideCreateRequest",
-        new Blob([guideData], { type: "application/json" })
+  
+      // ✅ `data` 유무에 따라 다른 요청 데이터 추가
+      const requestData = JSON.stringify(
+        data ? { content: editorContent, guideId } : { content: editorContent }
       );
-
+  
+      formData.append(
+        data ? "guideUpdateRequest" : "guideCreateRequest",
+        new Blob([requestData], { type: "application/json" })
+      );
+  
       // ✅ 첨부 파일 추가 (여러 개 가능)
       attachments.forEach((file) => {
         formData.append("attachments", file);
       });
-
+  
       const method = data ? "PATCH" : "POST";
       const url = data
         ? `http://172.16.211.53:8080/api/admin/guide/${guideId}`
         : `http://172.16.211.53:8080/api/admin/guide/${categoryId}`;
-
+  
       const response = await fetch(url, {
         method,
         headers: {
@@ -74,11 +77,11 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         },
         body: formData, // ✅ JSON + 파일을 함께 전송 (multipart/form-data)
       });
-
+  
       if (!response.ok) {
         throw new Error("가이드 저장 실패");
       }
-
+  
       alert("가이드가 성공적으로 저장되었습니다.");
       refetch();
       onClose();
@@ -87,6 +90,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
       alert("가이드를 저장하는 중 오류가 발생했습니다.");
     }
   };
+  
 
 
   // 가이드 삭제 함수
@@ -128,7 +132,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
 
 
   if (isLoading) {
-    return <div>불러오는 중...</div>;
+    return <div></div>;
   }
 
   return (
@@ -152,7 +156,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         </div>
 
         {/* ✅ 파일 업로드 영역 추가 */}
-        <FileBox onFileUpload={handleFileUpload} />
+        <FileBox onFileUpload={handleFileUpload} attachments={data?.result?.attachmentUrls}/>
 
         {/* Modal Footer */}
         <div className="p-4 border-t flex justify-end space-x-2">

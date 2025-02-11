@@ -30,7 +30,7 @@ export function TicketStatus({
             {isCancelled && (
               <div className="absolute flex flex-col items-center -top-3 left-1/2 transform -translate-x-1/2">
                 <FaExclamationTriangle className="text-red-500 text-xl" />
-                <span className="absolute top-full text-xs text-red-500 mt-2">취소</span>
+                <span className="absolute w-8 ml-3 top-full text-xs text-red-500 mt-2">취소</span>
               </div>
             )}
           </div>

@@ -1,34 +1,37 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import api from "@/lib/api/axios"; 
+import api from "@/lib/api/axios";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import axios from "axios";
 
 export default function ReissuePasswordPage() {
   const [nickname, setNickname] = useState("");
+  const [memberId, setMemberId] = useState("")
+  const [authCode, setAuthCode] = useState(""); // 인증번호 상태 추가
   const [error, setError] = useState("");
+  const [isAuthSent, setIsAuthSent] = useState(false); // 인증번호 입력 필드 표시 여부
   const router = useRouter();
+
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    btnText:'',
-    onClose: () => {},    
+    btnText: "닫기",
+    onClose: () => { },
   });
 
-  const showModal = (title: string, btnText='닫기', redirect = false, redirectPath = "") => {
+  const showModal = (title: string, btnText = "닫기", redirect = false, redirectPath = "") => {
     setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
-        setModalState(prev => ({ ...prev, isOpen: false }));
+        setModalState((prev) => ({ ...prev, isOpen: false }));
         if (redirect && redirectPath) {
           router.push(redirectPath);
         }
       },
-      redirect,
-      redirectPath,
     });
   };
 
@@ -36,7 +39,7 @@ export default function ReissuePasswordPage() {
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNickname(e.target.value);
 
-    // 아이디 형식 검증
+    // 닉네임 형식 검증
     const nicknameRegex = /^[a-z]{3,10}\.[a-z]{1,5}$/;
     if (!nicknameRegex.test(e.target.value)) {
       setError("아이디 형식이 올바르지 않습니다.");
@@ -45,28 +48,75 @@ export default function ReissuePasswordPage() {
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // 인증번호 입력 처리
+  const handleAuthCodeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthCode(e.target.value);
+  };
 
-    // 아이디 유효성 검사
+  // ✅ 인증번호 요청 (닉네임 입력 후)
+  const handleRequestAuthCode = async () => {
     if (error || nickname === "") {
-      showModal("유효한 아이디를 입력하세요.");
+      showModal("유효한 닉네임을 입력하세요.");
       return;
     }
 
     try {
-      const response = await api.patch("/api/members/password/reissue", {
-        nickname,
-      });
+      const response = await axios.post(
+        "http://172.16.211.53:8080/api/members/password/code", // ✅ 엔드포인트 직접 입력
+        { nickname }, // ✅ 요청 데이터
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          // withCredentials: true, // ✅ 토큰이 필요 없다면 제거
+        }
+      );
+      console.log(response)
 
       if (response.data.isSuccess) {
-        showModal('비밀번호 재발급 성공!', '로그인하기',true,'/login')
+        setIsAuthSent(true); // 인증번호 입력창 활성화
+        setMemberId(response?.data.result.memberId)
+        showModal("인증번호가 전송되었습니다.", "확인");
       } else {
-        showModal(response.data.message || "비밀번호 재발급에 실패했습니다.");
+        showModal(response.data.message || "인증번호 요청 실패");
+      }
+    } catch (err) {
+      console.error("인증번호 요청 에러:", err);
+      showModal(err?.response.data.message);
+    }
+  };
+
+  // ✅ 인증번호 확인 후 비밀번호 재발급 요청
+  const handleVerifyAndReissuePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (authCode.length !== 6) {
+      showModal("올바른 인증번호를 입력하세요.");
+      return;
+    }
+
+    try {
+      const response = await axios.patch(
+        "http://172.16.211.53:8080/api/members/password/reissue", // ✅ 엔드포인트 직접 입력
+        { 
+          memberId, 
+          verificationCode:authCode, 
+        }, // ✅ 요청 데이터
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      if (response.data.isSuccess) {
+        showModal("비밀번호 재발급 성공!", "로그인하기", true, "/login");
+      } else {
+        showModal(response.data.message || "비밀번호 재발급 실패");
       }
     } catch (err) {
       console.error("비밀번호 재발급 에러:", err);
-      showModal("서버와 통신 중 오류가 발생했습니다.");
+      showModal(err?.response.data.message);
     }
   };
 
@@ -90,41 +140,65 @@ export default function ReissuePasswordPage() {
       {/* 비밀번호 재발급 박스 */}
       <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
         <h2 className="text-3xl font-bold mb-2">비밀번호 재발급</h2>
-        <p className="text-sm text-gray-600 mb-6">
-          재발급받을 아이디를 입력하세요.
-        </p>
+        <p className="text-sm text-gray-600 mb-6">재발급받을 닉네임을 입력하세요.</p>
 
-        {/* 비밀번호 재발급 폼 */}
-        <form onSubmit={handleSubmit}>
+        {/* 인증번호 요청 폼 */}
+        <form onSubmit={handleVerifyAndReissuePassword}>
           <div className="mb-4">
             <input
-              type="text" // type을 "nickname"에서 "text"로 변경
+              type="text"
               id="nickname"
               value={nickname}
               onChange={handleNicknameChange}
               className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="아이디를 입력하세요"
+              placeholder="닉네임을 입력하세요"
+              disabled={isAuthSent} // 인증번호 입력 후 닉네임 수정 불가
             />
-            {error && (
-              <p className="text-red-500 text-sm mt-2">{error}</p>
-            )}
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </div>
-          
-          <button
-            type="submit"
-            className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
-          >
-            비밀번호 재발급
-          </button>
+
+          {!isAuthSent ? (
+            // 인증번호 받기 버튼
+            <button
+              type="button"
+              className={`w-full bg-[#252E66] text-white py-3 rounded-md font-semibold
+                 ${nickname ? "bg-[#252E66] text-white hover:bg-[#1F2557]" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}
+              onClick={handleRequestAuthCode}
+              disabled={!nickname}
+
+            >
+              인증번호 받기
+            </button>
+          ) : (
+            <>
+              {/* 인증번호 입력 필드 */}
+              <div className="mt-4 mb-4">
+                <input
+                  type="text"
+                  id="authCode"
+                  value={authCode}
+                  onChange={handleAuthCodeChange}
+                  className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
+                  placeholder="인증번호를 입력하세요"
+                />
+              </div>
+
+              {/* 비밀번호 재발급 버튼 */}
+              <button
+                type="submit"
+                className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
+              >
+                비밀번호 재발급
+              </button>
+            </>
+          )}
         </form>
       </div>
+
+      {/* 모달 */}
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>
-          <AlertModal 
-            title={modalState.title} 
-            onClick={modalState.onClose} 
-            btnText={modalState.btnText}
-          />
+          <AlertModal title={modalState.title} onClick={modalState.onClose} btnText={modalState.btnText} />
         </Modal>
       )}
     </div>

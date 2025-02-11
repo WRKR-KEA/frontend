@@ -64,7 +64,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
     transform: CSS.Transform.toString(transform),
     transition,
     opacity: isDragging ? 0.5 : 1,
-    cursor: isDragging ? "grabbing" : "grab",
+    cursor: isDragging ? "grabbing" : "",
   };
 
   // ✅ 카테고리 수정 함수
@@ -95,7 +95,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 
       showModal("카테고리가 성공적으로 수정되었습니다.");
       setIsEditing(false);
-      refetch();
+      refetchList();
     } catch (error) {
       console.error("❌ 카테고리 수정 오류:", error);
       showModal("카테고리를 수정하는 중 오류가 발생했습니다.");
@@ -127,7 +127,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 
       
       showModal("카테고리가 성공적으로 삭제되었습니다.", "확인", () => {
-        refetch(); // ✅ 모달이 닫힌 후 refetch 실행
+        refetchList(); // ✅ 모달이 닫힌 후 refetch 실행
       });
     } catch (error) {
       console.error("❌ 카테고리 삭제 오류:", error);
@@ -207,7 +207,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
 
           {/* ✅ 모달이 열려있지 않을 때만 버튼 표시 */}
           {isHovered && !isDragging && !isModalOpen && (
-            <div className="absolute right-4 flex space-x-2 bg-white p-1 rounded shadow-md">
+            <div className="absolute right-4 flex space-x-2 p-1 rounded">
               {isEditing ? (
                 <>
                   <button

@@ -59,15 +59,11 @@ const CategoryManagement: React.FC = () => {
         }
     }, [categoryData]);
 
-
     const onHelp = () => {
-        //도움말 보여주기
         setHelpOpen(true)
     }
 
     const onTemplate = () => {
-
-        //템플릿 보여주기
         setTemplateOpen(true)
     }
 
@@ -106,11 +102,12 @@ const CategoryManagement: React.FC = () => {
         }
     }, [categories]);
 
-
-
     // ✅ 카테고리 추가 함수
     const handleAddCategory = async () => {
         const newName = prompt("새로운 카테고리 이름을 입력하세요:");
+        showModal("카테고리 이름을 입력하세요", "추가")
+
+
         if (!newName) {
             showModal("카테고리 이름을 입력해주세요.");
             return;
@@ -146,9 +143,6 @@ const CategoryManagement: React.FC = () => {
         }
     };
 
-
-    
-
     const updateCategoryOrder = async (isAlert: boolean) => {
         if (!categories.length) return; // 카테고리가 없으면 실행하지 않음
 
@@ -183,8 +177,6 @@ const CategoryManagement: React.FC = () => {
         }
     };
 
-
-
     // ✅ DND 관련 설정
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -193,10 +185,8 @@ const CategoryManagement: React.FC = () => {
 
     return (
         <div className="bg-gray-100 py-10 px-6">
-            
+            <h1 className="max-w-6xl mx-auto text-2xl font-bold mb-4 text-gray-800">카테고리 관리</h1>
             <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-                <h1 className="text-2xl font-bold mb-6 text-gray-800">카테고리 관리</h1>
-
                 {isLoading ? (
                     <p></p>
                 ) : isError ? (
@@ -238,15 +228,13 @@ const CategoryManagement: React.FC = () => {
                                         // justifyContent: "space-between",
                                     }}
                                 >
-                                    <img src="/hamburg.png" alt="drag" className="w-5" />
+                                    <img src="/hamburg.png" alt="drag" className="w-5 cursor-grabbing" />
                                     <span className="text-lg font-semibold text-gray-700">
                                         {activeCategory.name}
                                     </span>
                                 </div>
                             ) : null}
                         </DragOverlay>
-
-
                     </DndContext>
                 )}
 
@@ -265,6 +253,7 @@ const CategoryManagement: React.FC = () => {
                         />
                 </Modal>
             )}
+        
         </div>
     );
 };

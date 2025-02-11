@@ -44,9 +44,9 @@ export default function UserTicketDetailPage() {
 
   const getComments = async (ticket) => {
     try {
-      const response = await fetchComments(ticket.id);
-      console.log("🐦 코멘트 응답 데이터:", response, ticket.id)
-      return response.result.comments
+      const response = await fetchComments(ticket?.id);
+      console.log("🐦 코멘트 응답 데이터:", response, ticket?.id)
+      return response?.result.comments
       .map(comment => {
         if (comment.type === "SYSTEM") {
           return {

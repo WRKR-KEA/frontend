@@ -52,7 +52,7 @@ export function TicketList({
   const router = useRouter();
 
   const handleTicketClick = (ticketId: string) => {
-    router.push(`http://localhost:3000/manager/myticket/${ticketId}`);
+    router.push(`/manager/myticket/${ticketId}`);
   };
 
   return (

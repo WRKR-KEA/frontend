@@ -133,26 +133,27 @@ export default function ManagericketDetailPage() {
   };
 
   return (
-    <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
-      <div className="flex justify-between items-center">
-        <h2 className="text-md font-semibold">티켓 상세 정보</h2>
-        <div className="flex space-x-2 mt-2">
-        {/* 버튼이 "new" 상태일 때만 보이도록 조건 추가 */}
-        {selectedTicket.status === "new" && (
+    <div className="pl-6 pr-6 pb-4 flex flex-col">
+    <div className="flex space-x-6">
+      <div className="flex-1 mt-5">
+        <TicketRequest ticket={selectedTicket} />
+      </div>
+      <div className="flex-1">
+      <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
+        <div className="flex justify-between items-center">
+          <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+          {selectedTicket.status === "REQUEST" && (
           <Button label="작업 승인" onClick={handleAcceptTicket} color={1} />
-          )}    </div>
+          )}  
+        </div>
       </div>
-
-      <div className="flex space-x-6">
         <TicketInfo ticket={selectedTicket} />
-        <TicketStatus
-          status={selectedTicket.status}
-        />
+        <TicketStatus status={selectedTicket.status} />
+        <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
+        <TicketComment ticketId={selectedTicket.id} logs={logs}/>
       </div>
-
-      <h2 className="text-md font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-      <TicketComment logs={logs} ticketId={selectedTicket.id} />
-
+    </div>
+    
       <TicketAccept
         isOpen={isModalOpen}
         onClose={closeModal}

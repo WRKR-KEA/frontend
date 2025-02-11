@@ -22,7 +22,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
   const [file, setFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState(false); // 같은 댓글 여러번 제출 방지
+  const [isLoading, setIsLoading] = useState(false); 
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   // 채팅 내용이 변경될 때마다 스크롤을 최하단으로 이동
@@ -34,7 +34,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
   }, [logs]);
 
   const displayLogs =
-    logs.length === 0 ? [{ log: '소통 내역이 없습니다.' }] : logs;
+    logs?.length === 0 ? [{ log: '소통 내역이 없습니다.' }] : logs;
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -81,7 +81,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
         ref={chatContainerRef}
         className="overflow-y-auto pr-2 flex-1 hide-scrollbar"
       >
-        {displayLogs.map((log, index) => (
+        {displayLogs?.map((log, index) => (
           <div key={index} className="flex flex-col mb-2">
             {log.log && (
               <div className="flex items-center justify-center mb-1">

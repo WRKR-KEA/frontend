@@ -170,8 +170,6 @@ export default function ManagericketDetailPage() {
         <div className="flex-1 mt-5">
           <TicketRequest ticket={selectedTicket} />
         </div>
-
-        {/* 오른쪽에 기존 TicketInfo, TicketStatus, TicketComment 컴포넌트 배치 */}
         <div className="flex-1">
         <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
           <div className="flex justify-between items-center">

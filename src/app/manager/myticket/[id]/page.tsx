@@ -17,11 +17,11 @@ import TicketRequest from "@/components/Tickets/ticketRequest";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); 
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
+  const [countdown, setCountdown] = useState(1);
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -103,19 +103,23 @@ export default function ManagericketDetailPage() {
     }
   }
 
-  const handleCancelTicket = () => {
-    setIsModalOpen(true); // 모달 열기
-  };
-
   const confirmCompleteTicket = async () => {
-    if (!param) return;
-
     try {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(ticketId);
       console.log("완료 성공:", result);
+      showModal("티켓이 완료되었습니다."); 
 
       closeCompleteTicketModal();
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+      
+      setTimeout(() => {
+        clearInterval(timer);
+        router.push("/user/home");
+      }, 1000);
+
     } catch (error) {
       console.error("티켓 완료 중 오류 발생:", error);
 
@@ -123,22 +127,26 @@ export default function ManagericketDetailPage() {
   };
 
   const confirmAbortTicket = async () => {
-    if (!param) return;
-
     try {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketReject(ticketId);
       console.log("작업 반려 성공:", result);
-
+      showModal("작업이 반려되었습니다."); 
       closeAbortTicketModal();
+
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+      
+      setTimeout(() => {
+        clearInterval(timer);
+        router.push("/user/home");
+      }, 1000);
+
     } catch (error) {
       console.error("작업 반려 중 오류 발생:", error);
 
     }
-  };
-
-  const closeModal = () => {
-    setIsModalOpen(false); // 모달 닫기
   };
 
   if (!selectedTicket) {
@@ -150,7 +158,7 @@ export default function ManagericketDetailPage() {
   }; 
 
   const handleAbortTicket = () => {
-    setIsAbortTicketOpen(true); 
+    setIsAbortTicketOpen(true); //작업 반려 모달 열기
   };
 
   const closeAbortTicketModal = () => {

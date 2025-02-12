@@ -5,13 +5,14 @@ import axios from "axios";
 import AlertModal from "./AlertModal";
 import Modal from "./Modal";
 import { useRouter } from "next/navigation";
+import api from "@/lib/api/axios";
 
 // 담당자 정보를 가져오는 API 요청 함수
 const fetchManagers = async () => {
   const accessToken = sessionStorage.getItem("accessToken");
   if (!accessToken) throw new Error("인증 토큰이 없습니다.");
 
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/manager/members`, {
+  const response = await api.get("/api/manager/members", {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -30,8 +31,9 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
   const accessToken = sessionStorage.getItem("accessToken");
   if (!accessToken) throw new Error("인증 토큰이 없습니다.");
 
-  const response = await axios.patch(
-    `${process.env.NEXT_PUBLIC_BASE_URL}/api/manager/tickets/${ticketId}/delegate`,
+
+  const response = await api.patch(
+    `/api/manager/tickets/${ticketId}/delegate`,
     {
       delegateManagerId, // 변경할 담당자 ID
     },

@@ -15,7 +15,7 @@ export function TicketComplete({ isOpen, onClose, onConfirm }: TicketCompletePro
         <p className="text-black text-lg font-medium mb-6">티켓 작업을 완료하시겠습니까?</p>
         <div className="flex justify-center space-x-4">
           <Button label="취소" onClick={onClose} color={4} />
-          <Button label="완료하기" onClick={onConfirm} color={3} />
+          <Button label="완료하기" onClick={onConfirm} color={1} />
         </div>
       </div>
     </div>

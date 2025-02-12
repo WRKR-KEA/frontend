@@ -69,8 +69,8 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
   
       const method = data ? "PATCH" : "POST";
       const url = data
-        ? `http://172.16.211.53:8080/api/admin/guide/${guideId}`
-        : `http://172.16.211.53:8080/api/admin/guide/${categoryId}`;
+        ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/guide/${guideId}`
+        : `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/guide/${categoryId}`;
   
       const response = await fetch(url, {
         method,
@@ -112,7 +112,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         return;
       }
 
-      const response = await fetch(`http://172.16.211.53:8080/api/admin/guide/${guideId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/guide/${guideId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${accessToken}`,

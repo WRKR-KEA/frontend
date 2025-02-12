@@ -14,7 +14,7 @@ const fetchMemberList = async (queryParams: Record<string, string | number>) => 
   ).toString();
 
   const response = await axios.get(
-    `http://172.16.211.53:8080/api/admin/members?${queryString}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members?${queryString}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

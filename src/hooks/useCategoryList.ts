@@ -5,7 +5,7 @@ const fetchCategoryList = async () => {
   const accessToken = sessionStorage.getItem("accessToken");
 
   const response = await axios.get(
-    `http://172.16.211.53:8080/api/admin/categories`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

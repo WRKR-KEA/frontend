@@ -11,7 +11,7 @@ const fetchGuide = async (categoryId: string) => {
 
 
   const response = await axios.get(
-    `http://172.16.211.53:8080/api/user/guide/${categoryId}`, // ✅ API 경로 변경
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/guide/${categoryId}`, // ✅ API 경로 변경
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

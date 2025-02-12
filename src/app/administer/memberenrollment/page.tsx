@@ -81,7 +81,7 @@ const AdminMemberEnrollPage: React.FC = () => {
     
 
     try {
-      const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${accessToken}`, // ✅ 인증 토큰 추가
@@ -95,15 +95,15 @@ const AdminMemberEnrollPage: React.FC = () => {
       if (response.ok) {
         showModal("회원이 성공적으로 등록되었습니다.");
         setFormData({
-          email: "",
-          name: "",
           nickname: "",
+          role: "사용자",
+          profileImageFile: null, // 파일 리셋
+          name: "",
+          email: "",
+          agitUrl: "",
           department: "",
           phone: "",
           position: "",
-          role: "사용자", // 기본값 유지
-          profileImageFile: null, // 파일 리셋
-          agitUrl: ""
         });
       } else {
         showModal(`회원 등록 실패: ${data.message || "서버에서 요청을 거부했습니다."}`);

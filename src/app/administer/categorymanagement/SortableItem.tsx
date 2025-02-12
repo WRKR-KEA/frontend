@@ -83,7 +83,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
       const accessToken = sessionStorage.getItem("accessToken");
 
       const response = await fetch(
-        `http://172.16.211.53:8080/api/admin/categories/${categoryId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories/${categoryId}`,
         {
           method: "PATCH",
           headers: {
@@ -114,7 +114,7 @@ const SortableItem: React.FC<SortableItemProps> = ({
         const accessToken = sessionStorage.getItem("accessToken");
   
         const response = await fetch(
-          `http://172.16.211.53:8080/api/admin/categories/${categoryId}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories/${categoryId}`,
           {
             method: "DELETE",
             headers: {

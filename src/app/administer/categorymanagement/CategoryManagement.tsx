@@ -137,7 +137,7 @@ const CategoryManagement: React.FC = () => {
             const accessToken = sessionStorage.getItem("accessToken");
 
             const response = await fetch(
-                "http://172.16.211.53:8080/api/admin/categories",
+                `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`,
                 {
                     method: "POST",
                     headers: {
@@ -172,7 +172,7 @@ const CategoryManagement: React.FC = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken");
 
-            const response = await fetch("http://172.16.211.53:8080/api/admin/categories", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",

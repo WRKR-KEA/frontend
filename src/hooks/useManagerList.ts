@@ -15,7 +15,18 @@ const fetchManagerList = async () => {
   );
 
   console.log("✅ 응답 데이터:", response.data);
-  return response.data;
+
+  // ✅ 데이터가 없는 경우 빈 배열을 기본값으로 설정
+  const managers = response.data?.result.managers || [];
+  const principal = response.data?.result.principal || null;
+
+  // ✅ 본인(principal) 제외한 관리자 목록 필터링
+  const filteredManagers = principal
+    ? managers.filter((manager: any) => manager.memberId !== principal.memberId)
+    : managers;
+
+  // ✅ principal이 존재하면 가장 위에 추가
+  return principal ? [principal, ...filteredManagers] : filteredManagers
 };
 
 export const useManagerListQuery = () => {

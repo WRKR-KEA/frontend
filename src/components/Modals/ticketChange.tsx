@@ -4,6 +4,7 @@ import Button from "@/components/Buttons/Button";
 import axios from "axios";
 import AlertModal from "./AlertModal";
 import Modal from "./Modal";
+import { useRouter } from "next/navigation";
 
 // 담당자 정보를 가져오는 API 요청 함수
 const fetchManagers = async () => {
@@ -55,6 +56,9 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
   const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null); // 선택된 담당자 ID
+  const [countdown, setCountdown] = useState(1);
+  const router = useRouter();
+  
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -102,8 +106,16 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
 
     try {
       await changeTicketManager(ticketId, selectedManagerId);
-      showModal("변경되었습니다!"); // 변경 동작을 구현
-      closeModal();
+      showModal("담당자 변경이 완료되었습니다."); 
+
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+      
+      setTimeout(() => {
+        clearInterval(timer);
+        router.push("/user/home");
+      }, 1000);
     } catch (err: any) {
       setError(err.message);
     }

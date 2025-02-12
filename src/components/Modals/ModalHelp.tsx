@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-interface ModalProps {
+interface ModalHelpProps {
   onClose: () => void;
   children: React.ReactNode;
 }
 
-export default function Modal({ onClose, children }: ModalProps) {
+export default function ModalHelp({ onClose, children }: ModalHelpProps) {
   const [isShowing, setIsShowing] = useState(false);
 
   useEffect(() => {

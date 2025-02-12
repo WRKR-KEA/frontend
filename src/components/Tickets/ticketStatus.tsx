@@ -12,8 +12,8 @@ export function TicketStatus({
   const isCancelled = status === 'CANCEL';
 
   return (
-    <div className={`bg-component p-4 rounded-md flex-1 min-w-96 ${isRejected ? 'bg-opacity-50' : ''}`}>
-      <h2 className="text-md font-semibold mb-12">상태</h2>
+    <div className={`bg-component p-4 rounded-md flex-1 min-w-96 mb-2 pb-12 ${isRejected ? 'bg-opacity-50' : ''}`}>
+      <h2 className="text-md font-semibold mb-6">상태</h2>
       <div className="px-4">
         <div className="flex items-center justify-around relative">
           {/* 작업 요청 */}

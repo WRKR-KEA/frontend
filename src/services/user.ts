@@ -14,27 +14,27 @@ export async function fetchComments(ticketId: string) {
 export async function postComment(
   ticketId: string,
   content: string,
-  attachments: string[] = [],
+  attachments: File[] = [],
 ) {
   try {
     const formData = new FormData();
+    const accessToken = sessionStorage.getItem("accessToken");
 
-    // 기본 파라미터 설정
-    const params = new URLSearchParams({
-      content: content,
+    // CommentRequest 객체 추가
+    formData.append('CommentRequest', JSON.stringify({ content }));
+
+    // attachments가 있을 때만 첨부파일 추가
+    attachments.forEach((file) => {
+      formData.append('attachments', file);
     });
 
-    // attachments가 있을 때만 추가
-    if (attachments.length > 0) {
-      params.append('attachments', JSON.stringify(attachments));
-    }
-
     const { data } = await api.post(
-      `/api/user/tickets/${ticketId}/comments?${params}`,
+      `/api/user/tickets/${ticketId}/comments`,
       formData,
       {
         headers: {
           'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${accessToken}`,  
         },
       },
     );

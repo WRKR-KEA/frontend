@@ -20,6 +20,7 @@ import {
     sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import InputModal from "@/components/Modals/InputModal";
+import axios from "axios";
 
 interface Category {
     categoryId: number;
@@ -28,13 +29,14 @@ interface Category {
 
 const CategoryManagement: React.FC = () => {
     const { data: categoryData, isLoading, isError, refetch } = useCategoryListQuery();
+    console.log(categoryData)
     const [isInitialRender, setIsInitialRender] = useState(true); // ✅ 최초 렌더링 감지 플래그
     const [categories, setCategories] = useState<Category[]>([]);
     const [activeCategory, setActiveCategory] = useState<Category | null>(null); // ✅ 드래그 중인 아이템
     const [templateOpen, setTemplateOpen] = useState(false)
     const [helpOpen, setHelpOpen] = useState(false)
     const [categoryName, setCategoryName] = useState("")
-
+    const [categoryAbb, setCategoryAbb] = useState("")
     const [modalState, setModalState] = useState({
         isOpen: false,
         title: "",
@@ -68,7 +70,7 @@ const CategoryManagement: React.FC = () => {
             onClose: () => {
                 setInputModalState(prev => ({ ...prev, isOpen: false }));
             },
-            
+
 
         });
     };
@@ -127,37 +129,37 @@ const CategoryManagement: React.FC = () => {
     // ✅ 카테고리 추가 함수
     const handleAddCategory = async () => {
         try {
+            if (categoryName.trim() === "") {
+                showModal("카테고리 이름을 입력해주세요.");
+                return;
+            }
 
-        if (categoryName === "") {
-            showModal("카테고리 이름을 입력해주세요.");
-            return;
-        }
-
-        const newSeq = categories.length + 1;
+            const newSeq = categories.length + 1;
             const accessToken = sessionStorage.getItem("accessToken");
 
-            const response = await fetch(
+            const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`,
                 {
-                    method: "POST",
+                    name: categoryName,
+                    seq: newSeq,
+                    abbreviation: categoryAbb
+                }, // 요청 데이터
+                {
                     headers: {
-                        "Content-Type": "application/json",
                         Authorization: `Bearer ${accessToken}`,
                     },
-                    body: JSON.stringify({ name: categoryName, seq: newSeq }),
                 }
             );
 
-            if (!response.ok) {
-                throw new Error("카테고리 생성 실패");
+            if (response.status === 201 || response.status === 200) {
+                await refetch();
+                showModal("새로운 카테고리가 추가되었습니다.");
+            } else {
+                throw response.data;
             }
-            await refetch();
-
-            showModal("새로운 카테고리가 추가되었습니다.");
-
         } catch (error) {
-            console.error("❌ 카테고리 추가 오류:", error);
-            showModal(error);
+            console.log("❌ 카테고리 추가 오류:", error);
+            showModal(error?.response.data.message);
         }
     };
 
@@ -202,7 +204,7 @@ const CategoryManagement: React.FC = () => {
     );
 
     return (
-        <div className="bg-gray-100 py-10 px-6">
+        <div className="bg-gray-50 py-10 px-6">
             <h1 className="max-w-6xl mx-auto text-2xl font-bold mb-4 text-gray-800">카테고리 관리</h1>
             <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
                 {isLoading ? (
@@ -223,7 +225,7 @@ const CategoryManagement: React.FC = () => {
                                         key={category.categoryId}
                                         categoryId={category.categoryId}
                                         name={category.name}
-
+                                        abbreviation={category.abbreviation}
                                         onHelp={onHelp}
                                         onTemplate={onTemplate}
                                         refetchList={refetch}
@@ -258,7 +260,7 @@ const CategoryManagement: React.FC = () => {
 
                 <button
                     className="w-full mt-6 px-6 py-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
-                    onClick={()=>showInputModal("카테고리 이름을 입력하세요", "추가")}
+                    onClick={() => showInputModal("카테고리 이름을 입력하세요", "추가")}
                 >
                     카테고리 추가
                 </button>
@@ -273,11 +275,16 @@ const CategoryManagement: React.FC = () => {
             )}
 
             {inputModalState.isOpen && (
-                <Modal onClose={inputModalState.onClose}>
+                <Modal onClose={() => {
+                    inputModalState.onClose()
+                    setCategoryAbb("")
+                    setCategoryName("")
+                }}>
                     <InputModal
                         title={inputModalState.title}
                         onClick={inputModalState.onClose}
                         setCategoryName={setCategoryName}
+                        setCategoryAbb={setCategoryAbb}
                         handleAddCategory={handleAddCategory}
                     />
                 </Modal>

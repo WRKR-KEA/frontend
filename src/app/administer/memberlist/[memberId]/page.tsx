@@ -1,13 +1,14 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useMemberDetailQuery } from "@/hooks/useMemberDetail";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import Modal from "@/components/Modals/Modal";
 import AlertModal from "@/components/Modals/AlertModal";
-
+import Button from "@/components/Buttons/Button";
+import axios from "axios";
 export default function AdminMemberDetailPage({ params }: { params: { memberId: string } }) {
-  const { memberId } = use(params); // ✅ params 언래핑
+  const { memberId } = useParams()
   const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -21,34 +22,29 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
     role: "",
     profileImage: "",
     agitUrl: "",
-    agitNotification: true,
-    emailNotification: true,
-    serviceNotification: true,
   });
+
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    btnText: '',
+    btnText: "닫기",
     onClose: () => { },
   });
 
-  const showModal = (title: string, btnText = '닫기') => {
+  const showModal = (title: string, btnText = "닫기") => {
     setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
-        setModalState(prev => ({ ...prev, isOpen: false }));
+        setModalState((prev) => ({ ...prev, isOpen: false }));
       },
-
     });
   };
 
-  // ✅ 멤버 상세 정보 가져오기
   const { data, isLoading, error, refetch } = useMemberDetailQuery(memberId);
-  console.log("유저디테일정보", data);
 
-  // ✅ 데이터 로딩 후 입력 필드 업데이트
+
   useEffect(() => {
     if (data) {
       setEditableData({
@@ -58,17 +54,14 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
         department: data.department || "",
         position: data.position || "",
         phone: data.phone || "",
-        role: data.role || "", // 기본값 설정
+        // role 값을 한글로 변환하여 저장
+        role: data.role === "USER" ? "사용자" : "담당자",
         profileImage: data.profileImage || "",
         agitUrl: data.agitUrl || "",
-        agitNotification: data.agitNotification || true,
-        emailNotification: data.emailNotification || true,
-        serviceNotification: data.serviceNotification || true,
       });
     }
   }, [data]);
 
-  // ✅ 입력값 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setEditableData((prev) => ({
@@ -77,7 +70,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
     }));
   };
 
-  // ✅ 멤버 정보 업데이트 요청
+
   const handleSave = async () => {
     try {
       const accessToken = sessionStorage.getItem("accessToken");
@@ -85,203 +78,192 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
         showModal("로그인이 필요합니다.");
         return;
       }
-
-      const requestBody = {
+  
+      const updatedData = {
         email: editableData.email.trim(),
         name: editableData.name.trim(),
         nickname: editableData.nickname.trim(),
         department: editableData.department.trim(),
         position: editableData.position.trim(),
         phone: editableData.phone.trim(),
-        role: editableData.role === "사용자" ? "USER" : "MANAGER", // 역할 변환
-        profileImage: editableData.profileImage.trim(),
+        role: editableData.role === "사용자" ? "USER" : "MANAGER",
         agitUrl: editableData.agitUrl.trim(),
-        agitNotification: editableData.agitNotification,
-        emailNotification: editableData.emailNotification,
-        serviceNotification: editableData.serviceNotification
       };
-
-      console.log("🔹 업데이트 요청 데이터:", requestBody);
-
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members/${memberId}`, {
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      console.log("🔹 서버 응답 상태:", response.status, response.statusText);
-      const responseData = await response.json();
-      console.log("🔹 서버 응답 데이터:", responseData);
-
-      if (!response.ok) {
-        throw new Error(responseData.message || "업데이트 실패");
+  
+      const formData = new FormData();
+      formData.append("request", new Blob([JSON.stringify(updatedData)], { type: "application/json" }));
+  
+      // ✅ 프로필 이미지가 있으면 추가
+      if (editableData.profileImageFile) {
+        formData.append("profileImage", editableData.profileImageFile);
       }
+  
+      const response = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members/${memberId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+  
+      if (response.status === 200 || response.status === 201) {
+        await refetch();
+        showModal("회원 정보가 성공적으로 수정되었습니다.");
+        setIsEditing(false);
+      } else {
+        throw response.data;
+    }
 
-      refetch()
-      showModal("회원 정보가 성공적으로 수정되었습니다.");
-      setIsEditing(false); // ✅ 수정 모드 종료
     } catch (error) {
       console.error("❌ 업데이트 요청 실패:", error);
-      showModal("회원 정보 수정에 실패했습니다.");
+      showModal(error?.response.data.message);
     }
   };
+  
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      // ✅ 파일 미리보기 (FileReader 사용)
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditableData((prev) => ({
+          ...prev,
+          profileImage: reader.result as string, // Base64 URL 저장 (미리보기용)
+        }));
+      };
+      reader.readAsDataURL(file);
+
+      // ✅ 상태에 파일 저장 (서버 전송용)
+      setEditableData((prev) => ({
+        ...prev,
+        profileImageFile: file, // 실제 파일 저장 (FormData 전송 시 필요)
+      }));
+    }
+  };
+
+
 
   if (isLoading) return <p>로딩 중...</p>;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (
-    <div className="bg-white flex justify-center p-8">
+    <div className="bg-gray-50 flex flex-col items-center p-8">
+      <h1 className="w-full max-w-4xl text-2xl font-bold text-gray-800 mb-4 text-left">회원 상세</h1>
+
       <div className="bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[600px]">
-        {/* 상단 프로필 및 기본 정보 */}
+        {/* 프로필 및 기본 정보 */}
         <div className="flex items-center justify-between border-b pb-6">
-          {/* 프로필 이미지 & 사용자 정보 */}
           <div className="flex items-center space-x-8">
             <div className="relative">
+              {/* 파일 업로드 input (숨김) */}
+              <input
+                type="file"
+                id="profileImageInput"
+                accept="image/*"
+                className="hidden"
+                onChange={isEditing ? handleFileChange : undefined} // 수정 모드일 때만 파일 변경 허용
+              />
+
+              {/* 프로필 이미지 (미리보기) */}
               <img
                 src={editableData.profileImage || "/adminProfile.png"}
                 alt={editableData.name}
-                className="w-32 h-32 rounded-full object-cover"
+                className={`w-32 h-32 rounded-full object-cover ${isEditing ? "cursor-pointer" : "cursor-default"}`}
+                onClick={isEditing ? () => document.getElementById("profileImageInput")?.click() : undefined}
               />
             </div>
+
+
+
             <div className="space-y-2">
               {isEditing ? (
                 <input
                   type="text"
-                  name="name"
-                  value={editableData.name}
+                  name="nickname"
+                  value={editableData.nickname}
                   onChange={handleInputChange}
                   className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 focus:outline-none h-10"
+                  required
                 />
               ) : (
                 <h1 className="text-2xl font-bold text-gray-800">{editableData.nickname}</h1>
               )}
+
               <div className="flex items-center space-x-4 text-gray-500">
-                {isEditing ? (
-                  <select
-                    name="role"
-                    value={editableData.role}
-                    onChange={handleInputChange}
-                    className="text-sm font-semibold text-gray-500 h-10"
-                  >
-                    <option value="사용자">사용자</option>
-                    <option value="담당자">담당자</option>
-                  </select>
-                ) : (
-                  <p>{editableData.role === "USER" ? "사용자" : "담당자"}</p>
-                )}
+
+                <p>{editableData.role === "USER" ? "사용자" : "담당자"}</p>
+
               </div>
             </div>
           </div>
-
-          {/* 비밀번호 변경 버튼 (오른쪽 끝) */}
-
-          <button
-            onClick={() => router.push("/changepassword")}
-            className="px-6 py-2 bg-red-500 text-white rounded-md ml-auto"
-          >
-            비밀번호 변경
-          </button>
         </div>
 
-        {/* 회원 정보 & 알림 설정 2열 배치 */}
-        <div className="grid grid-cols-2 gap-12 mt-8">
-          {/* 좌측: 회원 정보 */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold text-gray-500 mb-2">회원 정보</h2>
-            <div className="border-t border-gray-300 mb-4"></div>
+        {/* 회원 정보 입력 폼 */}
+        <div className="grid grid-cols-2 gap-6 mt-8">
+          {[
+            { label: "이름", name: "name", type: "text" },
+            { label: "이메일 주소", name: "email", type: "email" },
+            { label: "전화번호", name: "phone", type: "tel" },
+            { label: "아지트 URL", name: "agitUrl", type: "text" },
+            { label: "부서", name: "department", type: "text" },
+            { label: "직책", name: "position", type: "text" },
+          ].map((field) => (
+            <div key={field.name} className="mb-6">
+              <h2 className="text-sm font-semibold text-gray-500 mb-2">{field.label}</h2>
+              {isEditing ? (
+                <input
+                  type={field.type}
+                  name={field.name}
+                  value={editableData[field.name] || ""}
+                  onChange={handleInputChange}
+                  className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none h-10"
+                  required
+                />
 
-            {[
-              { label: "이름", name: "name", type: "text" },
-              { label: "이메일 주소", name: "email", type: "email" },
-              { label: "전화번호", name: "phone", type: "tel" },
-              { label: "아지트 URL", name: "agitUrl", type: "text" },
-              { label: "부서", name: "department", type: "text" },
-              { label: "직책", name: "position", type: "text" },
-            ].map((field) => (
-              <div key={field.name} className="mb-6">
-                <h2 className="text-sm font-semibold text-gray-500 mb-2">{field.label}</h2>
-                {isEditing ? (
-                  <input
-                    type={field.type}
-                    name={field.name}
-                    value={editableData[field.name] ? editableData[field.name] : "미등록"}
-                    onChange={handleInputChange}
-                    className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none h-10"
-                  />
-                ) : field.name === "email" || field.name === "agitUrl" ? (
-                  <a href={editableData[field.name]} className="text-blue-500">
-                    {editableData[field.name]}
-                  </a>
-                ) : (
-                  <p className="text-gray-700">{editableData[field.name]}</p>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* 우측: 알림 설정 */}
-          <div className="space-y-6">
-            <h2 className="text-sm font-semibold text-gray-500 mb-2">알림 설정</h2>
-            <div className="border-t border-gray-300 mb-4"></div>
-
-            <div className="space-y-6">
-              {[
-                { label: "아지트 알림", name: "agitNotification" },
-                { label: "이메일 알림", name: "emailNotification" },
-                { label: "서비스 알림", name: "serviceNotification" },
-              ].map((option) => (
-                <div key={option.name} className="flex justify-between items-center">
-                  <span className="text-gray-700">{option.label}</span>
-
-                  <label className={`relative inline-flex items-center cursor-pointer ${!isEditing ? "opacity-50 cursor-not-allowed" : ""}`}>
-                    <input
-                      type="checkbox"
-                      className="sr-only peer"
-                      checked={editableData[option.name]}
-                      onChange={() => handleToggle(option.name)}
-                      disabled={!isEditing} // isEditing이 false면 비활성화
-                    />
-
-                    <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-900 relative transition">
-                      <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transform peer-checked:translate-x-5 transition"></div>
-                    </div>
-                  </label>
-                </div>
-
-              ))}
+              ) : (
+                <p className="text-gray-700 px-2 py-2 border-b-2 border-transparent">{editableData[field.name] || "미등록"}</p>
+              )}
             </div>
-          </div>
+          ))}
         </div>
+
 
         {/* 수정/저장 버튼 */}
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex justify-center gap-4">
           {isEditing ? (
             <>
-              <button onClick={handleSave} className="px-6 py-3 bg-blue-500 text-white rounded-md">
-                저장
-              </button>
-              <button onClick={() => setIsEditing(false)}
-                className="px-6 py-3 bg-gray-200 rounded-md ml-4">
-                취소
-              </button>
+              <Button
+                label="저장"
+                onClick={handleSave}
+                color={1}
+                className=""
+              />
+              <Button
+                label="취소"
+                onClick={() => setIsEditing(false)}
+                color={6}
+                className=""
+              />
+
             </>
           ) : (
-            <button onClick={() => setIsEditing(true)} className="px-6 py-3 bg-gray-200 rounded-md">
-              수정
-            </button>
+            <Button
+              label="수정"
+              onClick={() => setIsEditing(true)}
+              color={6}
+              className=""
+            />
           )}
         </div>
       </div>
+
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>
-          <AlertModal
-            title={modalState.title}
-            onClick={modalState.onClose}
-            btnText={modalState.btnText}
-          />
+          <AlertModal title={modalState.title} onClick={modalState.onClose} btnText={modalState.btnText} />
         </Modal>
       )}
     </div>

@@ -7,7 +7,7 @@ interface SearchProps {
 
 export const Search = ({ placeHolder, onSearchChange}: SearchProps) => {
   const [searchInput, setSearchInput] = useState("");
-  console.log(searchInput);
+  console.log("🌟 서치 인풋: ",searchInput);
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchInput(e.target.value);
     onSearchChange(e.target.value);

@@ -6,7 +6,6 @@ type FilterTabProps = {
 };
 
 export function FilterTab({ activeTab, handleTabClick }: FilterTabProps) {
-console.log(activeTab);  
   return (
     <div className="flex border-gray-200 w-full items-center">
       <button

@@ -1,4 +1,7 @@
-import api from "@/lib/api/axios";
+import api from '@/lib/api/axios';
+import { AxiosResponse } from 'axios';
+
+const accessToken = sessionStorage.getItem("accessToken");
 
 // (GET) 담당자 티켓 목록 요청
 export async function fetchManagerTicketList(
@@ -21,7 +24,6 @@ export async function fetchManagerTicketList(
 
 // (GET) 티켓 상세 조회
 export async function fetchManagerTicket(ticketId: string) {
-  const accessToken = sessionStorage.getItem("accessToken");
   try {
     const { data } = await api.get(`/api/manager/tickets/${ticketId}`, {
       headers: {
@@ -42,15 +44,21 @@ export async function fetchManagerDepartmentTicket(
   startDate?: string,
   endDate?: string,
   page?: number,
-  size?: number
+  size?: number,
 ) {
   try {
     const { data } = await api.get(
-     `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`
-    );
+     `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`,
+     {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
     return data;
   } catch (error) {
-    console.error("부서 전체 티켓 조회 및 검색에 실패했습니다. :", error);
+    console.error('부서 전체 티켓 조회 및 검색에 실패했습니다. :', error);
   }
 }
 
@@ -60,31 +68,38 @@ export async function fetchManagerDepartmentTicketExcel(
   query?: string,
   status?: string,
   startDate?: string,
-  endDate?: string
+  endDate?: string,
 ) {
   try {
     const { data } = await api.get(
       `/api/manager/tickets/department/excel?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}`, {
         responseType: 'blob',
-      }
+      },
     );
     console.log(data);
     return data;
   } catch (error) {
-    console.error("부서 전체 티켓 조회 및 검색 결과 엑셀 다운로드에 실패했습니다. :", error);
+    console.error('부서 전체 티켓 조회 및 검색 결과 엑셀 다운로드에 실패했습니다. :', error);
   }
 }
 
 // (GET) 기간별 & 티켓 상태별 티켓 개수 조회
 export async function fetchManagerStatistics(
-  date?: { date: string },
-  type?: string,
-  status?: string,
+  date: string,
+  type: string,
+  status: string,
 ) {
   try {
-    const { data } = await api.get(
-      `/api/manager/statistics/count?date=${date?.date}&type=${type}&status=${status}`,
-    );
+    let data: AxiosResponse<any, any>;
+    if (status == null) {
+      data = await api.get(
+        `/api/manager/statistics/count?date=${date}&type=${type}&status=REQUEST`,
+      );
+    } else {
+      data = await api.get(
+        `/api/manager/statistics/count?date=${date}&type=${type}&status=${status}`,
+      );
+    }
     return data;
   } catch (error) {
     console.error(
@@ -148,11 +163,10 @@ export async function updateManagerTicketPin(ticketData: {
 }
 
 // (PATCH) 담당자 - 티켓 승인
-export async function updateManagerTicketApprove(ticketIds: string[]) {
+export async function updateManagerTicketApprove(ticketId: string) {
   try {
-    const queryString = ticketIds.map((id) => `ticketId=${id}`).join('&');
     const { data } = await api.patch(
-      `/api/manager/tickets/approve?${queryString}`,
+      `/api/manager/tickets/approve?ticketId=${encodeURIComponent(ticketId)}`
     );
     return data;
   } catch (error) {
@@ -177,13 +191,29 @@ export async function postManagerStatistics(
   }
 }
 
-export async function getTicketStatusSummery(
+export async function postSecondCategoryManagerStatistics(
   statisticsType: string,
-  statisticsData: string,
+  parentCategoryId: string,
+  statisticsData: { date: string },
 ) {
   try {
     const { data } = await api.post(
-      `/api/manager/statistics/${statisticsType}/status?date=${statisticsData}`,
+      `/api/manager/statistics/${statisticsType}/${parentCategoryId}`,
+      statisticsData,
+    );
+    return data;
+  } catch (error) {
+    console.error('카테고리별 통계 조회에 실패했습니다. :', error);
+  }
+}
+
+export async function getTicketStatusSummery(
+  statisticsType: string,
+  date: string,
+) {
+  try {
+    const { data } = await api.get(
+      `/api/manager/statistics/${statisticsType}/status?date=${date}`,
     );
     console.log(data);
     return data;

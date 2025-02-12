@@ -22,6 +22,7 @@ export default function ManagericketDetailPage() {
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
   const [ticketId, setTicketId] = useState('');
   const param = useParams();
+  const [countdown, setCountdown] = useState(1);
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -94,11 +95,19 @@ export default function ManagericketDetailPage() {
   const confirmAccept = async () => {
     try {
 
-      const result = await updateManagerTicketApprove([param.id]);
-      console.log("작업 승인 성공:", result);
-
-      
+      const result = await updateManagerTicketApprove(ticketId);
+      console.log("요청 승인 성공:", result);
+      showModal("요청이 승인되었습니다."); 
       setIsModalOpen(false); // 모달 닫기
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+      
+      setTimeout(() => {
+        clearInterval(timer);
+        router.push("/manager/home");
+      }, 1000);
+
     } catch (error) {
       console.error("작업 승인 중 오류 발생:", error);
       

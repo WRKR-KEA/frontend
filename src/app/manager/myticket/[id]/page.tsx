@@ -15,7 +15,7 @@ import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import TicketRequest from "@/components/Tickets/ticketRequest";
 
-export default function ManagericketDetailPage() {
+export default function ManagerTicketDetailPage() {
   const router = useRouter();
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
@@ -117,7 +117,7 @@ export default function ManagericketDetailPage() {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/user/home");
+        router.push("/manager/home");
       }, 1000);
 
     } catch (error) {
@@ -140,7 +140,7 @@ export default function ManagericketDetailPage() {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/user/home");
+        router.push("/manager/home");
       }, 1000);
 
     } catch (error) {

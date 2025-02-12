@@ -23,7 +23,7 @@ export async function createTicket(userId: number, ticketData: TicketData) {
         },
         withCredentials: true,
       });
-    console.log("Response Data:", response.data);
+    console.log("🌟 응답:", response.data);
     return response.data;
   } catch (error: any) {
     throw new Error(error.response?.data?.message || "티켓 생성에 실패했습니다.");

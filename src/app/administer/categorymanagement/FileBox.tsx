@@ -81,7 +81,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-2xl mx-auto mb-4">
       <div
         className={`border-2 border-dashed rounded-md p-6 text-center ${
           isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"

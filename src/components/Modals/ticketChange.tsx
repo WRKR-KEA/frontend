@@ -7,25 +7,6 @@ import Modal from "./Modal";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api/axios";
 
-// 담당자 정보를 가져오는 API 요청 함수
-const fetchManagers = async () => {
-  const accessToken = sessionStorage.getItem("accessToken");
-  if (!accessToken) throw new Error("인증 토큰이 없습니다.");
-
-  const response = await api.get("/api/manager/members", {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-    },
-  });
-
-  if (response.data.isSuccess) {
-    console.log("💁‍♀️ 담당자 리스트", response.data.result.managers);
-    return response.data.result.managers; // API 응답에서 담당자 리스트를 반환
-  } else {
-    throw new Error("담당자 데이터를 가져오는 데 실패했습니다.");
-  }
-};
-
 // 티켓 담당자 변경 API 요청 함수
 const changeTicketManager = async (ticketId: string, delegateManagerId: string) => {
   const accessToken = sessionStorage.getItem("accessToken");
@@ -54,7 +35,6 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
 
 export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const [managers, setManagers] = useState<any[]>([]); // 담당자 데이터 상태
   const [isLoading, setIsLoading] = useState(true); // 로딩 상태
   const [error, setError] = useState<string | null>(null); // 에러 상태
   const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null); // 선택된 담당자 ID
@@ -79,22 +59,6 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
 
     });
   };
-
-  useEffect(() => {
-    // 컴포넌트가 마운트되면 API를 호출하여 데이터 가져오기
-    const loadManagers = async () => {
-      try {
-        const data = await fetchManagers();
-        setManagers(data); // 데이터를 상태에 저장
-      } catch (err: any) {
-        setError(err.message);
-      } finally {
-        setIsLoading(false); // 로딩 상태 종료
-      }
-    };
-
-    loadManagers();
-  }, []);
 
   const closeModal = () => {
     setIsModalOpen(false); // 모달 닫기
@@ -122,12 +86,12 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
       setError(err.message);
     }
   };
-
-  // 로딩 중일 때 표시
-  if (isLoading) return <div>로딩 중...</div>;
-
-  // 에러 발생 시 표시
-  if (error) return <div>오류 발생: {error}</div>;
+  //
+  // // 로딩 중일 때 표시
+  // if (isLoading) return <div>로딩 중...</div>;
+  //
+  // // 에러 발생 시 표시
+  // if (error) return <div>오류 발생: {error}</div>;
 
   return (
     isModalOpen && (
@@ -136,7 +100,6 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
           {/* 데이터를 표시할 리스트 컴포넌트 */}
           <div className="max-h-[500px] overflow-y-auto">
             <ChangeMemberList
-              data={managers}
               onSelectManager={(managerId: string) => setSelectedManagerId(managerId)} // 담당자 선택 시 처리
             />
           </div>

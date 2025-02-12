@@ -103,7 +103,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
 
       console.log("🔹 업데이트 요청 데이터:", requestBody);
 
-      const response = await fetch(`http://172.16.211.53:8080/api/admin/members/${memberId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members/${memberId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",

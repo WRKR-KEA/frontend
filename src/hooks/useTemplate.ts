@@ -10,7 +10,7 @@ const fetchTemplate = async (categoryId: string) => {
   }
 
   const response = await axios.get(
-    `http://172.16.211.53:8080/api/user/templates/${categoryId}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/templates/${categoryId}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

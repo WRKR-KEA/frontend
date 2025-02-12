@@ -51,8 +51,8 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
 
       const method = data ? "PATCH" : "POST";
       const url = data
-        ? `http://172.16.211.53:8080/api/admin/templates/${categoryId}`
-        : `http://172.16.211.53:8080/api/admin/templates`;
+        ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/templates/${categoryId}`
+        : `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/templates`;
 
       const body = JSON.stringify({
         categoryId: !data ? categoryId : undefined,
@@ -98,7 +98,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
       }
 
       const response = await fetch(
-        `http://172.16.211.53:8080/api/admin/templates/${templateId}`,
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/templates/${templateId}`,
         {
           method: "DELETE",
           headers: {

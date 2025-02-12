@@ -11,7 +11,7 @@ const fetchManagers = async () => {
   const accessToken = sessionStorage.getItem("accessToken");
   if (!accessToken) throw new Error("인증 토큰이 없습니다.");
 
-  const response = await axios.get("http://172.16.211.53:8080/api/manager/members", {
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/manager/members`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
@@ -31,7 +31,7 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
   if (!accessToken) throw new Error("인증 토큰이 없습니다.");
 
   const response = await axios.patch(
-    `http://172.16.211.53:8080/api/manager/tickets/${ticketId}/delegate`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/manager/tickets/${ticketId}/delegate`,
     {
       delegateManagerId, // 변경할 담당자 ID
     },

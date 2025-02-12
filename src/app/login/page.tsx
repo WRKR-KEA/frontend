@@ -90,6 +90,7 @@ export default function LoginPage() {
           profileImage: response.data.result.profileImage,
           name: response.data.result.name,
           role: response.data.result.role,
+          nickname: response.data.result.nickname,
         });
         console.log("사용자 정보가 userStore에 저장되었습니다.");
       }

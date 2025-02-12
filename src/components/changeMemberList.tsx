@@ -50,7 +50,7 @@ const ChangeMemberList: React.FC<ChangeMemberListProps> = ({ onSelectManager }) 
             {data.map((member, index) => (
               <tr
                 key={member.memberId}
-                className={index % 2 === 0 && "bg-component"}
+                className={index % 2 === 0 ? "bg-component" : ""}
               >
                 <td className="px-4 py-2 w-10 min-w-10">
                   {index === 0 ? (

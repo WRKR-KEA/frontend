@@ -1,6 +1,8 @@
 import api from '@/lib/api/axios';
 import { AxiosResponse } from 'axios';
 
+const accessToken = sessionStorage.getItem("accessToken");
+
 // (GET) 담당자 티켓 목록 요청
 export async function fetchManagerTicketList(
   page?: number,
@@ -22,7 +24,6 @@ export async function fetchManagerTicketList(
 
 // (GET) 티켓 상세 조회
 export async function fetchManagerTicket(ticketId: string) {
-  const accessToken = sessionStorage.getItem("accessToken");
   try {
     const { data } = await api.get(`/api/manager/tickets/${ticketId}`, {
       headers: {
@@ -47,8 +48,14 @@ export async function fetchManagerDepartmentTicket(
 ) {
   try {
     const { data } = await api.get(
-      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`,
-    );
+     `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`,
+     {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
     return data;
   } catch (error) {
     console.error('부서 전체 티켓 조회 및 검색에 실패했습니다. :', error);

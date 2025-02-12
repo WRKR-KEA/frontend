@@ -8,56 +8,53 @@ import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
 import { TicketCancel } from "@/components/Modals/ticketCancel";
-import {fetchComments, fetchTicketDetail, updateTicket} from "@/services/user";
+import { fetchComments, fetchTicketDetail, updateTicket } from "@/services/user";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import Skeleton from "@/components/Skeleton"; // Assume you have a Skeleton component
 
 export default function UserTicketDetailPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [logs, setLogs] = useState([]);
+  const [isLoading, setIsLoading] = useState(true); // Track loading state
 
   useEffect(() => {
     const id = window.location.pathname.split("/").pop();
     if (id) {
       getTicketDetail(id).then(data => {
-        console.log('🎫 티켓 데이터', data);
+        console.log('🌟 티켓 데이터', data);
         setSelectedTicket(data);
-      })
+        setIsLoading(false); // Stop loading after fetching ticket
+      });
     }
   }, []);
 
   useEffect(() => {
     if (selectedTicket?.status == "REQUEST" || selectedTicket?.status == "CANCEL") return;
     getComments(selectedTicket).then(data => {
-      console.log('🐽 코멘트 데이터:', data)
-      setLogs(data)
-    })
-  }, [selectedTicket])
+      console.log('🌟 코멘트 데이터:', data);
+      setLogs(data);
+    });
+  }, [selectedTicket]);
 
   const getComments = async (ticket) => {
     try {
       const response = await fetchComments(ticket?.id);
-      console.log("🐦 코멘트 응답 데이터:", response, ticket?.id)
-      return response?.result.comments
-      .map(comment => {
+      console.log("🌟 코멘트 응답 데이터:", response, ticket?.id);
+      return response?.result.comments.map(comment => {
         if (comment.type === "SYSTEM") {
-          return {
-            log: comment.content
-          }
+          return { log: comment.content };
         } else {
-          return {
-            message: comment.content,
-            role: comment.type
-          }
+          return { message: comment.content, role: comment.type };
         }
-      })
+      });
     } catch (err) {
-      console.error(err)
-      return []
+      console.error(err);
+      return [];
     }
-  }
+  };
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchTicketDetail(ticketId);
@@ -75,34 +72,33 @@ export default function UserTicketDetailPage() {
       acceptDate: ticket.startedAt == null ? "―" : ticket.startedAt,
       updateDate: ticket.updatedAt == null ? "―" : ticket.updatedAt,
       completeDate: ticket.completedAt == null ? "―" : ticket.completedAt,
-    }
-  }
+    };
+  };
 
   const handleCancelTicket = () => {
     setIsModalOpen(true); 
   };
 
   const [modalState, setModalState] = useState({
-      isOpen: false,
-      title: "",
-      btnText:'',
-      onClose: () => {},
+    isOpen: false,
+    title: "",
+    btnText: '',
+    onClose: () => {},
+  });
+
+  const showModal = (title: string, btnText = '닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
     });
-  
-    const showModal = (title: string, btnText='닫기') => {
-      setModalState({
-        isOpen: true,
-        title,
-        btnText,
-        onClose: () => {
-          setModalState(prev => ({ ...prev, isOpen: false }));
-        },
-  
-      });
-    };
+  };
 
   const [countdown, setCountdown] = useState(1);
-  
+
   const confirmCancel = async () => {
     const response = await updateTicket(selectedTicket.id);
 
@@ -121,7 +117,7 @@ export default function UserTicketDetailPage() {
     const timer = setInterval(() => {
       setCountdown((prev) => (prev !== null ? prev - 1 : null));
     }, 1000);
-    
+
     setTimeout(() => {
       clearInterval(timer);
       router.push("/user/myticket");
@@ -134,8 +130,12 @@ export default function UserTicketDetailPage() {
     setIsModalOpen(false); 
   };
 
-  if (!selectedTicket) {
-    return <div>티켓 정보를 불러오는 중입니다...</div>; 
+  if (isLoading) {
+    return (
+      <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
+        <Skeleton width="100%" height="680px" />
+      </div>
+    );
   }
 
   return (
@@ -145,26 +145,24 @@ export default function UserTicketDetailPage() {
           <TicketRequest ticket={selectedTicket} />
         </div>
 
-        {/* 오른쪽에 기존 TicketInfo, TicketStatus, TicketComment 컴포넌트 배치 */}
         <div className="flex-1">
-        <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
-          <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
-            <div className="mt-[-12px]">
-            {selectedTicket.status === "REQUEST" && (
-              <Button label="요청 취소" onClick={handleCancelTicket} color={6} />
-            )}
+          <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+              <div className="mt-[-12px]">
+                {selectedTicket.status === "REQUEST" && (
+                  <Button label="요청 취소" onClick={handleCancelTicket} color={6} />
+                )}
+              </div>
             </div>
           </div>
-        </div>
           <TicketInfo ticket={selectedTicket} />
           <TicketStatus status={selectedTicket.status || selectedTicket.status} />
           <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-          <TicketComment ticketId={selectedTicket.id} logs={logs}/>
+          <TicketComment ticketId={selectedTicket.id} logs={logs} />
         </div>
       </div>
 
-      {/* TicketCancel 컴포넌트 */}
       <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>

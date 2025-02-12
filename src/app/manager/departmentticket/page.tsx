@@ -11,6 +11,7 @@ import { format } from "date-fns";
 import { fetchManagerDepartmentTicket, fetchManagerDepartmentTicketExcel } from "@/services/manager";
 import PagePagination from "@/components/pagination";
 import Button from "@/components/Buttons/Button";
+import Skeleton from "@/components/Skeleton";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -142,11 +143,12 @@ export default function DepartmentTicketListPage() {
       </div>
 
       <div className="relative min-h-[200px]">
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-60">
-            <span className="text-gray-500">로딩 중...</span>
-          </div>
-        )}
+      {isLoading ? (
+    <div className="flex flex-col items-center space-y-4">
+      <Skeleton width="100%" height="600px" />
+    </div>
+  ) : (
+    <>
         <TicketList_Depart
           tickets={tickets}
           maxTicketsToShow={maxTicketsToShow}
@@ -156,7 +158,6 @@ export default function DepartmentTicketListPage() {
           status={status || ""}
           onStatusChange={handleStatusChange}
         />
-      </div>
 
       <div className="flex justify-end mb-4">
         <Button label="다운로드" onClick={handleDownloadExcel} color={1} className="mr-2" />
@@ -172,6 +173,9 @@ export default function DepartmentTicketListPage() {
           onPageChange={handlePageChange}
         />
       </div>
+       </>
+      )}
+    </div>
     </div>
   );
 }

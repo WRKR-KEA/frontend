@@ -22,12 +22,16 @@ type TicketList_UserProps = {
   tickets: Ticket[];
   maxTicketsToShow: number;
   searchTerm: string;
+  onStatusChange: (status: string) => void;
+  status: string;
 };
 
 export function TicketList_User({
   tickets,
   maxTicketsToShow,
   searchTerm,
+  onStatusChange,
+  status,
 }: TicketList_UserProps) {
 
   const statusStyles: Record<string, string> = {
@@ -47,6 +51,7 @@ export function TicketList_User({
     setActiveTab(tab);
     setFilterStatus(tab);
     setCurrentPage(1);
+    onStatusChange(tab);
   };
 
   const handleTicketClick = (Id: string) => {
@@ -89,7 +94,6 @@ export function TicketList_User({
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-80">제목</th>
             <th className="px-4 py-2 w-32 min-w-32 text-center">담당자</th>
-            <th className="px-4 py-2 w-32 min-w-32 text-center">요청자</th>
             <th className="px-4 py-2 w-44 min-w-44 text-center">요청일</th>
             <th className="px-4 py-2 w-44 min-w-44 text-center">최근 변경일</th>
           </tr>
@@ -114,9 +118,8 @@ export function TicketList_User({
                   <HighlightText text={ticket.title} highlight={searchTerm} />
                 </td>
                 <td className="px-4 py-2 truncate text-center">
-                  <HighlightText text={ticket.handler} highlight={searchTerm} />
+                  <HighlightText text={ticket.handler || "-"} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2 truncate text-center">{ticket.requester}</td>
                 <td className="px-4 py-2 text-center">{ticket.requestDate}</td>
                 <td className="px-4 py-2 text-center">{ticket.updateDate}</td>
               </tr>

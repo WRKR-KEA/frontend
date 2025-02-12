@@ -16,10 +16,12 @@ interface ChangeMemberListProps {
 const ChangeMemberList: React.FC<ChangeMemberListProps> = ({ onSelectManager }) => {
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
 
+
   const { data, isLoading, error } = useManagerListQuery();
 
   if (isLoading) return <p>로딩 중...</p>;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
+
 
   const handleCheckboxChange = (index: number, managerId: string) => {
     // 선택된 행을 토글하고, 선택된 담당자의 ID를 부모로 전달

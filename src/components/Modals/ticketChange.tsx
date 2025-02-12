@@ -7,6 +7,27 @@ import Modal from "./Modal";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api/axios";
 
+
+// 담당자 정보를 가져오는 API 요청 함수
+const fetchManagers = async () => {
+  const accessToken = sessionStorage.getItem("accessToken");
+  if (!accessToken) throw new Error("인증 토큰이 없습니다.");
+
+  const response = await api.get("/api/manager/members", {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+
+  if (response.data.isSuccess) {
+    console.log("🌟 담당자 리스트", response.data.result.managers);
+    return response.data.result.managers; // API 응답에서 담당자 리스트를 반환
+  } else {
+    throw new Error("담당자 데이터를 가져오는 데 실패했습니다.");
+  }
+};
+
+
 // 티켓 담당자 변경 API 요청 함수
 const changeTicketManager = async (ticketId: string, delegateManagerId: string) => {
   const accessToken = sessionStorage.getItem("accessToken");
@@ -26,7 +47,7 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
   );
 
   if (response.data.isSuccess) {
-    console.log("담당자 변경이 완료 되었습니다. ", response.data);
+    console.log("🌟 담당자 변경이 완료 되었습니다. ", response.data);
     return response.data; // 성공적으로 변경되면 데이터 반환
   } else {
     throw new Error("담당자 변경에 실패했습니다.");

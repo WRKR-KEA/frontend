@@ -18,7 +18,7 @@ const fetchGuide = async (categoryId: string) => {
       },
     }
   );
-  console.log("가이드응답!",response)
+  console.log("🌟 가이드응답!",response)
   return response.data; // 필요한 데이터만 반환
 };
 

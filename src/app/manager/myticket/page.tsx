@@ -78,6 +78,7 @@ export default function ManagerTicketListPage() {
             ispinned: ticket.isPinned,
           }))
         );
+        console.log("✨ 담당 티켓 리스트: ",data.result.elements);
         setTotalPages(response.data.result.totalPages);
       } else {
         throw new Error(data.message);

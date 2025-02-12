@@ -19,6 +19,7 @@ import {
     SortableContext,
     sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
+import InputModal from "@/components/Modals/InputModal";
 
 interface Category {
     categoryId: number;
@@ -32,25 +33,46 @@ const CategoryManagement: React.FC = () => {
     const [activeCategory, setActiveCategory] = useState<Category | null>(null); // ✅ 드래그 중인 아이템
     const [templateOpen, setTemplateOpen] = useState(false)
     const [helpOpen, setHelpOpen] = useState(false)
+    const [categoryName, setCategoryName] = useState("")
 
     const [modalState, setModalState] = useState({
         isOpen: false,
         title: "",
         btnText: "",
-        onClose:()=>{},
+        onClose: () => { },
     })
 
-    const showModal = (title: string, btnText='닫기') => {
+    const [inputModalState, setInputModalState] = useState({
+        isOpen: false,
+        title: "",
+        btnText: "",
+        onClose: () => { },
+    })
+
+    const showModal = (title: string, btnText = '닫기') => {
         setModalState({
-          isOpen: true,
-          title,
-          btnText,
-          onClose: () => {
-            setModalState(prev => ({ ...prev, isOpen: false }));
-          },
-    
+            isOpen: true,
+            title,
+            btnText,
+            onClose: () => {
+                setModalState(prev => ({ ...prev, isOpen: false }));
+            },
         });
-      };
+    };
+
+    const showInputModal = (title: string, btnText = '닫기') => {
+        setInputModalState({
+            isOpen: true,
+            title,
+            btnText,
+            onClose: () => {
+                setInputModalState(prev => ({ ...prev, isOpen: false }));
+            },
+            
+
+        });
+    };
+
 
     useEffect(() => {
         if (categoryData?.result?.categories) {
@@ -59,15 +81,11 @@ const CategoryManagement: React.FC = () => {
         }
     }, [categoryData]);
 
-
     const onHelp = () => {
-        //도움말 보여주기
         setHelpOpen(true)
     }
 
     const onTemplate = () => {
-
-        //템플릿 보여주기
         setTemplateOpen(true)
     }
 
@@ -106,30 +124,27 @@ const CategoryManagement: React.FC = () => {
         }
     }, [categories]);
 
-
-
     // ✅ 카테고리 추가 함수
     const handleAddCategory = async () => {
-        const newName = prompt("새로운 카테고리 이름을 입력하세요:");
-        if (!newName) {
+        try {
+
+        if (categoryName === "") {
             showModal("카테고리 이름을 입력해주세요.");
             return;
         }
 
         const newSeq = categories.length + 1;
-
-        try {
             const accessToken = sessionStorage.getItem("accessToken");
 
             const response = await fetch(
-                "http://172.16.211.53:8080/api/admin/categories",
+                `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`,
                 {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                         Authorization: `Bearer ${accessToken}`,
                     },
-                    body: JSON.stringify({ name: newName, seq: newSeq }),
+                    body: JSON.stringify({ name: categoryName, seq: newSeq }),
                 }
             );
 
@@ -137,17 +152,14 @@ const CategoryManagement: React.FC = () => {
                 throw new Error("카테고리 생성 실패");
             }
             await refetch();
-            
+
             showModal("새로운 카테고리가 추가되었습니다.");
-            
+
         } catch (error) {
             console.error("❌ 카테고리 추가 오류:", error);
-            showModal("카테고리를 추가하는 중 오류가 발생했습니다.");
+            showModal(error);
         }
     };
-
-
-    
 
     const updateCategoryOrder = async (isAlert: boolean) => {
         if (!categories.length) return; // 카테고리가 없으면 실행하지 않음
@@ -160,7 +172,7 @@ const CategoryManagement: React.FC = () => {
         try {
             const accessToken = sessionStorage.getItem("accessToken");
 
-            const response = await fetch("http://172.16.211.53:8080/api/admin/categories", {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json",
@@ -183,8 +195,6 @@ const CategoryManagement: React.FC = () => {
         }
     };
 
-
-
     // ✅ DND 관련 설정
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -193,10 +203,8 @@ const CategoryManagement: React.FC = () => {
 
     return (
         <div className="bg-gray-100 py-10 px-6">
-            
+            <h1 className="max-w-6xl mx-auto text-2xl font-bold mb-4 text-gray-800">카테고리 관리</h1>
             <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-                <h1 className="text-2xl font-bold mb-6 text-gray-800">카테고리 관리</h1>
-
                 {isLoading ? (
                     <p></p>
                 ) : isError ? (
@@ -215,7 +223,7 @@ const CategoryManagement: React.FC = () => {
                                         key={category.categoryId}
                                         categoryId={category.categoryId}
                                         name={category.name}
-                                        
+
                                         onHelp={onHelp}
                                         onTemplate={onTemplate}
                                         refetchList={refetch}
@@ -238,33 +246,43 @@ const CategoryManagement: React.FC = () => {
                                         // justifyContent: "space-between",
                                     }}
                                 >
-                                    <img src="/hamburg.png" alt="drag" className="w-5" />
+                                    <img src="/hamburg.png" alt="drag" className="w-5 cursor-grabbing" />
                                     <span className="text-lg font-semibold text-gray-700">
                                         {activeCategory.name}
                                     </span>
                                 </div>
                             ) : null}
                         </DragOverlay>
-
-
                     </DndContext>
                 )}
 
                 <button
                     className="w-full mt-6 px-6 py-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
-                    onClick={handleAddCategory}
+                    onClick={()=>showInputModal("카테고리 이름을 입력하세요", "추가")}
                 >
                     카테고리 추가
                 </button>
             </div>
             {modalState.isOpen && (
-                <Modal onClose={modalState.onClose}>
+                <Modal onClose={modalState.onClose2}>
                     <AlertModal
                         title={modalState.title}
                         onClick={modalState.onClose}
-                        />
+                    />
                 </Modal>
             )}
+
+            {inputModalState.isOpen && (
+                <Modal onClose={inputModalState.onClose}>
+                    <InputModal
+                        title={inputModalState.title}
+                        onClick={inputModalState.onClose}
+                        setCategoryName={setCategoryName}
+                        handleAddCategory={handleAddCategory}
+                    />
+                </Modal>
+            )}
+
         </div>
     );
 };

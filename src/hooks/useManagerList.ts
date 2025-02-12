@@ -12,7 +12,7 @@ const fetchManagerList = async ({ page, size }: { page: number; size: number }) 
   console.log(`📌 요청: /api/manager/members/page?${queryParams}`);
 
   const response = await axios.get(
-    `http://172.16.211.53:8080/api/manager/members/page?${queryParams}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/manager/members/page?${queryParams}`,
     {
       headers: { Authorization: `Bearer ${accessToken}` },
     }

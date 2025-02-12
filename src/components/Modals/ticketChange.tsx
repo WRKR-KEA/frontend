@@ -31,6 +31,7 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
   const accessToken = sessionStorage.getItem("accessToken");
   if (!accessToken) throw new Error("인증 토큰이 없습니다.");
 
+
   const response = await api.patch(
     `/api/manager/tickets/${ticketId}/delegate`,
     {

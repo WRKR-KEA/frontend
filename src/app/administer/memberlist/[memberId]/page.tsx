@@ -28,11 +28,11 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    btnText:'',
-    onClose: () => {},    
+    btnText: '',
+    onClose: () => { },
   });
 
-  const showModal = (title: string, btnText='닫기') => {
+  const showModal = (title: string, btnText = '닫기') => {
     setModalState({
       isOpen: true,
       title,
@@ -40,7 +40,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
       },
-   
+
     });
   };
 
@@ -58,7 +58,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
         department: data.department || "",
         position: data.position || "",
         phone: data.phone || "",
-        role: data.role || "사용자", // 기본값 설정
+        role: data.role || "", // 기본값 설정
         profileImage: data.profileImage || "",
         agitUrl: data.agitUrl || "",
         agitNotification: data.agitNotification || true,
@@ -103,7 +103,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
 
       console.log("🔹 업데이트 요청 데이터:", requestBody);
 
-      const response = await fetch(`http://172.16.211.53:8080/api/admin/members/${memberId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members/${memberId}`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -156,7 +156,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
                   className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 focus:outline-none h-10"
                 />
               ) : (
-                <h1 className="text-2xl font-bold text-gray-800">{editableData.name}</h1>
+                <h1 className="text-2xl font-bold text-gray-800">{editableData.nickname}</h1>
               )}
               <div className="flex items-center space-x-4 text-gray-500">
                 {isEditing ? (
@@ -194,6 +194,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
             <div className="border-t border-gray-300 mb-4"></div>
 
             {[
+              { label: "이름", name: "name", type: "text" },
               { label: "이메일 주소", name: "email", type: "email" },
               { label: "전화번호", name: "phone", type: "tel" },
               { label: "아지트 URL", name: "agitUrl", type: "text" },
@@ -206,7 +207,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
                   <input
                     type={field.type}
                     name={field.name}
-                    value={editableData[field.name]}
+                    value={editableData[field.name] ? editableData[field.name] : "미등록"}
                     onChange={handleInputChange}
                     className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none h-10"
                   />
@@ -234,22 +235,22 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
               ].map((option) => (
                 <div key={option.name} className="flex justify-between items-center">
                   <span className="text-gray-700">{option.label}</span>
-                  {isEditing ? (
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={editableData[option.name]}
-                        onChange={() => handleToggle(option.name)}
-                      />
-                      <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-900 relative transition">
-                        <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transform peer-checked:translate-x-5 transition"></div>
-                      </div>
-                    </label>
-                  ) : (
-                    <p className="text-gray-700">{editableData[option.name] ? "수신함" : "수신안함"}</p>
-                  )}
+
+                  <label className={`relative inline-flex items-center cursor-pointer ${!isEditing ? "opacity-50 cursor-not-allowed" : ""}`}>
+                    <input
+                      type="checkbox"
+                      className="sr-only peer"
+                      checked={editableData[option.name]}
+                      onChange={() => handleToggle(option.name)}
+                      disabled={!isEditing} // isEditing이 false면 비활성화
+                    />
+
+                    <div className="w-11 h-6 bg-gray-300 rounded-full peer peer-checked:bg-blue-900 relative transition">
+                      <div className="absolute top-1 left-1 w-4 h-4 bg-white rounded-full shadow-md transform peer-checked:translate-x-5 transition"></div>
+                    </div>
+                  </label>
                 </div>
+
               ))}
             </div>
           </div>
@@ -263,7 +264,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
                 저장
               </button>
               <button onClick={() => setIsEditing(false)}
-                      className="px-6 py-3 bg-gray-200 rounded-md ml-4">
+                className="px-6 py-3 bg-gray-200 rounded-md ml-4">
                 취소
               </button>
             </>
@@ -276,9 +277,9 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
       </div>
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>
-          <AlertModal 
-            title={modalState.title} 
-            onClick={modalState.onClose} 
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
             btnText={modalState.btnText}
           />
         </Modal>

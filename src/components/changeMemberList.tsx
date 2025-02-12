@@ -53,11 +53,20 @@ const ChangeMemberList: React.FC<ChangeMemberListProps> = ({ onSelectManager }) 
                 className={index % 2 === 0 && "bg-component"}
               >
                 <td className="px-4 py-2 w-10 min-w-10">
-                  <input
-                    type="checkbox"
-                    checked={selectedRowIndex === index}
-                    onChange={() => handleCheckboxChange(index, member.memberId)}
-                  />
+                  {index === 0 ? (
+                    <input
+                      type="checkbox"
+                      checked={selectedRowIndex === index}
+                      onChange={() => handleCheckboxChange(index, member.memberId)}
+                      disabled
+                    />
+                  ) : (
+                    <input
+                      type="checkbox"
+                      checked={selectedRowIndex === index}
+                      onChange={() => handleCheckboxChange(index, member.memberId)}
+                    />
+                  )}
                 </td>
                 <td className="px-4 py-2">
                   <div className="flex items-center space-x-3">

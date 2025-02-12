@@ -115,7 +115,7 @@ export default function ManagerTicketListPage() {
       </div>
   
       <div className="relative min-h-[200px]">
-  {isLoading || tickets.length === 0 ? (
+  {isLoading? (
     <div className="flex flex-col items-center space-y-4">
       <Skeleton width="100%" height="600px" />
     </div>

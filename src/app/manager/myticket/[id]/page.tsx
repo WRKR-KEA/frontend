@@ -117,7 +117,7 @@ export default function ManagericketDetailPage() {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/user/home");
+        router.push("/manager/home");
       }, 1000);
 
     } catch (error) {
@@ -140,7 +140,7 @@ export default function ManagericketDetailPage() {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/user/home");
+        router.push("/manager/home");
       }, 1000);
 
     } catch (error) {

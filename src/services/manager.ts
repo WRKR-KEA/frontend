@@ -148,11 +148,10 @@ export async function updateManagerTicketPin(ticketData: {
 }
 
 // (PATCH) 담당자 - 티켓 승인
-export async function updateManagerTicketApprove(ticketIds: string[]) {
+export async function updateManagerTicketApprove(ticketId: string) {
   try {
-    const queryString = ticketIds.map((id) => `ticketId=${id}`).join('&');
     const { data } = await api.patch(
-      `/api/manager/tickets/approve?${queryString}`,
+      `/api/manager/tickets/approve?ticketId=${encodeURIComponent(ticketId)}`
     );
     return data;
   } catch (error) {

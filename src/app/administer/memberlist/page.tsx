@@ -20,11 +20,11 @@ export default function AdminMemberListPage() {
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    btnText:'',
-    onClose: () => {},
+    btnText: '',
+    onClose: () => { },
   });
 
-  const showModal = (title: string, btnText='닫기') => {
+  const showModal = (title: string, btnText = '닫기') => {
     setModalState({
       isOpen: true,
       title,
@@ -130,7 +130,7 @@ export default function AdminMemberListPage() {
     }
   };
 
-  if (isLoading) return <p>로딩 중...</p>;
+  if (isLoading) return <p></p>;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (
@@ -165,42 +165,47 @@ export default function AdminMemberListPage() {
           ))}
           <button
             onClick={handleDeleteMembers}
-            className="ml-auto px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
+            className={`ml-auto px-4 py-2 text-white rounded-md transition-all duration-200 shadow-sm 
+    ${selectedMembers.length > 0 ?
+                "bg-red-500 hover:bg-red-600 hover:shadow-md focus:ring-2 focus:ring-red-300"
+                : "bg-red-300 cursor-not-allowed opacity-50"}`}
+            disabled={selectedMembers.length === 0}
           >
             회원 삭제
           </button>
+
         </div>
 
         <div className="mt-3">
           <table className="w-full table-fixed border-collapse rounded-md">
             <thead>
-            <tr>
-              <th className="p-3 w-1/12"></th>
-              <th className="p-3 text-left w-3/12">아이디</th>
-              <th className="p-3 text-left w-2/12">이름</th>
-              <th className="p-3 text-left w-2/12">부서</th>
-              <th className="p-3 text-left w-2/12">직책</th>
-              <th className="p-3 text-left w-3/12">전화번호</th>
-              <th className="p-3 text-left w-4/12">이메일 주소</th>
-            </tr>
+              <tr>
+                <th className="p-3 w-1/12"></th>
+                <th className="p-3 text-left w-3/12">아이디</th>
+                <th className="p-3 text-left w-2/12">이름</th>
+                <th className="p-3 text-left w-2/12">부서</th>
+                <th className="p-3 text-left w-2/12">직책</th>
+                <th className="p-3 text-left w-3/12">전화번호</th>
+                <th className="p-3 text-left w-4/12">이메일 주소</th>
+              </tr>
             </thead>
             <tbody>
               {members?.elements?.map((row: any, index: number) => (
-                <tr key={index} className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}>
+                <tr key={index} className={index % 2 === 0 ? "bg-[#F5F5F5]" : ""}>
                   <td className="p-3 w-1/12">
                     <input
                       type="checkbox"
                       checked={selectedMembers.includes(row.memberId)}
                       onChange={() => handleCheckboxChange(row.memberId)}
-                      className="w-4 h-4 accent-[#4B5FC2] cursor-pointer rounded-md border-2 border-gray-400 transition-all duration-200 checked:bg-[#4B5FC2] checked:border-transparent focus:ring-2 focus:ring-[#4B5FC2] focus:outline-none"
+                      className="w-5 h-5 ml-2 accent-[#4B5FC2] cursor-pointer rounded-md border-2 border-gray-400 transition-all duration-200 checked:bg-[#4B5FC2] checked:border-transparent focus:ring-2 focus:ring-[#4B5FC2] focus:outline-none"
                     />
                   </td>
-                  
+
                   <td className="p-4 w-3/12">
-                  <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
+                    <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
                       <div className="flex items-center space-x-3">
                         <img
-                          src={row.avatar || "/userProfileImage.png"}
+                          src={row.profileImage || "userProfileImage.png"}
                           alt={row.name}
                           className="w-8 h-8 rounded-full object-cover"
                         />

@@ -66,19 +66,26 @@ const AdminMemberEnrollPage: React.FC = () => {
 
     // ✅ FormData 객체 생성 (파일 + JSON 데이터 포함)
     const formDataToSend = new FormData();
-    formDataToSend.append("email", formData.email.trim());
-    formDataToSend.append("name", formData.name.trim());
-    formDataToSend.append("nickname", formData.nickname.trim());
-    formDataToSend.append("department", formData.department.trim());
-    formDataToSend.append("phone", formData.phone.trim());
-    formDataToSend.append("position", formData.position.trim());
-    formDataToSend.append("role", formData.role);
+
+    // ✅ 요청 데이터(JSON)를 request 객체로 생성
+    const requestData = {
+      email: formData.email.trim(),
+      name: formData.name.trim(),
+      nickname: formData.nickname.trim(),
+      department: formData.department.trim(),
+      phone: formData.phone.trim(),
+      position: formData.position.trim(),
+      role: formData.role == "사용자" ? "USER" : "MANAGER",
+      agitUrl: formData.agitUrl.trim() || "",
+    };
+
+    // ✅ JSON 데이터 추가 (Swagger API의 request 객체 형식 유지)
+    formDataToSend.append("request", new Blob([JSON.stringify(requestData)], { type: "application/json" }));
 
     // ✅ 파일이 있으면 FormData에 추가
     if (formData.profileImageFile) {
       formDataToSend.append("profileImage", formData.profileImageFile);
     }
-    
 
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
@@ -96,7 +103,7 @@ const AdminMemberEnrollPage: React.FC = () => {
         showModal("회원이 성공적으로 등록되었습니다.");
         setFormData({
           nickname: "",
-          role: "사용자",
+          role: "USER", // Swagger API에 맞게 "USER" 유지
           profileImageFile: null, // 파일 리셋
           name: "",
           email: "",
@@ -115,6 +122,7 @@ const AdminMemberEnrollPage: React.FC = () => {
       setLoading(false);
     }
   };
+
 
 
   // 양식 다운로드 핸들러
@@ -185,8 +193,42 @@ const AdminMemberEnrollPage: React.FC = () => {
   return (
     <div className="bg-gray-50 flex justify-center p-8">
       <div className="w-full max-w-4xl">
-        {/* 제목을 왼쪽 상단으로 배치 */}
-        <h1 className="text-2xl font-bold text-gray-800 mb-4">회원 등록</h1>
+
+        <div className="w-full max-w-4xl">
+          {/* 제목과 버튼을 한 줄에 배치 */}
+          <div className="flex justify-between items-center mb-4">
+            {/* 제목 (왼쪽 정렬) */}
+            <h1 className="text-2xl font-bold text-gray-800">회원 등록</h1>
+
+            <div className="flex space-x-2">
+              <Button
+                label={<span className="whitespace-nowrap">양식 다운로드</span>}
+                onClick={handleDownloadTemplate}
+                color={6} // 빈파란색
+                className="flex-shrink-0 min-w-max px-4"
+              />
+              <Button
+                label={<span className="whitespace-nowrap">회원 일괄등록</span>}
+                onClick={() => {
+                  const fileInput = document.createElement('input');
+                  fileInput.type = 'file';
+                  fileInput.accept = '.xlsx, .xls'; // 엑셀 파일(.xlsx 및 .xls) 모두 허용
+                  fileInput.onchange = (e) => {
+                    const target = e.target as HTMLInputElement; // 타입 단언
+                    const file = target.files?.[0]; // 파일 선택
+                    if (file) {
+                      handleUploadMembers(file);
+                    }
+                  };
+                  fileInput.click(); // 파일 선택 대화상자 열기
+                }}
+                color={1} // 초록색
+                className="flex-shrink-0 min-w-max px-4"
+              />
+            </div>
+
+          </div>
+        </div>
 
         <div className="bg-white shadow-md rounded-lg p-12">
           {/* 상단 프로필 및 기본 정보 */}
@@ -205,7 +247,7 @@ const AdminMemberEnrollPage: React.FC = () => {
 
                 {/* 프로필 이미지 미리보기 */}
                 <img
-                  src={formData.profileImage || "/default-avatar.png"} // 기본 이미지 설정
+                  src={formData.profileImage || "/defaultProfileImage.jpg"} // 기본 이미지 설정
                   alt="프로필 이미지"
                   className="w-32 h-32 rounded-full object-cover cursor-pointer min-w-32"
                   onClick={() => document.getElementById("profileImageInput")?.click()} // 클릭 시 파일 업로드 창 열기
@@ -236,41 +278,9 @@ const AdminMemberEnrollPage: React.FC = () => {
               </div>
             </div>
 
-            {/* 버튼 추가 */}
-            <div className="flex justify-end ml-20"> {/* 여백 추가 */}
-              <Button
-                label={
-                  <>
-                    양식<br />
-                    다운로드
-                  </>
-                }
-                onClick={handleDownloadTemplate}
-                color={1} // 파란색
-                className="mr-2"
-              />
-              <Button
-                label={
-                  <>
-                    회원 정보<br />
-                    업로드
-                  </>
-                }
-                onClick={() => {
-                  const fileInput = document.createElement('input');
-                  fileInput.type = 'file';
-                  fileInput.accept = '.xlsx, .xls'; // 엑셀 파일(.xlsx 및 .xls) 모두 허용
-                  fileInput.onchange = (e) => {
-                    const target = e.target as HTMLInputElement; // 타입 단언
-                    const file = target.files?.[0]; // 파일 선택
-                    if (file) {
-                      handleUploadMembers(file);
-                    }
-                  };
-                  fileInput.click(); // 파일 선택 대화상자 열기
-                }}
-                color={3} // 초록색
-              />
+
+            <div className="flex justify-end ml-20 w-full"> {/* 여백 추가 */}
+
             </div>
           </div>
 
@@ -317,7 +327,7 @@ const AdminMemberEnrollPage: React.FC = () => {
                 onChange={handleChange}
                 className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none"
                 placeholder="아지트 URL을 입력하세요"
-                required
+               
               />
             </div>
 
@@ -363,18 +373,18 @@ const AdminMemberEnrollPage: React.FC = () => {
               />
             </div>
 
-
-
-
             {/* 등록 버튼 */}
-            <div className="col-span-2 mt-8">
-              <button
+            <div className="col-span-2 mt-4">
+              <Button
                 type="submit"
-                className="w-full bg-gray-200 text-gray-700 py-3 rounded-md font-semibold hover:bg-gray-300"
+                onClick={() => { }}
+                label="회원 등록"
+                className="w-full py-3 rounded-md font-semibold flex-shrink-0 min-w-max text-lg"
                 disabled={loading}
+                color={1}
               >
                 {loading ? "등록 중..." : "회원 등록하기"}
-              </button>
+              </Button>
             </div>
           </form>
         </div>

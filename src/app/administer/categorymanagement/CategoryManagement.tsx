@@ -20,6 +20,7 @@ import {
     sortableKeyboardCoordinates,
 } from "@dnd-kit/sortable";
 import InputModal from "@/components/Modals/InputModal";
+import axios from "axios";
 
 interface Category {
     categoryId: number;
@@ -127,37 +128,33 @@ const CategoryManagement: React.FC = () => {
     // ✅ 카테고리 추가 함수
     const handleAddCategory = async () => {
         try {
-
-        if (categoryName === "") {
-            showModal("카테고리 이름을 입력해주세요.");
-            return;
-        }
-
-        const newSeq = categories.length + 1;
+            if (categoryName.trim() === "") {
+                showModal("카테고리 이름을 입력해주세요.");
+                return;
+            }
+    
+            const newSeq = categories.length + 1;
             const accessToken = sessionStorage.getItem("accessToken");
-
-            const response = await fetch(
+    
+            const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`,
+                { name: categoryName, seq: newSeq }, // 요청 데이터
                 {
-                    method: "POST",
                     headers: {
-                        "Content-Type": "application/json",
                         Authorization: `Bearer ${accessToken}`,
                     },
-                    body: JSON.stringify({ name: categoryName, seq: newSeq }),
                 }
             );
-
-            if (!response.ok) {
-                throw new Error("카테고리 생성 실패");
+    
+            if (response.status === 201 || response.status === 200) {
+                await refetch();
+                showModal("새로운 카테고리가 추가되었습니다.");
+            } else {
+                throw response.data;
             }
-            await refetch();
-
-            showModal("새로운 카테고리가 추가되었습니다.");
-
         } catch (error) {
-            console.error("❌ 카테고리 추가 오류:", error);
-            showModal(error);
+            console.log("❌ 카테고리 추가 오류:", error);
+            showModal(error?.response.data.message);
         }
     };
 
@@ -202,7 +199,7 @@ const CategoryManagement: React.FC = () => {
     );
 
     return (
-        <div className="bg-gray-100 py-10 px-6">
+        <div className="bg-gray-50 py-10 px-6">
             <h1 className="max-w-6xl mx-auto text-2xl font-bold mb-4 text-gray-800">카테고리 관리</h1>
             <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
                 {isLoading ? (

@@ -2,7 +2,7 @@
 
 import { useManagerListQuery } from "@/hooks/useManagerList";
 
-export default function AdminMemberListPage() {
+export default function ManagerListPage() {
     // ✅ API에서 가져온 데이터
     const { data: managers, isLoading, error } = useManagerListQuery();
 

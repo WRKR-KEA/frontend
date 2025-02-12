@@ -10,7 +10,7 @@ const fetchMemberDetail = async (memberId: string) => {
   }
 
   const response = await axios.get(
-    `http://172.16.211.53:8080/api/admin/members/${memberId}`,
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members/${memberId}`,
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,

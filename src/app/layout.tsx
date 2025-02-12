@@ -44,7 +44,7 @@ export default function RootLayout({
       }
 
       const response = await fetch(
-        'http://172.16.211.53:8080/api/auth/refresh',
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/refresh`,
         {
           method: 'POST',
           headers: {
@@ -67,6 +67,7 @@ export default function RootLayout({
           profileImage: data.result.profileImage,
           name: data.result.name,
           role: data.result.role,
+          nickname: data.result.nickname
         });
         console.log('사용자 정보가 userStore에 저장되었습니다.');
       }

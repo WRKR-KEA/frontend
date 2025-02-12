@@ -22,12 +22,16 @@ type TicketList_UserProps = {
   tickets: Ticket[];
   maxTicketsToShow: number;
   searchTerm: string;
+  onStatusChange: (status: string) => void;
+  status: string;
 };
 
 export function TicketList_User({
   tickets,
   maxTicketsToShow,
   searchTerm,
+  onStatusChange,
+  status,
 }: TicketList_UserProps) {
 
   const statusStyles: Record<string, string> = {
@@ -47,6 +51,7 @@ export function TicketList_User({
     setActiveTab(tab);
     setFilterStatus(tab);
     setCurrentPage(1);
+    onStatusChange(tab);
   };
 
   const handleTicketClick = (Id: string) => {
@@ -113,7 +118,7 @@ export function TicketList_User({
                   <HighlightText text={ticket.title} highlight={searchTerm} />
                 </td>
                 <td className="px-4 py-2 truncate text-center">
-                  <HighlightText text={ticket.handler} highlight={searchTerm} />
+                  <HighlightText text={ticket.handler || "-"} highlight={searchTerm} />
                 </td>
                 <td className="px-4 py-2 text-center">{ticket.requestDate}</td>
                 <td className="px-4 py-2 text-center">{ticket.updateDate}</td>

@@ -25,6 +25,7 @@ type Ticket = {
 export default function UserTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
+  const [status, setStatus] = useState<string>(""); // 🔹 상태 필터 추가
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -32,21 +33,23 @@ export default function UserTicketListPage() {
   const user = useUserStore((state) => state.user);
   const ticketRequester = user ? user.name : "";
 
-  // Fetch tickets on page load or when page or ticket count changes
+  // 🔹 티켓 목록 가져오기
   useEffect(() => {
     const fetchTickets = async () => {
       try {
         const accessToken = sessionStorage.getItem("accessToken");
-        const response = await api.get("/api/user/tickets", {
+        const response = await api.get(`/api/user/tickets?page=${currentPage}&size=${maxTicketsToShow}&status=${status || ""}`, {
           params: {
             page: currentPage,
             size: maxTicketsToShow,
+            ...(status && { status }),
           },
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${accessToken}`,
           },
         });
+
         const { elements, totalPages } = response.data.result;
 
         const requestTicketList: Ticket[] = elements.map((ticket: any) => ({
@@ -54,16 +57,16 @@ export default function UserTicketListPage() {
           number: ticket.serialNumber,
           status: ticket.status,
           title: ticket.title,
-          handler: ticket.managerName, 
+          handler: ticket.managerName,
           requestDate: ticket.createdAt,
           updateDate: ticket.updatedAt,
           acceptDate: ticket.startedAt,
-          completeDate: ticket.endAt, 
-          ispinned: false, 
+          completeDate: ticket.endAt,
+          ispinned: false,
         }));
 
         setTickets(requestTicketList);
-        console.log(response);
+        console.log("요청된 티켓 리스트:",requestTicketList);
         setTotalPages(totalPages);
       } catch (error) {
         console.error("Error fetching tickets:", error);
@@ -71,18 +74,28 @@ export default function UserTicketListPage() {
     };
 
     fetchTickets();
-  }, [currentPage, maxTicketsToShow]); // Run effect when page or maxTicketsToShow changes
+  }, [currentPage, maxTicketsToShow, status]); // 🔹 상태 필터 변경 시 재요청
 
+  // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
-    setCurrentPage(pageNumber); // Update the current page
+    setCurrentPage(pageNumber);
   };
 
+  // 티켓 개수 선택 핸들러
   const handleSelectCount = (count: number) => {
-    setMaxTicketsToShow(count); // Update the number of tickets to show per page
+    setMaxTicketsToShow(count);
   };
 
+  // 검색어 변경 핸들러
   const handleSearchChange = (term: string) => {
-    setSearchTerm(term); // Update the search term
+    setSearchTerm(term);
+  };
+
+  // 🔹 상태 필터 변경 핸들러
+  const handleStatusChange = (newStatus: string) => {
+    setStatus(newStatus);
+    console.log("변환된 상태:", newStatus);
+    setCurrentPage(1); // 필터 변경 시 첫 페이지로 이동
   };
 
   return (
@@ -99,7 +112,8 @@ export default function UserTicketListPage() {
         </div>
       </div>
 
-      <TicketList_User tickets={tickets} maxTicketsToShow={maxTicketsToShow} searchTerm={searchTerm} />
+      <TicketList_User tickets={tickets} maxTicketsToShow={maxTicketsToShow} searchTerm={searchTerm} onStatusChange={handleStatusChange} status={status || ""}
+      />
       
       <div className="flex justify-center items-center mt-4 mb-4">
         <PagePagination

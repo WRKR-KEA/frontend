@@ -17,7 +17,6 @@ import TicketRequest from "@/components/Tickets/ticketRequest";
 
 export default function ManagericketDetailPage() {
   const router = useRouter();
-  const [isModalOpen, setIsModalOpen] = useState(false); 
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); 
@@ -103,13 +102,7 @@ export default function ManagericketDetailPage() {
     }
   }
 
-  const handleCancelTicket = () => {
-    setIsModalOpen(true); // 모달 열기
-  };
-
   const confirmCompleteTicket = async () => {
-    if (!param) return;
-
     try {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(ticketId);
@@ -123,8 +116,6 @@ export default function ManagericketDetailPage() {
   };
 
   const confirmAbortTicket = async () => {
-    if (!param) return;
-
     try {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketReject(ticketId);
@@ -137,10 +128,6 @@ export default function ManagericketDetailPage() {
     }
   };
 
-  const closeModal = () => {
-    setIsModalOpen(false); // 모달 닫기
-  };
-
   if (!selectedTicket) {
     return <div>티켓 정보를 불러오는 중입니다...</div>; // 데이터 로딩 처리
   }
@@ -150,7 +137,7 @@ export default function ManagericketDetailPage() {
   }; 
 
   const handleAbortTicket = () => {
-    setIsAbortTicketOpen(true); 
+    setIsAbortTicketOpen(true); //작업 반려 모달 열기
   };
 
   const closeAbortTicketModal = () => {

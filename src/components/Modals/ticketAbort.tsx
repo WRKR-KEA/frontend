@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Button from "@/components/Buttons/Button";
 
 type TicketAbortProps = {
@@ -9,7 +8,6 @@ type TicketAbortProps = {
 
 export function TicketAbort({ isOpen, onClose, onConfirm }: TicketAbortProps) {
   if (!isOpen) return null;
-  const [content, setContent] = useState("");
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
@@ -18,7 +16,7 @@ export function TicketAbort({ isOpen, onClose, onConfirm }: TicketAbortProps) {
         <p className="text-red-500 text-sm mb-6">반려 후 복구할 수 없어요.</p>
         <div className="flex justify-center space-x-4">
           <Button label="취소" onClick={onClose} color={4} />
-          <Button label="반려하기" onClick={() => {onConfirm}} color={2} />
+          <Button label="반려하기" onClick={onConfirm} color={2} />
         </div>
       </div>
     </div>

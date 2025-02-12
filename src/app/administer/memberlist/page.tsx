@@ -108,7 +108,7 @@ export default function AdminMemberListPage() {
       const isConfirmed = confirm("정말로 삭제하시겠습니까?");
       if (!isConfirmed) return;
 
-      const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json',
@@ -145,7 +145,7 @@ export default function AdminMemberListPage() {
             value={searchInput}
             onChange={handleInputChange}
             onKeyDown={handleInputKeyDown} // ✅ Enter 키 입력 감지
-            placeholder="이메일, 이름, 부서 검색"
+            placeholder="아이디, 이름, 이메일, 부서 검색"
             className="outline-none text-sm w-[180px]"
           />
         </div>
@@ -176,11 +176,12 @@ export default function AdminMemberListPage() {
             <thead>
             <tr>
               <th className="p-3 w-1/12"></th>
+              <th className="p-3 text-left w-3/12">아이디</th>
               <th className="p-3 text-left w-2/12">이름</th>
               <th className="p-3 text-left w-2/12">부서</th>
               <th className="p-3 text-left w-2/12">직책</th>
-              <th className="p-3 text-left w-2/12">전화번호</th>
-              <th className="p-3 text-left w-3/12">이메일 주소</th>
+              <th className="p-3 text-left w-3/12">전화번호</th>
+              <th className="p-3 text-left w-4/12">이메일 주소</th>
             </tr>
             </thead>
             <tbody>
@@ -194,22 +195,24 @@ export default function AdminMemberListPage() {
                       className="w-4 h-4 accent-[#4B5FC2] cursor-pointer rounded-md border-2 border-gray-400 transition-all duration-200 checked:bg-[#4B5FC2] checked:border-transparent focus:ring-2 focus:ring-[#4B5FC2] focus:outline-none"
                     />
                   </td>
-                  <td className="p-3 w-2/12">
-                    <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
+                  
+                  <td className="p-4 w-3/12">
+                  <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
                       <div className="flex items-center space-x-3">
                         <img
                           src={row.avatar || "/userProfileImage.png"}
                           alt={row.name}
                           className="w-8 h-8 rounded-full object-cover"
                         />
-                        <span>{row.name}</span>
+                        <span>{row.nickname}</span>
                       </div>
                     </Link>
                   </td>
+                  <td className="p-3 w-2/12">{row.name}</td>
                   <td className="p-4 w-2/12">{row.department}</td>
-                  <td className="p-4 w-2/12">{row.role}</td>
-                  <td className="p-4 w-2/12">{row.phone}</td>
-                  <td className="p-4 w-3/12">{row.email}</td>
+                  <td className="p-4 w-2/12">{row.position}</td>
+                  <td className="p-4 w-3/12">{row.phone}</td>
+                  <td className="p-4 w-4/12">{row.email}</td>
                 </tr>
               ))}
             </tbody>

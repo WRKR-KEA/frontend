@@ -62,7 +62,7 @@ export default function ReissuePasswordPage() {
 
     try {
       const response = await axios.post(
-        "http://172.16.211.53:8080/api/members/password/code", // ✅ 엔드포인트 직접 입력
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/members/password/code`, // ✅ 엔드포인트 직접 입력
         { nickname }, // ✅ 요청 데이터
         {
           headers: {
@@ -97,7 +97,7 @@ export default function ReissuePasswordPage() {
 
     try {
       const response = await axios.patch(
-        "http://172.16.211.53:8080/api/members/password/reissue", // ✅ 엔드포인트 직접 입력
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/members/password/reissue`, // ✅ 엔드포인트 직접 입력
         { 
           memberId, 
           verificationCode:authCode, 

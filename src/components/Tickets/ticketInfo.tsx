@@ -10,14 +10,16 @@ interface TicketInfoProps {
     handler: string,
     requestDate: string,
     updateDate: string | null,
-    acceptDate: string,
-    completeDate: string
+    ticketTimeInfo:{
+      startedAt: string | null,
+      endedAt: string | null,
+    },
   }
 }
 
 export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
   if (!ticket) {
-    console.log(ticket);
+    console.log("🌟 티켓: ",ticket);
     return <div>Loading...</div>;
   }
 
@@ -33,9 +35,9 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
           </div>
           <div className="space-y-4 text-left w-52 min-w-52">
             <div className="text-sm">요청 일시: {ticket.requestDate}</div>
-            <div className="text-sm">승인 일시: {ticket.acceptDate}</div>
+            <div className="text-sm">승인 일시: {ticket.ticketTimeInfo?.startedAt}</div>
             <div className="text-sm">수정 일시: {ticket.updateDate}</div>
-            <div className="text-sm">완료 일시: {ticket.completeDate}</div>
+            <div className="text-sm">완료 일시: {ticket.ticketTimeInfo?.endedAt}</div>
           </div>
         </div>
       </div>

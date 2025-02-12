@@ -34,7 +34,7 @@ export default function ManagerHomePage() {
       setIsLoading(true);
       try {
         const data = await fetchManagerTickets();
-        console.log("🌈 API 응답 데이터:", data);
+        console.log("🌟 API 응답 데이터:", data);
 
         if (!data || !data.result) {
           throw new Error("Invalid response format");

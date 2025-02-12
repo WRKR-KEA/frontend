@@ -15,7 +15,7 @@ interface ChangeMemberListProps {
 
 const ChangeMemberList: React.FC<ChangeMemberListProps> = ({ data, onSelectManager }) => {
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
-  console.log(data);
+  console.log("🌟 담당자 리스트: ",data);
 
   const handleCheckboxChange = (index: number, managerId: string) => {
     // 선택된 행을 토글하고, 선택된 담당자의 ID를 부모로 전달

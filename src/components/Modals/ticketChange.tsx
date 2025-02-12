@@ -19,7 +19,7 @@ const fetchManagers = async () => {
   });
 
   if (response.data.isSuccess) {
-    console.log("💁‍♀️ 담당자 리스트", response.data.result.managers);
+    console.log("🌟 담당자 리스트", response.data.result.managers);
     return response.data.result.managers; // API 응답에서 담당자 리스트를 반환
   } else {
     throw new Error("담당자 데이터를 가져오는 데 실패했습니다.");
@@ -44,7 +44,7 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
   );
 
   if (response.data.isSuccess) {
-    console.log("담당자 변경이 완료 되었습니다. ", response.data);
+    console.log("🌟 담당자 변경이 완료 되었습니다. ", response.data);
     return response.data; // 성공적으로 변경되면 데이터 반환
   } else {
     throw new Error("담당자 변경에 실패했습니다.");

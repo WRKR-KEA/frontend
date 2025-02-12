@@ -7,6 +7,7 @@ import { Search } from "@/components/search";
 import useUserStore from "@/stores/userStore";
 import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
+import Skeleton from "@/components/Skeleton"; // 스켈레톤 컴포넌트 가져오기
 
 type Ticket = {
   id: string;
@@ -29,6 +30,7 @@ export default function UserTicketListPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태
 
   const user = useUserStore((state) => state.user);
   const ticketRequester = user ? user.name : "";
@@ -36,6 +38,7 @@ export default function UserTicketListPage() {
   // 🔹 티켓 목록 가져오기
   useEffect(() => {
     const fetchTickets = async () => {
+      setIsLoading(true); // 데이터 로딩 시작
       try {
         const accessToken = sessionStorage.getItem("accessToken");
         const response = await api.get(`/api/user/tickets?page=${currentPage}&size=${maxTicketsToShow}&status=${status || ""}`, {
@@ -66,10 +69,11 @@ export default function UserTicketListPage() {
         }));
 
         setTickets(requestTicketList);
-        console.log("요청된 티켓 리스트:",requestTicketList);
         setTotalPages(totalPages);
       } catch (error) {
         console.error("Error fetching tickets:", error);
+      } finally {
+        setIsLoading(false); // 데이터 로딩 끝
       }
     };
 
@@ -94,7 +98,6 @@ export default function UserTicketListPage() {
   // 🔹 상태 필터 변경 핸들러
   const handleStatusChange = (newStatus: string) => {
     setStatus(newStatus);
-    console.log("변환된 상태:", newStatus);
     setCurrentPage(1); // 필터 변경 시 첫 페이지로 이동
   };
 
@@ -112,19 +115,33 @@ export default function UserTicketListPage() {
         </div>
       </div>
 
-      <TicketList_User tickets={tickets} maxTicketsToShow={maxTicketsToShow} searchTerm={searchTerm} onStatusChange={handleStatusChange} status={status || ""}
-      />
-      
-      <div className="flex justify-center items-center mt-4 mb-4">
-        <PagePagination
-          totalItemsCount={tickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
+      {isLoading  || tickets.length === 0  ? (
+        // 로딩 중이면 스켈레톤 표시
+        <div>
+          <Skeleton width="100%" height="600px" />
+        </div>
+      ) : (
+        // 로딩이 끝나면 실제 티켓 리스트와 페이지네이션 표시
+        <>
+          <TicketList_User
+            tickets={tickets}
+            maxTicketsToShow={maxTicketsToShow}
+            searchTerm={searchTerm}
+            onStatusChange={handleStatusChange}
+            status={status || ""}
+          />
+          <div className="flex justify-center items-center mt-4 mb-4">
+            <PagePagination
+              totalItemsCount={tickets.length}
+              itemsCountPerPage={maxTicketsToShow}
+              pageRangeDisplayed={5}
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

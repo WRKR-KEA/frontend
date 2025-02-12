@@ -19,7 +19,7 @@ const fetchUserTicketList = async (queryParams: Record<string, string | number>)
       },
     }
   );
-  console.log("유저티켓리스트",response)
+  console.log("🌟 유저티켓리스트",response)
   return response.data.result; // 필요한 데이터만 반환
 };
 

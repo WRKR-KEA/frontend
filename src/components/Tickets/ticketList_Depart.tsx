@@ -40,7 +40,7 @@ export function TicketList_Depart({
     CANCEL: 'bg-cancel text-cancel',
     REJECT: 'bg-reject text-reject',
   };
-console.log("받은 티켓 데이터:",tickets);
+console.log("🌟 받은 티켓 데이터:",tickets);
 
   const [currentPage, setCurrentPage] = useState(page);
   const [activeTab, setActiveTab] = useState(status);

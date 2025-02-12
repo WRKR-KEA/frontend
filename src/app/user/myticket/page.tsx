@@ -116,12 +116,10 @@ export default function UserTicketListPage() {
       </div>
 
       {isLoading  || tickets.length === 0  ? (
-        // 로딩 중이면 스켈레톤 표시
         <div>
           <Skeleton width="100%" height="600px" />
         </div>
       ) : (
-        // 로딩이 끝나면 실제 티켓 리스트와 페이지네이션 표시
         <>
           <TicketList_User
             tickets={tickets}

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import useUserStore from "@/stores/userStore";
 import { TicketList } from "@/components/Tickets/ticektList_Manager";
 import { fetchManagerTickets } from "@/services/manager";
+import Skeleton from "@/components/Skeleton"; 
 
 type Ticket = {
   id: string;
@@ -75,15 +76,20 @@ export default function ManagerHomePage() {
     fetchTickets();
   }, []);
 
-  if (isLoading) return <div>로딩 중...</div>;
-  if (error) return <div>{error}</div>;
-
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <h2 className="text-lg font-semibold">고정 티켓 조회</h2>
+      {isLoading ||requestTickets.length === 0 ? (
+         <Skeleton width="100%" height="40%" />
+        ) : (
       <TicketList tickets={pinTickets} maxTicketsToShow={maxTicketsToShow} page={1} />
+        )}
       <h2 className="text-lg font-semibold">최근 티켓 현황</h2>
+      {isLoading || requestTickets.length === 0 ? (
+         <Skeleton width="100%" height="40%" />
+        ) : (
       <TicketList tickets={requestTickets} maxTicketsToShow={maxTicketsToShow} page={1} />
+        )}
     </div>
   );
 }

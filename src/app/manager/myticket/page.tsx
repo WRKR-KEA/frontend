@@ -7,6 +7,7 @@ import { FilterOrder } from "@/components/Filters/filterOrder";
 import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
 import { Search_manager } from "@/components/search_manager";
+import Skeleton from "@/components/Skeleton"; // Assuming you have a Skeleton component
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -114,24 +115,23 @@ export default function ManagerTicketListPage() {
       </div>
   
       <div className="relative min-h-[200px]">
-        {isLoading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-white bg-opacity-60">
-            <span className="text-gray-500">로딩 중...</span>
-          </div>
-        )}
-        <TicketList_Manager
-          tickets={tickets}
-          maxTicketsToShow={maxTicketsToShow}
-          searchTerm={searchTerm}
-          sortOrder={sortOrder}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          status={status || ""}
-          onStatusChange={handleStatusChange}
-          onPageChange={handlePageChange}
-        />
-      </div>
-  
+  {isLoading || tickets.length === 0 ? (
+    <div className="flex flex-col items-center space-y-4">
+      <Skeleton width="100%" height="600px" />
+    </div>
+  ) : (
+    <>
+      <TicketList_Manager
+        tickets={tickets}
+        maxTicketsToShow={maxTicketsToShow}
+        searchTerm={searchTerm}
+        sortOrder={sortOrder}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        status={status || ""}
+        onStatusChange={handleStatusChange}
+        onPageChange={handlePageChange}
+      />
       <div className="flex justify-center items-center mt-4 mb-4">
         <PagePagination
           totalItemsCount={tickets.length}
@@ -142,6 +142,9 @@ export default function ManagerTicketListPage() {
           onPageChange={handlePageChange}
         />
       </div>
-    </div>
+    </>
+  )}
+  </div>
+</div>  
   );
 }

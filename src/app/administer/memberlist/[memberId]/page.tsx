@@ -70,6 +70,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
     }));
   };
 
+
   const handleSave = async () => {
     try {
       const accessToken = sessionStorage.getItem("accessToken");
@@ -77,8 +78,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
         showModal("로그인이 필요합니다.");
         return;
       }
-
-      // ✅ 최신 상태의 editableData 가져오기
+  
       const updatedData = {
         email: editableData.email.trim(),
         name: editableData.name.trim(),
@@ -86,17 +86,18 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
         department: editableData.department.trim(),
         position: editableData.position.trim(),
         phone: editableData.phone.trim(),
-        // role 값을 서버 형식으로 변환
         role: editableData.role === "사용자" ? "USER" : "MANAGER",
         agitUrl: editableData.agitUrl.trim(),
       };
-
-      console.log("🔹 전송할 데이터:", updatedData);
-
+  
       const formData = new FormData();
       formData.append("request", new Blob([JSON.stringify(updatedData)], { type: "application/json" }));
-      formData.append("profileImage", null);
-
+  
+      // ✅ 프로필 이미지가 있으면 추가
+      if (editableData.profileImageFile) {
+        formData.append("profileImage", editableData.profileImageFile);
+      }
+  
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members/${memberId}`,
         formData,
@@ -106,17 +107,41 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
           },
         }
       );
-
+  
       if (response.status === 200 || response.status === 201) {
         await refetch();
         showModal("회원 정보가 성공적으로 수정되었습니다.");
         setIsEditing(false);
       } else {
-        throw new Error(response.data?.message || "회원 정보 수정 실패");
-      }
+        throw response.data;
+    }
+
     } catch (error) {
       console.error("❌ 업데이트 요청 실패:", error);
-      showModal((error?.response?.data?.message + " 누락된 정보가 있습니다.") || "회원 정보 수정에 실패했습니다.");
+      showModal(error?.response.data.message);
+    }
+  };
+  
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      // ✅ 파일 미리보기 (FileReader 사용)
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setEditableData((prev) => ({
+          ...prev,
+          profileImage: reader.result as string, // Base64 URL 저장 (미리보기용)
+        }));
+      };
+      reader.readAsDataURL(file);
+
+      // ✅ 상태에 파일 저장 (서버 전송용)
+      setEditableData((prev) => ({
+        ...prev,
+        profileImageFile: file, // 실제 파일 저장 (FormData 전송 시 필요)
+      }));
     }
   };
 
@@ -134,22 +159,25 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
         <div className="flex items-center justify-between border-b pb-6">
           <div className="flex items-center space-x-8">
             <div className="relative">
+              {/* 파일 업로드 input (숨김) */}
               <input
                 type="file"
                 id="profileImageInput"
                 accept="image/*"
                 className="hidden"
-                onChange={() => { }}
-
+                onChange={isEditing ? handleFileChange : undefined} // 수정 모드일 때만 파일 변경 허용
               />
 
+              {/* 프로필 이미지 (미리보기) */}
               <img
                 src={editableData.profileImage || "/adminProfile.png"}
                 alt={editableData.name}
-                className="w-32 h-32 rounded-full object-cover cursor-pointer"
-                onClick={() => document.getElementById("profileImageInput")?.click()}
+                className={`w-32 h-32 rounded-full object-cover ${isEditing ? "cursor-pointer" : "cursor-default"}`}
+                onClick={isEditing ? () => document.getElementById("profileImageInput")?.click() : undefined}
               />
             </div>
+
+
 
             <div className="space-y-2">
               {isEditing ? (

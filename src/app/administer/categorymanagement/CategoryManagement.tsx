@@ -29,13 +29,14 @@ interface Category {
 
 const CategoryManagement: React.FC = () => {
     const { data: categoryData, isLoading, isError, refetch } = useCategoryListQuery();
+    console.log(categoryData)
     const [isInitialRender, setIsInitialRender] = useState(true); // ✅ 최초 렌더링 감지 플래그
     const [categories, setCategories] = useState<Category[]>([]);
     const [activeCategory, setActiveCategory] = useState<Category | null>(null); // ✅ 드래그 중인 아이템
     const [templateOpen, setTemplateOpen] = useState(false)
     const [helpOpen, setHelpOpen] = useState(false)
     const [categoryName, setCategoryName] = useState("")
-
+    const [categoryAbb, setCategoryAbb] = useState("")
     const [modalState, setModalState] = useState({
         isOpen: false,
         title: "",
@@ -69,7 +70,7 @@ const CategoryManagement: React.FC = () => {
             onClose: () => {
                 setInputModalState(prev => ({ ...prev, isOpen: false }));
             },
-            
+
 
         });
     };
@@ -132,20 +133,24 @@ const CategoryManagement: React.FC = () => {
                 showModal("카테고리 이름을 입력해주세요.");
                 return;
             }
-    
+
             const newSeq = categories.length + 1;
             const accessToken = sessionStorage.getItem("accessToken");
-    
+
             const response = await axios.post(
                 `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/categories`,
-                { name: categoryName, seq: newSeq }, // 요청 데이터
+                {
+                    name: categoryName,
+                    seq: newSeq,
+                    abbreviation: categoryAbb
+                }, // 요청 데이터
                 {
                     headers: {
                         Authorization: `Bearer ${accessToken}`,
                     },
                 }
             );
-    
+
             if (response.status === 201 || response.status === 200) {
                 await refetch();
                 showModal("새로운 카테고리가 추가되었습니다.");
@@ -220,7 +225,7 @@ const CategoryManagement: React.FC = () => {
                                         key={category.categoryId}
                                         categoryId={category.categoryId}
                                         name={category.name}
-
+                                        abbreviation={category.abbreviation}
                                         onHelp={onHelp}
                                         onTemplate={onTemplate}
                                         refetchList={refetch}
@@ -255,7 +260,7 @@ const CategoryManagement: React.FC = () => {
 
                 <button
                     className="w-full mt-6 px-6 py-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
-                    onClick={()=>showInputModal("카테고리 이름을 입력하세요", "추가")}
+                    onClick={() => showInputModal("카테고리 이름을 입력하세요", "추가")}
                 >
                     카테고리 추가
                 </button>
@@ -270,11 +275,16 @@ const CategoryManagement: React.FC = () => {
             )}
 
             {inputModalState.isOpen && (
-                <Modal onClose={inputModalState.onClose}>
+                <Modal onClose={() => {
+                    inputModalState.onClose()
+                    setCategoryAbb("")
+                    setCategoryName("")
+                }}>
                     <InputModal
                         title={inputModalState.title}
                         onClick={inputModalState.onClose}
                         setCategoryName={setCategoryName}
+                        setCategoryAbb={setCategoryAbb}
                         handleAddCategory={handleAddCategory}
                     />
                 </Modal>

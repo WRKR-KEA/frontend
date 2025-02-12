@@ -113,7 +113,7 @@ console.log("🌟 받은 티켓 데이터:",tickets);
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2 w-76 truncate">
+              <td className="px-4 py-2 w-60 truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 w-28 text-center truncate">{ticket.managerNickname}</td>

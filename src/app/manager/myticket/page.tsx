@@ -7,7 +7,7 @@ import { FilterOrder } from "@/components/Filters/filterOrder";
 import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
 import { Search_manager } from "@/components/search_manager";
-import Skeleton from "@/components/Skeleton"; // Assuming you have a Skeleton component
+import Skeleton from "@/components/Skeleton";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);

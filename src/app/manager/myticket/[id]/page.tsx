@@ -21,6 +21,7 @@ export default function ManagericketDetailPage() {
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); 
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
+  const [countdown, setCountdown] = useState(1);
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -107,8 +108,18 @@ export default function ManagericketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(ticketId);
       console.log("완료 성공:", result);
+      showModal("티켓이 완료되었습니다."); 
 
       closeCompleteTicketModal();
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+      
+      setTimeout(() => {
+        clearInterval(timer);
+        router.push("/user/home");
+      }, 1000);
+
     } catch (error) {
       console.error("티켓 완료 중 오류 발생:", error);
 
@@ -120,8 +131,18 @@ export default function ManagericketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketReject(ticketId);
       console.log("작업 반려 성공:", result);
-
+      showModal("작업이 반려되었습니다."); 
       closeAbortTicketModal();
+
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+      
+      setTimeout(() => {
+        clearInterval(timer);
+        router.push("/user/home");
+      }, 1000);
+
     } catch (error) {
       console.error("작업 반려 중 오류 발생:", error);
 

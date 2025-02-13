@@ -22,7 +22,7 @@ const Skeleton: React.FC<SkeletonNetProps> = ({ width = "100%", height = "20px" 
       <div className="absolute flex flex-col items-center justify-center top-0 left-0 right-0 bottom-0">
         <Package className="w-16 h-16 text-gray-400" />
         {/* <Ticket className="w-16 h-16 text-gray-400" /> */}
-        <p className="text-gray-500 text-lg mt-2">네트워크 오류가 발생했습니다.</p>
+        <p className="text-gray-500 text-lg mt-2">예상치 못한 오류가 발생했습니다. 다시 시도해 주세요.</p>
       </div>
     </div>
   );

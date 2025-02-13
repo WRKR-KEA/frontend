@@ -5,7 +5,6 @@ import { TicketList_User } from "@/components/Tickets/ticketList_User";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
 import useUserStore from "@/stores/userStore";
-import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
 import Skeleton from "@/components/Skeleton"; 
 import { useUserTicketListQuery } from "@/hooks/useUserTicketList";
@@ -79,7 +78,7 @@ export default function UserTicketListPage() {
   if (error) {
     return <SkeletonNet width="100%" height="100%" />;
   }
-  
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">

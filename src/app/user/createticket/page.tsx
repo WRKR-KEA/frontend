@@ -185,11 +185,6 @@ export default function UserCreateTicketPage() {
     selectedService !== "1차 카테고리를 선택해주세요." &&
     selectedRequestType !== "2차 카테고리를 선택해주세요."
 
-  const isReadyToShow =
-    selectedService !== "1차 카테고리를 선택해주세요." &&
-    selectedRequestType !== "2차 카테고리를 선택해주세요." &&
-    title.trim() !== "" && // 제목이 공백이 아니어야 함
-    content.trim() !== ""; // 내용이 공백이 아니어야 함
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col justify-between">
       <div>
@@ -231,9 +226,10 @@ export default function UserCreateTicketPage() {
 
       {isReadyToShowTemp && (
           <Template title={title} content={content} setTitle={setTitle} setContent={setContent} />
+          
       )}
 
-      {isReadyToShow && (
+      {isReadyToShowTemp && (
             <div className="flex justify-center">
             <Button label="티켓 요청" onClick={handleCreate} color={1} />
           </div>

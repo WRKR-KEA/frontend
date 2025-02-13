@@ -197,7 +197,7 @@ export default function UserProfilePage() {
                     <option value="담당자">담당자</option>
                   </select>
                 ) : (
-                  <p>{editableData.role === "USER" ? "사용자" : "담당자"}</p>
+                  <p>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
                 )}
               </div>
             </div>
@@ -298,4 +298,4 @@ export default function UserProfilePage() {
       )}
     </div>
   );
-}
+} 

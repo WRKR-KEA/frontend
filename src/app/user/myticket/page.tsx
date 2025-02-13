@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import { TicketList_User } from "@/components/Tickets/ticketList_User";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
@@ -26,11 +26,12 @@ type Ticket = {
 export default function UserTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [searchTerm, setSearchTerm] = useState("");
-  const [status, setStatus] = useState<string>(""); // 🔹 상태 필터 추가
+  const [status, setStatus] = useState<string>(""); 
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState<boolean>(true); // 로딩 상태
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const user = useUserStore((state) => state.user);
   const ticketRequester = user ? user.name : "";
@@ -41,7 +42,7 @@ export default function UserTicketListPage() {
       setIsLoading(true); // 데이터 로딩 시작
       try {
         const accessToken = sessionStorage.getItem("accessToken");
-        const response = await api.get(`/api/user/tickets?page=${currentPage}&size=${maxTicketsToShow}&status=${status || ""}`, {
+        const response = await api.get(`/api/user/tickets?page=${currentPage}&size=${maxTicketsToShow}&status=${selectedStatus || ""}`, {
           params: {
             page: currentPage,
             size: maxTicketsToShow,
@@ -78,7 +79,7 @@ export default function UserTicketListPage() {
     };
 
     fetchTickets();
-  }, [currentPage, maxTicketsToShow, status]); // 🔹 상태 필터 변경 시 재요청
+  }, [currentPage, maxTicketsToShow, selectedStatus]); 
 
   // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
@@ -96,10 +97,11 @@ export default function UserTicketListPage() {
   };
 
   // 🔹 상태 필터 변경 핸들러
-  const handleStatusChange = (newStatus: string) => {
+  const handleStatusChange = useCallback((newStatus: string) => {
+    setSelectedStatus(newStatus);
     setStatus(newStatus);
     setCurrentPage(1); // 필터 변경 시 첫 페이지로 이동
-  };
+  }, []);
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
@@ -115,7 +117,7 @@ export default function UserTicketListPage() {
         </div>
       </div>
 
-      {isLoading  || tickets.length === 0  ? (
+      {isLoading ? (
         <div>
           <Skeleton width="100%" height="600px" />
         </div>

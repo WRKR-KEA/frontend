@@ -42,16 +42,14 @@ export function TicketList_User({
     REQUEST: "bg-request text-request",
   };
 
-  const [filterStatus, setFilterStatus] = useState("");
-  const [activeTab, setActiveTab] = useState("");
+  const [activeTab, setActiveTab] = useState(status);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
-    setFilterStatus(tab);
-    setCurrentPage(1);
     onStatusChange(tab);
+    console.log("탭: ", activeTab);
   };
 
   const handleTicketClick = (Id: string) => {
@@ -69,7 +67,7 @@ export function TicketList_User({
       ticket.handler?.includes(searchTerm) ||
       ticket.number.includes(searchTerm);
     const matchesStatus =
-      filterStatus === "" || ticket.status === filterStatus;
+      status === "" || ticket.status === status;
     return matchesSearchTerm && matchesStatus;
   });
 

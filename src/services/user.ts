@@ -99,8 +99,14 @@ export async function fetchTemplates(categoryId: string) {
 
 // (GET) 카테고리 전체 조회
 export async function fetchCategories() {
+  const accessToken = sessionStorage.getItem("accessToken");
   try {
-    const { data } = await api.get("/api/user/categories");
+    const { data } = await api.get(`/api/user/categories`, {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return data;
   } catch (error: any) {
     console.error("카테고리 전체 조회에 실패했습니다. :", error);

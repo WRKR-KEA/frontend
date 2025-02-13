@@ -77,7 +77,7 @@ export default function Headerbar() {
 
         try {
             if (accessToken) {
-                const response = await fetch("http://172.16.211.53:8080/api/auth/logout", {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/logout`, {
                     method: "DELETE",
                     headers: {
                         "Content-Type": "application/json",

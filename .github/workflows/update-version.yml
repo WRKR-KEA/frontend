@@ -1,0 +1,52 @@
+name: Update Release Version
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+jobs:
+  update:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Save PR labels to file
+        run: echo '${{ toJson(github.event.pull_request.labels) }}' > pr_labels.json
+
+      - name: Determine Version Increment
+        id: vars
+        run: |
+          LABELS=$(jq -r '.[].name' pr_labels.json | tr '\n' ' ')
+          if echo $LABELS | grep -q "major"; then
+            echo "INCREMENT=major" >> $GITHUB_ENV
+          elif echo $LABELS | grep -q "minor"; then
+            echo "INCREMENT=minor" >> $GITHUB_ENV
+          elif echo $LABELS | grep -q "patch"; then
+            echo "INCREMENT=patch" >> $GITHUB_ENV
+          else
+            echo "INCREMENT=" >> $GITHUB_ENV
+          fi
+
+      - name: Update Project Version with npm
+        if: env.INCREMENT
+        run: |
+          npm version $INCREMENT --no-git-tag-version
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add package.json package-lock.json
+          git commit -m ":bookmark: Release: update release version based on PR(#${{ github.event.pull_request.number }})"
+          git push
+
+      - name: Create Git Tag
+        if: env.INCREMENT
+        run: |
+          NEW_VERSION=$(node -p "require('./package.json').version")
+          git tag -a "v$NEW_VERSION" -m "Release version v$NEW_VERSION"
+          git push origin "v$NEW_VERSION"

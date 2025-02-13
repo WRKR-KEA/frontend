@@ -77,7 +77,9 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
 
   // ✅ URL에서 파일명만 추출하는 함수
   const extractFileName = (url: string) => {
-    return decodeURIComponent(url.split("/").pop()?.split("?")[0] || "파일");
+    const fileName = decodeURIComponent(url.split("/").pop()?.split("?")[0] || "파일");
+    // ✅ UUID 패턴 (8-4-4-4-12) 탐색 및 제거
+    return fileName.replace(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/, '');
   };
 
   return (

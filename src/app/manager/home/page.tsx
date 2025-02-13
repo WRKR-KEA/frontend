@@ -5,6 +5,7 @@ import useUserStore from "@/stores/userStore";
 import { TicketList } from "@/components/Tickets/ticektList_Manager";
 import { fetchManagerTickets } from "@/services/manager";
 import Skeleton from "@/components/Skeleton"; 
+import { useManageTicketListQuery } from "@/hooks/useManagerTicket";
 
 type Ticket = {
   id: string;
@@ -79,7 +80,7 @@ export default function ManagerHomePage() {
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <h2 className="text-lg font-semibold">고정 티켓 조회</h2>
-      {isLoading ||requestTickets.length === 0 ? (
+      {isLoading ||pinTickets.length === 0 ? (
          <Skeleton width="100%" height="40%" />
         ) : (
       <TicketList tickets={pinTickets} maxTicketsToShow={maxTicketsToShow} page={1} />

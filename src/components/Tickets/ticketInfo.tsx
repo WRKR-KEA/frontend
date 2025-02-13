@@ -4,16 +4,15 @@ interface TicketInfoProps {
   ticket: {
     id: string,
     number: string,
+    firstCatetory: string,
+    secondCatetory: string,
     status: string,
     title: string,
-    requester: string,
-    handler: string,
-    requestDate: string,
-    updateDate: string | null,
-    ticketTimeInfo:{
-      startedAt: string | null,
-      endedAt: string | null,
-    },
+    handler: string | "-",
+    createdAt: string,
+    updatedAt: string | "-",
+    startedAt: string | "-",
+    completedAt: string | "-",
   }
 }
 
@@ -30,14 +29,13 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
           <div className="space-y-4 text-left truncate">
             {/*TODO: type으로 변경*/}
             <div className="text-sm truncate">업무: {ticket.title}</div>
-            <div className="text-sm truncate">요청자: {ticket.requester}</div>
             <div className="text-sm truncate">담당자: {ticket.handler || '―'}</div>
           </div>
           <div className="space-y-4 text-left w-52 min-w-52">
-            <div className="text-sm">요청 일시: {ticket.requestDate}</div>
-            <div className="text-sm">승인 일시: {ticket.ticketTimeInfo?.startedAt}</div>
-            <div className="text-sm">수정 일시: {ticket.updateDate}</div>
-            <div className="text-sm">완료 일시: {ticket.ticketTimeInfo?.endedAt}</div>
+            <div className="text-sm">요청 일시: {ticket.createdAt}</div>
+            <div className="text-sm">승인 일시: {ticket.startedAt}</div>
+            <div className="text-sm">수정 일시: {ticket.updatedAt}</div>
+            <div className="text-sm">완료 일시: {ticket.completedAt}</div>
           </div>
         </div>
       </div>

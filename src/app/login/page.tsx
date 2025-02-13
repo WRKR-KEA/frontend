@@ -135,7 +135,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-[#252E66]/80">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-main-2">
       {/* 헤더 */}
       <header className="absolute top-0 w-full bg-white py-4 shadow-sm">
         <div className="w-full flex items-center justify-between px-6">

@@ -105,7 +105,7 @@ export default function Headerbar() {
     // getNotification 함수
     const getNotification = async () => {
         try {
-            const response = await api.get(`${process.env.NEXT_PUBLIC_BASE_URL}api/user/notifications`);
+            const response = await api.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/notifications`);
             let notificationData = response.data.result;
             setNotificationData(notificationData); // notificationData 상태 업데이트
         } catch (error) {

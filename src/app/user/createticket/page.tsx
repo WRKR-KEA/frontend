@@ -125,7 +125,7 @@ export default function UserCreateTicketPage() {
   
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/user/home");
+        router.push("/user/myticket/");
       }, 1000);
     } catch (error: any) {
       console.error("❌ 티켓 생성 중 오류 발생:", error);
@@ -246,7 +246,6 @@ export default function UserCreateTicketPage() {
           <AlertModal
             title={modalState.title}
             onClick={modalState.onClose}
-            btnText={modalState.btnText}
           />
         </Modal>
       )}

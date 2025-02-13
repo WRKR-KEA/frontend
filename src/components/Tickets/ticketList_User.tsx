@@ -91,7 +91,7 @@ export function TicketList_User({
         <>
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100">
+          <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>

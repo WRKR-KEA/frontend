@@ -15,54 +15,6 @@ export default function SecondTaskDrop({
 }: SecondTaskDropProps) {
   const [isOpen, setIsOpen] = useState(false); // State to toggle the dropdown visibility
 
-  // const options = [
-  //   "추가 (Add)",
-  //   "수정 (Edit)",
-  //   "삭제 (Delete)",
-  //   "기타 (Others)"
-  // ];
-
-//   const getSecondTaskOptions = (service: string) => {
-//     switch (service) {
-//       case "인프라 (Infrastructure)":
-//         return [
-//           "Virtual Machine",
-//           "Bare Metal Server",
-//           "GPU",
-//           "Object Storage",
-//           "File Storage",
-//           "Media Convert",
-//         ];
-//       case "시스템 (System)":
-//         return [
-//           "MySQL",
-//           "PostgreSQL",
-//           "MemStore",
-//           "Kubernetes Engine",
-//           "Container Registry",
-//           "IAM",
-//           "Monitoring",
-//           "Cloud Trail",
-//           "Monitoring Flow",
-//           "Advanced Managed Prometheus",
-//           "Kubeflow",
-//         ];
-//       case "네트워크 (Networking)":
-//         return ["VPC", "Load Balancing", "CDN", "DNS", "Transit Gateway"];
-//       case "기타 (Others)":
-//         return [
-//           "OSS Library",
-//           "Hadoop Eco",
-//           "Data Catalog",
-//           "Data Query",
-//           "Pub/Sub",
-//           "Advanced Managed Kafka",
-//         ];
-//       default:
-//         return [];
-//     }
-//   };
-
   const handleSelect = (requestType: string) => {
     onRequestTypeChange(requestType); 
     setIsOpen(false); 

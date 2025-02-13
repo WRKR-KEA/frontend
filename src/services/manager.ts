@@ -122,16 +122,8 @@ export async function updateManagerTicketReject(ticketId: string) {
 
 // (PATCH) 담당자 - 티켓 완료
 export async function updateManagerTicketComplete(ticketId: string) {
-  const accessToken = sessionStorage.getItem('accessToken');
-
   try {
-    const { data } = await api.patch(`/api/manager/tickets/${ticketId}/complete`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  )
+    const { data } = await api.patch(`/api/manager/tickets/${ticketId}/complete`);
     return data;
   } catch (error) {
     console.error('담당자 - 티켓 완료에 실패했습니다. :', error);
@@ -168,7 +160,7 @@ export async function updateManagerTicketApprove(ticketId: string) {
   const accessToken = sessionStorage.getItem('accessToken');
   try {
     const { data } = await api.patch(
-      `/api/manager/tickets/approve?ticketId=${encodeURIComponent(ticketId)}`,
+      `/api/manager/tickets/approve?ticketId=${ticketId}`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,

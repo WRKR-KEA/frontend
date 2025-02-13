@@ -1,8 +1,6 @@
 import api from '@/lib/api/axios';
 import { AxiosResponse } from 'axios';
 
-const accessToken = sessionStorage.getItem("accessToken");
-
 // (GET) 담당자 티켓 목록 요청
 export async function fetchManagerTicketList(
   page?: number,
@@ -24,6 +22,8 @@ export async function fetchManagerTicketList(
 
 // (GET) 티켓 상세 조회
 export async function fetchManagerTicket(ticketId: string) {
+  const accessToken = sessionStorage.getItem("accessToken");
+
   try {
     const { data } = await api.get(`/api/manager/tickets/${ticketId}`, {
       headers: {
@@ -46,6 +46,7 @@ export async function fetchManagerDepartmentTicket(
   page?: number,
   size?: number,
 ) {
+  const accessToken = sessionStorage.getItem("accessToken");
   try {
     const { data } = await api.get(
      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`,
@@ -121,16 +122,8 @@ export async function updateManagerTicketReject(ticketId: string) {
 
 // (PATCH) 담당자 - 티켓 완료
 export async function updateManagerTicketComplete(ticketId: string) {
-  const accessToken = sessionStorage.getItem('accessToken');
-
   try {
-    const { data } = await api.patch(`/api/manager/tickets/${ticketId}/complete`,
-    {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    },
-  )
+    const { data } = await api.patch(`/api/manager/tickets/${ticketId}/complete`);
     return data;
   } catch (error) {
     console.error('담당자 - 티켓 완료에 실패했습니다. :', error);
@@ -164,9 +157,15 @@ export async function updateManagerTicketPin(ticketData: {
 
 // (PATCH) 담당자 - 티켓 승인
 export async function updateManagerTicketApprove(ticketId: string) {
+  const accessToken = sessionStorage.getItem('accessToken');
   try {
     const { data } = await api.patch(
-      `/api/manager/tickets/approve?ticketId=${encodeURIComponent(ticketId)}`
+      `/api/manager/tickets/approve?ticketId=${ticketId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
     );
     return data;
   } catch (error) {

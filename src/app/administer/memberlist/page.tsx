@@ -5,9 +5,7 @@ import { FaSearch } from 'react-icons/fa';
 import { useMemberListQuery } from '@/hooks/useMemberList';
 import PagePagination from '@/components/pagination';
 import Link from 'next/link';
-
-import UserProfilePage from "../../../../public/userProfileImage.png";
-
+import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 
@@ -23,6 +21,7 @@ export default function AdminMemberListPage() {
     btnText: '',
     onClose: () => { },
   });
+  const router = useRouter(); // ✅ useRouter 사용
 
   const showModal = (title: string, btnText = '닫기') => {
     setModalState({
@@ -102,6 +101,7 @@ export default function AdminMemberListPage() {
       const accessToken = sessionStorage.getItem('accessToken');
       if (!accessToken) {
         showModal("로그인이 필요합니다.");
+        router.push('/login'); // ✅ 로그인 페이지로 이동 😎push 대신 replace 사용
         return;
       }
 

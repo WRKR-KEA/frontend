@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 도움말이데이터 가져오는 쿼리
@@ -16,11 +17,14 @@ interface GuideModalProps {
   showModal:()=> void;
 }
 
-const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal, refetchList }) => {
+const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {
   const editorRef = useRef<Editor>(null);
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
+  const router = useRouter(); // ✅ useRouter 사용
+
   const queryClient = useQueryClient(); // ✅ queryClient 가져오기
   const [deleteAttachments, setDeleteAttachments] = useState([])
+        
   if (!isOpen) return null;
 
   console.log("도움말이모달 - 카테고리 ID:", categoryId);
@@ -45,7 +49,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        showModal("로그인이 필요합니다.");
         return;
       }
   

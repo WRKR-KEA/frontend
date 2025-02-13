@@ -101,7 +101,7 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/user/home");
+        router.push("/manager/home");
       }, 1000);
     } catch (err: any) {
       setError(err.message);

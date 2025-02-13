@@ -4,6 +4,7 @@ import React, { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import { useUserDetailQuery } from "@/hooks/useUserDetail";
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -43,55 +44,30 @@ export default function UserProfilePage() {
     });
   };
 
-  // ✅ 사용자 마이페이지 회원 정보 가져오기
-  const fetchUserProfile = async () => {
-    try {
-      const accessToken = sessionStorage.getItem("accessToken");
-      if (!accessToken) {
-        showModal("로그인이 필요합니다.");
-        return;
-      }
+    // ✅ 멤버 상세 정보 가져오기
+  const { data, isLoading, error, refetch } = useUserDetailQuery();
+  console.log("유저 디테일 정보:", data);
 
-      const response = await fetch("http://172.16.211.53:8080/api/user/my-page", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
-      
-      console.log(response); // Log the response to debug
-      const responseData = await response.json();
-      console.log("🔹 사용자 마이페이지 정보:", responseData);
-
-      if (response.ok) {
-        setEditableData({
-          email: responseData.result.email || "",
-          name: responseData.result.name || "",
-          nickname: responseData.result.nickname || "",
-          department: responseData.result.department || "",
-          position: responseData.result.position || "",
-          phone: responseData.result.phone || "",
-          role: responseData.result.role || "사용자", // 기본값 설정
-          profileImage: responseData.result.profileImage || "",
-          agitUrl: responseData.result.agitUrl || "",
-          agitNotification: responseData.result.agitNotification || true,
-          emailNotification: responseData.result.emailNotification || true,
-          serviceNotification: responseData.result.serviceNotification || true,
-          kakaoworkNotification: responseData.result.kakaoworkNotification || true,
-        });
-      } else {
-        throw new Error(responseData.message || "회원 정보 조회 실패");
-      }
-    } catch (error) {
-      console.error("❌ 사용자 정보 조회 실패:", error);
-      showModal("회원 정보를 불러오는 데 실패했습니다.");
-    }
-  };
-
+  // ✅ 데이터 로딩 후 입력 필드 업데이트
   useEffect(() => {
-    fetchUserProfile();
-  }, []);
+    if (data) {
+      setEditableData({
+        email: data.email || "",
+        name: data.name || "",
+        nickname: data.nickname || "",
+        department: data.department || "",
+        position: data.position || "",
+        phone: data.phone || "",
+        role: data.role || "사용자", // 기본값 설정
+        profileImage: data.profileImage || "",
+        agitUrl: data.agitUrl || "",
+        agitNotification: data.agitNotification ?? true,
+        emailNotification: data.emailNotification ?? true,
+        serviceNotification: data.serviceNotification ?? true,
+        kakaoworkNotification: data.kakaoworkNotification ?? true,
+      });
+    }
+  }, [data]);
 
   // ✅ 입력값 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

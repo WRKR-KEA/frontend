@@ -8,8 +8,9 @@ import path from "path";
 interface User {
     id: string;
     name: string;
-    email: string;
+    profileImage: string;
     role: string; // "USER", "MANAGER", "ADMIN" 등 역할 추가 가능
+    nickname: string;
 }
 
 interface SidebarProps {
@@ -73,7 +74,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <div>
                 <div className="flex items-center space-x-2 mt-6 ml-10">
                     <img
-                        src="/userProfileImage.png"
+                        src={user?.profileImage || "/profile.png"}
                         alt="User Avatar"
                         className="w-8 h-8 rounded-full"
                     />
@@ -83,8 +84,10 @@ export default function Sidebar({ user }: SidebarProps) {
                     </span>
                 </div>
 
+                <hr className="border-main-3 mt-4 mx-3"/>
+
                 {/* 사용자 네비게이션 메뉴 */}
-                <nav className="mt-6 w-full">
+                <nav className="mt-4 w-full">
                     {user?.role === "USER" && (
                         <ul className="space-y-3 w-full">
 
@@ -231,7 +234,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </span>
                                 </div>
                                 <ul
-                                    className={`ml-10 space-y-2 transition-all duration-300 overflow-hidden ${isTicketManagementOpen ? "max-h-40 opacity-100" : "max-h-0"
+                                    className={`space-y-2 transition-all duration-300 overflow-hidden ${isTicketManagementOpen ? "mt-2 max-h-40 opacity-100" : "max-h-0"
                                     }`}
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
@@ -242,7 +245,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 담당 티켓 조회
                                             </span>
                                         </Link>
@@ -254,7 +257,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 부서 티켓 조회
                                             </span>
                                         </Link>
@@ -316,7 +319,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </span>
                                 </div>
                                 <ul
-                                    className={`ml-10 space-y-2 transition-all duration-300 overflow-hidden ${isStatisticsOpen ? "max-h-40 opacity-100" : "max-h-0"
+                                    className={`space-y-2 transition-all duration-300 overflow-hidden ${isStatisticsOpen ? "mt-2 max-h-40 opacity-100" : "max-h-0"
                                     }`}
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
@@ -327,7 +330,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 일간 모니터링
                                             </span>
                                         </Link>
@@ -339,7 +342,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 월간 모니터링
                                             </span>
                                         </Link>
@@ -398,7 +401,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </span>
                                 </div>
                                 <ul
-                                    className={`ml-10 space-y-2 transition-all duration-300 overflow-hidden ${isMemberManagement ? "max-h-40 opacity-100" : "max-h-0"
+                                    className={`space-y-2 transition-all duration-300 overflow-hidden ${isMemberManagement ? "mt-2 max-h-40 opacity-100" : "max-h-0"
                                     }`}
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
@@ -409,7 +412,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 회원 조회
                                             </span>
                                         </Link>
@@ -421,7 +424,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 회원 등록
                                             </span>
                                         </Link>

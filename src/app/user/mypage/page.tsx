@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import { useUserDetailQuery } from "@/hooks/useUserDetail";
+import SkeletonNet from "@/components/SkeletonNet";
+import Skeleton from "@/components/Skeleton"; 
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -134,6 +136,14 @@ export default function UserProfilePage() {
       showModal("회원 정보 수정에 실패했습니다.");
     }
   };
+
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
+
+  if (isLoading) {
+    return <Skeleton width="100%" height="100%" />;
+  }
 
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">

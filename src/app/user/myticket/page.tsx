@@ -9,6 +9,7 @@ import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
 import Skeleton from "@/components/Skeleton"; 
 import { useUserTicketListQuery } from "@/hooks/useUserTicketList";
+import SkeletonNet from "@/components/SkeletonNet";
 
 type Ticket = {
   id: string,
@@ -75,6 +76,10 @@ export default function UserTicketListPage() {
     setCurrentPage(1); // 필터 변경 시 첫 페이지로 이동
   }, []);
 
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
+  
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">

@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import { useUserDetailQuery } from "@/hooks/useUserDetail";
+import SkeletonNet from "@/components/SkeletonNet";
+import Skeleton from "@/components/Skeleton"; 
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -134,6 +136,15 @@ export default function UserProfilePage() {
     }
   };
 
+
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
+
+  if (isLoading) {
+    return <Skeleton width="100%" height="100%" />;
+  }
+  
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
       <h1 className="w-full max-w-4xl text-2xl font-bold text-gray-800 mb-4 text-left">회원 상세</h1>

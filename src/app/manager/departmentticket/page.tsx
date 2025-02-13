@@ -13,6 +13,7 @@ import { useDepartTicketListQuery } from "@/hooks/useDepartTicketList";
 import PagePagination from "@/components/pagination";
 import Button from "@/components/Buttons/Button";
 import Skeleton from "@/components/Skeleton";
+import SkeletonNet from "@/components/SkeletonNet";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -108,6 +109,10 @@ export default function DepartmentTicketListPage() {
   
 };
 
+if (error) {
+  return <SkeletonNet width="100%" height="100%" />;
+}
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
@@ -144,7 +149,7 @@ export default function DepartmentTicketListPage() {
       </div>
 
       <div className="relative min-h-[200px]">
-        {error || isLoading ? (
+        {isLoading ? (
           <div className="flex flex-col items-center space-y-4">
             <Skeleton width="100%" height="600px" />
           </div>

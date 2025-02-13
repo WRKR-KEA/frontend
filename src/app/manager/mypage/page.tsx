@@ -164,6 +164,14 @@ export default function UserProfilePage() {
               </div>
             </div>
           </div>
+            {/* 비밀번호 변경 버튼 (오른쪽 끝) */}
+
+            <button
+            onClick={() => router.push("/changepassword")}
+            className="px-6 py-2 bg-red-500 text-white rounded-md ml-auto"
+          >
+            비밀번호 변경
+          </button>
         </div>
         <div className="grid grid-cols-2 gap-12 mt-8">
           <div className="space-y-6">

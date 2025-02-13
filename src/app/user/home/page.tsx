@@ -5,6 +5,7 @@ import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
 import Skeleton from "@/components/Skeleton";
+import SkeletonNet from "@/components/SkeletonNet";
 import { useUserMainTicketListQuery } from "@/hooks/useUserMainTicket";
 
 type Ticket = {
@@ -38,7 +39,6 @@ export default function UserHomePage() {
 
   // ✅ React Query를 이용해 티켓 데이터 가져오기
   const { data, isLoading, error } = useUserMainTicketListQuery();
-  console.log(data);
   // ✅ 티켓 데이터 상태 관리
   const [tickets, setRequestTickets] = useState<Ticket[]>([]);
 
@@ -79,6 +79,10 @@ export default function UserHomePage() {
     console.log("🌟 클릭한 티켓의 상태:", newStatus);
   };
 
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <h2 className="text-lg font-semibold">최근 티켓 조회</h2>
@@ -99,7 +103,7 @@ export default function UserHomePage() {
       <h2 className="text-lg font-semibold">최근 티켓 현황</h2>
 
       {/* 티켓 리스트 스켈레톤 UI */}
-      {isLoading || tickets.length === 0 ? (
+      {error || isLoading || tickets.length === 0 ? (
         <Skeleton width="100%" height="400px" />
       ) : (
         <TicketList

@@ -39,7 +39,7 @@ export default function UserTicketListPage() {
   const user = useUserStore((state) => state.user);
 
   // 🔹 티켓 목록 가져오기
-  const { data } = useUserTicketListQuery(currentPage, maxTicketsToShow, selectedStatus);
+  const { data, error } = useUserTicketListQuery(currentPage, maxTicketsToShow, selectedStatus);
 
   // 데이터가 성공적으로 로드되면 콘솔에 출력
   useEffect(() => {
@@ -79,16 +79,16 @@ export default function UserTicketListPage() {
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
         <h2 className="text-lg font-semibold">티켓 조회</h2>
-        {/* <div className="flex items-center space-x-4 ml-4">
-          <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
-        </div> */}
+        <div className="flex items-center space-x-4 ml-4">
+          <Search onSearchChange={handleSearchChange} placeHolder="페이지 내 제목, 담당자, 티켓번호 검색" />
+        </div>
 
         <div className="ml-auto">
           <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
 
-      {isLoading ?(
+      {error || isLoading ?(
         <div>
           <Skeleton width="100%" height="600px" />
         </div>

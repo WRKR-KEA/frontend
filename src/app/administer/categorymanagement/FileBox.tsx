@@ -96,6 +96,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
         onDrop={handleDrop}
       >
         <p className="text-gray-600">파일을 여기로 드래그하거나 클릭하여 선택하세요.</p>
+        <p className="text-xs text-gray-400 mt-1">첨부파일(jpg, jpeg, png, pdf, xls, xlsx만 허용)은 최대 5개까지 각각 최대 10MB 까지 가능합니다.</p>
         <input type="file" multiple className="hidden" id="fileInput" onChange={handleFileSelect} />
         <label
           htmlFor="fileInput"

@@ -112,40 +112,24 @@ export default function LogPage() {
     setCurrentPage(1); // 페이지네이션도 첫 페이지로 이동
   };
 
+
+
+  // LogPage 컴포넌트의 handleDownloadExcel 함수 수정
   const handleDownloadExcel = async () => {
     try {
-
-      // startDate와 endDate 포맷팅
-      const startDate = dateRange.startDate
-        ? format(dateRange.startDate, "yyyy-MM-dd")
-        : undefined;
-      const endDate = dateRange.endDate
-        ? format(dateRange.endDate, "yyyy-MM-dd")
-        : undefined;
-
-      // GET 요청으로 변경하고 response type을 blob으로 설정
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/access-logs/excel`, {
-        params: {
-          query: searchTerm,
-          startDate: startDate,
-          endDate: endDate
-        },
-        responseType: 'blob'
-      }
+      const data = await fetchAdminAccessLogsExcel(
+        searchTerm,
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
       );
 
-      // response.data가 blob 데이터
-      const data = response.data;
-
-      // Blob URL 생성 및 다운로드
-      const url = window.URL.createObjectURL(new Blob([data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `access_logs_${format(new Date(), 'yyyy-MM-dd')}.xlsx`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
+      const url = window.URL.createObjectURL(data);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `access_logs_${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("엑셀 다운로드 중 오류 발생:", error);
@@ -236,19 +220,28 @@ export default function LogPage() {
         </tbody>
       </table>
 
-      {/* 다운로드 버튼 추가 */}
-      <div className="flex justify-end mb-4">
-        <Button
-          label="다운로드"
-          onClick={handleDownloadExcel}
-          color={1} // 파란색
-          className="mr-2"
-        />
-      </div>
+      {
+        logs.length > 0 ? (
+          <>
+            <div className="flex justify-end mt-4">
+              <Button
+                label="다운로드"
+                onClick={handleDownloadExcel}
+                color={1} // 파란색
+                className="mr-2"
+              />
+            </div>
+            <div className="flex justify-center items-center mt-4 w-full">
+              <PagePagination totalItemsCount={totalElements} itemsCountPerPage={itemsPerPage} pageRangeDisplayed={5} onPageChange={(page) => setCurrentPage(page)} currentPage={currentPage} totalPages={totalPages} />
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+            <p className="text-lg">검색 결과가 없습니다.</p>
+          </div>
+        )
+      }
 
-      <div className="flex justify-center items-center mt-4 w-full">
-        <PagePagination totalItemsCount={totalElements} itemsCountPerPage={itemsPerPage} pageRangeDisplayed={5} onPageChange={(page) => setCurrentPage(page)} currentPage={currentPage} totalPages={totalPages} />
-      </div>
     </div>
   );
 }

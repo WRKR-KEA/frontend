@@ -232,7 +232,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </span>
                                 </div>
                                 <ul
-                                    className={`ml-10 space-y-2 transition-all duration-300 overflow-hidden ${isTicketManagementOpen ? "max-h-40 opacity-100" : "max-h-0"
+                                    className={`space-y-2 transition-all duration-300 overflow-hidden ${isTicketManagementOpen ? "mt-2 max-h-40 opacity-100" : "max-h-0"
                                     }`}
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
@@ -243,7 +243,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 담당 티켓 조회
                                             </span>
                                         </Link>
@@ -255,7 +255,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 부서 티켓 조회
                                             </span>
                                         </Link>
@@ -317,7 +317,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </span>
                                 </div>
                                 <ul
-                                    className={`ml-10 space-y-2 transition-all duration-300 overflow-hidden ${isStatisticsOpen ? "max-h-40 opacity-100" : "max-h-0"
+                                    className={`space-y-2 transition-all duration-300 overflow-hidden ${isStatisticsOpen ? "mt-2 max-h-40 opacity-100" : "max-h-0"
                                     }`}
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
@@ -328,7 +328,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 일간 모니터링
                                             </span>
                                         </Link>
@@ -340,7 +340,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 월간 모니터링
                                             </span>
                                         </Link>
@@ -399,7 +399,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </span>
                                 </div>
                                 <ul
-                                    className={`ml-10 space-y-2 transition-all duration-300 overflow-hidden ${isMemberManagement ? "max-h-40 opacity-100" : "max-h-0"
+                                    className={`space-y-2 transition-all duration-300 overflow-hidden ${isMemberManagement ? "mt-2 max-h-40 opacity-100" : "max-h-0"
                                     }`}
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
@@ -410,7 +410,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 회원 조회
                                             </span>
                                         </Link>
@@ -422,7 +422,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                                 }`}
                                             prefetch
                                         >
-                                            <span className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
+                                            <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 회원 등록
                                             </span>
                                         </Link>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
@@ -8,7 +8,8 @@ import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
 import { format } from "date-fns";
-import { fetchManagerDepartmentTicket, fetchManagerDepartmentTicketExcel } from "@/services/manager";
+import { fetchManagerDepartmentTicketExcel } from "@/services/manager";
+import { useDepartTicketListQuery } from "@/hooks/useDepartTicketList";
 import PagePagination from "@/components/pagination";
 import Button from "@/components/Buttons/Button";
 import Skeleton from "@/components/Skeleton";
@@ -17,33 +18,30 @@ export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
-  const [tickets, setTickets] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
-  const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState<string>("");
-  const [totalItemsCount, setTotalItems] =useState(1);
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<any>({
+    startDate: null,
+    endDate: null,
+    key: "selection",
+  });
 
-  const [modalState, setModalState] = useState({
-          isOpen: false,
-          title: "",
-          btnText: "",
-          onClose:()=>{},
-      })
-  
-      const showModal = (title: string, btnText='닫기') => {
-          setModalState({
-            isOpen: true,
-            title,
-            btnText,
-            onClose: () => {
-              setModalState(prev => ({ ...prev, isOpen: false }));
-            },
-      
-          });
-        };
-        
+  const formattedDateRange = dateRange.startDate
+    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
+    : "모든 날짜";
+
+  const { data, isLoading, error, isFetching } = useDepartTicketListQuery(
+    searchTerm,
+    status,
+    dateRange,
+    currentPage,
+    maxTicketsToShow
+  );
+
+  const tickets = data?.elements || [];
+  const totalPages = data?.totalPages || 1;
+  const totalItemsCount = data?.totalElements || 0;
+
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
   };
@@ -67,53 +65,10 @@ export default function DepartmentTicketListPage() {
     setDateRange(ranges.selection);
   };
 
-  const [dateRange, setDateRange] = useState<any>({
-    startDate: null,
-    endDate: null,
-    key: "selection",
-  });
-
-  const formattedDateRange = dateRange.startDate
-    ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
-    : "모든 날짜";
-
   const handleStatusChange = (status: string) => {
     setStatus(status);
     setCurrentPage(1);
   };
-
-  const fetchTickets = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await fetchManagerDepartmentTicket(
-        searchTerm,
-        status,
-        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null,
-        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null,
-        currentPage,
-        maxTicketsToShow
-      );
-
-      const firstdata = await fetchManagerDepartmentTicket(
-        "",
-        "",
-        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null,
-        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null,
-        currentPage,
-        maxTicketsToShow
-      );
-      const totalItemsCount =firstdata?.result?.totalElements;
-      setTotalItems(totalItemsCount);
-
-      setTickets(data?.result?.elements || []);
-      setTotalPages(data?.result?.totalPages || []);
-    } catch (err) {
-      setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [searchTerm, status, dateRange, currentPage, maxTicketsToShow]);
 
   const handleDownloadExcel = async () => {
     try {
@@ -133,13 +88,25 @@ export default function DepartmentTicketListPage() {
       a.remove();
     } catch (error) {
       console.error("엑셀 다운로드 중 오류 발생:", error);
-      showModal("엑셀 다운로드 중 오류가 발생했습니다.");
+    }
+  };
+  const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
+  const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
+
+   // ✅ 검색 입력 후 Enter 키 입력 시 실행
+   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
+      setCurrentPage(1); // 검색 시 첫 페이지로 이동
     }
   };
 
-  useEffect(() => {
-    fetchTickets();
-  }, [fetchTickets]);
+  const handleSearch = () => {
+  
+    setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+  
+};
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
@@ -147,7 +114,9 @@ export default function DepartmentTicketListPage() {
         <h2 className="text-lg font-semibold">티켓 조회</h2>
 
         <div className="flex items-center space-x-2 ml-4">
-          <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
+          <Search onSearchChange={handleSearchChange}  
+            onKeyDown={handleInputKeyDown}
+            onBlur={handleSearch}placeHolder="제목, 담당자, 티켓번호" />
         </div>
 
         <div className="ml-auto flex items-center relative">
@@ -175,39 +144,47 @@ export default function DepartmentTicketListPage() {
       </div>
 
       <div className="relative min-h-[200px]">
-      {isLoading || totalItemsCount === 0? (
-    <div className="flex flex-col items-center space-y-4">
-      <Skeleton width="100%" height="600px" />
-    </div>
-  ) : (
-    <>
-        <TicketList_Depart
-          tickets={tickets}
-          maxTicketsToShow={maxTicketsToShow}
-          page={currentPage}
-          searchTerm={searchTerm}
-          dateRange={dateRange}
-          status={status || ""}
-          onStatusChange={handleStatusChange}
-        />
+        {isLoading ? (
+          <div className="flex flex-col items-center space-y-4">
+            <Skeleton width="100%" height="600px" />
+          </div>
+        ) : (
+          <>
+            <TicketList_Depart
+              tickets={tickets}
+              maxTicketsToShow={maxTicketsToShow}
+              page={currentPage}
+              searchTerm={searchTerm}
+              dateRange={dateRange}
+              status={status || ""}
+              onStatusChange={handleStatusChange}
+            />
+            
+            {tickets.length === 0 ? (
+                     <div className="flex flex-col items-center justify-center py-4 text-gray-500">
+                     <p className="text-md">검색 결과가 없습니다.</p>
+                   </div>
+            ) : (
+              <>
+                <div className="flex justify-end mb-4 mt-4">
+                  <Button label="다운로드" onClick={handleDownloadExcel} color={1} className="mr-2" />
+                </div>
 
-      <div className="flex justify-end mb-4">
-        <Button label="다운로드" onClick={handleDownloadExcel} color={1} className="mr-2" />
+                <div className="flex justify-center items-center mt-4 mb-4">
+                  <PagePagination
+                    totalItemsCount={totalItemsCount}
+                    itemsCountPerPage={maxTicketsToShow}
+                    pageRangeDisplayed={5}
+                    currentPage={currentPage} 
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              </>
+            )}
+          </>
+        )}
       </div>
-
-      <div className="flex justify-center items-center mt-4 mb-4">
-        <PagePagination
-          totalItemsCount={tickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
-       </>
-      )}
-    </div>
     </div>
   );
 }

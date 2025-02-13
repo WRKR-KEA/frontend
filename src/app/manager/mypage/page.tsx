@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
@@ -15,7 +15,7 @@ export default function UserProfilePage() {
     name: "",
     nickname: "",
     department: "",
-    position: "", 
+    position: "",
     phone: "",
     role: "",
     profileImage: "",
@@ -28,23 +28,23 @@ export default function UserProfilePage() {
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    btnText: '',
+    btnText: "닫기",
     onClose: () => {},
   });
 
-  const showModal = (title: string, btnText='닫기') => {
+  const showModal = (title: string, btnText = "닫기") => {
     setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
-        setModalState(prev => ({ ...prev, isOpen: false }));
+        setModalState((prev) => ({ ...prev, isOpen: false }));
       },
    
     });
   };
 
-    // ✅ 멤버 상세 정보 가져오기
+  // ✅ 멤버 상세 정보 가져오기
   const { data, isLoading, error, refetch } = useUserDetailQuery();
   console.log("유저 디테일 정보:", data);
 
@@ -58,7 +58,7 @@ export default function UserProfilePage() {
         department: data.department || "",
         position: data.position || "",
         phone: data.phone || "",
-        role: data.role || "사용자", // 기본값 설정
+        role: data.role || "사용자",
         profileImage: data.profileImage || "",
         agitUrl: data.agitUrl || "",
         agitNotification: data.agitNotification ?? true,
@@ -127,14 +127,12 @@ export default function UserProfilePage() {
       }
 
       showModal("회원 정보가 성공적으로 수정되었습니다.");
-      setIsEditing(false); // ✅ 수정 모드 종료
+      setIsEditing(false);
     } catch (error) {
       console.error("❌ 업데이트 요청 실패:", error);
       showModal("회원 정보 수정에 실패했습니다.");
     }
   };
-
-  if (!editableData.email) return <p>로딩 중...</p>;
 
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
@@ -153,7 +151,7 @@ export default function UserProfilePage() {
               {isEditing ? (
                 <input
                   type="text"
-                  name="name"
+                  name="nickname"
                   value={editableData.nickname}
                   onChange={handleInputChange}
                   className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 focus:outline-none h-10"
@@ -162,19 +160,7 @@ export default function UserProfilePage() {
                 <h1 className="text-2xl font-bold text-gray-800">{editableData.nickname}</h1>
               )}
               <div className="flex items-center space-x-4 text-gray-500">
-                {isEditing ? (
-                  <select
-                    name="role"
-                    value={editableData.role}
-                    onChange={handleInputChange}
-                    className="text-sm font-semibold text-gray-500 h-10"
-                  >
-                    <option value="사용자">사용자</option>
-                    <option value="담당자">담당자</option>
-                  </select>
-                ) : (
-                  <p>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
-                )}
+                <p>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
               </div>
             </div>
           </div>
@@ -198,7 +184,7 @@ export default function UserProfilePage() {
                   <input
                     type={field.type}
                     name={field.name}
-                    value={editableData[field.name] ? editableData[field.name] : "미등록"}
+                    value={editableData[field.name]}
                     onChange={handleInputChange}
                     className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none h-10"
                   />
@@ -251,8 +237,7 @@ export default function UserProfilePage() {
               <button onClick={handleSave} className="px-6 py-3 bg-blue-500 text-white rounded-md">
                 저장
               </button>
-              <button onClick={() => setIsEditing(false)}
-                className="px-6 py-3 bg-gray-200 rounded-md ml-4">
+              <button onClick={() => setIsEditing(false)} className="px-6 py-3 bg-gray-200 rounded-md ml-4">
                 취소
               </button>
             </>
@@ -265,13 +250,9 @@ export default function UserProfilePage() {
       </div>
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>
-          <AlertModal
-            title={modalState.title}
-            onClick={modalState.onClose}
-            btnText={modalState.btnText}
-          />
+          <AlertModal title={modalState.title} onClick={modalState.onClose} btnText={modalState.btnText} />
         </Modal>
       )}
     </div>
   );
-} 
+}

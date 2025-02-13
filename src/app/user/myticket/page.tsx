@@ -7,20 +7,22 @@ import { Search } from "@/components/search";
 import useUserStore from "@/stores/userStore";
 import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
-import Skeleton from "@/components/Skeleton"; // 스켈레톤 컴포넌트 가져오기
+import Skeleton from "@/components/Skeleton"; 
+import { useUserTicketListQuery } from "@/hooks/useUserTicketList";
 
 type Ticket = {
-  id: string;
-  number: string;
-  status: string;
-  title: string;
-  requester: string;
-  requestDate: string;
-  acceptDate: string | null;
-  updateDate: string | null;
-  completeDate: string | null;
-  handler: string;
-  ispinned: boolean;
+  id: string,
+  serialNumber: string,
+  firstCategory: string,
+  secondCategory: string,
+  status: string,
+  title: string,
+  managerName: string | "-",
+  createdAt: string,
+  updatedAt: string | "-",
+  startedAt: string | "-",
+  endedAt: string | "-",
+  completedAt: string | "-",
 };
 
 export default function UserTicketListPage() {
@@ -30,69 +32,26 @@ export default function UserTicketListPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [totalItemsCount, setTotalItems] =useState(1);
+  const [totalItemsCount, setTotalItems] = useState(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const user = useUserStore((state) => state.user);
-  const ticketRequester = user ? user.name : "-";
 
   // 🔹 티켓 목록 가져오기
+  const { data } = useUserTicketListQuery(currentPage, maxTicketsToShow, selectedStatus);
+
+  // 데이터가 성공적으로 로드되면 콘솔에 출력
   useEffect(() => {
-    const fetchTickets = async () => {
-      setIsLoading(true); // 데이터 로딩 시작
-      try {
-        const accessToken = sessionStorage.getItem("accessToken");
-        const response = await api.get(`/api/user/tickets?page=${currentPage}&size=${maxTicketsToShow}&status=${selectedStatus || ""}`, {
-          params: {
-            page: currentPage,
-            size: maxTicketsToShow,
-            ...(status && { status }),
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const firstresponse = await api.get(`/api/user/tickets?page=${currentPage}&size=${maxTicketsToShow}&status=${""}`, {
-          params: {
-            page: currentPage,
-            size: maxTicketsToShow,
-            ...(status && { status }),
-          },
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
-        const totalItemsCount =firstresponse.data.result.totalElements;
-        setTotalItems(totalItemsCount);
-        const { elements, totalPages } = response.data.result;
-
-        const requestTicketList: Ticket[] = elements.map((ticket: any) => ({
-          id: ticket.id,
-          number: ticket.serialNumber,
-          status: ticket.status,
-          title: ticket.title,
-          handler: ticket.managerName,
-          requestDate: ticket.createdAt,
-          updateDate: ticket.updatedAt,
-          acceptDate: ticket.startedAt,
-          completeDate: ticket.endAt,
-          ispinned: false,
-        }));
-
-        setTickets(requestTicketList);
-        setTotalPages(totalPages);
-      } catch (error) {
-        console.error("Error fetching tickets:", error);
-      } finally {
-        setIsLoading(false); // 데이터 로딩 끝
-      }
-    };
-
-    fetchTickets();
-  }, [currentPage, maxTicketsToShow, selectedStatus]); 
+    if (data) {
+      console.log("🌟 가져온 데이터 목록: ", data);
+      console.log("🌟 가져온 티켓 목록: ", data.elements);
+      // 티켓 목록을 상태에 저장
+      setTickets(data.elements);
+      setTotalPages(data.totalPages);
+      setIsLoading(false); // 데이터 로딩 완료
+    }
+  }, [data]);
 
   // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
@@ -120,17 +79,16 @@ export default function UserTicketListPage() {
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
         <h2 className="text-lg font-semibold">티켓 조회</h2>
-
-        <div className="flex items-center space-x-4 ml-4">
+        {/* <div className="flex items-center space-x-4 ml-4">
           <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
-        </div>
+        </div> */}
 
         <div className="ml-auto">
           <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
 
-      {isLoading || totalItemsCount === 0? (
+      {isLoading ?(
         <div>
           <Skeleton width="100%" height="600px" />
         </div>
@@ -143,6 +101,10 @@ export default function UserTicketListPage() {
             onStatusChange={handleStatusChange}
             status={status || ""}
           />
+          {tickets.length === 0 ?(
+        <div>
+        </div>
+      ) : (
           <div className="flex justify-center items-center mt-4 mb-4">
             <PagePagination
               totalItemsCount={tickets.length}
@@ -153,7 +115,7 @@ export default function UserTicketListPage() {
               onPageChange={handlePageChange}
             />
           </div>
-        </>
+      )}</>
       )}
     </div>
   );

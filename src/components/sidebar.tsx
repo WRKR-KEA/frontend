@@ -74,7 +74,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <div>
                 <div className="flex items-center space-x-2 mt-6 ml-10">
                     <img
-                        src={user?.profileImage}
+                        src={user?.profileImage || "/profile.png"}
                         alt="User Avatar"
                         className="w-8 h-8 rounded-full"
                     />
@@ -84,8 +84,10 @@ export default function Sidebar({ user }: SidebarProps) {
                     </span>
                 </div>
 
+                <hr className="border-main-3 mt-4 mx-3"/>
+
                 {/* 사용자 네비게이션 메뉴 */}
-                <nav className="mt-6 w-full">
+                <nav className="mt-4 w-full">
                     {user?.role === "USER" && (
                         <ul className="space-y-3 w-full">
 

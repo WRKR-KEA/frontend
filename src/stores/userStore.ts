@@ -5,6 +5,7 @@ interface User {
   name: string;
   profileImage: string;
   role: string;
+  nickname: string;
 }
 
 // ✅ Zustand 스토어 타입 정의

@@ -4,8 +4,10 @@ import React, { useRef, useState } from "react";
 import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
-import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 가이드 데이터 가져오는 쿼리
+import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 도움말이데이터 가져오는 쿼리
 import FileBox from "./FileBox";
+import { useQueryClient } from "@tanstack/react-query"; // ✅ React Query 클라이언트 가져오기
+import Skeleton from "@/components/Skeleton";
 
 interface GuideModalProps {
   categoryId: string;
@@ -13,7 +15,7 @@ interface GuideModalProps {
   title: string;
   onClose: () => void;
   onSave: (editorContent: string) => void;
-  showModal:()=> void;
+  showModal: () => void;
 }
 
 const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {
@@ -21,13 +23,16 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
   const router = useRouter(); // ✅ useRouter 사용
 
+  const queryClient = useQueryClient(); // ✅ queryClient 가져오기
+  const [deleteAttachments, setDeleteAttachments] = useState([])
+
   if (!isOpen) return null;
 
-  console.log("가이드 모달 - 카테고리 ID:", categoryId);
+  console.log("도움말이모달 - 카테고리 ID:", categoryId);
 
   const { data, isLoading, isError, refetch } = useGuideQuery(categoryId);
   const guideId = data?.result?.guideId;
-  console.log("가이드 쿼리 결과:", data);
+  console.log("도움말이쿼리 결과:", data);
 
   // ✅ initialValue 값이 null 또는 undefined면 빈 문자열("")을 넣어줌
   const initialMarkdown = typeof data?.result.content === "string" ? data.result.content : "도움말을 입력하세요";
@@ -39,39 +44,39 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
 
   const handleSave = async () => {
     if (!editorRef.current) return;
-  
+
     const editorContent = editorRef.current.getInstance().getMarkdown();
-  
+
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
         showModal("로그인이 필요합니다.");
         return;
       }
-  
+
       // ✅ Multipart FormData 생성
       const formData = new FormData();
-  
+
       // ✅ `data` 유무에 따라 다른 요청 데이터 추가
       const requestData = JSON.stringify(
-        data ? { content: editorContent, guideId } : { content: editorContent }
+        data ? { content: editorContent, deleteAttachments, guideId } : { content: editorContent }
       );
-  
+
       formData.append(
         data ? "guideUpdateRequest" : "guideCreateRequest",
         new Blob([requestData], { type: "application/json" })
       );
-  
+
       // ✅ 첨부 파일 추가 (여러 개 가능)
       attachments.forEach((file) => {
-        formData.append("attachments", file);
+        formData.append(data ? "newAttachments" : "attachments", file);
       });
-  
+
       const method = data ? "PATCH" : "POST";
       const url = data
-        ? `http://172.16.211.53:8080/api/admin/guide/${guideId}`
-        : `http://172.16.211.53:8080/api/admin/guide/${categoryId}`;
-  
+        ? `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/guide/${guideId}`
+        : `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/guide/${categoryId}`;
+
       const response = await fetch(url, {
         method,
         headers: {
@@ -79,30 +84,31 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         },
         body: formData, // ✅ JSON + 파일을 함께 전송 (multipart/form-data)
       });
-  
+
       if (!response.ok) {
-        throw new Error("가이드 저장 실패");
+        throw new Error("도움말 저장 실패");
       }
-  
-      showModal("가이드가 성공적으로 저장되었습니다.");
+
+      showModal("도움말이 성공적으로 저장되었습니다.");
+
       refetch();
       onClose();
     } catch (error) {
-      console.error("❌ 가이드 저장 오류:", error);
-      showModal("가이드를 저장하는 중 오류가 발생했습니다.");
+      console.error("❌ 도움말이저장 오류:", error);
+      showModal("도움말을 저장하는 중 오류가 발생했습니다.");
     }
   };
-  
 
 
-  // 가이드 삭제 함수
+
+  // 도움말이삭제 함수
   const handleDelete = async () => {
     if (!guideId) {
       showModal("도움말 ID를 찾을 수 없습니다.");
       return;
     }
 
-    if (!confirm("정말 이 도움말을을 삭제하시겠습니까?")) return;
+    if (!confirm("정말 이 도움말을 삭제하시겠습니까?")) return;
 
     try {
       const accessToken = sessionStorage.getItem("accessToken");
@@ -111,22 +117,23 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         return;
       }
 
-      const response = await fetch(`http://172.16.211.53:8080/api/admin/guide/${guideId}`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/guide/${guideId}`, {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       });
 
-      if (!response.ok) throw new Error("템플릿 삭제 실패");
+      if (!response.ok) throw new Error("도움말 삭제 실패");
 
-      showModal("가이드가 성공적으로 삭제되었습니다.", "확인", () => {
-        refetch(); 
+      showModal("도움말이 성공적으로 삭제되었습니다.", "확인", () => {
+        refetch();
       });
+      queryClient.setQueryData(["guide_detail", categoryId], null);
       onClose(); // ✅ 모달 닫기
     } catch (error) {
       console.error("❌ 템플릿 삭제 오류:", error);
-      showModal("가이드를 삭제하는 중 오류가 발생했습니다.");
+      showModal("도움말을 삭제하는 중 오류가 발생했습니다.");
 
     }
   };
@@ -134,8 +141,9 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
 
 
   if (isLoading) {
-    return <div></div>;
+    return <Skeleton width={"100%"} height={"100%"} />
   }
+
 
   return (
     <div className="pt-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
@@ -158,7 +166,13 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         </div>
 
         {/* ✅ 파일 업로드 영역 추가 */}
-        <FileBox onFileUpload={handleFileUpload} />
+
+        <FileBox
+          onFileUpload={handleFileUpload}
+          attachments={data?.result?.attachmentUrls}
+          setDeleteAttachments={setDeleteAttachments}
+        />
+
 
         {/* Modal Footer */}
         <div className="p-4 border-t flex justify-end space-x-2">

@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import Skeleton from '@/components/Skeleton';
 
 
 export default function AdminMemberListPage() {
@@ -18,12 +19,12 @@ export default function AdminMemberListPage() {
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    btnText:'',
-    onClose: () => {},
+    btnText: '',
+    onClose: () => { },
   });
   const router = useRouter(); // ✅ useRouter 사용
 
-  const showModal = (title: string, btnText='닫기') => {
+  const showModal = (title: string, btnText = '닫기') => {
     setModalState({
       isOpen: true,
       title,
@@ -56,6 +57,13 @@ export default function AdminMemberListPage() {
       setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
       setCurrentPage(1); // 검색 시 첫 페이지로 이동
     }
+  };
+
+  const handleSearch = () => {
+  
+      setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
+      setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    
   };
 
   // ✅ 역할(role) 매핑 함수
@@ -108,7 +116,7 @@ export default function AdminMemberListPage() {
       const isConfirmed = confirm("정말로 삭제하시겠습니까?");
       if (!isConfirmed) return;
 
-      const response = await fetch("http://172.16.211.53:8080/api/admin/members", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
         method: "DELETE",
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +138,10 @@ export default function AdminMemberListPage() {
     }
   };
 
-  if (isLoading) return <p>로딩 중...</p>;
+  if (isLoading){
+    return <Skeleton width={"100%"} height={"100%"}/>
+}
+
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (
@@ -139,15 +150,17 @@ export default function AdminMemberListPage() {
         <h2 className="text-md font-semibold">회원 조회</h2>
 
         <div className="flex items-center border-b p-2">
-          <FaSearch className="text-gray-500 mr-2" />
+          
           <input
             type="text"
             value={searchInput}
             onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown} // ✅ Enter 키 입력 감지
-            placeholder="이메일, 이름, 부서 검색"
+            onKeyDown={handleInputKeyDown}
+            onBlur={handleSearch} // ✅ Enter 키 입력 감지
+            placeholder="아이디, 이름, 이메일, 부서 검색"
             className="outline-none text-sm w-[180px]"
           />
+          <FaSearch className="text-gray-500 mr-2 cursor-pointer" />
         </div>
       </div>
 
@@ -165,59 +178,70 @@ export default function AdminMemberListPage() {
           ))}
           <button
             onClick={handleDeleteMembers}
-            className="ml-auto px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-red-300"
+            className={`ml-auto px-4 py-2 text-white rounded-md transition-all duration-200 shadow-sm 
+    ${selectedMembers.length > 0 ?
+                "bg-red-500 hover:bg-red-600 hover:shadow-md focus:ring-2 focus:ring-red-300"
+                : "bg-red-300 cursor-not-allowed opacity-50"}`}
+            disabled={selectedMembers.length === 0}
           >
             회원 삭제
           </button>
+
         </div>
 
         <div className="mt-3">
           <table className="w-full table-fixed border-collapse rounded-md">
             <thead>
-            <tr>
-              <th className="p-3 w-1/12"></th>
-              <th className="p-3 text-left w-2/12">이름</th>
-              <th className="p-3 text-left w-2/12">부서</th>
-              <th className="p-3 text-left w-2/12">직책</th>
-              <th className="p-3 text-left w-2/12">전화번호</th>
-              <th className="p-3 text-left w-3/12">이메일 주소</th>
-            </tr>
+              <tr>
+                <th className="p-3 w-1/12"></th>
+                <th className="p-3 text-left w-3/12">아이디</th>
+                <th className="p-3 text-left w-2/12">이름</th>
+                <th className="p-3 text-left w-2/12">부서</th>
+                <th className="p-3 text-left w-2/12">직책</th>
+                <th className="p-3 text-left w-3/12">전화번호</th>
+                <th className="p-3 text-left w-4/12">이메일 주소</th>
+              </tr>
             </thead>
             <tbody>
               {members?.elements?.map((row: any, index: number) => (
-                <tr key={index} className={index % 2 === 0 ? "bg-[#6E61CA]/20" : ""}>
+                <tr key={index} className={index % 2 === 0 ? "bg-[#F5F5F5]" : ""}>
                   <td className="p-3 w-1/12">
                     <input
                       type="checkbox"
                       checked={selectedMembers.includes(row.memberId)}
                       onChange={() => handleCheckboxChange(row.memberId)}
-                      className="w-4 h-4 accent-[#4B5FC2] cursor-pointer rounded-md border-2 border-gray-400 transition-all duration-200 checked:bg-[#4B5FC2] checked:border-transparent focus:ring-2 focus:ring-[#4B5FC2] focus:outline-none"
+                      className="w-5 h-5 ml-2 accent-[#4B5FC2] cursor-pointer rounded-md border-2 border-gray-400 transition-all duration-200 checked:bg-[#4B5FC2] checked:border-transparent focus:ring-2 focus:ring-[#4B5FC2] focus:outline-none"
                     />
                   </td>
-                  <td className="p-3 w-2/12">
+
+                  <td className="p-4 w-3/12">
                     <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
                       <div className="flex items-center space-x-3">
                         <img
-                          src={row.avatar || "/userProfileImage.png"}
+                          src={row.profileImage || "userProfileImage.png"}
                           alt={row.name}
                           className="w-8 h-8 rounded-full object-cover"
                         />
-                        <span>{row.name}</span>
+                        <span>{row.nickname}</span>
                       </div>
                     </Link>
                   </td>
+                  <td className="p-3 w-2/12">{row.name}</td>
                   <td className="p-4 w-2/12">{row.department}</td>
-                  <td className="p-4 w-2/12">{row.role}</td>
-                  <td className="p-4 w-2/12">{row.phone}</td>
-                  <td className="p-4 w-3/12">{row.email}</td>
+                  <td className="p-4 w-2/12">{row.position}</td>
+                  <td className="p-4 w-3/12">{row.phone}</td>
+                  <td className="p-4 w-4/12">{row.email}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        {/* ✅ 페이지네이션 추가 */}
-        <div className="flex justify-center mt-4">
+        
+      {
+        members?.elements.length > 0 ? (
+          <>
+           <div className="flex justify-center mt-4">
           <PagePagination
             totalPages={members?.totalPages || 10}
             itemsCountPerPage={members?.size || 10}
@@ -226,6 +250,14 @@ export default function AdminMemberListPage() {
             currentPage={members?.currentPage}
           />
         </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+            <p className="text-lg">검색 결과가 없습니다.</p>
+          </div>
+        )
+      }
+       
       </div>
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>

@@ -16,7 +16,7 @@ import Modal from "@/components/Modals/Modal";
 import TicketRequest from "@/components/Tickets/ticketRequest";
 import Skeleton from "@/components/Skeleton";
 
-export default function ManagericketDetailPage() {
+export default function ManagerTicketDetailPage() {
   const router = useRouter();
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);

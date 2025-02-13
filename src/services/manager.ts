@@ -1,8 +1,6 @@
 import api from '@/lib/api/axios';
 import { AxiosResponse } from 'axios';
 
-const accessToken = sessionStorage.getItem("accessToken");
-
 // (GET) 담당자 티켓 목록 요청
 export async function fetchManagerTicketList(
   page?: number,
@@ -24,6 +22,8 @@ export async function fetchManagerTicketList(
 
 // (GET) 티켓 상세 조회
 export async function fetchManagerTicket(ticketId: string) {
+  const accessToken = sessionStorage.getItem("accessToken");
+
   try {
     const { data } = await api.get(`/api/manager/tickets/${ticketId}`, {
       headers: {
@@ -46,6 +46,7 @@ export async function fetchManagerDepartmentTicket(
   page?: number,
   size?: number,
 ) {
+  const accessToken = sessionStorage.getItem("accessToken");
   try {
     const { data } = await api.get(
      `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`,

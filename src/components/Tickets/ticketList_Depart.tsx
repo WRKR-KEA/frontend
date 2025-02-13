@@ -102,7 +102,7 @@ console.log("🌟 받은 티켓 데이터:",tickets);
           {filteredTickets.map((ticket) => (
             <tr
               key={ticket.ticketId}
-              className="border-t border-gray-5 cursor-pointer"
+              className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
               onClick={() => handleTicketClick(ticket.ticketId)}
             >
               <td className="px-4 py-2 w-20 text-center">

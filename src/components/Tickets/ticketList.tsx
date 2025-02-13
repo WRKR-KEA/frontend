@@ -7,11 +7,11 @@ type Ticket = {
   secondCatetory: string,
   status: string,
   title: string,
-  handler: string | "-",
+  handler: string,
   createdAt: string,
-  updatedAt: string | "-",
-  startedAt: string | "-",
-  completedAt: string | "-",
+  updatedAt: string,
+  startedAt: string,
+  completedAt: string,
 };
 
 type TicketListProps = {
@@ -58,7 +58,7 @@ export function TicketList({
           {displayedTickets.map((ticket, index) => (
             <tr
               key={ticket.id ?? `ticket-${index}`} // id가 없으면 index를 사용
-              className="border-t border-gray-5 cursor-pointer hover:bg-gray-100"
+              className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
               onClick={() => onTicketClick?.(ticket)}
             >
               <td className="px-4 py-2 text-center">{ticket.number}</td>

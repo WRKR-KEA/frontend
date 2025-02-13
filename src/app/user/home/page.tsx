@@ -14,13 +14,11 @@ type Ticket = {
   secondCatetory: string,
   status: string,
   title: string,
-  handler: string | "-",
-  createdAt: string | "-",
-  updatedAt: string | "-",
-  startedAt: string | "-",
-  endedAt: string | "-",
-  completedAt: string | "-",
-
+  handler: string,
+  createdAt: string,
+  updatedAt: string,
+  startedAt: string,
+  completedAt: string,
 };
 
 type TicketStatusType = "REQUEST" | "REJECT" | "IN_PROGRESS" | "COMPLETE" | "CANCEL";
@@ -53,12 +51,11 @@ export default function UserHomePage() {
         secondCatetory: ticket.secondCategory,
         status: ticket.status,
         title: ticket.title,
-        handler: ticket.managerNickname,
+        handler: ticket.managerNickname || "-",
         createdAt: ticket.ticketTimeInfo?.createdAt,
-        updatedAt: ticket.ticketTimeInfo?.updatedAt,
-        startedAt: ticket.ticketTimeInfo?.startedAt,
-        endedAt: ticket.ticketTimeInfo?.endedAt,
-        completedAt: ticket.ticketTimeInfo?.endedAt,      
+        updatedAt: ticket.ticketTimeInfo?.updatedAt || "-",
+        startedAt: ticket.ticketTimeInfo?.startedAt || "-",
+        completedAt: ticket.ticketTimeInfo?.endedAt || "-",      
       })) || [];
 
       setRequestTickets(requestTicketList);

@@ -84,9 +84,9 @@ export function TicketList_User({
     <div className="bg-white rounded-md">
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       {tickets.length === 0 ?(
-        <div>
-           <h2 className="text-sm text-center mt-4">해당 결과에 존재하는 티켓이 없습니다.</h2>
-        </div>
+        <div className="flex flex-col items-center justify-center py-4 text-gray-500">
+        <p className="text-md">검색 결과가 없습니다.</p>
+      </div>
       ) : (
         <>
       <table className="w-full text-sm border-collapse">
@@ -95,7 +95,7 @@ export function TicketList_User({
             <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
-            <th className="px-4 py-2 w-80">제목</th>
+            <th className="px-4 py-2 w-60">제목</th>
             <th className="px-4 py-2 w-32 min-w-32 text-center">담당자</th>
             <th className="px-4 py-2 w-44 min-w-44 text-center">최근 변경 일자</th>
           </tr>
@@ -105,7 +105,7 @@ export function TicketList_User({
             return (
               <tr
                 key={ticket.id}
-                className="border-t border-gray-5 cursor-pointer"
+                className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
                 onClick={() => handleTicketClick(ticket.id)}
               >
                 <td className="px-4 py-2 text-center">

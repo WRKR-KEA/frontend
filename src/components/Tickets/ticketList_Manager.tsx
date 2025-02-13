@@ -8,15 +8,16 @@ import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 
 type Ticket = {
+  createdAt: string;
+  firstCategory: string;
   id: string;
-  number: string;
+  isPinned: boolean;
+  requesterNickname: string;
+  secondCategory: string;
+  serialNumber: string;
   status: string;
   title: string;
-  requester: string;
-  requestDate: string;
-  updateDate: string | null;
-  handler: string;
-  ispinned: boolean;
+  updatedAt: string;
 };
 
 type TicketList_ManagerProps = {
@@ -112,13 +113,13 @@ export function TicketList_Manager({
 
   const sortedTickets = [...localTickets].sort((a, b) => {
     if (sortOrder === "NEWEST") {
-      return new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime();
+      return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
     }
     if (sortOrder === "OLDEST") {
-      return new Date(a.requestDate).getTime() - new Date(b.requestDate).getTime();
+      return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
     }
     if (sortOrder === "UPDATED") {
-      return (b.ispinned ? 1 : 0) - (a.ispinned ? 1 : 0);
+      return (b.isPinned ? 1 : 0) - (a.isPinned ? 1 : 0);
     }
     return 0;
   });
@@ -126,13 +127,20 @@ export function TicketList_Manager({
   return (
     <div className="bg-white rounded-md relative">
       <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
+      {tickets.length === 0 ?(
+        <div className="flex flex-col items-center justify-center py-4 text-gray-500">
+        <p className="text-md">검색 결과가 없습니다.</p>
+      </div>
+      ) : (
+        <>
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="px-4 py-2 w-8"></th>
             <th className="px-4 py-2 w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 text-center">상태</th>
-            <th className="px-4 py-2 w-80">제목</th>
+            <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
+            <th className="px-4 py-2 w-60">제목</th>
             <th className="px-4 py-2 w-32 text-center">요청자</th>
             <th className="px-4 py-2 w-44 text-center">요청일시</th>
             <th className="px-4 py-2 w-44 text-center">최근 변경일시</th>
@@ -142,36 +150,39 @@ export function TicketList_Manager({
           {sortedTickets.map((ticket) => (
             <tr
               key={ticket.id}
-              className="border-t border-gray-5 cursor-pointer"
+              className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
               onClick={() => handleTicketClick(ticket.id)}
             >
               <td
                 className="px-4 py-2"
                 onClick={(e) => {
                   e.stopPropagation();
-                  handlePinClick(ticket.id, ticket.ispinned);
+                  handlePinClick(ticket.id, ticket.isPinned);
                 }}
               >
-                {ticket.ispinned ? (
+                {ticket.isPinned ? (
                   <MdPushPin className="text-accent-1" size={20} />
                 ) : (
                   <MdOutlinePushPin className="text-gray-4" size={20} />
                 )}
               </td>
               <td className="px-4 py-2 text-center">
-                <HighlightText text={ticket.number} highlight={searchTerm} />
+                <HighlightText text={ticket.serialNumber} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 text-center">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2 truncate">
+              <td className="px-4 py-2 text-center truncate">
+                {ticket.firstCategory}/{ticket.secondCategory}
+              </td>
+              <td className="px-4 py-2 truncate max-w-[200px] whitespace-nowrap">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 text-center">{ticket.requester}</td>
-              <td className="px-4 py-2 text-center">{ticket.requestDate}</td>
-              <td className="px-4 py-2 text-center">{ticket.updateDate}</td>
+              <td className="px-4 py-2 text-center truncate">{ticket.requesterNickname}</td>
+              <td className="px-4 py-2 text-center truncate">{ticket.createdAt}</td>
+              <td className="px-4 py-2 text-center truncate">{ticket.updatedAt}</td>
             </tr>
           ))}
         </tbody>
@@ -180,6 +191,8 @@ export function TicketList_Manager({
         <Modal onClose={modalState.onClose}>
           <AlertModal title={modalState.title} onClick={modalState.onClose} btnText={modalState.btnText} />
         </Modal>
+      )}
+      </>
       )}
     </div>
   );

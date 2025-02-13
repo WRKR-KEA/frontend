@@ -24,6 +24,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
 
   const queryClient = useQueryClient(); // ✅ queryClient 가져오기
   const [deleteAttachments, setDeleteAttachments] = useState([])
+        
   if (!isOpen) return null;
 
   console.log("도움말이모달 - 카테고리 ID:", categoryId);

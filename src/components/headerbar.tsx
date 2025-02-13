@@ -14,7 +14,24 @@ export default function Headerbar() {
     const router = useRouter(); // ✅ 페이지 이동을 위한 useRouter
     const { setUser } = userStore(); // ✅ zustand에서 setUser 가져오기
     const [notificationData, setNotificationData] = useState<any[]>([]); // notificationData 상태 추가
+    const [modalState, setModalState] = useState({
+            isOpen: false,
+            title: "",
+            btnText: "",
+            onClose:()=>{},
+        })
 
+        const showModal = (title: string, btnText='닫기') => {
+            setModalState({
+            isOpen: true,
+            title,
+            btnText,
+            onClose: () => {
+                setModalState(prev => ({ ...prev, isOpen: false }));
+            },
+        
+            });
+        };
 
     // 사이드바 열고 닫기 함수
     const toggleSidebar = () => {
@@ -93,7 +110,7 @@ export default function Headerbar() {
             setNotificationData(notificationData); // notificationData 상태 업데이트
         } catch (error) {
             console.error("알람 에러:", error);
-            alert("서버와 통신 중 오류가 발생했습니다.");
+            showModal("서버와 통신 중 오류가 발생했습니다.");
         }
     };
 

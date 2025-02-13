@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useRef, useState } from "react";
+import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 가이드 데이터 가져오는 쿼리
@@ -15,9 +16,10 @@ interface GuideModalProps {
   showModal:()=> void;
 }
 
-const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal, refetchList }) => {
+const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {
   const editorRef = useRef<Editor>(null);
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
+  const router = useRouter(); // ✅ useRouter 사용
 
   if (!isOpen) return null;
 
@@ -43,7 +45,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
     try {
       const accessToken = sessionStorage.getItem("accessToken");
       if (!accessToken) {
-        alert("로그인이 필요합니다.");
+        showModal("로그인이 필요합니다.");
         return;
       }
   
@@ -82,12 +84,12 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         throw new Error("가이드 저장 실패");
       }
   
-      alert("가이드가 성공적으로 저장되었습니다.");
+      showModal("가이드가 성공적으로 저장되었습니다.");
       refetch();
       onClose();
     } catch (error) {
       console.error("❌ 가이드 저장 오류:", error);
-      alert("가이드를 저장하는 중 오류가 발생했습니다.");
+      showModal("가이드를 저장하는 중 오류가 발생했습니다.");
     }
   };
   

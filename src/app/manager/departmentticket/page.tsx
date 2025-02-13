@@ -25,6 +25,25 @@ export default function DepartmentTicketListPage() {
   const [status, setStatus] = useState<string>("");
   const [totalItemsCount, setTotalItems] =useState(1);
 
+  const [modalState, setModalState] = useState({
+          isOpen: false,
+          title: "",
+          btnText: "",
+          onClose:()=>{},
+      })
+  
+      const showModal = (title: string, btnText='닫기') => {
+          setModalState({
+            isOpen: true,
+            title,
+            btnText,
+            onClose: () => {
+              setModalState(prev => ({ ...prev, isOpen: false }));
+            },
+      
+          });
+        };
+        
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
   };
@@ -114,7 +133,7 @@ export default function DepartmentTicketListPage() {
       a.remove();
     } catch (error) {
       console.error("엑셀 다운로드 중 오류 발생:", error);
-      alert("엑셀 다운로드 중 오류가 발생했습니다.");
+      showModal("엑셀 다운로드 중 오류가 발생했습니다.");
     }
   };
 

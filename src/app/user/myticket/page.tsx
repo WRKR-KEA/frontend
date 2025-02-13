@@ -79,9 +79,9 @@ export default function UserTicketListPage() {
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
         <h2 className="text-lg font-semibold">티켓 조회</h2>
-        <div className="flex items-center space-x-4 ml-4">
+        {/* <div className="flex items-center space-x-4 ml-4">
           <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
-        </div>
+        </div> */}
 
         <div className="ml-auto">
           <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />

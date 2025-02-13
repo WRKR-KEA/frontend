@@ -12,6 +12,8 @@ type Ticket = {
   managerNickname: string;
   requestedDate: string;
   updatedDate: string;
+  firstCategory: string;
+  secondCategory: string;
 };
 
 type TicketList_DepartProps = {
@@ -88,14 +90,14 @@ console.log("🌟 받은 티켓 데이터:",tickets);
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
-            <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
-            <th className="px-4 py-2 w-76">제목</th>
-            <th className="px-4 py-2 w-28 min-w-32 text-center">담당자</th>
-            <th className="px-4 py-2 w-28 min-w-32 text-center">요청자</th>
-            <th className="px-4 py-2 w-32 min-w-32 text-center">요청일시</th>
-            <th className="px-4 py-2 w-32 min-w-32 text-center">최근 변경일시</th>
+          <tr className="bg-gray-6 text-left border-b border-gray-4 h-[50px]">
+            <th className="px-2 py-2 w-40 text-center">티켓 번호</th>
+            <th className="px-2 py-2 w-36 text-center">상태</th>
+            <th className="px-2 py-2 w-36 text-center">카테고리</th>
+            <th className="px-2 py-2 w-60 text-left">제목</th> 
+            <th className="px-2 py-2 w-32 text-center">담당자</th>
+            <th className="px-2 py-2 w-32 text-center">요청자</th>
+            <th className="px-2 py-2 w-32 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
@@ -105,21 +107,23 @@ console.log("🌟 받은 티켓 데이터:",tickets);
               className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
               onClick={() => handleTicketClick(ticket.ticketId)}
             >
-              <td className="px-4 py-2 w-20 text-center">
+              <td className="px-4 py-2 w-40 text-center truncate">
                 <HighlightText text={ticket.ticketSerialNumber} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 w-24 text-center">
+              <td className="px-4 py-2 w-28 text-center truncate">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2 w-60 truncate">
+              <td className="px-4 py-2 w-28 text-center truncate">
+                {ticket.firstCategory}/{ticket.secondCategory}
+              </td>
+              <td className="px-4 py-2 w-60 truncate text-left">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 w-28 text-center truncate">{ticket.managerNickname}</td>
-              <td className="px-4 py-2 w-28 text-center truncate">{ticket.userNickname}</td>
-              <td className="px-4 py-2 w-32 text-center">{ticket.requestedDate}</td>
-              <td className="px-4 py-2 w-32 text-center">{ticket.updatedDate}</td>
+              <td className="px-4 py-2 w-24 text-center truncate">{ticket.managerNickname}</td>
+              <td className="px-4 py-2 w-24 text-center truncate">{ticket.userNickname}</td>
+              <td className="px-4 py-2 w-32 text-center truncate">{ticket.updatedDate}</td>
             </tr>
           ))}
         </tbody>

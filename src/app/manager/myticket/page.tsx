@@ -94,8 +94,8 @@ export default function ManagerTicketListPage() {
             />
             {data?.elements.length === 0 ? (
               <div>
-          </div>
-          ) : (
+            </div>
+            ) : (
             <div className="flex justify-center items-center mt-4 mb-4">
               <PagePagination
                 totalItemsCount={data?.elements.length || 0}

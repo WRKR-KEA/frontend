@@ -102,7 +102,7 @@ export function TicketList_Manager({
 
       setLocalTickets((prevTickets) =>
         prevTickets.map((ticket) =>
-          ticket.id === ticketId ? { ...ticket, ispinned: !currentPinStatus } : ticket
+          ticket.id === ticketId ? { ...ticket, isPinned: !currentPinStatus } : ticket
         )
       );
     } catch (err) {
@@ -142,8 +142,7 @@ export function TicketList_Manager({
             <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
             <th className="px-4 py-2 w-60">제목</th>
             <th className="px-4 py-2 w-32 text-center">요청자</th>
-            <th className="px-4 py-2 w-44 text-center">요청일시</th>
-            <th className="px-4 py-2 w-44 text-center">최근 변경일시</th>
+            <th className="px-4 py-2 w-32 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
@@ -166,10 +165,10 @@ export function TicketList_Manager({
                   <MdOutlinePushPin className="text-gray-4" size={20} />
                 )}
               </td>
-              <td className="px-4 py-2 text-center">
+              <td className="px-4 py-2 text-center truncate">
                 <HighlightText text={ticket.serialNumber} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 text-center">
+              <td className="px-4 py-2 text-center truncate">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
                   {ticket.status}
                 </span>
@@ -181,7 +180,6 @@ export function TicketList_Manager({
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 text-center truncate">{ticket.requesterNickname}</td>
-              <td className="px-4 py-2 text-center truncate">{ticket.createdAt}</td>
               <td className="px-4 py-2 text-center truncate">{ticket.updatedAt}</td>
             </tr>
           ))}

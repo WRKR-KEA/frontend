@@ -8,8 +8,9 @@ import path from "path";
 interface User {
     id: string;
     name: string;
-    email: string;
+    profileImage: string;
     role: string; // "USER", "MANAGER", "ADMIN" 등 역할 추가 가능
+    nickname: string;
 }
 
 interface SidebarProps {
@@ -73,7 +74,7 @@ export default function Sidebar({ user }: SidebarProps) {
             <div>
                 <div className="flex items-center space-x-2 mt-6 ml-10">
                     <img
-                        src="/userProfileImage.png"
+                        src={user?.profileImage}
                         alt="User Avatar"
                         className="w-8 h-8 rounded-full"
                     />

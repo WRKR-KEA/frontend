@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL;
-const BASE_URL = "http://172.16.211.53:8080";
+const BASE_URL = `${process.env.NEXT_PUBLIC_BASE_URL}`;
 
 const accessToken = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiVVNFUiIsInR5cGUiOiJBQ0NFU1MiLCJzdWIiOiJ1c2VyLmN5dyIsImV4cCI6MTc0MDMxMDg0N30.YdTnsOwMVORmdhwmw6pM5IC1CWK-2BVRvyPEgfjQdOI";
 

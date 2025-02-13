@@ -21,8 +21,15 @@ export async function fetchManagerTicketList(
 
 // (GET) 티켓 상세 조회
 export async function fetchManagerTicket(ticketId: string) {
+  const accessToken = sessionStorage.getItem("accessToken");
+
   try {
-    const { data } = await api.get(`/api/manager/tickets/${ticketId}`)
+    const { data } = await api.get(`/api/manager/tickets/${ticketId}`, {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return data;
   } catch (error) {
     console.error('티켓 상세 조회에 실패했습니다. :', error);
@@ -38,9 +45,16 @@ export async function fetchManagerDepartmentTicket(
   page?: number,
   size?: number
 ) {
+  const accessToken = sessionStorage.getItem("accessToken");
   try {
     const { data } = await api.get(
-     `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`)
+     `/api/manager/tickets/department?query=${query}&status=${status}&startDate=${startDate}&endDate=${endDate}&page=${page}&size=${size}`,
+     {
+      headers: {
+        Accept: "application/json;charset=UTF-8",
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
     return data;
   } catch (error) {
     console.error("부서 전체 티켓 조회 및 검색에 실패했습니다. :", error);

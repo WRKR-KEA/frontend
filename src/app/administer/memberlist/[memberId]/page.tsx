@@ -7,6 +7,7 @@ import Modal from "@/components/Modals/Modal";
 import AlertModal from "@/components/Modals/AlertModal";
 import Button from "@/components/Buttons/Button";
 import axios from "axios";
+import Skeleton from "@/components/Skeleton";
 export default function AdminMemberDetailPage({ params }: { params: { memberId: string } }) {
   const { memberId } = useParams()
   const router = useRouter();
@@ -147,7 +148,10 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
 
 
 
-  if (isLoading) return <p>로딩 중...</p>;
+  if (isLoading){
+    return <Skeleton width={"100%"} height={"100%"}/>
+}
+
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (

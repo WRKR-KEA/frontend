@@ -1,27 +1,36 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useRef, useCallback ,useEffect} from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
-import api from "@/lib/api/axios";
 import PagePagination from "@/components/pagination";
 import { Search_manager } from "@/components/search_manager";
 import Skeleton from "@/components/Skeleton";
+import { useManageTicketListQuery } from "@/hooks/useManageTicketList";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
-  const [searchTerm, setSearchTerm] = useState(""); // 검색어 상태
+  const [searchTerm, setSearchTerm] = useState("");
   const [sortOrder, setSortOrder] = useState("UPDATED");
   const [currentPage, setCurrentPage] = useState(1);
-  const [tickets, setTickets] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
-  const [status, setStatus] = useState<string>("");
-
+  const [selectedStatus, setSelectedStatus] = useState("");
+  
   const searchInputRef = useRef<HTMLInputElement | null>(null);
+
+  const { data, isLoading, error } = useManageTicketListQuery(
+    currentPage,
+    maxTicketsToShow,
+    sortOrder,
+    selectedStatus,
+    searchTerm
+  );
+
+  useEffect(() => {
+    if (data) {
+      console.log("📌 받은 티켓 데이터:", data);
+    }
+  }, [data]);
 
   const handleSelectCount = useCallback((count: number) => {
     setMaxTicketsToShow(count);
@@ -44,56 +53,8 @@ export default function ManagerTicketListPage() {
 
   const handleStatusChange = useCallback((status: string) => {
     setSelectedStatus(status);
-    setStatus(status);
     setCurrentPage(1);
   }, []);
-
-  const fetchTickets = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const accessToken = sessionStorage.getItem("accessToken");
-      const response = await api.get(
-        `/api/manager/tickets?page=${currentPage}&size=${maxTicketsToShow}&sortType=${sortOrder}&status=${selectedStatus || ""}&query=${searchTerm}`,
-        {
-          headers: {
-            Accept: "application/json;charset=UTF-8",
-            Authorization: `Bearer ${accessToken}`,
-          },
-        }
-      );
-
-      const data = response.data;
-
-      if (data.isSuccess) {
-        setTickets(
-          data.result.elements.map((ticket: any) => ({
-            id: ticket.id,
-            number: ticket.serialNumber,
-            status: ticket.status,
-            title: ticket.title,
-            requester: ticket.requesterNickname,
-            requestDate: ticket.createdAt,
-            updateDate: ticket.updatedAt,
-            handler: "",
-            ispinned: ticket.isPinned,
-          }))
-        );
-        console.log("✨ 담당 티켓 리스트: ",data.result.elements);
-        setTotalPages(response.data.result.totalPages);
-      } else {
-        throw new Error(data.message);
-      }
-    } catch (err) {
-      setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentPage, maxTicketsToShow, sortOrder, selectedStatus, searchTerm]);
-
-  useEffect(() => {
-    fetchTickets();
-  }, [fetchTickets]);
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
@@ -114,37 +75,39 @@ export default function ManagerTicketListPage() {
         </div>
       </div>
   
-      <div className="relative min-h-[200px]">
-  {isLoading? (
-    <div className="flex flex-col items-center space-y-4">
-      <Skeleton width="100%" height="600px" />
-    </div>
-  ) : (
-    <>
-      <TicketList_Manager
-        tickets={tickets}
-        maxTicketsToShow={maxTicketsToShow}
-        searchTerm={searchTerm}
-        sortOrder={sortOrder}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        status={status || ""}
-        onStatusChange={handleStatusChange}
-        onPageChange={handlePageChange}
-      />
-      <div className="flex justify-center items-center mt-4 mb-4">
-        <PagePagination
-          totalItemsCount={tickets.length}
-          itemsCountPerPage={maxTicketsToShow}
-          pageRangeDisplayed={5}
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPageChange={handlePageChange}
-        />
-      </div>
-    </>
-  )}
-  </div>
-</div>  
-  );
-}
+        {isLoading ? (
+          <div className="flex flex-col items-center space-y-4">
+            <Skeleton width="100%" height="600px" />
+          </div>
+        ) :(
+          <>
+            <TicketList_Manager
+              tickets={data?.elements || []}
+              maxTicketsToShow={maxTicketsToShow}
+              searchTerm={searchTerm}
+              sortOrder={sortOrder}
+              currentPage={currentPage}
+              totalPages={data?.totalPages || 1}
+              status={selectedStatus || ""}
+              onStatusChange={handleStatusChange}
+              onPageChange={handlePageChange}
+            />
+            {data?.elements.length === 0 ? (
+              <div>
+            </div>
+            ) : (
+            <div className="flex justify-center items-center mt-4 mb-4">
+              <PagePagination
+                totalItemsCount={data?.elements.length || 0}
+                itemsCountPerPage={maxTicketsToShow}
+                pageRangeDisplayed={5}
+                currentPage={currentPage}
+                totalPages={data?.totalPages || 1}
+                onPageChange={handlePageChange}
+                />
+                </div>
+            )}</>
+            )}
+          </div>
+        );
+      }

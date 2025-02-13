@@ -10,6 +10,7 @@ import "react-date-range/dist/theme/default.css";
 import { fetchAdminAccessLogs, fetchAdminAccessLogsExcel } from "@/services/admin";
 import Button from "@/components/Buttons/Button";
 import { format } from 'date-fns';
+import axios from "axios";
 
 interface LogEntry {
   id: number;
@@ -22,17 +23,7 @@ interface LogEntry {
   status: string;
 }
 
-
-// const mockData: LogEntry[] = Array.from({ length: 100 }, (_, index) => ({
-//   id: index + 1,
-//   timestamp: "2025-01-22T07:51:21.542Z",
-//   user: `User${index + 1}`,
-//   email: `useremail${index + 1}@gmail.com`,
-//   ip: `111.234.567.${index + 1}`,
-//   role: index % 2 === 0 ? "관리자" : "사용자",
-//   action: index % 2 === 0 ? "로그인" : "로그아웃",
-//   status: index % 2 === 0 ? "성공" : "실패",
-// }));
+;
 
 export default function LogPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
@@ -63,26 +54,15 @@ export default function LogPage() {
 
   useEffect(() => {
     loadLogs(); // 🔹[추가] 컴포넌트 마운트 시 로그 불러오기
-  }, [activeTab,currentPage,itemsPerPage,dateRange]);
+  }, [activeTab, currentPage, itemsPerPage, dateRange]);
 
   const loadLogs = async () => {
     try {
-      const role =
-        activeTab === "전체"
-          ? undefined
-          : activeTab === "관리자"
-          ? "ADMIN"
-          : activeTab === "담당자"
-          ? "MANAGER"
-          : "USER";
 
-      console.log("role잉이이이이이",role)
       const response = await fetchAdminAccessLogs(
         currentPage,
         itemsPerPage,
-        role,
         searchTerm,
-        undefined,
         dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
         dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
       );
@@ -94,9 +74,7 @@ export default function LogPage() {
           response.result.elements.map((log: any) => ({
             id: log.accessLogId,
             user: log.nickname,
-            email: log.email || "N/A",
             ip: log.ip,
-            role: log.role,
             action: log.action, // 🔹 추가: 로그인/로그아웃
             timestamp: new Date(log.accessAt).toLocaleString(),
             status: log.isSuccess ? "성공" : "실패",
@@ -127,55 +105,20 @@ export default function LogPage() {
     ? `${dateRange.startDate.toLocaleDateString()} - ${dateRange.endDate.toLocaleDateString()}`
     : "모든 날짜";
 
-  const filteredLogs = logs.filter(
-    (log) =>
-      log.user.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      log.status.includes(searchTerm)
-  );
 
-  const paginatedLogs = filteredLogs.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
-
-  // const totalPages = Math.ceil(filteredLogs.length / itemsPerPage);
-
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page);
-  };
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
 
   const handleSelectCount = (count: number) => {
     setitemsPerPage(count);
     setCurrentPage(1); // 페이지네이션도 첫 페이지로 이동
   };
 
-  const handleTabClick = (tabName: string) => {
-    setActiveTab(tabName);
-    setCurrentPage(1);
-  };
 
-  // 엑셀 다운로드 핸들러
+
+  // LogPage 컴포넌트의 handleDownloadExcel 함수 수정
   const handleDownloadExcel = async () => {
     try {
-      const role =
-        activeTab === "전체"
-          ? undefined
-          : activeTab === "관리자"
-          ? "ADMIN"
-          : activeTab === "담당자"
-          ? "MANAGER"
-          : "USER";
-
       const data = await fetchAdminAccessLogsExcel(
-        role, // 역할이 빈 문자열이면 undefined로 설정
-        searchTerm || "", // 검색어가 없을 경우 빈 문자열로 설정
-        undefined, // action은 현재 사용하지 않으므로 undefined
+        searchTerm,
         dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : undefined,
         dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : undefined
       );
@@ -183,10 +126,11 @@ export default function LogPage() {
       const url = window.URL.createObjectURL(data);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "로그_리스트.xlsx"; // 다운로드할 파일 이름
+      a.download = `access_logs_${format(new Date(), 'yyyy-MM-dd')}.xlsx`;
       document.body.appendChild(a);
       a.click();
       a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("엑셀 다운로드 중 오류 발생:", error);
       alert("엑셀 다운로드 중 오류가 발생했습니다.");
@@ -245,22 +189,7 @@ export default function LogPage() {
         </div>
       </div>
 
-      {/* 역할 선택 탭 */}
-      <div className="flex items-center border-b mt-4">
-        {["전체", "관리자", "담당자", "사용자"].map((tab) => (
-          <button
-            key={tab}
-            onClick={() => handleTabClick(tab)}
-            className={`w-32 text-center py-3 font-semibold ${
-              activeTab === tab
-                ? "border-b-2 border-black text-black"
-                : "text-gray-500"
-            }`}
-          >
-            {tab}
-          </button>
-        ))}
-      </div>
+
 
       <table className="w-full border-collapse border border-gray-300 rounded-md overflow-hidden mt-4">
         <thead className="bg-gray-100">
@@ -291,19 +220,28 @@ export default function LogPage() {
         </tbody>
       </table>
 
-      {/* 다운로드 버튼 추가 */}
-      <div className="flex justify-end mb-4">
-          <Button
-            label="다운로드"
-            onClick={handleDownloadExcel}
-            color={1} // 파란색
-            className="mr-2"
-          />
-      </div>
+      {
+        logs.length > 0 ? (
+          <>
+            <div className="flex justify-end mt-4">
+              <Button
+                label="다운로드"
+                onClick={handleDownloadExcel}
+                color={1} // 파란색
+                className="mr-2"
+              />
+            </div>
+            <div className="flex justify-center items-center mt-4 w-full">
+              <PagePagination totalItemsCount={totalElements} itemsCountPerPage={itemsPerPage} pageRangeDisplayed={5} onPageChange={(page) => setCurrentPage(page)} currentPage={currentPage} totalPages={totalPages} />
+            </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+            <p className="text-lg">검색 결과가 없습니다.</p>
+          </div>
+        )
+      }
 
-      <div className="flex justify-center items-center mt-4 w-full">
-        <PagePagination totalItemsCount={totalElements} itemsCountPerPage={itemsPerPage} pageRangeDisplayed={5} onPageChange={(page) => setCurrentPage(page)} currentPage={currentPage} totalPages={totalPages} />
-      </div>
     </div>
   );
 }

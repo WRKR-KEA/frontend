@@ -99,6 +99,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
                   {Array.isArray(log.message) ? (
                     log.message.map((attachment, idx) => {
                       const fileName = attachment.split('/').pop();
+                      const finalFileName = fileName.replace(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/, '');
                       return (
                         <a
                           key={idx}
@@ -106,7 +107,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
                           download
                           className="text-blue-500 underline block"
                         >
-                          {fileName}
+                          {finalFileName}
                         </a>
                       );
                     })

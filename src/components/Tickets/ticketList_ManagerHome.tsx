@@ -2,17 +2,16 @@ import React from "react";
 import { useRouter } from "next/navigation";
 
 type Ticket = {
-  id: string;
-  number: string;
+  ticketId: string;
+  ticketSerialNumber: string;
   status: string;
   title: string;
-  requester: string;
-  requestDate: string;
-  acceptDate: string | null;
-  updateDate: string | null;
-  completeDate: string | null;
-  handler: string;
-  ispinned: boolean;
+  firstCategory: string;
+  secondCategory: string;
+  userNickname: string;
+  managerNickname: string | "-";
+  requestedDate: string;
+  updatedDate: string;
 };
 
 type TicketListProps = {
@@ -27,8 +26,8 @@ export function TicketList({
   tickets,
   maxTicketsToShow,
   page,
-  onTicketClick,
 }: TicketListProps) {
+  console.log("받아온 티켓:", tickets);
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-[#D1EEE2] text-[#3A966F]",
     IN_PROGRESS: "bg-[#CFE3FF] text-[#3E7DD6]",
@@ -45,9 +44,9 @@ export function TicketList({
 
   const handleTicketClick = (ticket: Ticket) => {
     if (ticket.status === "REQUEST") 
-      router.push(`/manager/departmentticket/${ticket.id}`);
+      router.push(`/manager/departmentticket/${ticket.ticketId}`);
     else
-      router.push(`/manager/myticket/${ticket.id}`);
+      router.push(`/manager/myticket/${ticket.ticketId}`);
   };
 
   return (
@@ -66,11 +65,11 @@ export function TicketList({
         <tbody>
           {displayedTickets.map((ticket) => (
             <tr
-              key={ticket.id}
+              key={ticket.ticketId}
               className="border-b cursor-pointer hover:bg-gray-100"
               onClick={() => handleTicketClick(ticket)}
             >
-              <td className="p-2 border">{ticket.number}</td>
+              <td className="p-2 border">{ticket.ticketSerialNumber}</td>
               <td className="p-2 border">
                 <span
                   className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${
@@ -81,9 +80,9 @@ export function TicketList({
                 </span>
               </td>
               <td className="p-2 border">{ticket.title}</td>
-              <td className="p-2 border">{ticket.requester}</td>
-              <td className="p-2 border">{ticket.requestDate}</td>
-              <td className="p-2 border">{ticket.updateDate}</td>
+              <td className="p-2 border">{ticket.userNickname}</td>
+              <td className="p-2 border">{ticket.requestedDate}</td>
+              <td className="p-2 border">{ticket.updatedDate}</td>
             </tr>
           ))}
         </tbody>

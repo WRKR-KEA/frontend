@@ -5,14 +5,15 @@ import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import { useTemplateQuery } from "@/hooks/useTemplate"; // ✅ 템플릿 데이터 가져오는 쿼리
 import { useQueryClient } from "@tanstack/react-query"; // ✅ React Query 클라이언트 가져오기
+import Skeleton from "@/components/Skeleton";
 
 interface TemplateModalProps {
   categoryId: string;
   isOpen: boolean;
   title: string;
   onClose: () => void;
-  refetchList: ()=> void;
-  showModal:()=> void;
+  refetchList: () => void;
+  showModal: () => void;
 }
 
 const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title, onClose, showModal }) => {
@@ -71,9 +72,9 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
       if (!response.ok) throw new Error("템플릿 저장 실패");
 
       showModal("템플릿이 성공적으로 저장되었습니다.", "확인", () => {
-        refetch(); 
+        refetch();
       });
-      
+
       onClose();
     } catch (error) {
       console.error("❌ 템플릿 저장 오류:", error);
@@ -109,10 +110,10 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
 
       if (!response.ok) throw new Error("템플릿 삭제 실패");
 
-    
+
       // await refetchList()
       showModal("템플릿이 삭제되었습니다.", "확인", () => {
-        refetch(); 
+        refetch();
       });
       queryClient.setQueryData(["template_detail", categoryId], null);
       onClose(); // ✅ 모달 닫기
@@ -122,7 +123,9 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
     }
   };
 
-  if (isLoading) return <div></div>;
+  if (isLoading) {
+    return <Skeleton width={"100%"} height={"100%"} />
+  }
 
   return (
     <div className="pt-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">

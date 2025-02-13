@@ -14,6 +14,7 @@ import { useCommentList } from '@/hooks/useCommentList';
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import TicketRequest from "@/components/Tickets/ticketRequest";
+import Skeleton from "@/components/Skeleton";
 
 export default function ManagerTicketDetailPage() {
   const router = useRouter();
@@ -150,7 +151,11 @@ export default function ManagerTicketDetailPage() {
   };
 
   if (!selectedTicket) {
-    return <div>티켓 정보를 불러오는 중입니다...</div>; // 데이터 로딩 처리
+    return (
+    <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
+      <Skeleton width="100%" height="680px" />
+    </div>
+    );
   }
 
   const handleCompleteTicket = () => {

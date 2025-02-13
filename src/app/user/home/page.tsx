@@ -4,21 +4,21 @@ import React, { useState, useEffect } from "react";
 import { TicketInfo } from "@/components/Tickets/ticketInfo";
 import { TicketStatus } from "@/components/Tickets/ticketStatus";
 import { TicketList } from "@/components/Tickets/ticketList";
-import { fetchUserTickets } from "@/service/user";
-import Skeleton from "@/components/Skeleton"; 
+import Skeleton from "@/components/Skeleton";
+import { useUserMainTicketListQuery } from "@/hooks/useUserMainTicket";
 
 type Ticket = {
-  id: string;
-  number: string;
-  status: string;
-  title: string;
-  requester: string;
-  requestDate: string;
-  acceptDate: string | null;
-  updateDate: string | null;
-  completeDate: string | null;
-  handler: string;
-  ispinned: boolean;
+  id: string,
+  number: string,
+  firstCatetory: string,
+  secondCatetory: string,
+  status: string,
+  title: string,
+  handler: string,
+  createdAt: string,
+  updatedAt: string,
+  startedAt: string,
+  completedAt: string,
 };
 
 type TicketStatusType = "REQUEST" | "REJECT" | "IN_PROGRESS" | "COMPLETE" | "CANCEL";
@@ -35,43 +35,33 @@ export default function UserHomePage() {
   const maxTicketsToShow = 10;
   const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("REQUEST");
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+
+  // ✅ React Query를 이용해 티켓 데이터 가져오기
+  const { data, isLoading, error } = useUserMainTicketListQuery();
+  console.log(data);
+  // ✅ 티켓 데이터 상태 관리
   const [tickets, setRequestTickets] = useState<Ticket[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      setIsLoading(true);
-      try {
-        const data = await fetchUserTickets();
-        const requestTicketList: Ticket[] = data.result.recentTickets.map((ticket: any) => ({
-          id: ticket.ticketId,
-          number: ticket.ticketSerialNumber,
-          status: ticket.status,
-          title: ticket.title,
-          requester: ticket.userNickname,
-          handler: ticket.managerNickname,
-          requestDate: ticket.requestedDate,
-          updateDate: ticket.updatedDate,
-          ticketTimeInfo: {
-            createdAt: ticket.ticketTimeInfo.createdAt,
-            updatedAt: ticket.ticketTimeInfo.updatedAt,
-            startedAt: ticket.ticketTimeInfo.startedAt,
-            endedAt: ticket.ticketTimeInfo.endedAt,
-          },
-        }));
+    if (data) {
+      const requestTicketList: Ticket[] = data?.map((ticket: any) => ({
+        id: ticket.ticketId,
+        number: ticket.ticketSerialNumber,
+        firstCatetory: ticket.firstCategory,
+        secondCatetory: ticket.secondCategory,
+        status: ticket.status,
+        title: ticket.title,
+        handler: ticket.managerNickname || "-",
+        createdAt: ticket.ticketTimeInfo?.createdAt,
+        updatedAt: ticket.ticketTimeInfo?.updatedAt || "-",
+        startedAt: ticket.ticketTimeInfo?.startedAt || "-",
+        completedAt: ticket.ticketTimeInfo?.endedAt || "-",      
+      })) || [];
 
-        setRequestTickets(requestTicketList);
-        console.log("🌟 API 응답 데이터:", requestTicketList);
-      } catch (error) {
-        setError("티켓 정보를 불러오는 중 오류가 발생했습니다.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchTickets();
-  }, []);
+      setRequestTickets(requestTicketList);
+      console.log("🌟 API 응답 데이터:", requestTicketList);
+    }
+  }, [data]);
 
   useEffect(() => {
     if (tickets.length > 0 && selectedTicket === null) {

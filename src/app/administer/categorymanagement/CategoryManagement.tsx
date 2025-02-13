@@ -21,6 +21,7 @@ import {
 } from "@dnd-kit/sortable";
 import InputModal from "@/components/Modals/InputModal";
 import axios from "axios";
+import Skeleton from "@/components/Skeleton";
 
 interface Category {
     categoryId: number;
@@ -42,6 +43,7 @@ const CategoryManagement: React.FC = () => {
         title: "",
         btnText: "",
         onClose: () => { },
+        onClose2:() => { }
     })
 
     const [inputModalState, setInputModalState] = useState({
@@ -57,6 +59,9 @@ const CategoryManagement: React.FC = () => {
             title,
             btnText,
             onClose: () => {
+                setModalState(prev => ({ ...prev, isOpen: false }));
+            },
+            onClose2: () => {
                 setModalState(prev => ({ ...prev, isOpen: false }));
             },
         });
@@ -159,7 +164,8 @@ const CategoryManagement: React.FC = () => {
             }
         } catch (error) {
             console.log("❌ 카테고리 추가 오류:", error);
-            showModal(error?.response.data.message);
+            showModal(error?.response.data.message)
+           
         }
     };
 
@@ -203,13 +209,15 @@ const CategoryManagement: React.FC = () => {
         useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates })
     );
 
+    if (isLoading){
+        return <Skeleton width={"100%"} height={"100%"}/>
+    }
+
     return (
         <div className="bg-gray-50 py-10 px-6">
             <h1 className="max-w-6xl mx-auto text-2xl font-bold mb-4 text-gray-800">카테고리 관리</h1>
             <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-lg p-6">
-                {isLoading ? (
-                    <p></p>
-                ) : isError ? (
+                {isError ? (
                     <p>❌ 오류 발생</p>
                 ) : (
                     <DndContext

@@ -2,20 +2,20 @@ import React, { useState } from "react";
 import { FilterTab } from "@/components/Filters/filterTab";
 import { useRouter } from "next/navigation";
 import { HighlightText } from "@/components/highlightText";
-import PagePagination from "@/components/pagination";
 
 type Ticket = {
-  id: string;
-  number: string;
-  status: string;
-  title: string;
-  requester: string;
-  requestDate: string;
-  acceptDate: string | null;
-  updateDate: string | null;
-  completeDate: string | null;
-  handler: string;
-  ispinned: boolean;
+  id: string,
+  serialNumber: string,
+  firstCategory: string,
+  secondCategory: string,
+  status: string,
+  title: string,
+  managerName: string | "-",
+  createdAt: string,
+  updatedAt: string | "-",
+  startedAt: string | "-",
+  endedAt: string | "-",
+  completedAt: string | "-",
 };
 
 type TicketList_UserProps = {
@@ -33,7 +33,6 @@ export function TicketList_User({
   onStatusChange,
   status,
 }: TicketList_UserProps) {
-
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-complete text-complete",
     IN_PROGRESS: "bg-inProgress text-inProgress",
@@ -41,16 +40,13 @@ export function TicketList_User({
     REJECT: "bg-reject text-reject",
     REQUEST: "bg-request text-request",
   };
-
-  const [filterStatus, setFilterStatus] = useState("");
-  const [activeTab, setActiveTab] = useState("");
+  console.log("here",tickets);
+  const [activeTab, setActiveTab] = useState(status);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
-    setFilterStatus(tab);
-    setCurrentPage(1);
     onStatusChange(tab);
   };
 
@@ -60,16 +56,16 @@ export function TicketList_User({
   };
 
   const sortedTickets = [...tickets].sort(
-    (a, b) => new Date(b.requestDate).getTime() - new Date(a.requestDate).getTime()
+    (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
 
   const filteredTickets = sortedTickets.filter((ticket) => {
     const matchesSearchTerm =
       ticket.title.includes(searchTerm) ||
-      ticket.handler?.includes(searchTerm) ||
-      ticket.number.includes(searchTerm);
+      ticket.managerName?.includes(searchTerm) ||
+      ticket.serialNumber.includes(searchTerm);
     const matchesStatus =
-      filterStatus === "" || ticket.status === filterStatus;
+      status === "" || ticket.status === status;
     return matchesSearchTerm && matchesStatus;
   });
 
@@ -87,46 +83,56 @@ export function TicketList_User({
   return (
     <div className="bg-white rounded-md">
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
+      {tickets.length === 0 ?(
+        <div className="flex flex-col items-center justify-center py-4 text-gray-500">
+        <p className="text-md">검색 결과가 없습니다.</p>
+      </div>
+      ) : (
+        <>
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="bg-gray-6 text-left border-b border-gray-4">
+          <tr className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100">
             <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
-            <th className="px-4 py-2 w-80">제목</th>
+            <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
+            <th className="px-4 py-2 w-60">제목</th>
             <th className="px-4 py-2 w-32 min-w-32 text-center">담당자</th>
-            <th className="px-4 py-2 w-44 min-w-44 text-center">요청일</th>
-            <th className="px-4 py-2 w-44 min-w-44 text-center">최근 변경일</th>
+            <th className="px-4 py-2 w-44 min-w-44 text-center">최근 변경 일자</th>
           </tr>
         </thead>
         <tbody>
-          {displayedTickets.map((ticket) => {
+          {filteredTickets.map((ticket) => {
             return (
               <tr
                 key={ticket.id}
-                className="border-t border-gray-5 cursor-pointer"
+                className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
                 onClick={() => handleTicketClick(ticket.id)}
               >
                 <td className="px-4 py-2 text-center">
-                  <HighlightText text={ticket.number} highlight={searchTerm} />
+                  <HighlightText text={ticket.serialNumber} highlight={searchTerm} />
                 </td>
                 <td className="px-4 py-2 text-center">
                   <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
                     {ticket.status}
                   </span>
                 </td>
+                <td className="px-4 py-2 text-center">
+                  {ticket.firstCategory}/{ticket.secondCategory}
+                </td>
                 <td className="px-4 py-2 truncate">
                   <HighlightText text={ticket.title} highlight={searchTerm} />
                 </td>
                 <td className="px-4 py-2 truncate text-center">
-                  <HighlightText text={ticket.handler || "-"} highlight={searchTerm} />
+                  <HighlightText text={ticket.managerName || "-"} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2 text-center">{ticket.requestDate}</td>
-                <td className="px-4 py-2 text-center">{ticket.updateDate}</td>
+                <td className="px-4 py-2 text-center">{ticket.updatedAt}</td>
               </tr>
             );
           })}
         </tbody>
       </table>
+      </>
+      )}
     </div>
   );
 }

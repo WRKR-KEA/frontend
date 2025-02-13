@@ -7,7 +7,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useState, useEffect, Suspense } from 'react';
 import useUserStore from '@/stores/userStore'; // ✅ Zustand 스토어 import
 import { useAuthGuard } from '@/hooks/useAuthGuard';
-
+import axios from "axios";
 
 
 export default function RootLayout({
@@ -27,6 +27,24 @@ export default function RootLayout({
   ];
   const isExcluded = excludedPaths.includes(pathname);
 
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText: "",
+    onClose:()=>{},
+  })
+
+  const showModal = (title: string, btnText='닫기') => {
+      setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+          setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+      });
+  };
   // ✅ Zustand에서 유저 정보 가져오기
   const user = useUserStore((state) => state.user);
   const { setUser } = useUserStore();
@@ -35,70 +53,76 @@ export default function RootLayout({
 
   const isChecking = useAuthGuard(); // 😎라우트 가드 훅 사용
 
-  const refreshAccessToken = async () => {
-    try {
-      const refreshToken = sessionStorage.getItem('refreshToken');
-      if (!refreshToken) {
-        console.warn('리프레시 토큰이 없습니다.');
-        return;
-      }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/refresh`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${refreshToken}`,
-          },
-        },
-      );
 
-      if (!response.ok) {
-        console.error('토큰 갱신 실패:', response.statusText);
-        return;
-      }
+const refreshAccessToken = async () => {
+  try {
+    const refreshToken = sessionStorage.getItem("refreshToken");
 
-      const data = await response.json();
-
-      // ✅ Zustand userStore에 로그인 정보 저장
-      if (data.result) {
-        setUser({
-          profileImage: data.result.profileImage,
-          name: data.result.name,
-          role: data.result.role,
-          nickname: data.result.nickname
-        });
-        console.log('사용자 정보가 userStore에 저장되었습니다.');
-      }
-
-      if (data.result?.accessToken && data.result?.refreshToken) {
-        sessionStorage.setItem('accessToken', data.result.accessToken);
-        sessionStorage.setItem('refreshToken', data.result.refreshToken);
-        console.log('토큰이 갱신되었습니다.');
-      } else {
-        console.error('응답에 토큰이 포함되지 않았습니다.');
-      }
-    } catch (error) {
-      console.error('토큰 갱신 중 오류:', error);
+    if (!refreshToken) {
+      console.warn("리프레시 토큰이 없습니다.");
+      return;
     }
-  };
 
-  // ✅ 유저 정보가 없으면 자동으로 로그인 페이지로 리다이렉트
+    const response = await axios.post(
+      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/refresh`,
+      {}, // ✅ POST 요청에 body 없음 (빈 객체 전달)
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${refreshToken}`,
+        },
+      }
+    );
+
+    if (response.status !== 200) {
+      throw new Error(`토큰 갱신 실패: ${response.status} - ${response.statusText}`);
+    }
+
+    const data = response.data;
+
+    // ✅ Zustand userStore에 로그인 정보 저장
+    if (data.result) {
+      setUser({
+        profileImage: data.result.profileImage,
+        name: data.result.name,
+        role: data.result.role,
+        nickname: data.result.nickname,
+      });
+      console.log("사용자 정보가 userStore에 저장되었습니다.");
+    }
+
+    if (data.result?.accessToken && data.result?.refreshToken) {
+      sessionStorage.setItem("accessToken", data.result.accessToken);
+      sessionStorage.setItem("refreshToken", data.result.refreshToken);
+      console.log("✅ 토큰이 갱신되었습니다.");
+    } else {
+      console.error("❌ 응답에 토큰이 포함되지 않았습니다.");
+    }
+  } catch (error) {
+    console.error("❌ 토큰 갱신 중 오류 발생:", error);
+
+    if (axios.isAxiosError(error)) {
+      console.error("📌 오류 응답 상태 코드:", error.response?.status);
+      console.error("📌 오류 메시지:", error.response?.data?.message || "서버 오류 발생");
+      console.error("📌 오류 응답 데이터:", error.response?.data);
+    } else {
+      console.error("📌 예기치 않은 오류:", error);
+    }
+  }
+};
+
+ 
   useEffect(() => {
     const accessToken = sessionStorage.getItem('accessToken');
 
     if (!accessToken) {
+      showModal("로그인이 필요합니다.");
       router.push('/login'); // ✅ 로그인 페이지로 이동 😎push 대신 replace 사용
     } else {
       refreshAccessToken();
     }
-  }, []);
-
-  
-
-  
-
+  },[pathname]);
   return (
     <html lang="ko" >
       <body className="h-screen flex">

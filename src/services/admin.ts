@@ -277,15 +277,13 @@ export async function fetchTemplate(categoryId: string) {
 export async function fetchAdminAccessLogs(
   page: number,
   size: number,
-  role?: string,
   query?: string,
-  action?: string,
   startDate?: string,
   endDate?: string,
 ) {
   try {
     const { data } = await api.get(`/api/admin/access-logs`, {
-      params: { page, size, role, query, action, startDate, endDate },
+      params: { page, size, query, startDate, endDate },
     });
 
     return data;
@@ -297,14 +295,12 @@ export async function fetchAdminAccessLogs(
 
 // (GET) 회원 접속 로그 엑셀 파일 다운로드
 export async function fetchAdminAccessLogsExcel(
-  role?: string,
   query?: string,
-  action?: string,
   startDate?: string,
   endDate?: string,
 ) {
   try {
-    const { data } = await api.get(`/api/admin/access-logs/excel?query=${query}&role=${role}&action=${action}&startDate=${startDate}&endDate=${endDate}`, {
+    const { data } = await api.get(`/api/admin/access-logs/excel?query=${query}&startDate=${startDate}&endDate=${endDate}`, {
       responseType: 'blob',
     }
   );
@@ -315,3 +311,5 @@ export async function fetchAdminAccessLogsExcel(
     return null;
   }
 }
+
+

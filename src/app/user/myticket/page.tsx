@@ -102,6 +102,10 @@ export default function UserTicketListPage() {
             onStatusChange={handleStatusChange}
             status={status || ""}
           />
+          {tickets.length === 0 ?(
+        <div>
+        </div>
+      ) : (
           <div className="flex justify-center items-center mt-4 mb-4">
             <PagePagination
               totalItemsCount={tickets.length}
@@ -112,7 +116,7 @@ export default function UserTicketListPage() {
               onPageChange={handlePageChange}
             />
           </div>
-        </>
+      )}</>
       )}
     </div>
   );

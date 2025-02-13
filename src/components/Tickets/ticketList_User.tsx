@@ -83,6 +83,12 @@ export function TicketList_User({
   return (
     <div className="bg-white rounded-md">
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
+      {tickets.length === 0 ?(
+        <div>
+           <h2 className="text-sm text-center mt-4">해당 결과에 존재하는 티켓이 없습니다.</h2>
+        </div>
+      ) : (
+        <>
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
@@ -125,6 +131,8 @@ export function TicketList_User({
           })}
         </tbody>
       </table>
+      </>
+      )}
     </div>
   );
 }

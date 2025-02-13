@@ -16,7 +16,7 @@ const AdminMemberEnrollPage: React.FC = () => {
     department: "",
     phone: "",
     position: "",
-    role: "",
+    role: "USER",
     profileImageFile: null,
     agitUrl: ""
   });
@@ -75,7 +75,7 @@ const AdminMemberEnrollPage: React.FC = () => {
       department: formData.department.trim(),
       phone: formData.phone.trim(),
       position: formData.position.trim(),
-      role: formData.role == "사용자" ? "USER" : "MANAGER",
+      role: formData.role.trim(),
       agitUrl: formData.agitUrl.trim() || "",
     };
 
@@ -272,8 +272,8 @@ const AdminMemberEnrollPage: React.FC = () => {
                   onChange={handleChange}
                   className="text-sm font-semibold text-gray-500"
                 >
-                  <option value="사용자">사용자</option>
-                  <option value="담당자">담당자</option>
+                  <option value="USER">사용자</option>
+                  <option value="MANAGER">담당자</option>
                 </select>
               </div>
             </div>

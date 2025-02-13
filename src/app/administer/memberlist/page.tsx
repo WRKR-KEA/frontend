@@ -8,6 +8,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import Skeleton from '@/components/Skeleton';
 
 
 export default function AdminMemberListPage() {
@@ -56,6 +57,13 @@ export default function AdminMemberListPage() {
       setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
       setCurrentPage(1); // 검색 시 첫 페이지로 이동
     }
+  };
+
+  const handleSearch = () => {
+  
+      setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
+      setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    
   };
 
   // ✅ 역할(role) 매핑 함수
@@ -130,7 +138,10 @@ export default function AdminMemberListPage() {
     }
   };
 
-  if (isLoading) return <p></p>;
+  if (isLoading){
+    return <Skeleton width={"100%"} height={"100%"}/>
+}
+
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
   return (
@@ -139,15 +150,17 @@ export default function AdminMemberListPage() {
         <h2 className="text-md font-semibold">회원 조회</h2>
 
         <div className="flex items-center border-b p-2">
-          <FaSearch className="text-gray-500 mr-2" />
+          
           <input
             type="text"
             value={searchInput}
             onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown} // ✅ Enter 키 입력 감지
+            onKeyDown={handleInputKeyDown}
+            onBlur={handleSearch} // ✅ Enter 키 입력 감지
             placeholder="아이디, 이름, 이메일, 부서 검색"
             className="outline-none text-sm w-[180px]"
           />
+          <FaSearch className="text-gray-500 mr-2 cursor-pointer" />
         </div>
       </div>
 
@@ -224,8 +237,11 @@ export default function AdminMemberListPage() {
           </table>
         </div>
 
-        {/* ✅ 페이지네이션 추가 */}
-        <div className="flex justify-center mt-4">
+        
+      {
+        members?.elements.length > 0 ? (
+          <>
+           <div className="flex justify-center mt-4">
           <PagePagination
             totalPages={members?.totalPages || 10}
             itemsCountPerPage={members?.size || 10}
@@ -234,6 +250,14 @@ export default function AdminMemberListPage() {
             currentPage={members?.currentPage}
           />
         </div>
+          </>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+            <p className="text-lg">검색 결과가 없습니다.</p>
+          </div>
+        )
+      }
+       
       </div>
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>

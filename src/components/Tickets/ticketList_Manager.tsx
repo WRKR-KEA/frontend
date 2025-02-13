@@ -146,7 +146,7 @@ export function TicketList_Manager({
           </tr>
         </thead>
         <tbody>
-          {sortedTickets.map((ticket) => (
+          {tickets.map((ticket) => (
             <tr
               key={ticket.id}
               className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"

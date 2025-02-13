@@ -90,6 +90,23 @@ export default function DepartmentTicketListPage() {
       console.error("엑셀 다운로드 중 오류 발생:", error);
     }
   };
+  const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
+  const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
+
+   // ✅ 검색 입력 후 Enter 키 입력 시 실행
+   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
+      setCurrentPage(1); // 검색 시 첫 페이지로 이동
+    }
+  };
+
+  const handleSearch = () => {
+  
+    setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+  
+};
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
@@ -97,7 +114,9 @@ export default function DepartmentTicketListPage() {
         <h2 className="text-lg font-semibold">티켓 조회</h2>
 
         <div className="flex items-center space-x-2 ml-4">
-          <Search onSearchChange={handleSearchChange} placeHolder="제목, 담당자, 티켓번호" />
+          <Search onSearchChange={handleSearchChange}  
+            onKeyDown={handleInputKeyDown}
+            onBlur={handleSearch}placeHolder="제목, 담당자, 티켓번호" />
         </div>
 
         <div className="ml-auto flex items-center relative">
@@ -156,7 +175,7 @@ export default function DepartmentTicketListPage() {
                     totalItemsCount={totalItemsCount}
                     itemsCountPerPage={maxTicketsToShow}
                     pageRangeDisplayed={5}
-                    currentPage={currentPage}
+                    currentPage={currentPage} 
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
                   />

@@ -101,7 +101,7 @@ console.log("🌟 받은 티켓 데이터:",tickets);
           </tr>
         </thead>
         <tbody>
-          {filteredTickets.map((ticket) => (
+          {tickets.map((ticket) => (
             <tr
               key={ticket.ticketId}
               className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"

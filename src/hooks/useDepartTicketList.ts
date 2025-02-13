@@ -3,7 +3,7 @@ import axios from "axios";
 import { format } from "date-fns";
 
 const fetchDepartTicket = async (
-  searchTerm: string,
+  query: string,
   status: string,
   startDate: string | null,
   endDate: string | null,
@@ -20,7 +20,7 @@ const fetchDepartTicket = async (
 
   const response = await axios.get(url, {
     params: {
-      searchTerm,
+      query,
       status,
       startDate,
       endDate,
@@ -32,12 +32,13 @@ const fetchDepartTicket = async (
       Accept: "application/json;charset=UTF-8",
     },
   });
-
+  console.log("로그", query);
+  console.log("로그", response);
   return response.data.result;
 };
 
 export const useDepartTicketListQuery = (
-  searchTerm: string,
+  query: string,
   status: string,
   dateRange: { startDate: Date | null; endDate: Date | null },
   currentPage: number,
@@ -46,7 +47,7 @@ export const useDepartTicketListQuery = (
   return useQuery({
     queryKey: [
       "manager_department_tickets",
-      searchTerm,
+      query,
       status,
       dateRange.startDate,
       dateRange.endDate,
@@ -55,7 +56,7 @@ export const useDepartTicketListQuery = (
     ],
     queryFn: () =>
       fetchDepartTicket(
-        searchTerm,
+        query,
         status,
         dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null,
         dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null,

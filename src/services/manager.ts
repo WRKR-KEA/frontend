@@ -165,9 +165,15 @@ export async function updateManagerTicketPin(ticketData: {
 
 // (PATCH) 담당자 - 티켓 승인
 export async function updateManagerTicketApprove(ticketId: string) {
+  const accessToken = sessionStorage.getItem('accessToken');
   try {
     const { data } = await api.patch(
-      `/api/manager/tickets/approve?ticketId=${encodeURIComponent(ticketId)}`
+      `/api/manager/tickets/approve?ticketId=${encodeURIComponent(ticketId)}`,
+      {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      },
     );
     return data;
   } catch (error) {

@@ -20,6 +20,7 @@ export default function ManagerTicketListPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [status, setStatus] = useState<string>("");
+  const [totalItemsCount, setTotalItems] =useState(1);
 
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -63,6 +64,17 @@ export default function ManagerTicketListPage() {
         }
       );
 
+      const firstresponse = await api.get(
+        `/api/manager/tickets?page=${currentPage}&size=${maxTicketsToShow}&sortType=${sortOrder}&status=${""}&query=${""}`,
+        {
+          headers: {
+            Accept: "application/json;charset=UTF-8",
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      const totalItemsCount =firstresponse.data.result.totalElements;
+      setTotalItems(totalItemsCount);
       const data = response.data;
 
       if (data.isSuccess) {
@@ -115,11 +127,11 @@ export default function ManagerTicketListPage() {
       </div>
   
       <div className="relative min-h-[200px]">
-  {isLoading? (
-    <div className="flex flex-col items-center space-y-4">
-      <Skeleton width="100%" height="600px" />
-    </div>
-  ) : (
+    {isLoading  || totalItemsCount === 0? (
+      <div className="flex flex-col items-center space-y-4">
+        <Skeleton width="100%" height="600px" />
+      </div>
+    ) : (
     <>
       <TicketList_Manager
         tickets={tickets}

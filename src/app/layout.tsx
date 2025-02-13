@@ -27,6 +27,24 @@ export default function RootLayout({
   ];
   const isExcluded = excludedPaths.includes(pathname);
 
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText: "",
+    onClose:()=>{},
+  })
+
+  const showModal = (title: string, btnText='닫기') => {
+      setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+          setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+
+      });
+  };
   // ✅ Zustand에서 유저 정보 가져오기
   const user = useUserStore((state) => state.user);
   const { setUser } = useUserStore();
@@ -89,15 +107,12 @@ export default function RootLayout({
     const accessToken = sessionStorage.getItem('accessToken');
 
     if (!accessToken) {
+      showModal("로그인이 필요합니다.");
       router.push('/login'); // ✅ 로그인 페이지로 이동 😎push 대신 replace 사용
     } else {
       refreshAccessToken();
     }
   }, []);
-
-  
-
-  
 
   return (
     <html lang="ko" >

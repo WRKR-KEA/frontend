@@ -11,14 +11,14 @@ import { TicketCancel } from "@/components/Modals/ticketCancel";
 import { fetchComments, fetchTicketDetail, updateTicket } from "@/services/user";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
-import Skeleton from "@/components/Skeleton"; // Assume you have a Skeleton component
+import Skeleton from "@/components/Skeleton";
 
 export default function UserTicketDetailPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
   const [logs, setLogs] = useState([]);
-  const [isLoading, setIsLoading] = useState(true); // Track loading state
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const id = window.location.pathname.split("/").pop();

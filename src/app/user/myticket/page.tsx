@@ -30,11 +30,12 @@ export default function UserTicketListPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalItemsCount, setTotalItems] =useState(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const user = useUserStore((state) => state.user);
-  const ticketRequester = user ? user.name : "";
+  const ticketRequester = user ? user.name : "-";
 
   // 🔹 티켓 목록 가져오기
   useEffect(() => {
@@ -53,7 +54,19 @@ export default function UserTicketListPage() {
             Authorization: `Bearer ${accessToken}`,
           },
         });
-
+        const firstresponse = await api.get(`/api/user/tickets?page=${currentPage}&size=${maxTicketsToShow}&status=${""}`, {
+          params: {
+            page: currentPage,
+            size: maxTicketsToShow,
+            ...(status && { status }),
+          },
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        const totalItemsCount =firstresponse.data.result.totalElements;
+        setTotalItems(totalItemsCount);
         const { elements, totalPages } = response.data.result;
 
         const requestTicketList: Ticket[] = elements.map((ticket: any) => ({
@@ -117,7 +130,7 @@ export default function UserTicketListPage() {
         </div>
       </div>
 
-      {isLoading ? (
+      {isLoading || totalItemsCount === 0? (
         <div>
           <Skeleton width="100%" height="600px" />
         </div>

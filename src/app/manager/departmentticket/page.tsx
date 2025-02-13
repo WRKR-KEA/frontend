@@ -23,6 +23,7 @@ export default function DepartmentTicketListPage() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [totalPages, setTotalPages] = useState(1);
   const [status, setStatus] = useState<string>("");
+  const [totalItemsCount, setTotalItems] =useState(1);
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
@@ -74,6 +75,18 @@ export default function DepartmentTicketListPage() {
         currentPage,
         maxTicketsToShow
       );
+
+      const firstdata = await fetchManagerDepartmentTicket(
+        "",
+        "",
+        dateRange.startDate ? format(dateRange.startDate, "yyyy-MM-dd") : null,
+        dateRange.endDate ? format(dateRange.endDate, "yyyy-MM-dd") : null,
+        currentPage,
+        maxTicketsToShow
+      );
+      const totalItemsCount =firstdata?.result?.totalElements;
+      setTotalItems(totalItemsCount);
+
       setTickets(data?.result?.elements || []);
       setTotalPages(data?.result?.totalPages || []);
     } catch (err) {
@@ -143,7 +156,7 @@ export default function DepartmentTicketListPage() {
       </div>
 
       <div className="relative min-h-[200px]">
-      {isLoading ? (
+      {isLoading || totalItemsCount === 0? (
     <div className="flex flex-col items-center space-y-4">
       <Skeleton width="100%" height="600px" />
     </div>

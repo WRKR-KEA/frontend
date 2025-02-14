@@ -204,7 +204,7 @@ export default function UserCreateTicketPage() {
                   className="flex items-center justify-center text-[#6E61CA] hover:text-[#5A50A8] mt-0.5 ml-2"
                   onClick={() => updateHelpContent(selectedService)}
                 >
-                  <span className="text-sm font-medium mr-1">도움말</span>
+                  <span className="text-sm font-medium ml-3 mr-1">도움말</span>
                   <img src="/helpIcon.png" alt="Help Icon" className="w-4 h-4" />
                 </button>
               )}

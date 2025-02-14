@@ -7,18 +7,18 @@ interface FirstTaskDropProps {
   firstCategories: string[];
 }
 
-export default function FirstTaskDrop({ selectedService, onServiceChange,firstCategories }: FirstTaskDropProps) {
-  const [isOpen, setIsOpen] = useState(false); // State to toggle the dropdown visibility
+export default function FirstTaskDrop({ selectedService, onServiceChange, firstCategories }: FirstTaskDropProps) {
+  const [isOpen, setIsOpen] = useState(false); // 드롭다운 상태
 
   const handleSelect = (service: string) => {
-    onServiceChange(service); // Update the selected service
-    setIsOpen(false); // Close the dropdown after selection
+    onServiceChange(service); // 선택된 값 변경
+    setIsOpen(false); // 드롭다운 닫기
   };
 
   return (
     <div className="relative">
       <button
-        className="flex items-center justify-start w-80 rounded mt-2 text-md text-gray-500"
+        className="flex items-center justify-start w-80 rounded mt-2 text-md"
         onClick={() => setIsOpen(!isOpen)}
       >
         <img
@@ -26,7 +26,9 @@ export default function FirstTaskDrop({ selectedService, onServiceChange,firstCa
           alt="Category Icon"
           className="w-6 h-6 mr-2"
         />
-        <span>{selectedService}</span>
+        <span className={selectedService === "1차 카테고리를 선택해주세요." ? "text-gray-500" : "text-black"}>
+          {selectedService}
+        </span>
         <svg
           className={`w-4 h-4 transform ${isOpen ? "rotate-180" : ""} ml-auto`}
           xmlns="http://www.w3.org/2000/svg"
@@ -51,10 +53,12 @@ export default function FirstTaskDrop({ selectedService, onServiceChange,firstCa
             {firstCategories.map((service) => (
               <li key={service}>
                 <button
-                  className={`flex items-center w-full text-left px-3 py-2 text-sm ${selectedService === service ? "text-black" : "text-gray-500"} hover:bg-gray-100 hover:text-[#6E61CA]`}
+                  className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                    selectedService === service ? "text-black" : "text-gray-500"
+                  } hover:bg-gray-100 hover:text-[#6E61CA]`}
                   onClick={() => handleSelect(service)}
                 >
-                <span className={`${selectedService === service} ? "text-black" : "text-gray-500"}`}>{service}</span>
+                  <span>{service}</span>
                 </button>
               </li>
             ))}

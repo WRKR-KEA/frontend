@@ -33,7 +33,9 @@ export default function SecondTaskDrop({
           alt="Category Icon"
           className="w-6 h-6 mr-2"
         />
-        <span>{selectedRequestType}</span>
+         <span className={selectedRequestType=== "2차 카테고리를 선택해주세요." ? "text-gray-500" : "text-black"}>
+          {selectedRequestType}
+        </span>
         <svg
           className={`w-4 h-4 transform ${isOpen ? "rotate-180" : ""} ml-auto`}
           xmlns="http://www.w3.org/2000/svg"

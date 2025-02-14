@@ -39,7 +39,6 @@ export default function UserProfilePage() {
     email: "",
     department: "",
     position: "",
-    agitUrl:"",
   });
 
   const showModal = (title: string, btnText = "닫기") => {
@@ -107,10 +106,6 @@ export default function UserProfilePage() {
     }
     if (!editableData.department.trim()) {
       newErrors.department = "부서를 입력해주세요.";
-      valid = false;
-    }
-    if (!editableData.agitUrl.trim()) {
-      newErrors.agitUrl = "아지트 주소를 입력해주세요.";
       valid = false;
     }
     if (!editableData.position.trim()) {
@@ -186,7 +181,6 @@ export default function UserProfilePage() {
       phone: "",
       name: "",
       email: "",
-      agitUrl: "",
       department: "",
       position: "",
     });

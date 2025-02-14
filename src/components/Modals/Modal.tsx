@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react';
 interface ModalProps {
   onClose: () => void;
   children: React.ReactNode;
+  zIndex?: string;
 }
 
-export default function Modal({ onClose, children }: ModalProps) {
+export default function Modal({ onClose, children, zIndex="50" }: ModalProps) {
   const [isShowing, setIsShowing] = useState(false);
 
   useEffect(() => {
@@ -14,7 +15,7 @@ export default function Modal({ onClose, children }: ModalProps) {
   }, []);
 
   return (
-    <div className="fixed inset-0 z-50">
+    <div className={`fixed inset-0 z-${zIndex}`}>
       <div
         className={`
           fixed inset-0 bg-gray-500 transition-opacity duration-300 ease-in-out

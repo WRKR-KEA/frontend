@@ -7,7 +7,6 @@ import Modal from "./Modal";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api/axios";
 
-
 // 담당자 정보를 가져오는 API 요청 함수
 const fetchManagers = async () => {
   const accessToken = sessionStorage.getItem("accessToken");
@@ -33,12 +32,9 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
   const accessToken = sessionStorage.getItem("accessToken");
   if (!accessToken) throw new Error("인증 토큰이 없습니다.");
 
-
   const response = await api.patch(
     `/api/manager/tickets/${ticketId}/delegate`,
-    {
-      delegateManagerId, // 변경할 담당자 ID
-    },
+    { delegateManagerId }, // 변경할 담당자 ID
     {
       headers: {
         Authorization: `Bearer ${accessToken}`,
@@ -56,12 +52,10 @@ const changeTicketManager = async (ticketId: string, delegateManagerId: string) 
 
 export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const [isLoading, setIsLoading] = useState(true); // 로딩 상태
-  const [error, setError] = useState<string | null>(null); // 에러 상태
-  const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null); // 선택된 담당자 ID
+  const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(1);
-  const router = useRouter();
-  
+  const router = useRouter();  // ✅ 여기서 useRouter() 사용
+
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -77,12 +71,11 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
       },
-
     });
   };
 
   const closeModal = () => {
-    setIsModalOpen(false); // 모달 닫기
+    setIsModalOpen(false);
   };
 
   const handleChange = async () => {
@@ -90,42 +83,32 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
       showModal("담당자를 선택해주세요.");
       return;
     }
-
+  
     try {
-      await changeTicketManager(ticketId, selectedManagerId);
-      showModal("담당자 변경이 완료되었습니다."); 
-
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null));
-      }, 1000);
+      const result = await changeTicketManager(ticketId, selectedManagerId);
+      
+      // 1초 후 모달 닫기
+      showModal("담당자 변경이 완료되었습니다.");
       
       setTimeout(() => {
-        clearInterval(timer);
-        router.push("/manager/home");
+        setIsModalOpen(false); // 모달 닫기
+        router.push(`/manager/myticket`); 
       }, 1000);
+      
     } catch (err: any) {
-      setError(err.message);
+      showModal(err.message);
     }
   };
-  //
-  // // 로딩 중일 때 표시
-  // if (isLoading) return <div>로딩 중...</div>;
-  //
-  // // 에러 발생 시 표시
-  // if (error) return <div>오류 발생: {error}</div>;
 
   return (
     isModalOpen && (
       <div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-50">
         <div className="bg-white p-6 rounded-lg shadow-md max-w-[500px] w-full">
-          {/* 데이터를 표시할 리스트 컴포넌트 */}
           <div className="max-h-[500px] overflow-y-auto">
             <ChangeMemberList
-              onSelectManager={(managerId: string) => setSelectedManagerId(managerId)} // 담당자 선택 시 처리
+              onSelectManager={(managerId: string) => setSelectedManagerId(managerId)}
             />
           </div>
-
-          {/* 버튼 영역 */}
           <div className="mt-4 flex justify-center space-x-3">
             <Button label="취소" onClick={closeModal} color={4} />
             <Button label="변경하기" onClick={handleChange} color={1} />

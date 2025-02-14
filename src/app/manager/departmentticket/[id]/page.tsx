@@ -106,7 +106,7 @@ export default function ManagericketDetailPage() {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/manager/home");
+        router.push(`/manager/myticket/${result.result[0]?.ticketId}`);
       }, 1000);
 
     } catch (error) {

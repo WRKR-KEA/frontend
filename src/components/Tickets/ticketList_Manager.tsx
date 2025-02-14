@@ -136,13 +136,13 @@ export function TicketList_Manager({
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-8"></th>
-            <th className="px-4 py-2 w-20 text-center">티켓 번호</th>
-            <th className="px-4 py-2 w-24 text-center">상태</th>
-            <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
-            <th className="px-4 py-2 w-60 max-w-60">제목</th>
-            <th className="px-4 py-2 w-32 text-center">요청자</th>
-            <th className="px-4 py-2 w-32 text-center">최근 변경 일시</th>
+            <th className="px-4 py-2 w-8 max-w-8"></th>
+            <th className="px-4 py-2 w-28 max-w-28 text-center border">티켓 번호</th>
+            <th className="px-4 py-2 w-24 max-w-24 text-center">상태</th>
+            <th className="px-4 py-2 w-32 max-w-24 text-center">카테고리</th>
+            <th className="px-4 py-2 w-80 max-w-80 text-center">제목</th>
+            <th className="px-4 py-2 w-32 max-w-32 text-center">요청자</th>
+            <th className="px-4 py-2 w-32 max-w-32 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
@@ -153,7 +153,7 @@ export function TicketList_Manager({
               onClick={() => handleTicketClick(ticket.id)}
             >
               <td
-                className="px-4 py-2"
+                className="px-4 py-2 border  max-w-8"
                 onClick={(e) => {
                   e.stopPropagation();
                   handlePinClick(ticket.id, ticket.isPinned);
@@ -165,22 +165,22 @@ export function TicketList_Manager({
                   <MdOutlinePushPin className="text-gray-4" size={20} />
                 )}
               </td>
-              <td className="px-4 py-2 text-center truncate">
+              <td className="px-4 py-2 max-w-28 border text-center truncate">
                 <HighlightText text={ticket.serialNumber} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 text-center truncate">
+              <td className="px-4 py-2 max-w-24 border text-center truncate">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2 text-center truncate">
+              <td className="px-4 py-2 border max-w-24 text-center truncate">
                 {ticket.firstCategory}/{ticket.secondCategory}
               </td>
-              <td className="px-4 py-2 truncate max-w-60 whitespace-nowrap">
+              <td className="px-4 py-2 border truncate max-w-80 whitespace-nowrap">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 text-center truncate">{ticket.requesterNickname}</td>
-              <td className="px-4 py-2 text-center truncate">{ticket.updatedAt}</td>
+              <td className="px-4 py-2 max-w-32 border text-center truncate text-center">{ticket.requesterNickname}</td>
+              <td className="px-4 py-2 max-w-32 border text-center truncate text-center">{ticket.updatedAt}</td>
             </tr>
           ))}
         </tbody>

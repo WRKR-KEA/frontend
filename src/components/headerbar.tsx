@@ -37,23 +37,25 @@ export default function Headerbar() {
     const toggleSidebar = () => {
         setIsSidebarOpen((prev) => !prev);
     };
+
     const toggleModal = (modalType: string) => {
         setActiveModal((prev) => (prev === modalType ? null : modalType));
     };
+
     const pageTitle = (() => {
         switch (true) {
             case pathname === "/user/home" || pathname === "/manager/home":
                 return "홈";
             case pathname === "/user/createticket":
-                return "티켓 생성";
+                return "티켓 요청";
             case pathname.startsWith("/user/myticket"):
                 return "티켓 조회";
             case pathname === "/user/mypage" || pathname === "/manager/mypage":
                 return "계정";
             case pathname.startsWith("/manager/myticket"):
-                return "담당 티켓 조회";
+                return "담당 티켓";
             case pathname.startsWith("/manager/departmentticket"):
-                return "부서 티켓 조회";
+                return "부서 티켓";
             case pathname === "/manager/managerlist":
                 return "담당자 조회";
             case pathname.startsWith("/manager/monitoring"):
@@ -63,13 +65,21 @@ export default function Headerbar() {
             case pathname === "/administer/memberenrollment":
                 return "회원 등록";
             case pathname === "/administer/categorymanagement":
-                return "카테고리 조회";
+                return "카테고리 관리";
             case pathname === "/administer/log":
-                return "로그 조회"
+                return "접속 로그 조회"
             default:
                 return "페이지 없음";
         }
     })();
+
+    useEffect(() => {
+        if (pageTitle === "홈") {
+            document.title = "Tickety";
+        } else {
+            document.title = "Tickety - " + pageTitle;
+        }
+    }, [pageTitle]);
 
     // ✅ 로그아웃 처리 함수
     const handleLogout = async () => {

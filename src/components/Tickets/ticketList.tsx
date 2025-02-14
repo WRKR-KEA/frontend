@@ -62,7 +62,7 @@ export function TicketList({
               onClick={() => onTicketClick?.(ticket)}
             >
               <td className="px-4 py-2 max-w-28 border truncate text-center">{ticket.number}</td>
-              <td className="px-4 py-2 max-w-28 border truncate text-center">
+              <td className="px-4 py-2 max-w-28 border text-center">
                 <span
                   className={`inline-block px-2 py-1 border rounded-md truncate text-xs font-semibold ${statusStyles[ticket.status]}`}
                 >

@@ -18,10 +18,10 @@ type Ticket = {
   status: string,
   title: string,
   handler: string,
-  createdAt: string,
-  updatedAt: string,
-  startedAt: string,
-  completedAt: string,
+  requestDate: string,
+  updateDate: string,
+  acceptDate: string,
+  completeDate: string,
   requester: string,
 };
 
@@ -56,10 +56,10 @@ export default function UserHomePage() {
         status: ticket.status,
         title: ticket.title,
         handler: ticket.managerNickname || "-",
-        createdAt: ticket.ticketTimeInfo?.createdAt,
-        updatedAt: ticket.ticketTimeInfo?.updatedAt || "-",
-        startedAt: ticket.ticketTimeInfo?.startedAt || "-",
-        completedAt: ticket.ticketTimeInfo?.endedAt || "-",      
+        requestDate: ticket.ticketTimeInfo?.createdAt,
+        updateDate: ticket.ticketTimeInfo?.updatedAt || "-",
+        acceptDate: ticket.ticketTimeInfo?.startedAt || "-",
+        completeDate: ticket.ticketTimeInfo?.endedAt || "-",      
         requester: user?.nickname,
       })) || [];
       

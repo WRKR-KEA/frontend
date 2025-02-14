@@ -8,10 +8,10 @@ type Ticket = {
   status: string,
   title: string,
   handler: string,
-  createdAt: string,
-  updatedAt: string,
-  startedAt: string,
-  completedAt: string,
+  requestDate: string,
+  updateDate: string,
+  acceptDate: string,
+  completeDate: string,
 };
 
 type TicketListProps = {
@@ -74,7 +74,7 @@ export function TicketList({
               </td>
               <td className="px-4 py-2 border max-w-80 truncate">{ticket.title}</td>
               <td className="px-4 py-2 border max-w-28 truncate text-center">{ticket.handler}</td>
-              <td className="px-4 py-2 border max-w-32 truncate text-center">{ticket.updatedAt}</td>
+              <td className="px-4 py-2 border max-w-32 truncate text-center">{ticket.updateDate}</td>
             </tr>
           ))}
         </tbody>

@@ -22,17 +22,22 @@ export default function AdminMemberListPage() {
     title: "",
     btnText: '',
     onClose: () => { },
+    onClose2: () => {}
   });
   const router = useRouter(); // ✅ useRouter 사용
 
-  const showModal = (title: string, btnText = '닫기') => {
+  const showModal = (title: string, btnText = '닫기', onCloseCallback?: () => void) => {
     setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
+        if (onCloseCallback) onCloseCallback(); // ✅ 모달 닫힌 후 실행할 콜백 함수 실행
       },
+      onClose2:() => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      }
     });
   };
 
@@ -114,25 +119,26 @@ export default function AdminMemberListPage() {
         return;
       }
 
-      const isConfirmed = confirm("정말로 삭제하시겠습니까?");
-      if (!isConfirmed) return;
+      showModal("정말로 삭제하시겠습니까?", "확인", async()=>{
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
+          method: "DELETE",
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify({ memberIdList: selectedMembers }),
+        });
+  
+        if (!response.ok) {
+          throw new Error('회원 삭제 실패');
+        }
+  
+        showModal("선택한 회원이 삭제되었습니다.");
+        setSelectedMembers([]);
+        refetch();
+      })
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
-        method: "DELETE",
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken}`,
-        },
-        body: JSON.stringify({ memberIdList: selectedMembers }),
-      });
-
-      if (!response.ok) {
-        throw new Error('회원 삭제 실패');
-      }
-
-      showModal("선택한 회원이 삭제되었습니다.");
-      setSelectedMembers([]);
-      refetch();
+     
     } catch (error) {
       console.error('❌ 삭제 요청 실패:', error);
       showModal("회원 삭제 중 오류가 발생했습니다.");
@@ -228,21 +234,21 @@ export default function AdminMemberListPage() {
                           className="w-8 h-8 rounded-full object-cover"
                         />
                         <span>
-                          <HighlightText text={row.nickname} highlight={searchInput} />
+                          <HighlightText text={row.nickname} highlight={searchTrigger} />
                         </span>
                       </div>
                     </Link>
                   </td>
                   <td className="p-3 w-2/12">
-                    <HighlightText text={row.name} highlight={searchInput} />
+                    <HighlightText text={row.name} highlight={searchTrigger} />
                   </td>
                   <td className="p-4 w-2/12">
-                    <HighlightText text={row.department} highlight={searchInput} />
+                    <HighlightText text={row.department} highlight={searchTrigger} />
                   </td>
                   <td className="p-4 w-2/12">{row.position}</td>
                   <td className="p-4 w-3/12">{row.phone}</td>
                   <td className="p-4 w-4/12">
-                    <HighlightText text={row.email} highlight={searchInput} />
+                    <HighlightText text={row.email} highlight={searchTrigger} />
                   </td>
                 </tr>
               ))}
@@ -273,7 +279,7 @@ export default function AdminMemberListPage() {
 
       </div>
       {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
+        <Modal onClose={modalState.onClose2}>
           <AlertModal
             title={modalState.title}
             onClick={modalState.onClose}

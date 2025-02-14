@@ -117,12 +117,13 @@ const refreshAccessToken = async () => {
     const accessToken = sessionStorage.getItem('accessToken');
 
     if (!accessToken && pathname!='/reissuepassword') {
-
-      router.push('/login'); // ✅ 로그인 페이지로 이동 😎push 대신 replace 사용
+      router.push('/login');     
     } else {
       refreshAccessToken();
-    }
+    } 
+   
   },[pathname]);
+
   return (
     <html lang="ko" >
     <head>
@@ -141,8 +142,6 @@ const refreshAccessToken = async () => {
           {/* 메인 콘텐츠 */}
           <main className="flex-1 overflow-y-auto bg-white">
             <QueryClientProvider client={queryClient}>
-
-              
               {children}
             </QueryClientProvider>
           </main>

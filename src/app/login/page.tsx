@@ -19,13 +19,14 @@ export default function LoginPage() {
     onClose: () => { },
   });
 
-  const showModal = (title: string, btnText = '닫기') => {
+  const showModal = (title: string, btnText = '닫기', onCloseCallback?: () => void) => {
     setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
+        if (onCloseCallback) onCloseCallback(); // ✅ 모달 닫힌 후 실행할 콜백 함수 실행
       },
 
     });
@@ -68,12 +69,6 @@ export default function LoginPage() {
       // Axios를 사용하여 로그인 API 호출
       const response = await api.post("/api/auth/login", { nickname, password });
 
-      console.log("로그인 성공:", response);
-
-      // ✅ 서버 응답 메시지 alert
-      if (response.data.message) {
-        showModal(response.data.message);
-      }
 
       // ✅ 토큰 저장
       if (response.data.result?.accessToken && response.data.result?.refreshToken) {
@@ -97,22 +92,28 @@ export default function LoginPage() {
 
       // 임시 비밀번호인 경우 변경 페이지로 이동
       if (response.data.result.isTempPassword) {
-        showModal("최초 로그인 시 비밀번호 변경이 필요합니다.")
-        router.push("/changepassword");
+        showModal("최초 로그인 시 비밀번호 변경이 필요합니다.", "확인", ()=>{
+          router.push("/changepassword")
+        })
+        
+
       } else {
         // 로그인 성공 시 리다이렉트
-        showModal("로그인 성공!");
-        switch (response.data.result.role) {
-          case "USER":
-            router.push("/user/home");
-            break;
-          case "MANAGER":
-            router.push("/manager/home");
-            break;
-          case "ADMIN":
-            router.push("/administer/memberlist");
-            break;
-        }
+        showModal("로그인 성공!", "확인", ()=>{
+          switch (response.data.result.role) {
+            case "USER":
+              router.push("/user/home");
+              break;
+            case "MANAGER":
+              router.push("/manager/home");
+              break;
+            case "ADMIN":
+              router.push("/administer/memberlist");
+              break;
+          }
+        })
+
+        
       }
     } catch (err: any) {
       console.error("로그인 에러:", err);

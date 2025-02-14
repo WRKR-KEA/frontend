@@ -161,8 +161,6 @@ if (error) {
           <div className="flex flex-col items-center space-y-4">
             <Skeleton width="100%" height="600px" />
           </div>
-        ) :tickets.length === 0 ? (
-          <SkeletonZero width="100%" height="40%" /> 
         ) : (
           <>
             <TicketList_Depart

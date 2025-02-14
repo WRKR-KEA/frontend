@@ -8,7 +8,7 @@ interface InputModalProps {
     setCategoryName: (value: string) => void;
     setCategoryAbb: (value: string) => void;
     setCategoryDescription?: (value: string) => void; // 추가된 상태 관리
-    handleAddCategory: () => void;
+    handleAddCategory: () => Promise<boolean>;
 }
 
 export default function InputModal({
@@ -77,12 +77,15 @@ export default function InputModal({
             {/* 버튼을 가로로 길게 변경 */}
             <button
                 onClick={() => {
-                    handleAddCategory();
-                    onClick();
-                    setInputAbb("")
-                    setInputName("")
-                    setCategoryAbb("")
-                    setCategoryName("")
+                    handleAddCategory().then(result => {
+                      if (result) {
+                        onClick()
+                        setInputAbb("")
+                        setInputName("")
+                        setCategoryAbb("")
+                        setCategoryName("")
+                      }
+                    });
                 }}
                 className="px-8 py-2 text-white bg-main-1 rounded-md text-center transition-all duration-200
                 hover:bg-main-hover disabled:opacity-50 disabled:hover:bg-main-1"

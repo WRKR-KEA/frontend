@@ -135,10 +135,6 @@ const CategoryManagement: React.FC = () => {
     // ✅ 카테고리 추가 함수
     const handleAddCategory = async () => {
         try {
-            if (categoryName.trim() === "") {
-                showModal("카테고리 이름을 입력해주세요.");
-                return;
-            }
 
             const newSeq = categories.length + 1;
             const accessToken = sessionStorage.getItem("accessToken");
@@ -160,13 +156,14 @@ const CategoryManagement: React.FC = () => {
             if (response.status === 201 || response.status === 200) {
                 await refetch();
                 showModal("새로운 카테고리가 추가되었습니다.");
+                return true;
             } else {
                 throw response.data;
             }
         } catch (error) {
             console.log("❌ 카테고리 추가 오류:", error);
             showModal(error?.response.data.message)
-           
+           return false;
         }
     };
 
@@ -282,7 +279,7 @@ const CategoryManagement: React.FC = () => {
             )}
 
             {inputModalState.isOpen && (
-                <Modal onClose={() => {
+                <Modal zIndex="40" onClose={() => {
                     inputModalState.onClose()
                     setCategoryAbb("")
                     setCategoryName("")

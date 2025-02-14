@@ -32,8 +32,8 @@ export default function Dashboard() {
   const [selectedDate, setSelectedDate] = useState(new Date());
 
   const formattedDate = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1)
-  .toString()
-  .padStart(2, '0')}-01`;
+    .toString()
+    .padStart(2, '0')}-01`;
 
   const [firstCategoryDonutChartSeries, setFirstCategoryDonutChartSeries] = useState<number[]>([]);
   const [firstCategoryDonutChartLabels, setFirstCategoryDonutChartLabels] = useState<string[]>([]);
@@ -65,20 +65,20 @@ export default function Dashboard() {
     },
   });
   const [ticketCardData, setTicketCardData] = useState
-  < {
-    accept: number,
-    complete: number,
-    reject: number,
-    request: number,
-    date: string,
-  } > ({
-    accept: 0,
-    complete: 0,
-    reject: 0,
-    request: 0,
-    date: '',
-  });
-
+    <{
+      accept: number,
+      complete: number,
+      reject: number,
+      request: number,
+      date: string,
+    }>({
+      accept: 0,
+      complete: 0,
+      reject: 0,
+      request: 0,
+      date: '',
+    });
+  const [selectedCategoryName, setSelectedCategoryName] = useState<string>('');
   const [barChartData, setBarChartData] = useState<ticketCountByStatus[]>([]);
   const [barChartStatusFilter, setBarChartStatusFilter] = useState<string>();
   const [barChartOptions, setBarChartOptions] = useState<ApexOptions>({
@@ -146,7 +146,7 @@ export default function Dashboard() {
   const asyncBarChartData = async (date: string, ticketStatusFilter: string) => {
     try {
       const data = await fetchManagerStatistics(date, 'MONTHLY', ticketStatusFilter);
-      setBarChartData(data.data.result.countList);
+      setBarChartData(data?.data.result.countList);
     } catch (error) {
       console.error('API 요청 실패:', error);
     }
@@ -194,8 +194,9 @@ export default function Dashboard() {
           events: {
             dataPointSelection: async (event, chartContext, { dataPointIndex }) => {
               const selectedCategoryId = updatedCategoryIds[dataPointIndex];
+              const selectedName = updatedLabels[dataPointIndex];  // 선택된 카테고리 이름
+              setSelectedCategoryName(selectedName);  // 새로 추가한 state 업데이트
               setSelectedDonutChartCategoryId(selectedCategoryId);
-              console.log(`Selected categoryId: ${selectedCategoryId}`);
             },
           },
         },
@@ -282,10 +283,10 @@ export default function Dashboard() {
           offsetX: 500,
         },
       },
-      yaxis:{
+      yaxis: {
         title: {
           text: '티켓 개수',
-          offsetY:0,
+          offsetY: 0,
         },
       },
       colors: [getBarChartColor(barChartStatusFilter)],
@@ -295,7 +296,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col gap-8 p-8">
       {/* 상단 바 */}
-      <div className="flex items-center justify-between relative z-50">
+      <div className="flex items-center justify-between relative z-[50]">
         <h2 className="text-md font-semibold">월간 모니터링</h2>
         <div className="relative">
           {/* 달력 버튼 */}
@@ -377,9 +378,11 @@ export default function Dashboard() {
           )}
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
-          <h4 className="text-lg text-gray-800 mb-4">티켓 카테고리</h4>
+          <h4 className="text-lg text-gray-800 mb-4">
+            {selectedCategoryName ? `${selectedCategoryName}에서 요청된 티켓` : '카테고리를 선택해주세요'}
+          </h4>
           <Chart options={secondCategoryDonutChartOptions} series={secondCategoryDonutChartSeries}
-                 type="donut" height={300} />
+            type="donut" height={300} />
         </div>
       </div>
     </div>

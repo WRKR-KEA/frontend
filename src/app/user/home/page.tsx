@@ -59,7 +59,7 @@ export default function UserHomePage() {
         updatedAt: ticket.ticketTimeInfo?.updatedAt || "-",
         startedAt: ticket.ticketTimeInfo?.startedAt || "-",
         completedAt: ticket.ticketTimeInfo?.endedAt || "-",      
-        requester: user.name,
+        requester: user.nickname,
       })) || [];
       
 

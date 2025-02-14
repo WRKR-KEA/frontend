@@ -5,7 +5,6 @@ import React, { useEffect, useState } from "react";
 interface FileBoxProps {
   onFileUpload: (files: File[]) => void; // ✅ 부모 컴포넌트에 파일 전달
   attachments: string[]; // ✅ 기존 파일 URL 리스트 추가
-
   setDeleteAttachments: (deletedUrls: string[]) => void; // ✅ 삭제된 파일 URL 저장 함수
 }
 
@@ -83,7 +82,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mb-4">
+    <div className="w-full max-w-2xl mx-auto">
       <div
         className={`border-2 border-dashed rounded-md p-6 text-center ${
           isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
@@ -100,7 +99,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
         <input type="file" multiple className="hidden" id="fileInput" onChange={handleFileSelect} />
         <label
           htmlFor="fileInput"
-          className="mt-2 inline-block cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600"
+          className="mt-2 inline-block cursor-pointer bg-main-1 text-white px-4 py-2 rounded-md text-sm hover:bg-main-hover"
         >
           파일 선택
         </label>
@@ -108,7 +107,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
 
       {/* 파일 리스트 출력 (업로드된 파일 + 기존 URL 파일) */}
       {(files.length > 0 || fileUrls.length > 0) && (
-        <ul className="mt-4 rounded-md p-3">
+        <ul className="mt-4 rounded-md px-3">
           {/* ✅ 기존 URL 파일 리스트 */}
           {fileUrls.map((url, index) => (
             <li key={`url-${index}`} className="flex justify-between items-center border-b last:border-none p-2">
@@ -127,8 +126,8 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
           {/* ✅ 새롭게 추가한 파일 리스트 */}
           {files.map((file, index) => (
             <li key={`file-${index}`} className="flex justify-between items-center border-b last:border-none p-2">
-              <span className="text-gray-700 text-sm">{file.name}</span>
-              <button className="text-red-500 hover:text-red-700 text-xs" onClick={() => handleRemoveFile(index)}>
+              <span className="text-gray-700 text-sm truncate">{file.name}</span>
+              <button className="text-red-500 min-w-6 hover:text-red-700 text-xs" onClick={() => handleRemoveFile(index)}>
                 삭제
               </button>
             </li>

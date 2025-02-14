@@ -18,7 +18,6 @@ body {
 @layer base {
   body {
     min-width: 1024px;
-    font-family: 'Pretendard';
     overflow-wrap: break-word;
     font-family: "Pretendard", sans-serif;
   }
@@ -53,6 +52,10 @@ body {
   --gray-6: #f3f3f3;
   --white: #fff;
   --component: #f9f9fa;
+
+  --main-1-hover: #0d1547;
+  --accent-1-hover: #ac2e1e;
+  --white-1-hover: var(--gray-5);
 
   --request: #d79804;
   --request-bg: #ffe9b6;

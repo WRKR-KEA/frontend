@@ -206,7 +206,7 @@ const handleSave = async () => {
           />
         )}
 
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between p-4 max-h-12">
           <div className="flex items-center space-x-4">
             <div {...attributes} {...listeners} className="">
               <img src="/hamburg.png" alt="drag" className="w-5 cursor-grab" />
@@ -263,13 +263,13 @@ const handleSave = async () => {
                 <>
                   <button
                     onClick={() => handleOpenModal("guide")}
-                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-200"
                   >
                     도움말
                   </button>
                   <button
                     onClick={() => handleOpenModal("template")}
-                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-200"
                   >
                     템플릿
                   </button>

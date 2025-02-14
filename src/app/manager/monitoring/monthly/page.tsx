@@ -5,7 +5,7 @@ import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import './custom-datepicker.css';
+import '../custom-datepicker.css';
 import {
   fetchManagerStatistics,
   getTicketStatusSummery,
@@ -169,7 +169,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (ticketCountByCategory.length > 0) {
-      const dynamicColors = ticketCountByCategory.map((_, index) => {
+      const dynamicColors = ticketCountByCategory?.map((_, index) => {
         const colors = [
           getCssVariable('--main-1'),
           getCssVariable('--main-2'),
@@ -180,9 +180,9 @@ export default function Dashboard() {
         return colors[index % colors.length];
       });
 
-      const updatedLabels = ticketCountByCategory.map((item) => item.categoryName);
-      const updatedSeries = ticketCountByCategory.map((item) => item.count);
-      const updatedCategoryIds = ticketCountByCategory.map((item) => item.categoryId);
+      const updatedLabels = ticketCountByCategory?.map((item) => item.categoryName);
+      const updatedSeries = ticketCountByCategory?.map((item) => item.count);
+      const updatedCategoryIds = ticketCountByCategory?.map((item) => item.categoryId);
 
       setFirstCategoryDonutChartSeries(updatedSeries);
       setFirstCategoryDonutChartLabels(updatedLabels);
@@ -216,7 +216,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     if (secondCategoryTicketCount.length > 0) {
-      const dynamicColors = secondCategoryTicketCount.map((_, index) => {
+      const dynamicColors = secondCategoryTicketCount?.map((_, index) => {
         const colors = [
           getCssVariable('--main-1'),
           getCssVariable('--complete'),
@@ -227,9 +227,9 @@ export default function Dashboard() {
         return colors[index % colors.length];
       });
 
-      const updatedLabels = secondCategoryTicketCount.map((item) => item.categoryName);
-      const updatedSeries = secondCategoryTicketCount.map((item) => item.count);
-      const updatedCategoryIds = secondCategoryTicketCount.map((item) => item.categoryId);
+      const updatedLabels = secondCategoryTicketCount?.map((item) => item.categoryName);
+      const updatedSeries = secondCategoryTicketCount?.map((item) => item.count);
+      const updatedCategoryIds = secondCategoryTicketCount?.map((item) => item.categoryId);
       console.log('updatedSeries:', updatedSeries);
       console.log('updatedLabels:', updatedLabels);
       setSecondCategoryDonutChartSeries(updatedSeries);
@@ -268,7 +268,7 @@ export default function Dashboard() {
 
   useEffect(() => {
 
-    const updatedBarChartSeries = barChartData.map((value) => value.count);
+    const updatedBarChartSeries = barChartData?.map((value) => value.count);
     setBarChartSeries({ name: '티켓 개수', data: updatedBarChartSeries });
     const dynamicCategories = Array.from({ length: barChartData.length }, (_, i) => `${i + 1}`);
 
@@ -331,7 +331,7 @@ export default function Dashboard() {
         <div
           onClick={() => setBarChartStatusFilter('REQUEST')}
           className="bg-gradient-to-b bg-request p-6 rounded-lg shadow-md text-center cursor-pointer transform transition-transform hover:scale-105 hover:shadow-lg">
-          <h3 className="text-lg text-gray-800 mb-2">월간 요청 티켓</h3>
+          <h3 className="text-lg text-gray-800 mb-2">월간 요청된 티켓</h3>
           <p className="text-2xl font-bold text-gray-800">{ticketCardData.request}</p>
         </div>
         <div
@@ -349,7 +349,7 @@ export default function Dashboard() {
         <div
           onClick={() => setBarChartStatusFilter('IN_PROGRESS')}
           className="bg-gradient-to-b bg-inProgress p-6 rounded-lg shadow-md text-center cursor-pointer transform transition-transform hover:scale-105 hover:shadow-lg">
-          <h3 className="text-lg text-gray-800 mb-2">월간 처리중 티켓</h3>
+          <h3 className="text-lg text-gray-800 mb-2">월간 승인된 티켓</h3>
           <p className="text-2xl font-bold text-gray-800">{ticketCardData.accept}</p>
         </div>
       </div>

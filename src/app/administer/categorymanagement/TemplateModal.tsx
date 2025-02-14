@@ -12,8 +12,7 @@ interface TemplateModalProps {
   isOpen: boolean;
   title: string;
   onClose: () => void;
-  refetchList: () => void;
-  showModal: () => void;
+  showModal: (title: string, btnText?: string, onCloseCallback?: () => void) => void;
 }
 
 const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title, onClose, showModal }) => {
@@ -25,23 +24,20 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
   const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
   const templateId = data?.result.templateId;
 
-  useEffect(() => {
-    if (!isFetching && editorRef.current) {
-      editorRef.current.getInstance().setMarkdown(
-        data?.result.content
-      );
+  const initialMarkdown = data?.result.content || " ";
+
+  const [isDisabled, setIsDisabled] = useState(null);
+  const handleEditorChange = () => {
+    if (editorRef.current) {
+      const content = editorRef.current.getInstance().getMarkdown().trim();
+      setIsDisabled(content === "");
     }
-  }, [isFetching, data]);
+  };
 
   const handleSave = async () => {
     if (!editorRef.current) return;
 
-    const editorContent = editorRef.current.getInstance().getMarkdown().trim(); // ✅ 공백 제거 후 확인
-
-    if (editorContent === "") {
-      showModal("공백은 작성할 수 없습니다. 내용을 입력해주세요.");
-      return;
-    }
+    const editorContent = editorRef.current.getInstance().getMarkdown();
 
     try {
       const accessToken = sessionStorage.getItem("accessToken");
@@ -118,7 +114,6 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
       queryClient.setQueryData(["template_detail", categoryId], null);
       onClose(); // ✅ 모달 닫기
     } catch (error) {
-      console.error("❌ 템플릿 저장 오류:", error);
       showModal("템플릿을 삭제하는 중 오류가 발생했습니다.");
     }
   };
@@ -128,10 +123,10 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
   }
 
   return (
-    <div className="pt-10 fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
-      <div className="bg-white w-[800px] rounded-lg shadow-lg">
+    <div className="p-10 fixed inset-0 flex justify-center bg-black bg-opacity-50 z-50">
+      <div className="bg-white w-[800px] rounded-lg shadow-lg overflow-auto hide-scrollbar">
         {/* Modal Header */}
-        <div className="p-10 border-b">
+        <div className="px-6 py-4 border-b sticky top-0 bg-white z-40">
           <h2 className="text-xl font-bold text-gray-800">{title}</h2>
         </div>
 
@@ -139,32 +134,35 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
         <div className="p-4">
           <Editor
             ref={editorRef}
-            initialValue={data?.result.content || "템플릿 내용을 입력하세요."}
+            initialValue={initialMarkdown}
+            placeholder="템플릿을 입력하세요."
             previewStyle="vertical"
-            height="500px"
+            height="auto"
             initialEditType="wysiwyg"
             useCommandShortcut={true}
+            onChange={handleEditorChange}
           />
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t flex justify-end space-x-2">
+        <div className="p-4 border-t flex justify-end space-x-2 sticky bottom-0 bg-white z-40">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 text-gray-700 text-sm font-semibold rounded-md hover:bg-gray-400 transition-all"
+            className="px-4 py-2 bg-white border-main-1 border-2 text-main-1 text-sm font-semibold rounded-md hover:bg-gray-5 hover:border-main-hover transition-all"
           >
             취소
           </button>
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-blue-500 text-white text-sm font-semibold rounded-md hover:bg-blue-600 transition-all"
+            className="px-4 py-2 bg-main-1 text-white text-sm font-semibold rounded-md hover:bg-main-hover disabled:opacity-50 disabled:hover:bg-main-1 transition-all"
+            disabled={isDisabled == null ? !initialMarkdown.trim() : isDisabled}
           >
             {!data ? "추가" : "저장"}
           </button>
           {data?.result.templateId && (
             <button
               onClick={handleDelete}
-              className="px-4 py-2 bg-red-500 text-white text-sm font-semibold rounded-md hover:bg-red-600 transition-all"
+              className="px-4 py-2 bg-accent-1 text-white text-sm font-semibold rounded-md hover:bg-accent-hover transition-all"
             >
               삭제
             </button>

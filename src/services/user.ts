@@ -34,7 +34,7 @@ export async function postComment(
       {
         headers: {
           'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${accessToken}`,  
+          'Authorization': `Bearer ${accessToken}`,
         },
       },
     );

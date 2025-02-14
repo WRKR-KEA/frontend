@@ -7,6 +7,7 @@ import Button from "@/components/Buttons/Button";
 import { fetchMemberRegisterExcelForm, postMemberRegisterExcelFile } from "@/services/admin";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import axios from "axios";
 
 const AdminMemberEnrollPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -88,18 +89,20 @@ const AdminMemberEnrollPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // ✅ 인증 토큰 추가
-        },
-        body: formDataToSend, // ✅ multipart/form-data 형식으로 전송
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`,
+        formDataToSend, // ✅ multipart/form-data 전송
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // ✅ 인증 토큰 추가
+            "Content-Type": "multipart/form-data", // ✅ Axios는 자동 처리하지만 명시적으로 추가
+          },
+        }
+      );
 
-      const data = await response.json();
-      console.log("서버 응답:", data); // ✅ 서버 응답 확인
+      console.log("서버 응답:", response.data); // ✅ 서버 응답 확인
 
-      if (response.ok) {
+      if (response.status === 201 || response.status === 200) {
         showModal("회원이 성공적으로 등록되었습니다.");
         setFormData({
           nickname: "",
@@ -113,15 +116,24 @@ const AdminMemberEnrollPage: React.FC = () => {
           position: "",
         });
       } else {
-        showModal(`회원 등록 실패: ${data.message || "서버에서 요청을 거부했습니다."}`);
+        throw response.data
       }
     } catch (error) {
-      console.error("회원 등록 중 오류 발생:", error);
-      showModal("회원 등록 중 오류가 발생했습니다.");
+      console.error("❌ 회원 등록 중 오류 발생:", error);
+
+      // ✅ 에러 응답에서 첫 번째 오류 메시지 추출
+      if (axios.isAxiosError(error) && error.response?.data?.result) {
+        const firstKey = Object.keys(error.response.data.result)?.[0]; // 첫 번째 key 가져오기
+        const firstValue = firstKey ? error.response.data.result[firstKey] : "알 수 없는 오류";
+        showModal(`${firstValue}`);
+      } else {
+        showModal(error.response.data.message);
+      }
     } finally {
       setLoading(false);
     }
   };
+
 
 
 
@@ -279,7 +291,7 @@ const AdminMemberEnrollPage: React.FC = () => {
             </div>
 
 
-            <div className="flex justify-end ml-20 w-full"> {/* 여백 추가 */}
+            <div className="flex justify-end ml-20 w-full">
 
             </div>
           </div>
@@ -327,7 +339,7 @@ const AdminMemberEnrollPage: React.FC = () => {
                 onChange={handleChange}
                 className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none"
                 placeholder="아지트 URL을 입력하세요"
-               
+
               />
             </div>
 

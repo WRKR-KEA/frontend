@@ -2,8 +2,7 @@
 
 /* 달력 컨테이너 */
 .react-datepicker {
-  width: 235px; /* 달력의 기본 너비 설정 */
-  max-height: 400px; /* 세로로 길어지는 문제 방지 */
+  min-width: 235px;
   overflow: hidden; /* 내용 넘침 방지 */
   border: 1px solid #e0e0e0;
   border-radius: 8px;
@@ -12,7 +11,7 @@
 
 /* 달력 헤더 */
 .react-datepicker__header {
-  background-color: #6e61ca;
+  background-color: #252e66de;
   color: white;
   padding: 12px 16px;
   border-bottom: none;
@@ -20,7 +19,8 @@
 
 /* 현재 연도와 월 */
 .react-datepicker__current-month {
-  font-size: 1.2rem;
+  color: white;
+  font-size: 1rem;
   font-weight: 600;
   text-align: center;
 }
@@ -36,9 +36,9 @@
 /* 날짜와 월 텍스트 */
 .react-datepicker__day,
 .react-datepicker__month-text {
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: #333333;
-  padding: 10px;
+  padding: 5px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -56,13 +56,14 @@
 .react-datepicker__day--selected,
 .react-datepicker__month-text--selected,
 .react-datepicker__day--keyboard-selected {
-  background-color: #6e61ca;
+  background-color: #252e66de;
   color: white;
   border-radius: 6px;
 }
 
 /* 월 선택 모드 */
 .react-datepicker__month-container {
+  
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -81,7 +82,18 @@
   align-items: center;
 }
 
-.react-datepicker__month-year-dropdown {
+.react-datepicker__month-text {
+  padding: 8px 12px; /* 개별 월 요소 패딩 */
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.react-datepicker__month-text:hover {
+  background-color: #f0f0f0; /* 마우스 오버 효과 */
+}
+
+/* .react-datepicker__month-year-dropdown {
   padding: 8px 12px;
   background-color: #ffffff;
   border: none;
@@ -93,7 +105,7 @@
 
 .react-datepicker__month-year-dropdown:hover {
   background-color: #f5f5f5;
-}
+} */
 
 /* 삼각형 제거 */
 .react-datepicker__triangle {
@@ -102,7 +114,7 @@
 
 /* 네비게이션 */
 .react-datepicker__navigation {
-  top: 16px;
+  top: 8px;
 }
 
 .react-datepicker__navigation-icon {

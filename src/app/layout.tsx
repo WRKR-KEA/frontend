@@ -116,8 +116,8 @@ const refreshAccessToken = async () => {
   useEffect(() => {
     const accessToken = sessionStorage.getItem('accessToken');
 
-    if (!accessToken) {
-      showModal("로그인이 필요합니다.");
+    if (!accessToken && pathname!='/reissuepassword') {
+
       router.push('/login'); // ✅ 로그인 페이지로 이동 😎push 대신 replace 사용
     } else {
       refreshAccessToken();
@@ -125,7 +125,11 @@ const refreshAccessToken = async () => {
   },[pathname]);
   return (
     <html lang="ko" >
-      <body className="h-screen flex">
+    <head>
+      <link rel="icon" href="/favicon.svg" />
+      <title>Tickety</title>
+    </head>
+    <body className="h-screen flex">
         {/* 경로가 제외 대상이 아닌 경우에만 사이드바와 헤더바 표시 */}
         {!isExcluded && <Sidebar user={user} />}
 

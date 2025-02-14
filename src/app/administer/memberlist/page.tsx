@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import Skeleton from '@/components/Skeleton';
+import { HighlightText } from '@/components/highlightText';
 
 
 export default function AdminMemberListPage() {
@@ -60,10 +61,10 @@ export default function AdminMemberListPage() {
   };
 
   const handleSearch = () => {
-  
-      setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
-      setCurrentPage(1); // 검색 시 첫 페이지로 이동
-    
+
+    setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+
   };
 
   // ✅ 역할(role) 매핑 함수
@@ -138,9 +139,9 @@ export default function AdminMemberListPage() {
     }
   };
 
-  if (isLoading){
-    return <Skeleton width={"100%"} height={"100%"}/>
-}
+  if (isLoading) {
+    return <Skeleton width={"100%"} height={"100%"} />
+  }
 
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
@@ -148,21 +149,25 @@ export default function AdminMemberListPage() {
     <div className="flex flex-col bg-white p-4 rounded-md w-full">
       <div className="flex items-center">
         <h2 className="text-md font-semibold">회원 조회</h2>
+        <div className="flex items-center space-x-2 ml-4">
+          <div className="flex items-center border-b p-2">
 
-        <div className="flex items-center border-b p-2">
-          
-          <input
-            type="text"
-            value={searchInput}
-            onChange={handleInputChange}
-            onKeyDown={handleInputKeyDown}
-            onBlur={handleSearch} // ✅ Enter 키 입력 감지
-            placeholder="아이디, 이름, 이메일, 부서 검색"
-            className="outline-none text-sm w-[180px]"
-          />
-          <FaSearch className="text-gray-500 mr-2 cursor-pointer" />
+            <input
+              type="text"
+              value={searchInput}
+              onChange={handleInputChange}
+              onKeyDown={handleInputKeyDown}
+              onBlur={handleSearch} // ✅ Enter 키 입력 감지
+              placeholder="아이디, 이름, 이메일, 부서 검색"
+              className="outline-none text-sm w-[180px]"
+            />
+            <FaSearch className="text-gray-500 mr-2 cursor-pointer" />
+          </div>
         </div>
       </div>
+
+
+
 
       <div className="flex flex-col w-full mt-2">
         <div className="flex items-center border-b">
@@ -222,42 +227,50 @@ export default function AdminMemberListPage() {
                           alt={row.name}
                           className="w-8 h-8 rounded-full object-cover"
                         />
-                        <span>{row.nickname}</span>
+                        <span>
+                          <HighlightText text={row.nickname} highlight={searchInput} />
+                        </span>
                       </div>
                     </Link>
                   </td>
-                  <td className="p-3 w-2/12">{row.name}</td>
-                  <td className="p-4 w-2/12">{row.department}</td>
+                  <td className="p-3 w-2/12">
+                    <HighlightText text={row.name} highlight={searchInput} />
+                  </td>
+                  <td className="p-4 w-2/12">
+                    <HighlightText text={row.department} highlight={searchInput} />
+                  </td>
                   <td className="p-4 w-2/12">{row.position}</td>
                   <td className="p-4 w-3/12">{row.phone}</td>
-                  <td className="p-4 w-4/12">{row.email}</td>
+                  <td className="p-4 w-4/12">
+                    <HighlightText text={row.email} highlight={searchInput} />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
 
-        
-      {
-        members?.elements.length > 0 ? (
-          <>
-           <div className="flex justify-center mt-4">
-          <PagePagination
-            totalPages={members?.totalPages || 10}
-            itemsCountPerPage={members?.size || 10}
-            pageRangeDisplayed={5}
-            onPageChange={handlePageChange}
-            currentPage={members?.currentPage}
-          />
-        </div>
-          </>
-        ) : (
-          <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-            <p className="text-lg">검색 결과가 없습니다.</p>
-          </div>
-        )
-      }
-       
+
+        {
+          members?.elements.length > 0 ? (
+            <>
+              <div className="flex justify-center mt-4">
+                <PagePagination
+                  totalPages={members?.totalPages || 10}
+                  itemsCountPerPage={members?.size || 10}
+                  pageRangeDisplayed={5}
+                  onPageChange={handlePageChange}
+                  currentPage={members?.currentPage}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center py-8 text-gray-500">
+              <p className="text-lg">검색 결과가 없습니다.</p>
+            </div>
+          )
+        }
+
       </div>
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>

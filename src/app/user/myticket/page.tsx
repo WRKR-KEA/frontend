@@ -9,6 +9,7 @@ import PagePagination from "@/components/pagination";
 import Skeleton from "@/components/Skeleton"; 
 import { useUserTicketListQuery } from "@/hooks/useUserTicketList";
 import SkeletonNet from "@/components/SkeletonNet";
+import SkeletonZero from "@/components/SkeletonZero"; 
 
 type Ticket = {
   id: string,
@@ -92,10 +93,12 @@ export default function UserTicketListPage() {
         </div>
       </div>
 
-      {error || isLoading ?(
+      {isLoading ?(
         <div>
           <Skeleton width="100%" height="600px" />
         </div>
+      ) :tickets.length === 0 ? (
+        <SkeletonZero width="100%" height="40%" />
       ) : (
         <>
           <TicketList_User

@@ -135,9 +135,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-main-2">
-      {/* 헤더 */}
-      <header className="absolute top-0 w-full bg-white py-4 shadow-sm">
+
+    <div className="overflow-hidden h-screen">
+      <header className="w-full bg-white py-4 shadow-sm">
         <div className="w-full flex items-center justify-between px-6">
           {/* 로고 */}
           <svg width="96" height="32" viewBox="0 0 96 32" fill="none">
@@ -167,69 +167,72 @@ export default function LoginPage() {
         </div>
       </header>
 
-      {/* 로그인 박스 */}
-      <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
-        <h2 className="text-3xl font-bold mb-2">로그인</h2>
-        <p className="text-sm text-gray-600 mb-6">
-          서비스를 사용하려면 로그인하세요.
-        </p>
 
-        {/* 로그인 폼 */}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <input
-              type="text"
-              id="nickname"
-              value={nickname}
-              onChange={handleNicknameChange}
-              className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="닉네임을 입력하세요"
-            />
-          </div>
-          <div className="mb-6">
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={handlePasswordChange}
-              className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="비밀번호를 입력하세요"
-            />
-          </div>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-main-2">
+        {/* 로그인 박스 */}
+        <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
+          <h2 className="text-3xl font-bold mb-2">로그인</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            서비스를 사용하려면 로그인하세요.
+          </p>
 
-          {/* 로그인 버튼 */}
-          <button
-            type="submit"
-            className={`w-full py-3 rounded-md font-semibold transition-all
+          {/* 로그인 폼 */}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <input
+                type="text"
+                id="nickname"
+                value={nickname}
+                onChange={handleNicknameChange}
+                className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
+                placeholder="아이디를 입력하세요"
+              />
+            </div>
+            <div className="mb-6">
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={handlePasswordChange}
+                className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
+                placeholder="비밀번호를 입력하세요"
+              />
+            </div>
+
+            {/* 로그인 버튼 */}
+            <button
+              type="submit"
+              className={`w-full py-3 rounded-md font-semibold transition-all
     ${nickname && password ? "bg-[#252E66] text-white hover:bg-[#1F2557]" : "bg-gray-400 text-white cursor-not-allowed"}
   `}
-            disabled={!nickname || !password} // 닉네임과 비밀번호가 없으면 비활성화
-          >
-            로그인
-          </button>
-
-
-          {/* 비밀번호 찾기 버튼 */}
-          <div className="flex justify-end mt-4">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-sm text-[#252E66] hover:underline focus:outline-none"
+              disabled={!nickname || !password} // 닉네임과 비밀번호가 없으면 비활성화
             >
-              비밀번호를 잊으셨나요?
+              로그인
             </button>
-          </div>
-        </form>
+
+
+            {/* 비밀번호 찾기 버튼 */}
+            <div className="flex justify-end mt-4">
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-sm text-[#252E66] hover:underline focus:outline-none"
+              >
+                비밀번호를 잊으셨나요?
+              </button>
+            </div>
+          </form>
+        </div>
+        {modalState.isOpen && (
+          <Modal onClose={modalState.onClose}>
+            <AlertModal
+              title={modalState.title}
+              onClick={modalState.onClose}
+              btnText={modalState.btnText}
+            />
+          </Modal>
+        )}
       </div>
-      {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
-            title={modalState.title}
-            onClick={modalState.onClose}
-            btnText={modalState.btnText}
-          />
-        </Modal>
-      )}
     </div>
   );
 }

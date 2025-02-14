@@ -9,10 +9,11 @@ interface TicketInfoProps {
     status: string,
     title: string,
     handler: string | "-",
-    createdAt: string,
-    updatedAt: string | "-",
-    startedAt: string | "-",
-    completedAt: string | "-",
+    requester: string | "-"
+    requestDate: string,
+    updateDate: string | "-",
+    acceptDate: string | "-",
+    completeDate: string | "-",
   }
 }
 
@@ -30,12 +31,13 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
             {/*TODO: type으로 변경*/}
             <div className="text-sm truncate">업무: {ticket.title}</div>
             <div className="text-sm truncate">담당자: {ticket.handler || '―'}</div>
+            <div className="text-sm truncate">요청자: {ticket.requester || '―'}</div>
           </div>
           <div className="space-y-4 text-left w-52 min-w-52">
-            <div className="text-sm">요청 일시: {ticket.createdAt}</div>
-            <div className="text-sm">승인 일시: {ticket.startedAt}</div>
-            <div className="text-sm">수정 일시: {ticket.updatedAt}</div>
-            <div className="text-sm">완료 일시: {ticket.completedAt}</div>
+            <div className="text-sm">요청 일시: {ticket.requestDate}</div>
+            <div className="text-sm">승인 일시: {ticket.acceptDate}</div>
+            <div className="text-sm">수정 일시: {ticket.updateDate}</div>
+            <div className="text-sm">완료 일시: {ticket.completeDate}</div>
           </div>
         </div>
       </div>

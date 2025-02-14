@@ -15,9 +15,10 @@ interface Log {
 export interface TicketCommentProps {
   logs: Log[];
   ticketId: string;
+  status: string;
 }
 
-const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
+const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status }) => {
   const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
@@ -28,34 +29,38 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [logs]);
 
-  const displayLogs =
-    logs?.length === 0 ? [{ log: '소통 내역이 없습니다.' }] : logs;
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-    }
-  };
+  const displayLogs = logs.length === 0 ? [{ log: '소통 내역이 없습니다.' }] : logs;
 
   const handleFileUploadClick = () => {
     fileInputRef.current?.click();
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    // Reset file input for next selection
+    e.target.value = '';
+  };
+
   const handleSendMessage = async () => {
     if (!message.trim() && !file) return;
     if (isLoading) return;
-
+  
     try {
       setIsLoading(true);
       const attachments: File[] = file ? [file] : [];
+  
+      // 파일과 메시지 모두 전송
       await postComment(ticketId, message, attachments);
-      queryClient.refetchQueries({ queryKey: ['comments', { ticketId }] });
+      queryClient.invalidateQueries({ queryKey: ['comments', { ticketId }] });
+  
+      // Clear message and file state after sending
       setMessage('');
       setFile(null);
     } catch (error) {
@@ -75,7 +80,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
   return (
     <div className="bg-component rounded-md p-4 flex flex-col h-[460px]">
       <div ref={chatContainerRef} className="overflow-y-auto pr-2 flex-1 hide-scrollbar">
-        {displayLogs?.map((log, index) => (
+        {displayLogs.map((log, index) => (
           <div key={index} className="flex flex-col mb-2">
             {log.log && (
               <div className="flex items-center justify-center mb-1">
@@ -85,7 +90,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
               </div>
             )}
             {log.message && (
-              <div className={`flex ${log.role === user?.role ? 'justify-start' : 'justify-end'}`}>
+              <div className={`flex ${log.role !== user?.role ? 'justify-start' : 'justify-end'}`}>
                 {log.role !== user?.role && (
                   <p className="self-end text-xs mr-2 text-gray-400">
                     {formatTime(log.createdAt)}
@@ -127,12 +132,21 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
       </div>
 
       <div className="flex space-x-2 items-center mt-2">
-        <button onClick={handleFileUploadClick} className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl" type="button">
+        <button
+          onClick={handleFileUploadClick}
+          className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl"
+          type="button"
+          disabled={status !== 'IN_PROGRESS'}
+        >
           <FiPaperclip className="text-xl text-gray-600" />
         </button>
         <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
 
-        <button className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl" type="button">
+        <button
+          className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl"
+          type="button"
+          disabled={status !== 'IN_PROGRESS'}
+        >
           <FiClock className="text-xl text-red-600" />
         </button>
 
@@ -141,11 +155,17 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="메시지를 입력하세요..."
+          placeholder={status !== 'IN_PROGRESS' ? '진행 중인 티켓이 아니거나 권한이 없습니다.' : '메시지를 입력하세요...'}
           className="flex-1 p-2 rounded-lg border border-gray-300"
+          disabled={status !== 'IN_PROGRESS'}
         />
 
-        <button onClick={handleSendMessage} disabled={!message.trim() && !file} className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" type="button">
+        <button
+          onClick={handleSendMessage}
+          disabled={status !== 'IN_PROGRESS' || (!message.trim() && !file)}
+          className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          type="button"
+        >
           <FiSend className="text-xl" />
         </button>
       </div>

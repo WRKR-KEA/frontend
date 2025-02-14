@@ -12,20 +12,14 @@ interface SortableItemProps {
   categoryId: number;
   name: string;
   abbreviation: string;
-  onEdit: (newName: string) => void;
-  onDelete: () => void;
   refetch: () => void;
-  refetchList: () => void;
 }
 
 const SortableItem: React.FC<SortableItemProps> = ({
   categoryId,
   name,
   abbreviation,
-  onEdit,
-  onDelete,
   refetch,
-  refetchList,
 }) => {
   const {
     attributes,
@@ -106,7 +100,7 @@ const handleSave = async () => {
 
     showModal("카테고리가 성공적으로 수정되었습니다.");
     setIsEditing(false);
-    refetchList();
+    refetch();
   } catch (error) {
     console.error("❌ 카테고리 수정 오류:", error);
 
@@ -147,7 +141,7 @@ const handleSave = async () => {
 
 
         showModal("카테고리가 성공적으로 삭제되었습니다.", "확인", () => {
-          refetchList(); // ✅ 모달이 닫힌 후 refetch 실행
+          refetch();
         });
       } catch (error) {
         console.error("❌ 카테고리 삭제 오류:", error);
@@ -156,7 +150,6 @@ const handleSave = async () => {
     })
   };
 
-  // ✅ 모달 열기 함수 (도움말 / 템플릿)
   const handleOpenModal = (type: "guide" | "template") => {
     setIsHovered(false);
     setModalType(type);
@@ -189,7 +182,6 @@ const handleSave = async () => {
             onClose={handleCloseModal}
             onSave={handleCloseModal}
             showModal={showModal}
-            refetchList={refetchList}
           />
         )}
 
@@ -199,14 +191,12 @@ const handleSave = async () => {
             isOpen={isModalOpen}
             title={modalTitle}
             onClose={handleCloseModal}
-            onSave={handleCloseModal}
-            refetchList={refetchList}
             showModal={showModal}
 
           />
         )}
 
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between p-4 max-h-12">
           <div className="flex items-center space-x-4">
             <div {...attributes} {...listeners} className="">
               <img src="/hamburg.png" alt="drag" className="w-5 cursor-grab" />
@@ -263,13 +253,13 @@ const handleSave = async () => {
                 <>
                   <button
                     onClick={() => handleOpenModal("guide")}
-                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-200"
                   >
                     도움말
                   </button>
                   <button
                     onClick={() => handleOpenModal("template")}
-                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-200"
                   >
                     템플릿
                   </button>

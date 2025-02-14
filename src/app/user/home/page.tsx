@@ -7,6 +7,8 @@ import { TicketList } from "@/components/Tickets/ticketList";
 import Skeleton from "@/components/Skeleton";
 import SkeletonNet from "@/components/SkeletonNet";
 import { useUserMainTicketListQuery } from "@/hooks/useUserMainTicket";
+import useUserStore from '@/stores/userStore';
+import SkeletonZero from "@/components/SkeletonZero"; 
 
 type Ticket = {
   id: string,
@@ -16,10 +18,11 @@ type Ticket = {
   status: string,
   title: string,
   handler: string,
-  createdAt: string,
-  updatedAt: string,
-  startedAt: string,
-  completedAt: string,
+  requestDate: string,
+  updateDate: string,
+  acceptDate: string,
+  completeDate: string,
+  requester: string,
 };
 
 type TicketStatusType = "REQUEST" | "REJECT" | "IN_PROGRESS" | "COMPLETE" | "CANCEL";
@@ -36,6 +39,7 @@ export default function UserHomePage() {
   const maxTicketsToShow = 10;
   const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("REQUEST");
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const user = useUserStore((state) => state.user);
 
   // ✅ React Query를 이용해 티켓 데이터 가져오기
   const { data, isLoading, error } = useUserMainTicketListQuery();
@@ -52,11 +56,13 @@ export default function UserHomePage() {
         status: ticket.status,
         title: ticket.title,
         handler: ticket.managerNickname || "-",
-        createdAt: ticket.ticketTimeInfo?.createdAt,
-        updatedAt: ticket.ticketTimeInfo?.updatedAt || "-",
-        startedAt: ticket.ticketTimeInfo?.startedAt || "-",
-        completedAt: ticket.ticketTimeInfo?.endedAt || "-",      
+        requestDate: ticket.ticketTimeInfo?.createdAt,
+        updateDate: ticket.ticketTimeInfo?.updatedAt || "-",
+        acceptDate: ticket.ticketTimeInfo?.startedAt || "-",
+        completeDate: ticket.ticketTimeInfo?.endedAt || "-",      
+        requester: user?.nickname,
       })) || [];
+      
 
       setRequestTickets(requestTicketList);
       console.log("🌟 API 응답 데이터:", requestTicketList);
@@ -83,12 +89,16 @@ export default function UserHomePage() {
     return <SkeletonNet width="100%" height="100%" />;
   }
 
+  if (tickets.length === 0) {
+    return <SkeletonZero width="100%" height="100%" />;
+  }
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <h2 className="text-lg font-semibold">최근 티켓 정보</h2>
 
       {/* 로딩 중이거나 티켓이 없을 때 스켈레톤 UI */}
-      {isLoading || tickets.length === 0 ? (
+      {isLoading ? (
         <div className="flex space-x-6">
           <Skeleton width="50%" height="200px" />
           <Skeleton width="50%" height="200px" />
@@ -103,7 +113,7 @@ export default function UserHomePage() {
       <h2 className="text-lg font-semibold">최근 티켓 목록</h2>
 
       {/* 티켓 리스트 스켈레톤 UI */}
-      {error || isLoading || tickets.length === 0 ? (
+      {isLoading ? (
         <Skeleton width="100%" height="400px" />
       ) : (
         <TicketList

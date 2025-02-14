@@ -70,7 +70,7 @@ export function TicketList({
               onClick={() => handleTicketClick(ticket)}
             >
               <td className="p-2 border max-w-28 truncate text-center">{ticket.ticketSerialNumber}</td>
-              <td className="p-2 border max-w-28 truncate text-center">
+              <td className="p-2 border max-w-28 text-center">
                 <span
                   className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${
                     statusStyles[ticket.status] || ""

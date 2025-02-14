@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import "@toast-ui/editor/dist/toastui-editor.css";
 import { Editor } from "@toast-ui/react-editor";
 import { useGuideQuery } from "@/hooks/useGuide"; // ✅ 도움말이데이터 가져오는 쿼리
@@ -21,7 +20,6 @@ interface GuideModalProps {
 const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {
   const editorRef = useRef<Editor>(null);
   const [attachments, setAttachments] = useState<File[]>([]); // ✅ 파일 리스트 상태 추가
-  const router = useRouter(); // ✅ useRouter 사용
 
   const queryClient = useQueryClient(); // ✅ queryClient 가져오기
   const [deleteAttachments, setDeleteAttachments] = useState([])
@@ -34,8 +32,7 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
   const guideId = data?.result?.guideId;
   console.log("도움말이쿼리 결과:", data);
 
-  // ✅ initialValue 값이 null 또는 undefined면 빈 문자열("")을 넣어줌
-  const initialMarkdown = typeof data?.result.content === "string" ? data.result.content : "도움말을 입력하세요";
+  const initialMarkdown = data?.result.content || " ";
 
   // ✅ 파일 업로드 처리 함수
   const handleFileUpload = (uploadedFiles: File[]) => {
@@ -94,14 +91,11 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
       refetch();
       onClose();
     } catch (error) {
-      console.error("❌ 도움말이저장 오류:", error);
+      console.error("❌ 도움말 저장 오류:", error);
       showModal("도움말을 저장하는 중 오류가 발생했습니다.");
     }
   };
 
-
-
-  // 도움말이삭제 함수
   const handleDelete = async () => {
     if (!guideId) {
       showModal("도움말 ID를 찾을 수 없습니다.");
@@ -138,8 +132,6 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
     }
   };
 
-
-
   if (isLoading) {
     return <Skeleton width={"100%"} height={"100%"} />
   }
@@ -157,7 +149,8 @@ const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onCl
         <div className="p-4">
           <Editor
             ref={editorRef}
-            initialValue={initialMarkdown} // ✅ 수정: 문자열이 아닐 경우 빈 문자열로 설정
+            initialValue={initialMarkdown}
+            placeholder="도움말을 입력하세요"
             previewStyle="vertical"
             height="500px"
             initialEditType="wysiwyg"

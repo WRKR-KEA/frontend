@@ -25,13 +25,7 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
   const { data, isLoading, isFetching, refetch } = useTemplateQuery(categoryId);
   const templateId = data?.result.templateId;
 
-  useEffect(() => {
-    if (!isFetching && editorRef.current) {
-      editorRef.current.getInstance().setMarkdown(
-        data?.result.content
-      );
-    }
-  }, [isFetching, data]);
+  const initialMarkdown = data?.result.content || " ";
 
   const handleSave = async () => {
     if (!editorRef.current) return;
@@ -118,7 +112,6 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
       queryClient.setQueryData(["template_detail", categoryId], null);
       onClose(); // ✅ 모달 닫기
     } catch (error) {
-      console.error("❌ 템플릿 저장 오류:", error);
       showModal("템플릿을 삭제하는 중 오류가 발생했습니다.");
     }
   };
@@ -139,7 +132,8 @@ const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title
         <div className="p-4">
           <Editor
             ref={editorRef}
-            initialValue={data?.result.content || "템플릿 내용을 입력하세요."}
+            initialValue={initialMarkdown}
+            placeholder="템플릿을 입력하세요."
             previewStyle="vertical"
             height="500px"
             initialEditType="wysiwyg"

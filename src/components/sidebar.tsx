@@ -129,7 +129,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
-                                        티켓 생성
+                                        티켓 요청
                                     </span>
                                 </Link>
                             </li>
@@ -246,7 +246,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             prefetch
                                         >
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
-                                                담당 티켓 조회
+                                                담당 티켓
                                             </span>
                                         </Link>
                                     </li>
@@ -258,7 +258,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             prefetch
                                         >
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
-                                                부서 티켓 조회
+                                                부서 티켓
                                             </span>
                                         </Link>
                                     </li>
@@ -452,7 +452,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
-                                        카테고리 조회
+                                        카테고리 관리
                                     </span>
                                 </Link>
                             </li>
@@ -473,7 +473,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     </svg>
                                     <span
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
-                                        로그 조회
+                                        접속 로그 조회
                                     </span>
                                 </Link>
                             </li>

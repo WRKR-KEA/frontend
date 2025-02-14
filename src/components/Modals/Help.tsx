@@ -16,7 +16,7 @@ async function markdownToHtml(markdown: string) {
     .replace(/<ul>/g, '<ul class="list-disc pl-6 my-2">')
     .replace(/<ol>/g, '<ol class="list-decimal pl-6 my-2">')
     .replace(/<li>/g, '<li class="my-1">')
-    .replace(/<a href="/g, '<a href="/" class="text-indigo-600 hover:underline"') // 링크 스타일링
+    .replace(/<a href="/g, '<a href="/" class="text-indigo-600 hover:underline"') 
     .replace(/<p>/g, '<p class="text-base leading-relaxed my-3">') // p 태그 스타일링
     .replace(/<strong>/g, '<strong class="font-bold">') // strong 태그 스타일링
     .replace(/<em>/g, '<em class="italic">') // em 태그 스타일링

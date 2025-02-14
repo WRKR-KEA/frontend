@@ -15,8 +15,8 @@ export function TicketCancel({ isOpen, onClose, onConfirm }: TicketCancelProps) 
         <p className="text-black text-lg font-medium">티켓 요청을 취소하시겠습니까?</p>
         <p className="text-red-500 text-sm mb-6">취소 후 복구할 수 없어요.</p>
         <div className="flex justify-center space-x-4">
-          <Button label="취소" onClick={onClose} color={4} />
-          <Button label="요청 취소" onClick={onConfirm} color={1} />
+          <Button label="아니요" onClick={onClose} color={4} />
+          <Button label="네" onClick={onConfirm} color={1} />
         </div>
       </div>
     </div>

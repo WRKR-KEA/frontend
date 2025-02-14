@@ -52,7 +52,8 @@ const Help: React.FC<HelpProps> = ({ title, content }) => {
 
   return (
     <div>
-      <h2 className="text-lg font-bold">{title}</h2>
+      <h2 className="text-2xl font-semibold">{title}</h2>
+      <div className="border-t border-gray-300 mt-4" />
       <div
         className="text-sm mt-2"
         dangerouslySetInnerHTML={{ __html: htmlContent }} 

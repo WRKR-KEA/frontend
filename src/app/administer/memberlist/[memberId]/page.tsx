@@ -118,8 +118,17 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
     }
 
     } catch (error) {
-      console.error("❌ 업데이트 요청 실패:", error);
-      showModal(error?.response.data.message);
+      console.error("❌ 회원 등록 중 오류 발생:", error);
+
+      // ✅ 에러 응답에서 첫 번째 오류 메시지 추출
+      if (axios.isAxiosError(error) && error.response?.data?.result) {
+        const firstKey = Object.keys(error.response.data.result)?.[0]; // 첫 번째 key 가져오기
+        const firstValue = firstKey ? error.response.data.result[firstKey] : "알 수 없는 오류";
+        showModal(`${firstValue}`);
+      } else {
+        showModal(error.response.data.message);
+      }
+    } finally {
     }
   };
   
@@ -248,7 +257,21 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
               />
               <Button
                 label="취소"
-                onClick={() => setIsEditing(false)}
+                onClick={() => {
+                  setIsEditing(false)
+                  setEditableData({
+                    email: data.email || "",
+                    name: data.name || "",
+                    nickname: data.nickname || "",
+                    department: data.department || "",
+                    position: data.position || "",
+                    phone: data.phone || "",
+                    // role 값을 한글로 변환하여 저장
+                    role: data.role === "USER" ? "사용자" : "담당자",
+                    profileImage: data.profileImage || "",
+                    agitUrl: data.agitUrl || "",
+                  });
+                }}
                 color={6}
                 className=""
               />

@@ -206,7 +206,7 @@ const handleSave = async () => {
           />
         )}
 
-        <div className="flex items-center justify-between p-4">
+        <div className="flex items-center justify-between p-4 max-h-12">
           <div className="flex items-center space-x-4">
             <div {...attributes} {...listeners} className="">
               <img src="/hamburg.png" alt="drag" className="w-5 cursor-grab" />

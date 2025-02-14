@@ -101,28 +101,29 @@ export default function UserTicketDetailPage() {
 
   const confirmCancel = async () => {
     const response = await updateTicket(selectedTicket.id);
-
+  
     if (!response || !response.isSuccess) {
       throw new Error("티켓 취소 요청이 실패했습니다.");
     }
-
+  
     setSelectedTicket((prevTicket: any) => ({
       ...prevTicket,
       status: "CANCEL",
     }));
-
-    console.log("요청이 취소되었습니다."); 
-    showModal("요청이 취소되었습니다."); 
-
+  
+    console.log("요청이 취소되었습니다.");
+    showModal("요청이 취소되었습니다.");
+  
     const timer = setInterval(() => {
       setCountdown((prev) => (prev !== null ? prev - 1 : null));
     }, 1000);
-
+  
     setTimeout(() => {
       clearInterval(timer);
-      router.push("/user/myticket");
+      router.push("/user/myticket"); 
+      window.location.reload(); 
     }, 1000);
-
+  
     setIsModalOpen(false);
   };
 

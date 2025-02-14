@@ -33,13 +33,13 @@ export default function ManagerHomePage() {
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
-      <h2 className="text-lg font-semibold">고정 티켓 조회</h2>
+      <h2 className="text-lg font-semibold">고정된 티켓</h2>
       {error || isLoading || pinTickets.length === 0 ? (
         <Skeleton width="100%" height="40%" />
       ) : (
         <TicketList tickets={pinTickets} maxTicketsToShow={maxTicketsToShow} page={1} />
       )}
-      <h2 className="text-lg font-semibold">최근 티켓 현황</h2>
+      <h2 className="text-lg font-semibold">최근 티켓 요청 현황</h2>
       {error || isLoading || requestTickets.length === 0 ? (
         <Skeleton width="100%" height="40%" />
       ) : (

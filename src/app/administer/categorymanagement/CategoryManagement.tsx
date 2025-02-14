@@ -26,6 +26,7 @@ import Skeleton from "@/components/Skeleton";
 interface Category {
     categoryId: number;
     name: string;
+    abbreviation: string;
 }
 
 const CategoryManagement: React.FC = () => {
@@ -245,30 +246,28 @@ const CategoryManagement: React.FC = () => {
                         {/* ✅ DragOverlay 추가 → 드래그 중 UI 유지 */}
                         <DragOverlay>
                             {activeCategory ? (
-                                <div
-                                    className="bg-gray-50 border border-gray-200 rounded-md shadow-lg px-4 py-7 flex items-center space-x-4"
-                                    style={{
-                                        opacity: 1,
-                                        width: "100%", // ✅ 원본 아이템과 같은 너비
-                                        height: "50px", // ✅ 리스트 아이템과 동일한 높이 유지
-                                        display: "flex",
-                                        alignItems: "center",
-                                        // justifyContent: "space-between",
-                                    }}
-                                >
-                                    <img src="/hamburg.png" alt="drag" className="w-5 cursor-grabbing" />
-                                    <span className="text-lg font-semibold text-gray-700">
-                                        {activeCategory.name}
+                              <div
+                                className="bg-gray-50 border border-gray-200 w-full h-12 max-h-12 rounded-md shadow-lg p-4 flex items-center space-x-4"
+                              >
+                                  <img src="/hamburg.png" alt="drag"
+                                       className="w-5 cursor-grabbing" />
+                                  <div>
+                                      <span className="text-lg font-semibold text-gray-700">
+                                            {`[${activeCategory.abbreviation != '' ? activeCategory.abbreviation : 'AB'}] `}
+                                      </span>
+                                      <span className="text-lg font-semibold text-gray-700">
+                                            {activeCategory.name}
                                     </span>
-                                </div>
+                                  </div>
+                              </div>
                             ) : null}
                         </DragOverlay>
                     </DndContext>
                 )}
 
                 <button
-                    className="w-full mt-6 px-6 py-4 bg-gray-500 text-white rounded-md hover:bg-gray-600 transition-all"
-                    onClick={() => showInputModal("카테고리 이름을 입력하세요", "추가")}
+                  className="w-full mt-6 px-6 py-4 bg-main-1 text-white rounded-md hover:bg-main-hover transition-all"
+                  onClick={() => showInputModal("카테고리 이름을 입력하세요", "추가")}
                 >
                     카테고리 추가
                 </button>

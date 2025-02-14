@@ -244,17 +244,7 @@ export default function UserProfilePage() {
               />
             </div>
             <div className="space-y-2">
-              {isEditing ? (
-                <input
-                  type="text"
-                  name="nickname"
-                  value={editableData.nickname}
-                  onChange={handleInputChange}
-                  className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 focus:outline-none h-10 pb-2"
-                />
-              ) : (
                 <h1 className="text-2xl font-semibold text-gray-800">{editableData.nickname}</h1>
-              )}
                 <div className="flex items-center space-x-4 text-gray-500">
                 <p className={isEditing ? 'pt-0':'pt-2'}>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
               </div>

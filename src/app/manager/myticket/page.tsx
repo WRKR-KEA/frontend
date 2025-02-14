@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback ,useEffect} from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
@@ -17,6 +17,7 @@ export default function ManagerTicketListPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState("");
   
+  const [tickets, setTickets] = useState<any[]>([]); // 💡 티켓 상태 추가
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   const { data, isLoading, error } = useManageTicketListQuery(
@@ -27,9 +28,11 @@ export default function ManagerTicketListPage() {
     searchTerm
   );
 
+  // 💡 data가 변경될 때 tickets 상태 업데이트
   useEffect(() => {
-    if (data) {
-      console.log("📌 받은 티켓 데이터:", data);
+    if (data?.elements) {
+      setTickets(data.elements);
+      console.log("📌 받은 티켓 데이터:", data.elements);
     }
   }, [data]);
 

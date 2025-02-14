@@ -109,7 +109,6 @@ export default function ManagerTicketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(ticketId);
       console.log("완료 성공:", result);
-      showModal("티켓이 완료되었습니다."); 
 
       closeCompleteTicketModal();
       const timer = setInterval(() => {
@@ -118,7 +117,7 @@ export default function ManagerTicketDetailPage() {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/manager/home");
+        window.location.reload();
       }, 1000);
 
     } catch (error) {
@@ -141,7 +140,7 @@ export default function ManagerTicketDetailPage() {
       
       setTimeout(() => {
         clearInterval(timer);
-        router.push("/manager/home");
+        window.location.reload();
       }, 1000);
 
     } catch (error) {
@@ -200,7 +199,7 @@ export default function ManagerTicketDetailPage() {
           <TicketInfo ticket={selectedTicket} />
           <TicketStatus status={selectedTicket.status} />
           <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-          <TicketComment ticketId={selectedTicket.id} logs = {logs}/>
+          <TicketComment ticketId={selectedTicket.id} status={selectedTicket.status} logs={logs} />
         </div>
       </div>
 
@@ -217,15 +216,6 @@ export default function ManagerTicketDetailPage() {
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (
         <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
-      )}
-        {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
-            title={modalState.title}
-            onClick={modalState.onClose}
-            btnText={modalState.btnText}
-          />
-        </Modal>
       )}
     </div>
   );

@@ -147,7 +147,6 @@ export default function UserProfilePage() {
   
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
-      <h1 className="w-full max-w-4xl text-2xl font-bold text-gray-800 mb-4 text-left">회원 상세</h1>
       <div className="bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[600px]">
         <div className="flex items-center justify-between border-b pb-6">
           <div className="flex items-center space-x-8">

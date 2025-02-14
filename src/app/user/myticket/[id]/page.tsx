@@ -12,13 +12,16 @@ import { fetchComments, fetchTicketDetail, updateTicket } from "@/services/user"
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import Skeleton from "@/components/Skeleton";
+import { useCommentList } from '@/hooks/useCommentList';
 
 export default function UserTicketDetailPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); 
-  const [logs, setLogs] = useState([]);
+  // const [logs, setLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [ticketId, setTicketId] = useState('');
+  const { data: commentData } = useCommentList({ ticketId });
 
   useEffect(() => {
     const id = window.location.pathname.split("/").pop();
@@ -31,14 +34,29 @@ export default function UserTicketDetailPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (selectedTicket?.status == "REQUEST" || selectedTicket?.status == "CANCEL") return;
-    getComments(selectedTicket).then(data => {
-      console.log('🌟 코멘트 데이터:', data);
-      setLogs(data);
-    });
-  }, [selectedTicket]);
+  const logs =
+    commentData?.result?.comments?.map((comment) => {
+      if (comment.type === 'SYSTEM') {
+        return { log: comment.content };
+      }
+      return {
+        message: comment.content || comment.attachments,
+        role: comment.type,
+        createdAt: comment.createdAt,
+      };
+    }) || [];
 
+    useEffect(() => {
+      const id = window.location.pathname.split('/').pop();
+      if (id) {
+        setTicketId(id); // 티켓 ID 설정
+        getTicketDetail(id).then((data) => {
+          console.log('ticket', data);
+          setSelectedTicket(data);
+        });
+      }
+    }, []);
+  
   const getComments = async (ticket) => {
     try {
       const response = await fetchComments(ticket?.id);
@@ -111,7 +129,7 @@ export default function UserTicketDetailPage() {
       status: "CANCEL",
     }));
   
-    console.log("요청이 취소되었습니다.");
+    console.log("요청이 취소되었습니다.", response);
     showModal("요청이 취소되었습니다.");
   
     const timer = setInterval(() => {
@@ -120,7 +138,7 @@ export default function UserTicketDetailPage() {
   
     setTimeout(() => {
       clearInterval(timer);
-      router.push("/user/myticket"); 
+      router.push(`/user/myticket/${response.result.ticketId}`);
       window.location.reload(); 
     }, 1000);
   
@@ -160,7 +178,7 @@ export default function UserTicketDetailPage() {
           <TicketInfo ticket={selectedTicket} />
           <TicketStatus status={selectedTicket.status || selectedTicket.status} />
           <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-          <TicketComment ticketId={selectedTicket.id} logs={logs} />
+          <TicketComment ticketId={selectedTicket.id} status={selectedTicket.status} logs={logs} />
         </div>
       </div>
 

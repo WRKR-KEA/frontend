@@ -137,10 +137,10 @@ export function TicketList_Manager({
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="px-4 py-2 w-8"></th>
-            <th className="px-4 py-2 w-20 text-center">티켓 번호</th>
+            <th className="px-4 py-2 w-32 max-w-32 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 text-center">상태</th>
             <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
-            <th className="px-4 py-2 w-60 max-w-60">제목</th>
+            <th className="px-4 py-2 w-90 max-w-90">제목</th>
             <th className="px-4 py-2 w-32 text-center">요청자</th>
             <th className="px-4 py-2 w-32 text-center">최근 변경 일시</th>
           </tr>
@@ -176,7 +176,7 @@ export function TicketList_Manager({
               <td className="px-4 py-2 text-center truncate">
                 {ticket.firstCategory}/{ticket.secondCategory}
               </td>
-              <td className="px-4 py-2 truncate max-w-60 whitespace-nowrap">
+              <td className="px-4 py-2 truncate max-w-90 whitespace-nowrap">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 text-center truncate">{ticket.requesterNickname}</td>

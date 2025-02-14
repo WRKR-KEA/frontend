@@ -50,15 +50,15 @@ export function TicketList({
   };
 
   return (
-    <div className="bg-white rounded-md shadow-md">
+    <div className="bg-white rounded-md">
       <table className="w-full text-sm border-collapse">
         <thead>
-          <tr className="bg-gray-100 text-left">
-            <th className="p-2 w-24 border">티켓 번호</th>
-            <th className="p-2 w-20 border">상태</th>
-            <th className="p-2 w-40 border">제목</th>
-            <th className="p-2 w-24 border">요청자</th>
-            <th className="p-2 w-32 border">요청일</th>
+          <tr className="bg-gray-6 text-left border-b border-gray-4">
+            <th className="p-2 w-28 border">티켓 번호</th>
+            <th className="p-2 w-32 border text-center">상태</th>
+            <th className="p-2 w-64 max-w-64 border">제목</th>
+            <th className="p-2 w-28 border">요청자</th>
+            <th className="p-2 w-28 border">요청일</th>
             <th className="p-2 w-32 border">최근 업데이트일</th>
           </tr>
         </thead>
@@ -69,8 +69,8 @@ export function TicketList({
               className="border-b cursor-pointer hover:bg-gray-100"
               onClick={() => handleTicketClick(ticket)}
             >
-              <td className="p-2 border">{ticket.ticketSerialNumber}</td>
-              <td className="p-2 border">
+              <td className="p-2 border truncate">{ticket.ticketSerialNumber}</td>
+              <td className="p-2 border truncate text-center">
                 <span
                   className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${
                     statusStyles[ticket.status] || ""
@@ -79,10 +79,10 @@ export function TicketList({
                   {ticket.status}
                 </span>
               </td>
-              <td className="p-2 border">{ticket.title}</td>
-              <td className="p-2 border">{ticket.userNickname}</td>
-              <td className="p-2 border">{ticket.requestedDate}</td>
-              <td className="p-2 border">{ticket.updatedDate}</td>
+              <td className="p-2 border max-w-64 truncate">{ticket.title}</td>
+              <td className="p-2 border truncate">{ticket.userNickname}</td>
+              <td className="p-2 border truncate">{ticket.requestedDate}</td>
+              <td className="p-2 border truncate">{ticket.updatedDate}</td>
             </tr>
           ))}
         </tbody>

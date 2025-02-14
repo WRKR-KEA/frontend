@@ -108,24 +108,24 @@ export function TicketList_User({
                 className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
                 onClick={() => handleTicketClick(ticket.id)}
               >
-                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis">
+                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis border">
                   <HighlightText text={ticket.serialNumber} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis">
+                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis border">
                   <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
                     {ticket.status}
                   </span>
                 </td>
-                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis">
+                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis border">
                   {ticket.firstCategory}/{ticket.secondCategory}
                 </td>
-                <td className="px-4 py-2 max-w-60 truncate overflow-hidden whitespace-nowrap text-ellipsis">
+                <td className="px-4 py-2 max-w-60 truncate overflow-hidden whitespace-nowrap text-ellipsis border">
                   <HighlightText text={ticket.title} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2 truncate text-center overflow-hidden whitespace-nowrap text-ellipsis">
+                <td className="px-4 py-2 truncate text-center overflow-hidden whitespace-nowrap text-ellipsis border">
                   <HighlightText text={ticket.managerName || "-"} highlight={searchTerm} />
                 </td>
-                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis">
+                <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis border">
                   {ticket.updatedAt}
                 </td>
               </tr>

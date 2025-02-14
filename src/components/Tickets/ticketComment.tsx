@@ -15,6 +15,7 @@ interface Log {
 export interface TicketCommentProps {
   logs: Log[];
   ticketId: string;
+  status:string;
 }
 
 const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
@@ -85,7 +86,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
               </div>
             )}
             {log.message && (
-              <div className={`flex ${log.role === user?.role ? 'justify-start' : 'justify-end'}`}>
+              <div className={`flex ${log.role !== user?.role ? 'justify-start' : 'justify-end'}`}>
                 {log.role !== user?.role && (
                   <p className="self-end text-xs mr-2 text-gray-400">
                     {formatTime(log.createdAt)}

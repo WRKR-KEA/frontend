@@ -53,10 +53,10 @@ export default function ReissuePasswordPage() {
     setAuthCode(e.target.value);
   };
 
-  // ✅ 인증번호 요청 (닉네임 입력 후)
+
   const handleRequestAuthCode = async () => {
     if (error || nickname === "") {
-      showModal("유효한 닉네임을 입력하세요.");
+      showModal("유효한 아이디를 입력하세요.");
       return;
     }
 
@@ -98,9 +98,9 @@ export default function ReissuePasswordPage() {
     try {
       const response = await axios.patch(
         `${process.env.NEXT_PUBLIC_BASE_URL}/api/members/password/reissue`, // ✅ 엔드포인트 직접 입력
-        { 
-          memberId, 
-          verificationCode:authCode, 
+        {
+          memberId,
+          verificationCode: authCode,
         }, // ✅ 요청 데이터
         {
           headers: {
@@ -121,8 +121,7 @@ export default function ReissuePasswordPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-main-2">
-      {/* 헤더 */}
+    <div className="overflow-hidden h-screen">
       <header className="absolute top-0 w-full bg-white py-4 shadow-sm">
         <div className="w-full flex items-center justify-between px-6">
           {/* 로고 */}
@@ -152,72 +151,76 @@ export default function ReissuePasswordPage() {
           </svg>
         </div>
       </header>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-main-2">
+        {/* 헤더 */}
 
-      {/* 비밀번호 재발급 박스 */}
-      <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
-        <h2 className="text-3xl font-bold mb-2">비밀번호 재발급</h2>
-        <p className="text-sm text-gray-600 mb-6">재발급받을 닉네임을 입력하세요.</p>
 
-        {/* 인증번호 요청 폼 */}
-        <form onSubmit={handleVerifyAndReissuePassword}>
-          <div className="mb-4">
-            <input
-              type="text"
-              id="nickname"
-              value={nickname}
-              onChange={handleNicknameChange}
-              className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="닉네임을 입력하세요"
-              disabled={isAuthSent} // 인증번호 입력 후 닉네임 수정 불가
-            />
-            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
-          </div>
+        {/* 비밀번호 재발급 박스 */}
+        <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
+          <h2 className="text-3xl font-bold mb-2">비밀번호 재발급</h2>
+          <p className="text-sm text-gray-600 mb-6">재발급받을 아이디를 입력하세요.</p>
 
-          {!isAuthSent ? (
-            // 인증번호 받기 버튼
-            <button
-              type="button"
-              className={`w-full bg-[#252E66] text-white py-3 rounded-md font-semibold
-                 ${nickname ? "bg-[#252E66] text-white hover:bg-[#1F2557]" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}
-              onClick={handleRequestAuthCode}
-              disabled={!nickname}
+          {/* 인증번호 요청 폼 */}
+          <form onSubmit={handleVerifyAndReissuePassword}>
+            <div className="mb-4">
+              <input
+                type="text"
+                id="nickname"
+                value={nickname}
+                onChange={handleNicknameChange}
+                className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
+                placeholder="아이디를 입력하세요"
+                disabled={isAuthSent} // 인증번호 입력 후 닉네임 수정 불가
+              />
+              {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
+            </div>
 
-            >
-              인증번호 받기
-            </button>
-          ) : (
-            <>
-              {/* 인증번호 입력 필드 */}
-              <div className="mt-4 mb-4">
-                <input
-                  type="text"
-                  id="authCode"
-                  value={authCode}
-                  onChange={handleAuthCodeChange}
-                  className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-                  placeholder="인증번호를 입력하세요"
-                />
-              </div>
-
-              {/* 비밀번호 재발급 버튼 */}
+            {!isAuthSent ? (
+              // 인증번호 받기 버튼
               <button
-                type="submit"
-                className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
-              >
-                비밀번호 재발급
-              </button>
-            </>
-          )}
-        </form>
-      </div>
+                type="button"
+                className={`w-full bg-[#252E66] text-white py-3 rounded-md font-semibold
+                 ${nickname ? "bg-[#252E66] text-white hover:bg-[#1F2557]" : "bg-gray-400 text-gray-700 cursor-not-allowed"}`}
+                onClick={handleRequestAuthCode}
+                disabled={!nickname}
 
-      {/* 모달 */}
-      {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal title={modalState.title} onClick={modalState.onClose}
-                      btnText={modalState.btnText} />
-        </Modal>
-      )}
+              >
+                인증번호 받기
+              </button>
+            ) : (
+              <>
+                {/* 인증번호 입력 필드 */}
+                <div className="mt-4 mb-4">
+                  <input
+                    type="text"
+                    id="authCode"
+                    value={authCode}
+                    onChange={handleAuthCodeChange}
+                    className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
+                    placeholder="인증번호를 입력하세요"
+                  />
+                </div>
+
+                {/* 비밀번호 재발급 버튼 */}
+                <button
+                  type="submit"
+                  className="w-full bg-[#252E66] text-white py-3 rounded-md font-semibold hover:bg-[#1F2557]"
+                >
+                  비밀번호 재발급
+                </button>
+              </>
+            )}
+          </form>
+        </div>
+
+        {/* 모달 */}
+        {modalState.isOpen && (
+          <Modal onClose={modalState.onClose}>
+            <AlertModal title={modalState.title} onClick={modalState.onClose}
+              btnText={modalState.btnText} />
+          </Modal>
+        )}
+      </div>
     </div>
   );
 }

@@ -318,7 +318,7 @@ export default function DailyMonitoring() {
           onClick={() => setLineChartStatusFilter('REQUEST')}
           className="bg-gradient-to-b bg-request p-6 rounded-lg shadow-md text-center cursor-pointer transform transition-transform hover:scale-105 hover:shadow-lg"
         >
-          <h3 className="text-lg text-gray-800 mb-2">일간 요청 티켓</h3>
+          <h3 className="text-lg text-gray-800 mb-2">일간 요청된 티켓</h3>
           <p className="text-2xl font-bold text-gray-800">{ticketCardData.request}</p>
         </div>
         <div
@@ -339,7 +339,7 @@ export default function DailyMonitoring() {
           onClick={() => setLineChartStatusFilter('IN_PROGRESS')}
           className="bg-gradient-to-b bg-inProgress p-6 rounded-lg shadow-md text-center cursor-pointer transform transition-transform hover:scale-105 hover:shadow-lg"
         >
-          <h3 className="text-lg text-gray-800 mb-2">일간 처리중 티켓</h3>
+          <h3 className="text-lg text-gray-800 mb-2">일간 승인된 티켓</h3>
           <p className="text-2xl font-bold text-gray-800">{ticketCardData.accept}</p>
         </div>
       </div>

@@ -68,10 +68,15 @@ export default function ManagerTicketListPage() {
   
         <div className="flex items-center space-x-2 ml-4">
           <Search_manager
-            onSearchChange={handleSearchChange}
-            searchTerm={searchTerm}
-            searchInputRef={searchInputRef}
-          />
+                    onSearchChange={handleSearchChange} 
+                    placeHolder="제목, 티켓번호 검색"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        console.log("검색 실행:", searchTerm);
+                      }
+                    }}
+                    onBlur={() => console.log("검색어 입력 완료:", searchTerm)}
+                  />
         </div>
   
         <div className="ml-auto flex items-center">

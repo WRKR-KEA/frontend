@@ -140,13 +140,13 @@ export function TicketList_Manager({
             <th className="px-4 py-2 w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 text-center">상태</th>
             <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
-            <th className="px-4 py-2 w-60">제목</th>
+            <th className="px-4 py-2 w-60 max-w-60">제목</th>
             <th className="px-4 py-2 w-32 text-center">요청자</th>
             <th className="px-4 py-2 w-32 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
-          {tickets.map((ticket) => (
+          {sortedTickets.map((ticket) => (
             <tr
               key={ticket.id}
               className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
@@ -176,7 +176,7 @@ export function TicketList_Manager({
               <td className="px-4 py-2 text-center truncate">
                 {ticket.firstCategory}/{ticket.secondCategory}
               </td>
-              <td className="px-4 py-2 truncate max-w-[200px] whitespace-nowrap">
+              <td className="px-4 py-2 truncate max-w-60 whitespace-nowrap">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 text-center truncate">{ticket.requesterNickname}</td>

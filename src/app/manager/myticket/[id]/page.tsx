@@ -23,6 +23,7 @@ export default function ManagerTicketDetailPage() {
   const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); 
   const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
   const [countdown, setCountdown] = useState(1);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const [modalState, setModalState] = useState({
     isOpen: false,
@@ -109,7 +110,8 @@ export default function ManagerTicketDetailPage() {
       const result = await updateManagerTicketComplete(ticketId);
       console.log("완료 성공:", result);
 
-      closeCompleteTicketModal();
+      showModal("작업이 완료되었습니다."); 
+
       const timer = setInterval(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null));
       }, 1000);
@@ -118,6 +120,7 @@ export default function ManagerTicketDetailPage() {
         clearInterval(timer);
         window.location.reload();
       }, 1000);
+      setIsModalOpen(false);
 
     } catch (error) {
       console.error("티켓 완료 중 오류 발생:", error);
@@ -131,7 +134,6 @@ export default function ManagerTicketDetailPage() {
       const result = await updateManagerTicketReject(ticketId);
       console.log("작업 반려 성공:", result);
       showModal("작업이 반려되었습니다."); 
-      closeAbortTicketModal();
 
       const timer = setInterval(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null));
@@ -142,11 +144,14 @@ export default function ManagerTicketDetailPage() {
         window.location.reload();
       }, 1000);
 
+      setIsModalOpen(false);
+
     } catch (error) {
       console.error("작업 반려 중 오류 발생:", error);
 
     }
   };
+
 console.log(selectedTicket);
   if (!selectedTicket) {
     return (
@@ -158,10 +163,12 @@ console.log(selectedTicket);
 
   const handleCompleteTicket = () => {
     setIsCompleteTicketOpen(true); // 작업 완료 모달 열기
+    setIsModalOpen(true); 
   }; 
 
   const handleAbortTicket = () => {
     setIsAbortTicketOpen(true); //작업 반려 모달 열기
+    setIsModalOpen(true); 
   };
 
   const closeAbortTicketModal = () => {
@@ -215,6 +222,15 @@ console.log(selectedTicket);
       {/* 작업 완료 모달 */}
       {isCompleteTicketOpen && (
         <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
+      )}
+       {modalState.isOpen && (
+        <Modal onClose={modalState.onClose}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
       )}
     </div>
   );

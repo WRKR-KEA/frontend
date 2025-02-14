@@ -94,7 +94,7 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
         setIsModalOpen(false); // 모달 닫기
         router.push(`/manager/myticket`); 
       }, 1000);
-  
+      
     } catch (err: any) {
       showModal(err.message);
     }

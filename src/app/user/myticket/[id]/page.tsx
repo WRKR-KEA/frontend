@@ -130,7 +130,7 @@ export default function UserTicketDetailPage() {
     }));
   
     console.log("요청이 취소되었습니다.", response);
-    showModal("요청이 취소되었습니다.");
+    showModal("요청이 취소되었습니다."); 
   
     const timer = setInterval(() => {
       setCountdown((prev) => (prev !== null ? prev - 1 : null));

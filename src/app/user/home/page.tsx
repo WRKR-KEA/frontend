@@ -60,7 +60,7 @@ export default function UserHomePage() {
         updatedAt: ticket.ticketTimeInfo?.updatedAt || "-",
         startedAt: ticket.ticketTimeInfo?.startedAt || "-",
         completedAt: ticket.ticketTimeInfo?.endedAt || "-",      
-        requester: user.nickname,
+        requester: user?.nickname,
       })) || [];
       
 

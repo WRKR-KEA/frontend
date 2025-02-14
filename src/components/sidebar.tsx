@@ -6,7 +6,6 @@ import { useState } from "react";
 import path from "path";
 
 interface User {
-    id: string;
     name: string;
     profileImage: string;
     role: string; // "USER", "MANAGER", "ADMIN" 등 역할 추가 가능

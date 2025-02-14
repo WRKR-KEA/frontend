@@ -106,8 +106,13 @@ export default function UserCreateTicketPage() {
       };
   
       console.log("📌 요청 데이터:", ticketData);
-      const result = await postTicket(ticketData);
-      console.log("📌 티켓 생성 결과:", result);
+      const { result, error } = await postTicket(ticketData);
+  
+      if (error) {  // error가 있을 경우 처리
+        console.error("⚠️ 티켓 생성 실패:", error);
+        showModal(error?.response?.data?.result?.title || error?.response?.data?.result?.content);
+        return;
+      }
   
       if (!result) {
         console.error("⚠️ 티켓 생성 실패: 응답 데이터 없음");
@@ -119,6 +124,7 @@ export default function UserCreateTicketPage() {
       setIsTicketCreated(true); // 생성 완료 상태로 변경
       setCountdown(1); // 카운트다운 시작
       showModal("티켓 생성이 완료되었습니다.");
+      
       const timer = setInterval(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null));
       }, 1000);

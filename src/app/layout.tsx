@@ -9,7 +9,6 @@ import useUserStore from '@/stores/userStore'; // ✅ Zustand 스토어 import
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import axios from "axios";
 
-
 export default function RootLayout({
   children,
 }: {

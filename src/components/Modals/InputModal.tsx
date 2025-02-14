@@ -45,7 +45,7 @@ export default function InputModal({
             {/* 첫 번째 인풋 */}
             <input
                 type="text"
-                placeholder="약어를 입력하세요 ex)VM"
+                placeholder="약어를 입력하세요. ex)VM"
                 value={inputValue}
                 onChange={handleInputChange}
                 className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-grey-700 focus:border-blue-800"
@@ -54,7 +54,7 @@ export default function InputModal({
             {/* 두 번째 인풋 */}
             <input
                 type="text"
-                placeholder="카테고리 이름을 입력하세요..."
+                placeholder="카테고리 이름을 입력하세요."
                 value={inputValue2}
                 onChange={handleInputChange2}
                 className="w-full max-w-md px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-grey-700 focus:border-blue-800"
@@ -70,7 +70,7 @@ export default function InputModal({
                     setCategoryAbb("")
                     setCategoryName("")
                 }}
-                className={`w-full max-w-md px-4 py-2 text-white rounded-md text-center transition-all duration-200 
+                className={`px-8 py-2 text-white rounded-md text-center transition-all duration-200 
             ${inputValue.trim() === "" ? "bg-gray-400 cursor-not-allowed" : "bg-gray-600 hover:bg-gray-700"}`}
                 disabled={inputValue.trim() === ""}
             >

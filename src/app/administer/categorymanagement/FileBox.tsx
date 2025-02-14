@@ -1,11 +1,12 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Modal from '@/components/Modals/Modal';
+import AlertModal from '@/components/Modals/AlertModal';
 
 interface FileBoxProps {
   onFileUpload: (files: File[]) => void; // ✅ 부모 컴포넌트에 파일 전달
   attachments: string[]; // ✅ 기존 파일 URL 리스트 추가
-
   setDeleteAttachments: (deletedUrls: string[]) => void; // ✅ 삭제된 파일 URL 저장 함수
 }
 
@@ -15,6 +16,31 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
   const [fileUrls, setFileUrls] = useState<string[]>([]); // ✅ 기존 파일 URL 저장
   const [isDragging, setIsDragging] = useState(false);
   const [deletedUrls, setDeletedUrls] = useState<string[]>([]); // ✅ 삭제된 URL 저장
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: '',
+    content: '',
+    btnText: '',
+    onClose: () => { },
+    onClose2: () => { },
+  });
+
+  const showModal = (title: string, content = null, btnText = null, onCloseCallback?: () => void) => {
+    setModalState({
+      isOpen: true,
+      title,
+      content,
+      btnText,
+      onClose: () => {
+        setModalState((prev) => ({ ...prev, isOpen: false }));
+        if (onCloseCallback) onCloseCallback();
+      },
+      onClose2: () => {
+        setModalState((prev) => ({ ...prev, isOpen: false }));
+
+      },
+    });
+  };
 
   console.log("attachments", attachments);
 
@@ -54,9 +80,28 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
 
+    const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "xls", "xlsx"]
+
     const newFiles = Array.from(event.target.files);
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onFileUpload([...files, ...newFiles]); // ✅ 부모 컴포넌트에 파일 전달
+    if (newFiles.length > 5) {
+      showModal("파일 개수 제한 초과", "파일을 다시 선택해주세요.", "확인")
+      return;
+    }
+
+    const allowedNewFiles = newFiles.filter((file) => allowedExtensions.some((extension) => file.name.endsWith(extension)));
+    if (allowedNewFiles.length < newFiles.length) {
+      showModal("허용되지 않는 확장자 포함", "허용되는 확장자의 파일만 선택해주세요.", "확인")
+      return;
+    }
+
+    const validSizeFiles = allowedNewFiles.filter((file) => file.size <= 10 * 1024 * 1024)
+    if (validSizeFiles.length < allowedNewFiles.length) {
+      showModal("파일 크기 제한 초과", "10MB를 넘지 않는 파일만 선택해주세요.", "확인")
+      return;
+    }
+
+    setFiles((prevFiles) => [...prevFiles, ...validSizeFiles]);
+    onFileUpload([...files, ...validSizeFiles]); // ✅ 부모 컴포넌트에 파일 전달
   };
 
   // ✅ 파일 삭제 (업로드된 파일 & 기존 URL 파일 처리)
@@ -83,7 +128,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto mb-4">
+    <div className="w-full max-w-2xl mx-auto">
       <div
         className={`border-2 border-dashed rounded-md p-6 text-center ${
           isDragging ? "border-blue-500 bg-blue-50" : "border-gray-300"
@@ -100,7 +145,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
         <input type="file" multiple className="hidden" id="fileInput" onChange={handleFileSelect} />
         <label
           htmlFor="fileInput"
-          className="mt-2 inline-block cursor-pointer bg-blue-500 text-white px-4 py-2 rounded-md text-sm hover:bg-blue-600"
+          className="mt-2 inline-block cursor-pointer bg-main-1 text-white px-4 py-2 rounded-md text-sm hover:bg-main-hover"
         >
           파일 선택
         </label>
@@ -108,7 +153,7 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
 
       {/* 파일 리스트 출력 (업로드된 파일 + 기존 URL 파일) */}
       {(files.length > 0 || fileUrls.length > 0) && (
-        <ul className="mt-4 rounded-md p-3">
+        <ul className="mt-4 rounded-md px-3">
           {/* ✅ 기존 URL 파일 리스트 */}
           {fileUrls.map((url, index) => (
             <li key={`url-${index}`} className="flex justify-between items-center border-b last:border-none p-2">
@@ -127,13 +172,23 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
           {/* ✅ 새롭게 추가한 파일 리스트 */}
           {files.map((file, index) => (
             <li key={`file-${index}`} className="flex justify-between items-center border-b last:border-none p-2">
-              <span className="text-gray-700 text-sm">{file.name}</span>
-              <button className="text-red-500 hover:text-red-700 text-xs" onClick={() => handleRemoveFile(index)}>
+              <span className="text-gray-700 text-sm truncate">{file.name}</span>
+              <button className="text-red-500 min-w-6 hover:text-red-700 text-xs" onClick={() => handleRemoveFile(index)}>
                 삭제
               </button>
             </li>
           ))}
         </ul>
+      )}
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose2}>
+          <AlertModal
+            title={modalState.title}
+            content={modalState.content}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
       )}
     </div>
   );

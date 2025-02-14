@@ -15,6 +15,7 @@ export default {
           1: "var(--main-1)",
           2: "var(--main-2)",
           3: "var(--main-3)",
+          hover: "var(--main-1-hover)"
         },
         sub: {
           1: "var(--sub-1)",
@@ -24,6 +25,7 @@ export default {
         accent: {
           1: "var(--accent-1)",
           2: "var(--accent-2)",
+          hover: "var(--accent-1-hover)"
         },
         gray: {
           1: "var(--gray-1)",

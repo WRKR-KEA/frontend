@@ -8,6 +8,7 @@ import PagePagination from "@/components/pagination";
 import { Search_manager } from "@/components/search_manager";
 import Skeleton from "@/components/Skeleton";
 import { useManageTicketListQuery } from "@/hooks/useManageTicketList";
+import SkeletonNet from "@/components/SkeletonNet";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -55,6 +56,10 @@ export default function ManagerTicketListPage() {
     setSelectedStatus(status);
     setCurrentPage(1);
   }, []);
+
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">

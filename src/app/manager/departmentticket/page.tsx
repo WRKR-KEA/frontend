@@ -13,6 +13,7 @@ import { useDepartTicketListQuery } from "@/hooks/useDepartTicketList";
 import PagePagination from "@/components/pagination";
 import Button from "@/components/Buttons/Button";
 import Skeleton from "@/components/Skeleton";
+import SkeletonNet from "@/components/SkeletonNet";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -107,6 +108,10 @@ export default function DepartmentTicketListPage() {
     setCurrentPage(1); // 검색 시 첫 페이지로 이동
   
 };
+
+if (error) {
+  return <SkeletonNet width="100%" height="100%" />;
+}
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">

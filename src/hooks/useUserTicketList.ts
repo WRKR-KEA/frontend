@@ -12,7 +12,7 @@ const fetchUserTickets = async (
   if (!accessToken) {
     throw new Error("Access token is missing. Please log in again.");
   }
-  const url = "http://172.16.211.53:8080/api/user/tickets";
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/user/tickets`;
 
   const response = await axios.get(url, {
     params: {

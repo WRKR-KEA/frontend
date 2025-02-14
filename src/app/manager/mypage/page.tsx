@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import { useUserDetailQuery } from "@/hooks/useUserDetail";
+import SkeletonNet from "@/components/SkeletonNet";
+import Skeleton from "@/components/Skeleton"; 
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -110,7 +112,7 @@ export default function UserProfilePage() {
 
       console.log("🔹 업데이트 요청 데이터:", requestBody);
 
-      const response = await fetch("http://172.16.211.53:8080/api/user/my-page", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/my-page`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -134,6 +136,15 @@ export default function UserProfilePage() {
     }
   };
 
+
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
+
+  if (isLoading) {
+    return <Skeleton width="100%" height="100%" />;
+  }
+  
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
       <h1 className="w-full max-w-4xl text-2xl font-bold text-gray-800 mb-4 text-left">회원 상세</h1>
@@ -164,6 +175,14 @@ export default function UserProfilePage() {
               </div>
             </div>
           </div>
+            {/* 비밀번호 변경 버튼 (오른쪽 끝) */}
+
+            <button
+            onClick={() => router.push("/changepassword")}
+            className="px-6 py-2 bg-red-500 text-white rounded-md ml-auto"
+          >
+            비밀번호 변경
+          </button>
         </div>
         <div className="grid grid-cols-2 gap-12 mt-8">
           <div className="space-y-6">

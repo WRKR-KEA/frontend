@@ -37,7 +37,7 @@ export const Search = ({ placeHolder, onSearchChange, onKeyDown, onBlur }: Searc
         onKeyDown={onKeyDown}
         onBlur={onBlur}
         placeholder={placeHolder}
-        className="outline-none text-sm w-32"
+        className="outline-none text-sm w-52"
       />
     </div>
   );

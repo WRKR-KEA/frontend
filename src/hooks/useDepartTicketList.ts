@@ -16,7 +16,7 @@ const fetchDepartTicket = async (
     throw new Error("Access token is missing. Please log in again.");
   }
 
-  const url = "http://172.16.211.53:8080/api/manager/tickets/department";
+  const url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/manager/tickets/department`;
 
   const response = await axios.get(url, {
     params: {

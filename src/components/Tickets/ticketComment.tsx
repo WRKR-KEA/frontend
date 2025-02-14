@@ -151,7 +151,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder={status !== 'IN_PROGRESS' ? '진행 중인 티켓이 아닙니다.' : '메시지를 입력하세요...'}
+          placeholder={status !== 'IN_PROGRESS' ? '진행 중인 티켓이 아니거나 권한이 없습니다.' : '메시지를 입력하세요...'}
           className="flex-1 p-2 rounded-lg border border-gray-300"
           disabled={status !== 'IN_PROGRESS'}
         />

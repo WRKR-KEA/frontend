@@ -142,7 +142,7 @@ export function TicketList_Manager({
             <th className="px-4 py-2 w-32 max-w-24 text-center">카테고리</th>
             <th className="px-4 py-2 w-80 max-w-80 text-center">제목</th>
             <th className="px-4 py-2 w-32 max-w-32 text-center">요청자</th>
-            <th className="px-4 py-2 w-32 max-w-32 text-center">최근 변경 일시</th>
+            <th className="px-4 py-2 w-36 max-w-36 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
@@ -153,7 +153,7 @@ export function TicketList_Manager({
               onClick={() => handleTicketClick(ticket.id)}
             >
               <td
-                className="px-4 py-2 border  max-w-8"
+                className="px-3 py-2 border max-w-8"
                 onClick={(e) => {
                   e.stopPropagation();
                   handlePinClick(ticket.id, ticket.isPinned);
@@ -180,7 +180,7 @@ export function TicketList_Manager({
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 max-w-32 border text-center truncate text-center">{ticket.requesterNickname}</td>
-              <td className="px-4 py-2 max-w-32 border text-center truncate text-center">{ticket.updatedAt}</td>
+              <td className="px-4 py-2 max-w-36 border text-center truncate text-center">{ticket.updatedAt}</td>
             </tr>
           ))}
         </tbody>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useCallback ,useEffect} from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
@@ -9,6 +9,7 @@ import { Search_manager } from "@/components/search_manager";
 import Skeleton from "@/components/Skeleton";
 import { useManageTicketListQuery } from "@/hooks/useManageTicketList";
 import SkeletonNet from "@/components/SkeletonNet";
+import SkeletonZero from "@/components/SkeletonZero"; 
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -16,7 +17,8 @@ export default function ManagerTicketListPage() {
   const [sortOrder, setSortOrder] = useState("UPDATED");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState("");
-  
+
+  const [tickets, setTickets] = useState<any[]>([]); // 💡 티켓 상태 추가
   const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   const { data, isLoading, error } = useManageTicketListQuery(
@@ -27,11 +29,13 @@ export default function ManagerTicketListPage() {
     searchTerm
   );
 
+  // 💡 data가 변경될 때 tickets 상태 업데이트
   useEffect(() => {
     if (data) {
-      console.log("📌 받은 티켓 데이터:", data);
+      setTickets(data.elements);
+      console.log("📌 받은 티켓 데이터:", data.elements);
     }
-  }, [data]);
+  }, [data]); // 'data'가 변경될 때마다 자동으로 tickets 상태 업데이트
 
   const handleSelectCount = useCallback((count: number) => {
     setMaxTicketsToShow(count);
@@ -65,47 +69,48 @@ export default function ManagerTicketListPage() {
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
         <h2 className="text-lg font-semibold">티켓 조회</h2>
-  
+
         <div className="flex items-center space-x-2 ml-4">
           <Search_manager
-                    onSearchChange={handleSearchChange} 
-                    placeHolder="제목, 티켓번호 검색"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        console.log("검색 실행:", searchTerm);
-                      }
-                    }}
-                    onBlur={() => console.log("검색어 입력 완료:", searchTerm)}
-                  />
+            onSearchChange={handleSearchChange} 
+            placeHolder="제목, 티켓번호 검색"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                console.log("검색 실행:", searchTerm);
+              }
+            }}
+            onBlur={() => console.log("검색어 입력 완료:", searchTerm)}
+          />
         </div>
-  
+
         <div className="ml-auto flex items-center">
           <FilterOrder onSelectOrder={handleSelectOrder} sortOrder={sortOrder} />
           <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
-  
-        {isLoading ? (
-          <div className="flex flex-col items-center space-y-4">
-            <Skeleton width="100%" height="600px" />
-          </div>
-        ) :(
-          <>
-            <TicketList_Manager
-              tickets={data?.elements || []}
-              maxTicketsToShow={maxTicketsToShow}
-              searchTerm={searchTerm}
-              sortOrder={sortOrder}
-              currentPage={currentPage}
-              totalPages={data?.totalPages || 1}
-              status={selectedStatus || ""}
-              onStatusChange={handleStatusChange}
-              onPageChange={handlePageChange}
-            />
-            {data?.elements.length === 0 ? (
-              <div>
-            </div>
-            ) : (
+
+      {isLoading ? (
+        <div className="flex flex-col items-center space-y-4">
+          <Skeleton width="100%" height="600px" />
+        </div>
+      ) : data?.elements.length === 0 ?(
+        <SkeletonZero width="100%" height="40%" /> 
+      ) : (
+        <>
+          <TicketList_Manager
+            tickets={tickets}
+            maxTicketsToShow={maxTicketsToShow}
+            searchTerm={searchTerm}
+            sortOrder={sortOrder}
+            currentPage={currentPage}
+            totalPages={data?.totalPages || 1}
+            status={selectedStatus || ""}
+            onStatusChange={handleStatusChange}
+            onPageChange={handlePageChange}
+          />
+          {data?.elements.length === 0 ? (
+            <div></div>
+          ) : (
             <div className="flex justify-center items-center mt-4 mb-4">
               <PagePagination
                 totalItemsCount={data?.elements.length || 0}
@@ -114,10 +119,11 @@ export default function ManagerTicketListPage() {
                 currentPage={currentPage}
                 totalPages={data?.totalPages || 1}
                 onPageChange={handlePageChange}
-                />
-                </div>
-            )}</>
-            )}
-          </div>
-        );
-      }
+              />
+            </div>
+          )}
+        </>
+      )}
+    </div>
+  );
+}

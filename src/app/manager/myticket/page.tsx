@@ -8,6 +8,7 @@ import PagePagination from "@/components/pagination";
 import { Search_manager } from "@/components/search_manager";
 import Skeleton from "@/components/Skeleton";
 import { useManageTicketListQuery } from "@/hooks/useManageTicketList";
+import SkeletonNet from "@/components/SkeletonNet";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -56,6 +57,10 @@ export default function ManagerTicketListPage() {
     setCurrentPage(1);
   }, []);
 
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
@@ -63,10 +68,15 @@ export default function ManagerTicketListPage() {
   
         <div className="flex items-center space-x-2 ml-4">
           <Search_manager
-            onSearchChange={handleSearchChange}
-            searchTerm={searchTerm}
-            searchInputRef={searchInputRef}
-          />
+                    onSearchChange={handleSearchChange} 
+                    placeHolder="제목, 티켓번호 검색"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        console.log("검색 실행:", searchTerm);
+                      }
+                    }}
+                    onBlur={() => console.log("검색어 입력 완료:", searchTerm)}
+                  />
         </div>
   
         <div className="ml-auto flex items-center">

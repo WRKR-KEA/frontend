@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import { useUserDetailQuery } from "@/hooks/useUserDetail";
+import SkeletonNet from "@/components/SkeletonNet";
+import Skeleton from "@/components/Skeleton"; 
 
 export default function UserProfilePage() {
   const router = useRouter();
@@ -111,7 +113,7 @@ export default function UserProfilePage() {
 
       console.log("🔹 업데이트 요청 데이터:", requestBody);
 
-      const response = await fetch("http://172.16.211.53:8080/api/user/my-page", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/my-page`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -135,7 +137,13 @@ export default function UserProfilePage() {
     }
   };
 
-  if (!editableData.email) return <p>로딩 중...</p>;
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
+
+  if (isLoading) {
+    return <Skeleton width="100%" height="100%" />;
+  }
 
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
@@ -154,7 +162,7 @@ export default function UserProfilePage() {
               {isEditing ? (
                 <input
                   type="text"
-                  name="name"
+                  name="nickname"
                   value={editableData.nickname}
                   onChange={handleInputChange}
                   className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 focus:outline-none h-10"
@@ -163,10 +171,18 @@ export default function UserProfilePage() {
                 <h1 className="text-2xl font-bold text-gray-800">{editableData.nickname}</h1>
               )}
               <div className="flex items-center space-x-4 text-gray-500">
-                  <p>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
+                <p>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
               </div>
             </div>
           </div>
+            {/* 비밀번호 변경 버튼 (오른쪽 끝) */}
+
+            <button
+            onClick={() => router.push("/changepassword")}
+            className="px-6 py-2 bg-red-500 text-white rounded-md ml-auto"
+          >
+            비밀번호 변경
+          </button>
         </div>
         <div className="grid grid-cols-2 gap-12 mt-8">
           <div className="space-y-6">
@@ -187,7 +203,7 @@ export default function UserProfilePage() {
                   <input
                     type={field.type}
                     name={field.name}
-                    value={editableData[field.name] ? editableData[field.name] : "미등록"}
+                    value={editableData[field.name]}
                     onChange={handleInputChange}
                     className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none h-10"
                   />
@@ -240,8 +256,7 @@ export default function UserProfilePage() {
               <button onClick={handleSave} className="px-6 py-3 bg-blue-500 text-white rounded-md">
                 저장
               </button>
-              <button onClick={() => setIsEditing(false)}
-                className="px-6 py-3 bg-gray-200 rounded-md ml-4">
+              <button onClick={() => setIsEditing(false)} className="px-6 py-3 bg-gray-200 rounded-md ml-4">
                 취소
               </button>
             </>
@@ -254,11 +269,7 @@ export default function UserProfilePage() {
       </div>
       {modalState.isOpen && (
         <Modal onClose={modalState.onClose}>
-          <AlertModal
-            title={modalState.title}
-            onClick={modalState.onClose}
-            btnText={modalState.btnText}
-          />
+          <AlertModal title={modalState.title} onClick={modalState.onClose} btnText={modalState.btnText} />
         </Modal>
       )}
     </div>

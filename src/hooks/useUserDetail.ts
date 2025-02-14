@@ -9,7 +9,7 @@ const fetchUserDetail = async () => {
     throw new Error("Access token is missing. Please log in again.");
   }
 
-  const response = await axios.get("http://172.16.211.53:8080/api/user/my-page", {
+  const response = await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/user/my-page`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

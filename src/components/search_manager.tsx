@@ -1,38 +1,54 @@
-import { useState, useEffect } from "react";
-import { FaSearch } from "react-icons/fa";
+import { useState } from "react";
 
 interface Search_managerProps {
+  placeHolder: string;
   onSearchChange: (term: string) => void;
-  searchTerm: string;
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
 }
 
-export const Search_manager = ({ onSearchChange, searchTerm, searchInputRef }) => {
-  const [searchInput, setSearchInput] = useState(searchTerm);
-
-  // 검색어가 변경되었을 때만 searchInput 상태를 업데이트
-  useEffect(() => {
-    if (searchTerm !== searchInput) {
-      setSearchInput(searchTerm);
-    }
-  }, [searchTerm]);
+export const Search_manager = ({ placeHolder, onSearchChange, onKeyDown, onBlur }: Search_managerProps) => {
+  const [searchInput, setSearchInput] = useState("");
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchInput(value);  // 사용자가 입력하는 값 업데이트
-    onSearchChange(value);   // 부모에게 검색어 전달
+    setSearchInput(e.target.value);  // Just update the local state, no search triggered yet
   };
 
   return (
     <div className="flex items-center border-b p-2">
-      <FaSearch className="text-gray-500 mr-2" />
       <input
-      ref={searchInputRef}
         type="text"
-        value={searchTerm}
-        onChange={(e) => onSearchChange(e.target.value)}
-        placeholder="제목, 티켓번호"
-        className="outline-none text-sm w-[85px]"
+        value={searchInput}
+        onChange={handleInputChange}  // Only update the state, no search here
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            onSearchChange(searchInput); // Search when Enter is pressed
+          }
+          if (onKeyDown) onKeyDown(e);
+        }}
+        onBlur={() => {
+          onSearchChange(searchInput); // Search when input loses focus
+          if (onBlur) onBlur();
+        }}
+        placeholder={placeHolder}
+        className="outline-none text-sm w-28"
       />
+      <svg
+        className="ml-2 cursor-pointer"  // Add cursor-pointer to change the mouse cursor on hover
+        width="24" height="24" viewBox="0 0 24 24" fill="none"
+      >
+        <path
+          d="M10.5 16C13.5376 16 16 13.5376 16 10.5C16 7.46243 13.5376 5 10.5 5C7.46243 5 5 7.46243 5 10.5C5 13.5376 7.46243 16 10.5 16Z"
+          stroke="var(--gray-3)" strokeWidth="1.5"
+        />
+        <path
+          d="M15 15L19 19"
+          stroke="var(--gray-3)"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
     </div>
   );
 };

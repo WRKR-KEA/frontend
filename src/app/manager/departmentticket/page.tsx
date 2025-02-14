@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
 import { FilterNum } from "@/components/Filters/filterNum";
-import { Search } from "@/components/search";
+import { Search_manager } from "@/components/search_manager";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -13,6 +13,7 @@ import { useDepartTicketListQuery } from "@/hooks/useDepartTicketList";
 import PagePagination from "@/components/pagination";
 import Button from "@/components/Buttons/Button";
 import Skeleton from "@/components/Skeleton";
+import SkeletonNet from "@/components/SkeletonNet";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -108,15 +109,26 @@ export default function DepartmentTicketListPage() {
   
 };
 
+if (error) {
+  return <SkeletonNet width="100%" height="100%" />;
+}
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
         <h2 className="text-lg font-semibold">티켓 조회</h2>
 
         <div className="flex items-center space-x-2 ml-4">
-          <Search onSearchChange={handleSearchChange}  
-            onKeyDown={handleInputKeyDown}
-            onBlur={handleSearch}placeHolder="제목, 담당자, 티켓번호" />
+        <Search_manager
+                    onSearchChange={handleSearchChange} 
+                    placeHolder="제목, 티켓번호, 담당자 검색"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        console.log("검색 실행:", searchTerm);
+                      }
+                    }}
+                    onBlur={() => console.log("검색어 입력 완료:", searchTerm)}
+                  />
         </div>
 
         <div className="ml-auto flex items-center relative">

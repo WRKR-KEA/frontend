@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FilterTab } from '@/components/Filters/filterTab';
 import { useRouter } from 'next/navigation';
 import { HighlightText } from '@/components/highlightText';
+import { FilterTab_Depart } from '../Filters/filterTab_Depart';
 
 type Ticket = {
   ticketId: string;
@@ -87,14 +88,14 @@ console.log("🌟 받은 티켓 데이터:",tickets);
 
   return (
     <div className="bg-white rounded-md">
-      <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
+      <FilterTab_Depart activeTab={activeTab} handleTabClick={handleTabClick} />
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4 h-[50px]">
             <th className="px-2 py-2 w-40 text-center">티켓 번호</th>
             <th className="px-2 py-2 w-36 text-center">상태</th>
             <th className="px-2 py-2 w-36 text-center">카테고리</th>
-            <th className="px-2 py-2 w-60 text-left">제목</th> 
+            <th className="px-2 py-2 w-60 max-w-60 text-left">제목</th> 
             <th className="px-2 py-2 w-32 text-center">담당자</th>
             <th className="px-2 py-2 w-32 text-center">요청자</th>
             <th className="px-2 py-2 w-32 text-center">최근 변경 일시</th>
@@ -118,7 +119,7 @@ console.log("🌟 받은 티켓 데이터:",tickets);
               <td className="px-4 py-2 w-28 text-center truncate">
                 {ticket.firstCategory}/{ticket.secondCategory}
               </td>
-              <td className="px-4 py-2 w-60 truncate text-left">
+              <td className="px-4 py-2 w-60 max-w-60 truncate text-left">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
               <td className="px-4 py-2 w-24 text-center truncate">{ticket.managerNickname}</td>

@@ -15,54 +15,6 @@ export default function SecondTaskDrop({
 }: SecondTaskDropProps) {
   const [isOpen, setIsOpen] = useState(false); // State to toggle the dropdown visibility
 
-  // const options = [
-  //   "추가 (Add)",
-  //   "수정 (Edit)",
-  //   "삭제 (Delete)",
-  //   "기타 (Others)"
-  // ];
-
-//   const getSecondTaskOptions = (service: string) => {
-//     switch (service) {
-//       case "인프라 (Infrastructure)":
-//         return [
-//           "Virtual Machine",
-//           "Bare Metal Server",
-//           "GPU",
-//           "Object Storage",
-//           "File Storage",
-//           "Media Convert",
-//         ];
-//       case "시스템 (System)":
-//         return [
-//           "MySQL",
-//           "PostgreSQL",
-//           "MemStore",
-//           "Kubernetes Engine",
-//           "Container Registry",
-//           "IAM",
-//           "Monitoring",
-//           "Cloud Trail",
-//           "Monitoring Flow",
-//           "Advanced Managed Prometheus",
-//           "Kubeflow",
-//         ];
-//       case "네트워크 (Networking)":
-//         return ["VPC", "Load Balancing", "CDN", "DNS", "Transit Gateway"];
-//       case "기타 (Others)":
-//         return [
-//           "OSS Library",
-//           "Hadoop Eco",
-//           "Data Catalog",
-//           "Data Query",
-//           "Pub/Sub",
-//           "Advanced Managed Kafka",
-//         ];
-//       default:
-//         return [];
-//     }
-//   };
-
   const handleSelect = (requestType: string) => {
     onRequestTypeChange(requestType); 
     setIsOpen(false); 
@@ -81,7 +33,9 @@ export default function SecondTaskDrop({
           alt="Category Icon"
           className="w-6 h-6 mr-2"
         />
-        <span>{selectedRequestType}</span>
+         <span className={selectedRequestType=== "2차 카테고리를 선택해주세요." ? "text-gray-500" : "text-black"}>
+          {selectedRequestType}
+        </span>
         <svg
           className={`w-4 h-4 transform ${isOpen ? "rotate-180" : ""} ml-auto`}
           xmlns="http://www.w3.org/2000/svg"

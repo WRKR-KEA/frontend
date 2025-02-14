@@ -263,13 +263,13 @@ const handleSave = async () => {
                 <>
                   <button
                     onClick={() => handleOpenModal("guide")}
-                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-200"
                   >
                     도움말
                   </button>
                   <button
                     onClick={() => handleOpenModal("template")}
-                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-100"
+                    className="px-3 py-1 bg-gray-50 text-gray-500 text-sm rounded-md hover:bg-gray-200"
                   >
                     템플릿
                   </button>

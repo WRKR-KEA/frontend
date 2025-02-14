@@ -7,6 +7,7 @@ import { TicketList } from "@/components/Tickets/ticketList";
 import Skeleton from "@/components/Skeleton";
 import SkeletonNet from "@/components/SkeletonNet";
 import { useUserMainTicketListQuery } from "@/hooks/useUserMainTicket";
+import useUserStore from '@/stores/userStore';
 
 type Ticket = {
   id: string,
@@ -20,6 +21,7 @@ type Ticket = {
   updatedAt: string,
   startedAt: string,
   completedAt: string,
+  requester: string,
 };
 
 type TicketStatusType = "REQUEST" | "REJECT" | "IN_PROGRESS" | "COMPLETE" | "CANCEL";
@@ -36,6 +38,7 @@ export default function UserHomePage() {
   const maxTicketsToShow = 10;
   const [ticketStatus, setTicketStatus] = useState<TicketStatusType>("REQUEST");
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
+  const user = useUserStore((state) => state.user);
 
   // ✅ React Query를 이용해 티켓 데이터 가져오기
   const { data, isLoading, error } = useUserMainTicketListQuery();
@@ -56,7 +59,9 @@ export default function UserHomePage() {
         updatedAt: ticket.ticketTimeInfo?.updatedAt || "-",
         startedAt: ticket.ticketTimeInfo?.startedAt || "-",
         completedAt: ticket.ticketTimeInfo?.endedAt || "-",      
+        requester: user.name,
       })) || [];
+      
 
       setRequestTickets(requestTicketList);
       console.log("🌟 API 응답 데이터:", requestTicketList);

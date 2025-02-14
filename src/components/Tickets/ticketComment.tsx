@@ -15,10 +15,10 @@ interface Log {
 export interface TicketCommentProps {
   logs: Log[];
   ticketId: string;
-  status:string;
+  status: string;
 }
 
-const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
+const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status }) => {
   const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
@@ -128,12 +128,21 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
       </div>
 
       <div className="flex space-x-2 items-center mt-2">
-        <button onClick={handleFileUploadClick} className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl" type="button">
+        <button
+          onClick={handleFileUploadClick}
+          className="bg-gray-200 rounded-lg p-2 hover:bg-gray-300 hover:rounded-xl"
+          type="button"
+          disabled={status !== 'IN_PROGRESS'}
+        >
           <FiPaperclip className="text-xl text-gray-600" />
         </button>
         <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
 
-        <button className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl" type="button">
+        <button
+          className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl"
+          type="button"
+          disabled={status !== 'IN_PROGRESS'}
+        >
           <FiClock className="text-xl text-red-600" />
         </button>
 
@@ -142,11 +151,17 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={handleKeyPress}
-          placeholder="메시지를 입력하세요..."
+          placeholder={status !== 'IN_PROGRESS' ? '진행 중인 티켓이 아닙니다.' : '메시지를 입력하세요...'}
           className="flex-1 p-2 rounded-lg border border-gray-300"
+          disabled={status !== 'IN_PROGRESS'}
         />
 
-        <button onClick={handleSendMessage} disabled={!message.trim() && !file} className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600" type="button">
+        <button
+          onClick={handleSendMessage}
+          disabled={status !== 'IN_PROGRESS' || (!message.trim() && !file)}
+          className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+          type="button"
+        >
           <FiSend className="text-xl" />
         </button>
       </div>

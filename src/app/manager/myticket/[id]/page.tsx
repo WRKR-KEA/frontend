@@ -87,7 +87,6 @@ export default function ManagerTicketDetailPage() {
   const getTicketDetail = async (ticketId) => {
     const response = await fetchManagerTicket(ticketId);
     const ticket = response.result;
-    console.log('ticke!!!!', ticket);
     return {
       id: ticket.ticketId,
       number: ticket.ticketSerialNumber,
@@ -148,7 +147,7 @@ export default function ManagerTicketDetailPage() {
 
     }
   };
-
+console.log(selectedTicket);
   if (!selectedTicket) {
     return (
     <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">

@@ -83,16 +83,25 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
     const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "xls", "xlsx"]
 
     const newFiles = Array.from(event.target.files);
-    const allowedNewFiles = newFiles.filter((value) => allowedExtensions.some((extension) => value.name.endsWith(extension)))
-    if (allowedNewFiles.length > 5) {
+    if (newFiles.length > 5) {
       showModal("파일 개수 제한 초과", "파일을 다시 선택해주세요.", "확인")
       return;
     }
+
+    const allowedNewFiles = newFiles.filter((file) => allowedExtensions.some((extension) => file.name.endsWith(extension)));
     if (allowedNewFiles.length < newFiles.length) {
-      showModal("허용되지 않는 확장자 포함", "파일을 다시 선택해주세요.", "확인")
+      showModal("허용되지 않는 확장자 포함", "허용되는 확장자의 파일만 선택해주세요.", "확인")
+      return;
     }
-    setFiles((prevFiles) => [...prevFiles, ...allowedNewFiles]);
-    onFileUpload([...files, ...allowedNewFiles]); // ✅ 부모 컴포넌트에 파일 전달
+
+    const validSizeFiles = allowedNewFiles.filter((file) => file.size <= 10 * 1024 * 1024)
+    if (validSizeFiles.length < allowedNewFiles.length) {
+      showModal("파일 크기 제한 초과", "10MB를 넘지 않는 파일만 선택해주세요.", "확인")
+      return;
+    }
+
+    setFiles((prevFiles) => [...prevFiles, ...validSizeFiles]);
+    onFileUpload([...files, ...validSizeFiles]); // ✅ 부모 컴포넌트에 파일 전달
   };
 
   // ✅ 파일 삭제 (업로드된 파일 & 기존 URL 파일 처리)

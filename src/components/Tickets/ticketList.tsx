@@ -46,12 +46,12 @@ export function TicketList({
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-32 min-w-32">티켓 번호</th>
+            <th className="px-4 py-2 w-32 min-w-32 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
-            <th className="px-4 py-2 w-36 min-w-36">카테고리</th>
-            <th className="px-4 py-2 w-60 max-w-60">제목</th>
-            <th className="px-4 py-2 w-24 min-w-24">담당자</th>
-            <th className="px-4 py-2 w-40 min-w-40">최근 변경 일시</th>
+            <th className="px-4 py-2 w-36 min-w-36 text-center">카테고리</th>
+            <th className="px-4 py-2 w-60 max-w-60 text-center">제목</th>
+            <th className="px-4 py-2 w-24 min-w-24 text-center">담당자</th>
+            <th className="px-4 py-2 w-40 min-w-40 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
@@ -61,7 +61,7 @@ export function TicketList({
               className="border-b cursor-pointer hover:bg-gray-100"
               onClick={() => onTicketClick?.(ticket)}
             >
-              <td className="px-4 py-2 border truncate">{ticket.number}</td>
+              <td className="px-4 py-2 border truncate text-center">{ticket.number}</td>
               <td className="px-4 py-2 border truncate text-center">
                 <span
                   className={`inline-block px-2 py-1 border rounded-md truncate text-xs font-semibold ${statusStyles[ticket.status]}`}
@@ -69,12 +69,12 @@ export function TicketList({
                   {ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2 border truncate">
+              <td className="px-4 py-2 border truncate text-center">
                 {ticket.firstCatetory}/{ticket.secondCatetory}
               </td>
               <td className="px-4 py-2 border max-w-60 truncate">{ticket.title}</td>
-              <td className="px-4 py-2 border truncate">{ticket.handler}</td>
-              <td className="px-4 py-2 border truncate">{ticket.updatedAt}</td>
+              <td className="px-4 py-2 border truncate text-center">{ticket.handler}</td>
+              <td className="px-4 py-2 border truncate text-center">{ticket.updatedAt}</td>
             </tr>
           ))}
         </tbody>

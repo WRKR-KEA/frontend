@@ -8,6 +8,7 @@ import Skeleton from "@/components/Skeleton";
 import SkeletonNet from "@/components/SkeletonNet";
 import { useUserMainTicketListQuery } from "@/hooks/useUserMainTicket";
 import useUserStore from '@/stores/userStore';
+import SkeletonZero from "@/components/SkeletonZero"; 
 
 type Ticket = {
   id: string,
@@ -88,12 +89,16 @@ export default function UserHomePage() {
     return <SkeletonNet width="100%" height="100%" />;
   }
 
+  if (tickets.length === 0) {
+    return <SkeletonZero width="100%" height="100%" />;
+  }
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <h2 className="text-lg font-semibold">최근 티켓 정보</h2>
 
       {/* 로딩 중이거나 티켓이 없을 때 스켈레톤 UI */}
-      {isLoading || tickets.length === 0 ? (
+      {isLoading ? (
         <div className="flex space-x-6">
           <Skeleton width="50%" height="200px" />
           <Skeleton width="50%" height="200px" />
@@ -108,7 +113,7 @@ export default function UserHomePage() {
       <h2 className="text-lg font-semibold">최근 티켓 목록</h2>
 
       {/* 티켓 리스트 스켈레톤 UI */}
-      {error || isLoading || tickets.length === 0 ? (
+      {isLoading ? (
         <Skeleton width="100%" height="400px" />
       ) : (
         <TicketList

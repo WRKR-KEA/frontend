@@ -95,7 +95,7 @@ export function TicketList_User({
             <th className="px-4 py-2 w-20 min-w-20 text-center">티켓 번호</th>
             <th className="px-4 py-2 w-24 min-w-24 text-center">상태</th>
             <th className="px-4 py-2 w-32 min-w-24 text-center">카테고리</th>
-            <th className="px-4 py-2 w-60 max-w-60 ">제목</th>
+            <th className="px-4 py-2 w-60 max-w-60 text-center">제목</th>
             <th className="px-4 py-2 w-32 min-w-32 text-center">담당자</th>
             <th className="px-4 py-2 w-44 min-w-44 text-center">최근 변경 일자</th>
           </tr>

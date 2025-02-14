@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Modal from '@/components/Modals/Modal';
+import AlertModal from '@/components/Modals/AlertModal';
 
 interface FileBoxProps {
   onFileUpload: (files: File[]) => void; // ✅ 부모 컴포넌트에 파일 전달
@@ -14,6 +16,31 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
   const [fileUrls, setFileUrls] = useState<string[]>([]); // ✅ 기존 파일 URL 저장
   const [isDragging, setIsDragging] = useState(false);
   const [deletedUrls, setDeletedUrls] = useState<string[]>([]); // ✅ 삭제된 URL 저장
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: '',
+    content: '',
+    btnText: '',
+    onClose: () => { },
+    onClose2: () => { },
+  });
+
+  const showModal = (title: string, content = null, btnText = null, onCloseCallback?: () => void) => {
+    setModalState({
+      isOpen: true,
+      title,
+      content,
+      btnText,
+      onClose: () => {
+        setModalState((prev) => ({ ...prev, isOpen: false }));
+        if (onCloseCallback) onCloseCallback();
+      },
+      onClose2: () => {
+        setModalState((prev) => ({ ...prev, isOpen: false }));
+
+      },
+    });
+  };
 
   console.log("attachments", attachments);
 
@@ -53,9 +80,19 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!event.target.files) return;
 
+    const allowedExtensions = ["jpg", "jpeg", "png", "pdf", "xls", "xlsx"]
+
     const newFiles = Array.from(event.target.files);
-    setFiles((prevFiles) => [...prevFiles, ...newFiles]);
-    onFileUpload([...files, ...newFiles]); // ✅ 부모 컴포넌트에 파일 전달
+    const allowedNewFiles = newFiles.filter((value) => allowedExtensions.some((extension) => value.name.endsWith(extension)))
+    if (allowedNewFiles.length > 5) {
+      showModal("파일 개수 제한 초과", "파일을 다시 선택해주세요.", "확인")
+      return;
+    }
+    if (allowedNewFiles.length < newFiles.length) {
+      showModal("허용되지 않는 확장자 포함", "파일을 다시 선택해주세요.", "확인")
+    }
+    setFiles((prevFiles) => [...prevFiles, ...allowedNewFiles]);
+    onFileUpload([...files, ...allowedNewFiles]); // ✅ 부모 컴포넌트에 파일 전달
   };
 
   // ✅ 파일 삭제 (업로드된 파일 & 기존 URL 파일 처리)
@@ -133,6 +170,16 @@ const FileBox: React.FC<FileBoxProps> = ({ onFileUpload, attachments, setDeleteA
             </li>
           ))}
         </ul>
+      )}
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose2}>
+          <AlertModal
+            title={modalState.title}
+            content={modalState.content}
+            onClick={modalState.onClose}
+            btnText={modalState.btnText}
+          />
+        </Modal>
       )}
     </div>
   );

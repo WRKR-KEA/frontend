@@ -14,7 +14,7 @@ interface GuideModalProps {
   title: string;
   onClose: () => void;
   onSave: (editorContent: string) => void;
-  showModal: () => void;
+  showModal: (title: string, btnText?: string, onCloseCallback?: () => void) => void;
 }
 
 const GuideModal: React.FC<GuideModalProps> = ({ categoryId, isOpen, title, onClose, onSave, showModal }) => {

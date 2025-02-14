@@ -12,8 +12,7 @@ interface TemplateModalProps {
   isOpen: boolean;
   title: string;
   onClose: () => void;
-  refetchList: () => void;
-  showModal: () => void;
+  showModal: (title: string, btnText?: string, onCloseCallback?: () => void) => void;
 }
 
 const TemplateModal: React.FC<TemplateModalProps> = ({ categoryId, isOpen, title, onClose, showModal }) => {

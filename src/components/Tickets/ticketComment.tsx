@@ -29,34 +29,38 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
 
   useEffect(() => {
     if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop =
-        chatContainerRef.current.scrollHeight;
+      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
     }
   }, [logs]);
 
-  const displayLogs =
-    logs?.length === 0 ? [{ log: '소통 내역이 없습니다.' }] : logs;
-
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = e.target.files?.[0];
-    if (selectedFile) {
-      setFile(selectedFile);
-    }
-  };
+  const displayLogs = logs.length === 0 ? [{ log: '소통 내역이 없습니다.' }] : logs;
 
   const handleFileUploadClick = () => {
     fileInputRef.current?.click();
   };
 
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    const selectedFile = e.target.files[0];
+    setFile(selectedFile);
+
+    // Reset file input for next selection
+    e.target.value = '';
+  };
+
   const handleSendMessage = async () => {
     if (!message.trim() && !file) return;
     if (isLoading) return;
-
+  
     try {
       setIsLoading(true);
       const attachments: File[] = file ? [file] : [];
+  
+      // 파일과 메시지 모두 전송
       await postComment(ticketId, message, attachments);
-      queryClient.refetchQueries({ queryKey: ['comments', { ticketId }] });
+      queryClient.invalidateQueries({ queryKey: ['comments', { ticketId }] });
+  
+      // Clear message and file state after sending
       setMessage('');
       setFile(null);
     } catch (error) {
@@ -76,7 +80,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
   return (
     <div className="bg-component rounded-md p-4 flex flex-col h-[460px]">
       <div ref={chatContainerRef} className="overflow-y-auto pr-2 flex-1 hide-scrollbar">
-        {displayLogs?.map((log, index) => (
+        {displayLogs.map((log, index) => (
           <div key={index} className="flex flex-col mb-2">
             {log.log && (
               <div className="flex items-center justify-center mb-1">

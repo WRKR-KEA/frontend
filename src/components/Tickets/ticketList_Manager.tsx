@@ -61,12 +61,18 @@ export function TicketList_Manager({
   });
 
   useEffect(() => {
+    // 티켓 상태 변경 시 localTickets 업데이트
     setLocalTickets(tickets);
+    console.log("바뀐 티켓",tickets);
   }, [tickets]);
+
+  useEffect(() => {
+    // activeTab이 변경될 때마다 해당 탭에 맞는 티켓을 필터링
+    onStatusChange(activeTab);
+  }, [activeTab, onStatusChange]);
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
-    onStatusChange(tab);
   };
 
   const handleTicketClick = (ticketId: string) => {
@@ -105,6 +111,8 @@ export function TicketList_Manager({
           ticket.id === ticketId ? { ...ticket, isPinned: !currentPinStatus } : ticket
         )
       );
+
+      onStatusChange(activeTab);
     } catch (err) {
       console.error("Error while pinning/unpinning the ticket:", err);
       showModal("핀 고정은 최대 10개까지 가능합니다.");
@@ -127,70 +135,70 @@ export function TicketList_Manager({
   return (
     <div className="bg-white rounded-md relative">
       <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
-      {tickets.length === 0 ?(
+      {tickets.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-4 text-gray-500">
-        <p className="text-md">검색 결과가 없습니다.</p>
-      </div>
+          <p className="text-md">검색 결과가 없습니다.</p>
+        </div>
       ) : (
         <>
-      <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-8 max-w-8"></th>
-            <th className="px-4 py-2 w-28 max-w-28 text-center border">티켓 번호</th>
-            <th className="px-4 py-2 w-24 max-w-24 text-center">상태</th>
-            <th className="px-4 py-2 w-32 max-w-24 text-center">카테고리</th>
-            <th className="px-4 py-2 w-80 max-w-80 text-center">제목</th>
-            <th className="px-4 py-2 w-32 max-w-32 text-center">요청자</th>
-            <th className="px-4 py-2 w-36 max-w-36 text-center">최근 변경 일시</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sortedTickets.map((ticket) => (
-            <tr
-              key={ticket.id}
-              className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
-              onClick={() => handleTicketClick(ticket.id)}
-            >
-              <td
-                className="px-3 py-2 border max-w-8"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handlePinClick(ticket.id, ticket.isPinned);
-                }}
-              >
-                {ticket.isPinned ? (
-                  <MdPushPin className="text-accent-1" size={20} />
-                ) : (
-                  <MdOutlinePushPin className="text-gray-4" size={20} />
-                )}
-              </td>
-              <td className="px-4 py-2 max-w-28 border text-center truncate">
-                <HighlightText text={ticket.serialNumber} highlight={searchTerm} />
-              </td>
-              <td className="px-4 py-2 max-w-24 border text-center truncate">
-                <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
-                  {ticket.status}
-                </span>
-              </td>
-              <td className="px-4 py-2 border max-w-24 text-center truncate">
-                {ticket.firstCategory}/{ticket.secondCategory}
-              </td>
-              <td className="px-4 py-2 border truncate max-w-80 whitespace-nowrap">
-                <HighlightText text={ticket.title} highlight={searchTerm} />
-              </td>
-              <td className="px-4 py-2 max-w-32 border text-center truncate text-center">{ticket.requesterNickname}</td>
-              <td className="px-4 py-2 max-w-36 border text-center truncate text-center">{ticket.updatedAt}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal title={modalState.title} onClick={modalState.onClose} btnText={modalState.btnText} />
-        </Modal>
-      )}
-      </>
+          <table className="w-full text-sm border-collapse">
+            <thead>
+              <tr className="bg-gray-6 text-left border-b border-gray-4">
+                <th className="px-4 py-2 w-8 max-w-8"></th>
+                <th className="px-4 py-2 w-28 max-w-28 text-center border">티켓 번호</th>
+                <th className="px-4 py-2 w-24 max-w-24 text-center">상태</th>
+                <th className="px-4 py-2 w-32 max-w-24 text-center">카테고리</th>
+                <th className="px-4 py-2 w-80 max-w-80 text-center">제목</th>
+                <th className="px-4 py-2 w-32 max-w-32 text-center">요청자</th>
+                <th className="px-4 py-2 w-36 max-w-36 text-center">최근 변경 일시</th>
+              </tr>
+            </thead>
+            <tbody>
+              {sortedTickets.map((ticket) => (
+                <tr
+                  key={ticket.id}
+                  className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
+                  onClick={() => handleTicketClick(ticket.id)}
+                >
+                  <td
+                    className="px-3 py-2 border max-w-8"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handlePinClick(ticket.id, ticket.isPinned);
+                    }}
+                  >
+                    {ticket.isPinned ? (
+                      <MdPushPin className="text-accent-1" size={20} />
+                    ) : (
+                      <MdOutlinePushPin className="text-gray-4" size={20} />
+                    )}
+                  </td>
+                  <td className="px-4 py-2 max-w-28 border text-center truncate">
+                    <HighlightText text={ticket.serialNumber} highlight={searchTerm} />
+                  </td>
+                  <td className="px-4 py-2 max-w-24 border text-center truncate">
+                    <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
+                      {ticket.status}
+                    </span>
+                  </td>
+                  <td className="px-4 py-2 border max-w-24 text-center truncate">
+                    {ticket.firstCategory}/{ticket.secondCategory}
+                  </td>
+                  <td className="px-4 py-2 border truncate max-w-80 whitespace-nowrap">
+                    <HighlightText text={ticket.title} highlight={searchTerm} />
+                  </td>
+                  <td className="px-4 py-2 max-w-32 border text-center truncate text-center">{ticket.requesterNickname}</td>
+                  <td className="px-4 py-2 max-w-36 border text-center truncate text-center">{ticket.updatedAt}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {modalState.isOpen && (
+            <Modal onClose={modalState.onClose}>
+              <AlertModal title={modalState.title} onClick={modalState.onClose} btnText={modalState.btnText} />
+            </Modal>
+          )}
+        </>
       )}
     </div>
   );

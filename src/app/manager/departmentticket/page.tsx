@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { TicketList_Depart } from "@/components/Tickets/ticketList_Depart";
 import { FilterNum } from "@/components/Filters/filterNum";
-import { Search_manager } from "@/components/search_manager";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
@@ -15,6 +14,7 @@ import Button from "@/components/Buttons/Button";
 import Skeleton from "@/components/Skeleton";
 import SkeletonNet from "@/components/SkeletonNet";
 import SkeletonZero from "@/components/SkeletonZero"; 
+import { Search_depart } from "@/components/search_depart";
 
 export default function DepartmentTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -120,7 +120,7 @@ if (error) {
         <h2 className="text-lg font-semibold">티켓 조회</h2>
 
         <div className="flex items-center space-x-2 ml-4">
-        <Search_manager
+        <Search_depart
                     onSearchChange={handleSearchChange} 
                     placeHolder="제목, 티켓번호, 담당자 검색"
                     onKeyDown={(e) => {
@@ -161,8 +161,6 @@ if (error) {
           <div className="flex flex-col items-center space-y-4">
             <Skeleton width="100%" height="600px" />
           </div>
-        ) :tickets.length === 0 ? (
-          <SkeletonZero width="100%" height="40%" /> 
         ) : (
           <>
             <TicketList_Depart

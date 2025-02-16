@@ -61,7 +61,6 @@ export default function LogPage() {
   };
 
   const handleSearch = () => {
-  
     setSearchTrigger(searchTerm); // ✅ 현재 검색어로 실행
     setCurrentPage(1); // 검색 시 첫 페이지로 이동
   
@@ -74,7 +73,7 @@ export default function LogPage() {
 
   const loadLogs = async () => {
     try {
-
+      
       const response = await fetchAdminAccessLogs(
         currentPage,
         itemsPerPage,
@@ -109,6 +108,7 @@ export default function LogPage() {
   };
 
   const handleDateChange = (ranges: any) => {
+    setCurrentPage(1)
     setDateRange(ranges.selection);
   };
 
@@ -225,10 +225,10 @@ export default function LogPage() {
             <tr key={log.id} className="hover:bg-gray-50">
               <td className="p-3 border">{log.id}</td>
               <td className="p-3 border">
-                <HighlightText text={log.user} highlight={searchTerm} />
+                <HighlightText text={log.user} highlight={searchTrigger} />
               </td>
               <td className="p-3 border">
-                <HighlightText text={log.ip} highlight={searchTerm} />
+                <HighlightText text={log.ip} highlight={searchTrigger} />
               </td>
               <td className="p-3 border">{log.timestamp}</td>
               <td className="p-3 border">{log.action}</td>

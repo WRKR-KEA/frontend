@@ -238,28 +238,28 @@ export default function Sidebar({ user }: SidebarProps) {
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
                                     <li>
-                                        <Link
+                                        <a
                                             href="/manager/myticket"
                                             className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/manager/myticket" ? "bg-[#FFFFFF]/20" : ""
                                             }`}
-                                            prefetch
+                                            
                                         >
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 담당 티켓
                                             </span>
-                                        </Link>
+                                        </a>
                                     </li>
                                     <li>
-                                        <Link
+                                        <a
                                             href="/manager/departmentticket"
                                             className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/manager/departmentticket" ? "bg-[#FFFFFF]/20" : ""
                                                 }`}
-                                            prefetch
+                                            
                                         >
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 부서 티켓
                                             </span>
-                                        </Link>
+                                        </a>
                                     </li>
                                 </ul>
                             </li>
@@ -405,16 +405,16 @@ export default function Sidebar({ user }: SidebarProps) {
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
                                     <li>
-                                        <Link
+                                        <a
                                             href="/administer/memberlist"
                                             className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/administer/memberlist" ? "bg-[#FFFFFF]/20" : ""
                                             }`}
-                                            prefetch
+                                            
                                         >
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 회원 조회
                                             </span>
-                                        </Link>
+                                        </a>
                                     </li>
                                     <li>
                                         <Link
@@ -458,11 +458,11 @@ export default function Sidebar({ user }: SidebarProps) {
 
 
                             <li className="ml-3 mr-3">
-                                <Link
-                                    href="/administer/log"
+                                <a
+                                    href={`/administer/log`}
                                     className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/administer/log" ? "bg-[#FFFFFF]/20" : ""
                                     }`}
-                                    prefetch
+                                    
                                 >
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="ml-4">
                                         <path
@@ -474,7 +474,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                         접속 로그 조회
                                     </span>
-                                </Link>
+                                </a>
                             </li>
 
                         </ul>)}

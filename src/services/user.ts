@@ -157,9 +157,10 @@ export async function postTicket(ticketData: {
 }) {
   try {
     const { data } = await api.post("/api/user/tickets", ticketData);
-    return data;
+    return { result: data, error: null };
   } catch (error: any) {
     console.error("사용자 티켓 요청에 실패했습니다. :", error);
+    return { result: null, error: error }; // 오류가 발생하면 error를 반환
   }
 }
 

@@ -108,9 +108,8 @@ export default function LogPage() {
   };
 
   const handleDateChange = (ranges: any) => {
-    
+    setCurrentPage(1)
     setDateRange(ranges.selection);
-    
   };
 
   const toggleCalendar = () => {

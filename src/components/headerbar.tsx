@@ -1,7 +1,7 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation"; // 수정된 import
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import path from "path";
 import userStore from "@/stores/userStore"; // ✅ zustand 스토어 import
 import axios from "axios";
@@ -9,11 +9,12 @@ import api from "@/lib/api/axios";
 
 export default function Headerbar() {
     const pathname = usePathname(); // 현재 경로 가져오기
-    const [activeModal, setActiveModal] = useState<null | string>(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true); // 사이드바 상태 관리
     const router = useRouter(); // ✅ 페이지 이동을 위한 useRouter
     const { user, setUser } = userStore(); // ✅ zustand에서 setUser 가져오기
     const [notificationData, setNotificationData] = useState<any[]>([]); // notificationData 상태 추가
+    const [activeModal, setActiveModal] = useState(null);
+    const modalRef = useRef(null); // ✅ 모달을 감지하기 위한 ref 추가
 
     const [modalState, setModalState] = useState({
         isOpen: false,
@@ -42,6 +43,25 @@ export default function Headerbar() {
     const toggleModal = (modalType: string) => {
         setActiveModal((prev) => (prev === modalType ? null : modalType));
     };
+
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (modalRef.current && !modalRef.current.contains(event.target)) {
+                setActiveModal(null);
+            }
+        };
+
+        if (activeModal) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [activeModal]);
 
     const pageTitle = (() => {
         switch (true) {
@@ -159,7 +179,9 @@ export default function Headerbar() {
                                         fill="black" />
                                 </svg>
                                 {activeModal === "notification" && (
-                                    <div className="absolute right-[-22px] top-9 w-80 bg-white border rounded-md shadow-lg p-4 z-[100]">
+                                    <div 
+                                    ref={modalRef} // ✅ 모달 ref 추가
+                                    className="absolute right-[-22px] top-9 w-80 bg-white border rounded-md shadow-lg p-4 z-[100]">
                                     {/* 말풍선 뾰족한 부분 */}
                                     <div className="absolute top-[-10px] right-6 w-4 h-4 bg-white border-t border-l rotate-45 transform origin-center"></div>
                                     <p className="text-gray-700 mb-2">Notification</p>
@@ -209,7 +231,9 @@ export default function Headerbar() {
                                         strokeWidth="1.5" strokeLinecap="round" />
                                 </svg>
                                 {activeModal === "ticket" && (
-                                    <div className="absolute right-[-22px] top-9 w-80 bg-white border rounded-md shadow-lg p-4 z-[100]">
+                                    <div 
+                                    ref={modalRef} // ✅ 모달 ref 추가
+                                    className="absolute right-[-22px] top-9 w-80 bg-white border rounded-md shadow-lg p-4 z-[100]">
                                         {/* 말풍선 뾰족한 부분 */}
                                         <div className="absolute top-[-10px] right-6 w-4 h-4 bg-white border-t border-l rotate-45 transform origin-center"></div>
                                         <p className="text-gray-700 mb-2">Activities</p>
@@ -245,7 +269,8 @@ export default function Headerbar() {
                                     </div>
 
                                 )}
-                            </li></> )}
+                            </li>
+                        </> )}
 
 
 

@@ -15,14 +15,16 @@ export default function LoginPage() {
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
+    content: "",
     btnText: '',
     onClose: () => { },
   });
 
-  const showModal = (title: string, btnText = '닫기', onCloseCallback?: () => void) => {
+  const showModal = (title: string, content: string, btnText = '닫기', onCloseCallback?: () => void) => {
     setModalState({
       isOpen: true,
       title,
+      content,
       btnText,
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
@@ -92,14 +94,14 @@ export default function LoginPage() {
 
       // 임시 비밀번호인 경우 변경 페이지로 이동
       if (response.data.result.isTempPassword) {
-        showModal("최초 로그인 시 비밀번호 변경이 필요합니다.", "확인", ()=>{
+        showModal("최초 로그인 시 비밀번호 변경이 필요합니다.", "","확인", () => {
           router.push("/changepassword")
         })
-        
+
 
       } else {
         // 로그인 성공 시 리다이렉트
-        showModal("로그인 성공!", "확인", ()=>{
+        showModal("로그인 성공!", "", "확인", () => {
           switch (response.data.result.role) {
             case "USER":
               router.push("/user/home");
@@ -113,13 +115,15 @@ export default function LoginPage() {
           }
         })
 
-        
+
       }
     } catch (err: any) {
       console.error("로그인 에러:", err);
 
       // ✅ 서버 응답 메시지가 있으면 alert 표시
-      if (err.response?.data?.message) {
+      if (err.response.data.code == "AUTH_302"){
+        showModal("비밀번호를 5회 연속 잘못 입력하였습니다.", "30분 동안 계정이 잠깁니다.", "확인");
+      } else if (err.response?.data?.message) {
         showModal(err.response.data.message);
       } else {
         showModal("서버와 통신 중 오류가 발생했습니다.");
@@ -228,6 +232,7 @@ export default function LoginPage() {
           <Modal onClose={modalState.onClose}>
             <AlertModal
               title={modalState.title}
+              content={modalState.content}
               onClick={modalState.onClose}
               btnText={modalState.btnText}
             />

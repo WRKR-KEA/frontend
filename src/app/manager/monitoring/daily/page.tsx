@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import DatePicker from 'react-datepicker';
@@ -102,7 +102,7 @@ export default function DailyMonitoring() {
         },
     });
     const [lineChartSeries, setLineChartSeries] = useState<{ name: string; data: number[] }>();
-
+    const datepickerRef = useRef(null); // ✅ 캘린더 감지용 ref
     const fetchTicketCountByCategory = async (date: string) => {
         try {
             const res = await postManagerStatistics('DAILY', { date });
@@ -288,11 +288,30 @@ export default function DailyMonitoring() {
         }));
     }, [lineChartData]);
 
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (datepickerRef.current && !datepickerRef.current.contains(event.target)) {
+                setIsCalendarOpen(false);
+            }
+        };
+
+        if (isCalendarOpen) {
+            document.addEventListener("mousedown", handleClickOutside);
+        } else {
+            document.removeEventListener("mousedown", handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [isCalendarOpen]);
+
     return (
         <div className="flex flex-col gap-8 p-8">
             <div className="flex items-center justify-between relative z-[50]">
                 <h2 className="text-md font-semibold">상태별 티켓 요약</h2>
-                <div className="relative">
+                <div className="relative" ref={datepickerRef}>
                     <button
                         className="flex items-center text-sm font-medium text-main-2 hover:text-main-1 px-4 py-2 rounded-md"
                         onClick={toggleCalendar}
@@ -304,7 +323,7 @@ export default function DailyMonitoring() {
                     </button>
 
                     {isCalendarOpen && (
-                        <div className="absolute top-12 right-0 bg-white border shadow-lg rounded-md p-4">
+                        <div className="absolute top-12 right-0 bg-none border-none rounded-md">
                             <DatePicker
                                 selected={selectedDate}
                                 onChange={handleDateChange}
@@ -364,16 +383,21 @@ export default function DailyMonitoring() {
                             type="donut"
                             height={350}
                         />
-                    ) : (
-                        <Skeleton />
-                    )}
+                    ) : 
+                        <Skeleton width='100%' height='300px' />
+                    }
                 </div>
                 <div className="bg-white p-6 rounded-lg shadow-md">
                     <h4 className="text-lg text-gray-800 mb-4">
                         {selectedCategoryName ? `${selectedCategoryName}에서 요청된 티켓` : '카테고리를 선택해주세요'}
                     </h4>
-                    <Chart options={secondCategoryDonutChartOptions} series={secondCategoryDonutChartSeries}
-                        type="donut" height={300} />
+                    {
+                        firstCategoryDonutChartSeries.length > 0 ? (
+                            <Chart options={secondCategoryDonutChartOptions} series={secondCategoryDonutChartSeries}
+                                type="donut" height={350} />
+                        ) : <Skeleton width='100%' height='300px' />
+                    }
+
                 </div>
             </div>
         </div>

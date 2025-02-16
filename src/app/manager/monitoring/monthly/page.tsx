@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import DatePicker from 'react-datepicker';
@@ -12,6 +12,7 @@ import {
   postManagerStatistics,
   postSecondCategoryManagerStatistics,
 } from '@/services/manager';
+import Skeleton from '@/components/Skeleton';
 
 const Chart = dynamic(() => import('react-apexcharts'), { ssr: false });
 const getCssVariable = (variable: string) => {
@@ -30,7 +31,7 @@ export default function Dashboard() {
   };
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(new Date());
-
+  const datepickerRef = useRef(null); // ✅ 캘린더 감지용 ref
   const formattedDate = `${selectedDate.getFullYear()}-${(selectedDate.getMonth() + 1)
     .toString()
     .padStart(2, '0')}-01`;
@@ -180,6 +181,7 @@ export default function Dashboard() {
         return colors[index % colors.length];
       });
 
+
       const updatedLabels = ticketCountByCategory?.map((item) => item.categoryName);
       const updatedSeries = ticketCountByCategory?.map((item) => item.count);
       const updatedCategoryIds = ticketCountByCategory?.map((item) => item.categoryId);
@@ -268,6 +270,23 @@ export default function Dashboard() {
   }, [barChartStatusFilter]);
 
   useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (datepickerRef.current && !datepickerRef.current.contains(event.target)) {
+        setIsCalendarOpen(false);
+      }
+    };
+    if (isCalendarOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [isCalendarOpen]);
+
+  useEffect(() => {
 
     const updatedBarChartSeries = barChartData?.map((value) => value.count);
     setBarChartSeries({ name: '티켓 개수', data: updatedBarChartSeries });
@@ -298,7 +317,7 @@ export default function Dashboard() {
       {/* 상단 바 */}
       <div className="flex items-center justify-between relative z-[50]">
         <h2 className="text-md font-semibold">월간 모니터링</h2>
-        <div className="relative">
+        <div className="relative" ref={datepickerRef}>
           {/* 달력 버튼 */}
           <button
             className="flex items-center text-sm font-medium text-main-2 hover:text-main-1 px-4 py-2 rounded-md"
@@ -314,7 +333,7 @@ export default function Dashboard() {
 
           {/* 달력 */}
           {isCalendarOpen && (
-            <div className="absolute top-12 right-0 bg-white border shadow-lg rounded-md p-4">
+            <div className="absolute top-12 right-0 bg-none border-none rounded-md">
               <DatePicker
                 selected={selectedDate}
                 onChange={handleDateChange}
@@ -374,15 +393,20 @@ export default function Dashboard() {
               height={350}
             />
           ) : (
-            <p>Loading chart data...</p>
+            <Skeleton width='100%' height='300px' />
           )}
         </div>
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h4 className="text-lg text-gray-800 mb-4">
             {selectedCategoryName ? `${selectedCategoryName}에서 요청된 티켓` : '카테고리를 선택해주세요'}
           </h4>
-          <Chart options={secondCategoryDonutChartOptions} series={secondCategoryDonutChartSeries}
-            type="donut" height={300} />
+          {
+            firstCategoryDonutChartSeries.length > 0 ? (
+              <Chart options={secondCategoryDonutChartOptions} series={secondCategoryDonutChartSeries}
+                type="donut" height={300} />
+            ) : <Skeleton width='100%' height='300px' />
+          }
+
         </div>
       </div>
     </div>

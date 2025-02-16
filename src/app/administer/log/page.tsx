@@ -11,6 +11,7 @@ import { fetchAdminAccessLogs, fetchAdminAccessLogsExcel } from "@/services/admi
 import Button from "@/components/Buttons/Button";
 import { format } from 'date-fns';
 import axios from "axios";
+import { HighlightText } from "@/components/highlightText";
 
 interface LogEntry {
   id: number;
@@ -35,7 +36,7 @@ export default function LogPage() {
   const [itemsPerPage, setitemsPerPage] = useState(20);
   const [totalPages, setTotalPages] = useState(0); // 🔹 totalPages 상태 추가
   const [totalElements, setTotalElements] = useState(0); // 🔹 전체 요소 개수 추가
-
+  const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
   // Date Range Picker 관련 상태 및 핸들러
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [dateRange, setDateRange] = useState({
@@ -43,22 +44,36 @@ export default function LogPage() {
     endDate: null,
     key: "selection",
   });
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+  };
+
+
+
   //enter 키를 눌렀을 때 API 요청
-  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       console.log("🔍 검색 실행:", searchTerm);
+      setSearchTrigger(searchTerm); // ✅ 현재 검색어로 실행
       setCurrentPage(1); // 검색 시 첫 페이지로 이동
       loadLogs(); // 🔹 API 요청 실행
     }
   };
 
+  const handleSearch = () => {
+    setSearchTrigger(searchTerm); // ✅ 현재 검색어로 실행
+    setCurrentPage(1); // 검색 시 첫 페이지로 이동
+  
+};
+
+  
   useEffect(() => {
     loadLogs(); // 🔹[추가] 컴포넌트 마운트 시 로그 불러오기
   }, [activeTab, currentPage, itemsPerPage, dateRange]);
 
   const loadLogs = async () => {
     try {
-
+      
       const response = await fetchAdminAccessLogs(
         currentPage,
         itemsPerPage,
@@ -93,6 +108,7 @@ export default function LogPage() {
   };
 
   const handleDateChange = (ranges: any) => {
+    setCurrentPage(1)
     setDateRange(ranges.selection);
   };
 
@@ -145,15 +161,17 @@ export default function LogPage() {
           <h2 className="text-md font-semibold">로그 조회</h2>
           <div className="flex items-center space-x-2 ml-4">
             <div className="flex items-center border-b p-2">
-              <FaSearch className="text-gray-500 mr-2" />
+              
               <input
                 type="text"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                onKeyDown={handleSearchKeyDown}
-                placeholder="닉네임, IP 검색"
+                onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
+                onBlur={handleSearch}
+                placeholder="회원 아이디, IP 검색"
                 className="outline-none text-sm"
               />
+              <FaSearch className="text-gray-500 mr-2" />
             </div>
           </div>
         </div>
@@ -195,7 +213,7 @@ export default function LogPage() {
         <thead className="bg-gray-100">
           <tr>
             <th className="p-3 border w-1/12">ID</th>
-            <th className="p-3 border w-2/12">회원 닉네임</th>
+            <th className="p-3 border w-2/12">회원 아이디</th>
             <th className="p-3 border w-2/12">IP</th>
             <th className="p-3 border w-3/12">접근 시간</th>
             <th className="p-3 border w-2/12">접근 유형</th>
@@ -206,8 +224,12 @@ export default function LogPage() {
           {logs.slice(0, itemsPerPage).map((log) => (
             <tr key={log.id} className="hover:bg-gray-50">
               <td className="p-3 border">{log.id}</td>
-              <td className="p-3 border">{log.user}</td>
-              <td className="p-3 border">{log.ip}</td>
+              <td className="p-3 border">
+                <HighlightText text={log.user} highlight={searchTrigger} />
+              </td>
+              <td className="p-3 border">
+                <HighlightText text={log.ip} highlight={searchTrigger} />
+              </td>
               <td className="p-3 border">{log.timestamp}</td>
               <td className="p-3 border">{log.action}</td>
               <td className="p-3 border text-center">

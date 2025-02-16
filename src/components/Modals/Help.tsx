@@ -36,9 +36,10 @@ async function markdownToHtml(markdown: string) {
 interface HelpProps {
   title: string;
   content: string;
+  fileUrls: string[];
 }
 
-const Help: React.FC<HelpProps> = ({ title, content }) => {
+const Help: React.FC<HelpProps> = ({ title, content, fileUrls }) => {
   const [htmlContent, setHtmlContent] = useState<string>("");
 
   useEffect(() => {
@@ -50,15 +51,40 @@ const Help: React.FC<HelpProps> = ({ title, content }) => {
     convertMarkdownToHtml();
   }, [content]);
 
+  const extractFileName = (url: string) => {
+    const fileName = decodeURIComponent(url.split("/").pop()?.split("?")[0] || "파일");
+    return fileName.replace(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/, '');
+  };
+
   return (
-    <div>
-      <h2 className="text-2xl font-semibold">{title}</h2>
-      <div className="border-t border-gray-300 mt-4" />
-      <div
-        className="text-sm mt-2"
-        dangerouslySetInnerHTML={{ __html: htmlContent }} 
-      />
-    </div>
+    <>
+      <h2 className="text-lg font-bold ">{title}</h2>
+      <div className="max-h-[544px] overflow-auto hide-scrollbar">
+        <div>
+          <div
+            className="text-sm mt-2"
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        </div>
+        {fileUrls.length > 0 && (
+          <div className="mt-4">
+            <hr />
+            <h2 className="mt-4 text-lg font-bold">첨부파일</h2>
+            <ul className="rounded-md px-3">
+              {fileUrls.map((url, index) => (
+                <li key={index}
+                    className="flex justify-between items-center border-b last:border-none p-2">
+                  <a href={url} target="_blank" rel="noopener noreferrer"
+                     className="text-blue-500 text-sm">
+                    {extractFileName(url)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
 

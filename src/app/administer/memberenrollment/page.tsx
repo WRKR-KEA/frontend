@@ -7,6 +7,7 @@ import Button from "@/components/Buttons/Button";
 import { fetchMemberRegisterExcelForm, postMemberRegisterExcelFile } from "@/services/admin";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
+import axios from "axios";
 
 const AdminMemberEnrollPage: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -23,19 +24,22 @@ const AdminMemberEnrollPage: React.FC = () => {
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
+    content: "",
     btnText: '',
     onClose: () => { },
   });
 
 
 
-  const showModal = (title: string, btnText = '닫기') => {
+  const showModal = (title: string, content="", btnText = '닫기', onCloseCallback?: () => void) => {
     setModalState({
       isOpen: true,
       title,
+      content,
       btnText,
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
+        if (onCloseCallback) onCloseCallback();
       },
 
     });
@@ -88,19 +92,21 @@ const AdminMemberEnrollPage: React.FC = () => {
     }
 
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // ✅ 인증 토큰 추가
-        },
-        body: formDataToSend, // ✅ multipart/form-data 형식으로 전송
-      });
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/admin/members`,
+        formDataToSend, // ✅ multipart/form-data 전송
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`, // ✅ 인증 토큰 추가
+            "Content-Type": "multipart/form-data", // ✅ Axios는 자동 처리하지만 명시적으로 추가
+          },
+        }
+      );
 
-      const data = await response.json();
-      console.log("서버 응답:", data); // ✅ 서버 응답 확인
+      console.log("서버 응답:", response.data); // ✅ 서버 응답 확인
 
-      if (response.ok) {
-        showModal("회원이 성공적으로 등록되었습니다.");
+      if (response.status === 201 || response.status === 200) {
+        
         setFormData({
           nickname: "",
           role: "USER", // Swagger API에 맞게 "USER" 유지
@@ -112,16 +118,45 @@ const AdminMemberEnrollPage: React.FC = () => {
           phone: "",
           position: "",
         });
+        showModal("회원이 성공적으로 등록되었습니다.","", "확인", ()=>{
+          router.push("/administer/memberlist")
+        });
       } else {
-        showModal(`회원 등록 실패: ${data.message || "서버에서 요청을 거부했습니다."}`);
+        throw response.data
       }
     } catch (error) {
-      console.error("회원 등록 중 오류 발생:", error);
-      showModal("회원 등록 중 오류가 발생했습니다.");
+      console.error("❌ 회원 등록 중 오류 발생:", error);
+
+      // ✅ 에러 응답에서 첫 번째 오류 메시지 추출
+      if (axios.isAxiosError(error) && error.response?.data?.result) {
+        const responseData = error.response?.data;
+
+    if (responseData?.result && typeof responseData.result === "object") {
+        // ✅ result가 객체인 경우
+        const firstKey = Object.keys(responseData.result)?.[0]; // 첫 번째 key 가져오기
+        console.log(firstKey)
+        const firstValue = firstKey ? responseData.result[firstKey]: "알 수 없는 오류";
+        if (firstKey == 'nickname'){          
+          showModal(firstValue,`아이디는 3~10자의 영문 소문자로 시작하고, 점(.)과 1~5자의 영문 소문자로 이루어져야 합니다.`,"확인");
+        }else if (firstKey == 'phone'){
+          showModal(firstValue,`전화번호 형식은 000-0000-0000입니다.`, "확인");
+        }
+        else{
+          const firstValue = firstKey ? responseData.result[firstKey] : "알 수 없는 오류";
+          showModal(`${firstValue}`);
+        }
+    } else {
+        // ✅ result가 객체가 아닌 경우
+        showModal(responseData?.result);
+    }
+      } else {
+        showModal(error.response.data.message);
+      }
     } finally {
       setLoading(false);
     }
   };
+
 
 
 
@@ -279,7 +314,7 @@ const AdminMemberEnrollPage: React.FC = () => {
             </div>
 
 
-            <div className="flex justify-end ml-20 w-full"> {/* 여백 추가 */}
+            <div className="flex justify-end ml-20 w-full">
 
             </div>
           </div>
@@ -327,7 +362,7 @@ const AdminMemberEnrollPage: React.FC = () => {
                 onChange={handleChange}
                 className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none"
                 placeholder="아지트 URL을 입력하세요"
-               
+
               />
             </div>
 
@@ -392,6 +427,7 @@ const AdminMemberEnrollPage: React.FC = () => {
           <Modal onClose={modalState.onClose}>
             <AlertModal
               title={modalState.title}
+              content={modalState.content}
               onClick={modalState.onClose}
               btnText={modalState.btnText}
             />

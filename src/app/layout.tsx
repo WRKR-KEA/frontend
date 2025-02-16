@@ -33,13 +33,14 @@ export default function RootLayout({
     onClose:()=>{},
   })
 
-  const showModal = (title: string, btnText='닫기') => {
+  const showModal = (title: string, btnText='닫기', onCloseCallback?: () => void) => {
       setModalState({
       isOpen: true,
       title,
       btnText,
       onClose: () => {
           setModalState(prev => ({ ...prev, isOpen: false }));
+          if (onCloseCallback) onCloseCallback();
       },
 
       });
@@ -100,7 +101,7 @@ const refreshAccessToken = async () => {
     }
   } catch (error) {
     console.error("❌ 토큰 갱신 중 오류 발생:", error);
-
+    
     if (axios.isAxiosError(error)) {
       console.error("📌 오류 응답 상태 코드:", error.response?.status);
       console.error("📌 오류 메시지:", error.response?.data?.message || "서버 오류 발생");
@@ -108,6 +109,11 @@ const refreshAccessToken = async () => {
     } else {
       console.error("📌 예기치 않은 오류:", error);
     }
+    showModal("토큰이 유효하지 않습니다. 다시 로그인해주세요", "확인", ()=>{
+      router.push("/login")
+      sessionStorage.removeItem("accessToken");
+      sessionStorage.removeItem("refreshToken");
+    })
   }
 };
 
@@ -115,13 +121,14 @@ const refreshAccessToken = async () => {
   useEffect(() => {
     const accessToken = sessionStorage.getItem('accessToken');
 
-    if (!accessToken) {
-      showModal("로그인이 필요합니다.");
-      router.push('/login'); // ✅ 로그인 페이지로 이동 😎push 대신 replace 사용
+    if (!accessToken && pathname!='/reissuepassword') {
+      router.push('/login');     
     } else {
       refreshAccessToken();
-    }
+    } 
+   
   },[pathname]);
+
   return (
     <html lang="ko" >
     <head>
@@ -140,8 +147,6 @@ const refreshAccessToken = async () => {
           {/* 메인 콘텐츠 */}
           <main className="flex-1 overflow-y-auto bg-white">
             <QueryClientProvider client={queryClient}>
-
-              
               {children}
             </QueryClientProvider>
           </main>

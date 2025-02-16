@@ -15,17 +15,20 @@ export default function LoginPage() {
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
+    content: "",
     btnText: '',
     onClose: () => { },
   });
 
-  const showModal = (title: string, btnText = '닫기') => {
+  const showModal = (title: string, content: string, btnText = '닫기', onCloseCallback?: () => void) => {
     setModalState({
       isOpen: true,
       title,
+      content,
       btnText,
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
+        if (onCloseCallback) onCloseCallback(); // ✅ 모달 닫힌 후 실행할 콜백 함수 실행
       },
 
     });
@@ -68,12 +71,6 @@ export default function LoginPage() {
       // Axios를 사용하여 로그인 API 호출
       const response = await api.post("/api/auth/login", { nickname, password });
 
-      console.log("로그인 성공:", response);
-
-      // ✅ 서버 응답 메시지 alert
-      if (response.data.message) {
-        showModal(response.data.message);
-      }
 
       // ✅ 토큰 저장
       if (response.data.result?.accessToken && response.data.result?.refreshToken) {
@@ -97,28 +94,36 @@ export default function LoginPage() {
 
       // 임시 비밀번호인 경우 변경 페이지로 이동
       if (response.data.result.isTempPassword) {
-        showModal("최초 로그인 시 비밀번호 변경이 필요합니다.")
-        router.push("/changepassword");
+        showModal("최초 로그인 시 비밀번호 변경이 필요합니다.", "","확인", () => {
+          router.push("/changepassword")
+        })
+
+
       } else {
         // 로그인 성공 시 리다이렉트
-        showModal("로그인 성공!");
-        switch (response.data.result.role) {
-          case "USER":
-            router.push("/user/home");
-            break;
-          case "MANAGER":
-            router.push("/manager/home");
-            break;
-          case "ADMIN":
-            router.push("/administer/memberlist");
-            break;
-        }
+        showModal("로그인 성공!", "", "확인", () => {
+          switch (response.data.result.role) {
+            case "USER":
+              router.push("/user/home");
+              break;
+            case "MANAGER":
+              router.push("/manager/home");
+              break;
+            case "ADMIN":
+              router.push("/administer/memberlist");
+              break;
+          }
+        })
+
+
       }
     } catch (err: any) {
       console.error("로그인 에러:", err);
 
       // ✅ 서버 응답 메시지가 있으면 alert 표시
-      if (err.response?.data?.message) {
+      if (err.response.data.code == "AUTH_302"){
+        showModal("비밀번호를 5회 연속 잘못 입력하였습니다.", "30분 동안 계정이 잠깁니다.", "확인");
+      } else if (err.response?.data?.message) {
         showModal(err.response.data.message);
       } else {
         showModal("서버와 통신 중 오류가 발생했습니다.");
@@ -135,9 +140,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-main-2">
-      {/* 헤더 */}
-      <header className="absolute top-0 w-full bg-white py-4 shadow-sm">
+
+    <div className="overflow-hidden h-screen">
+      <header className="w-full bg-white py-4 shadow-sm">
         <div className="w-full flex items-center justify-between px-6">
           {/* 로고 */}
           <svg width="96" height="32" viewBox="0 0 96 32" fill="none">
@@ -167,69 +172,73 @@ export default function LoginPage() {
         </div>
       </header>
 
-      {/* 로그인 박스 */}
-      <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
-        <h2 className="text-3xl font-bold mb-2">로그인</h2>
-        <p className="text-sm text-gray-600 mb-6">
-          서비스를 사용하려면 로그인하세요.
-        </p>
 
-        {/* 로그인 폼 */}
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <input
-              type="text"
-              id="nickname"
-              value={nickname}
-              onChange={handleNicknameChange}
-              className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="닉네임을 입력하세요"
-            />
-          </div>
-          <div className="mb-6">
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={handlePasswordChange}
-              className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
-              placeholder="비밀번호를 입력하세요"
-            />
-          </div>
+      <div className="min-h-screen w-full flex flex-col items-center justify-center bg-main-2">
+        {/* 로그인 박스 */}
+        <div className="bg-white rounded-lg shadow-md px-20 pb-14 pt-20">
+          <h2 className="text-3xl font-bold mb-2">로그인</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            서비스를 사용하려면 로그인하세요.
+          </p>
 
-          {/* 로그인 버튼 */}
-          <button
-            type="submit"
-            className={`w-full py-3 rounded-md font-semibold transition-all
+          {/* 로그인 폼 */}
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <input
+                type="text"
+                id="nickname"
+                value={nickname}
+                onChange={handleNicknameChange}
+                className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
+                placeholder="아이디를 입력하세요"
+              />
+            </div>
+            <div className="mb-6">
+              <input
+                type="password"
+                id="password"
+                value={password}
+                onChange={handlePasswordChange}
+                className="w-[440px] px-3 py-4 border rounded-md focus:ring-2 focus:ring-[#252E66] focus:outline-none"
+                placeholder="비밀번호를 입력하세요"
+              />
+            </div>
+
+            {/* 로그인 버튼 */}
+            <button
+              type="submit"
+              className={`w-full py-3 rounded-md font-semibold transition-all
     ${nickname && password ? "bg-[#252E66] text-white hover:bg-[#1F2557]" : "bg-gray-400 text-white cursor-not-allowed"}
   `}
-            disabled={!nickname || !password} // 닉네임과 비밀번호가 없으면 비활성화
-          >
-            로그인
-          </button>
-
-
-          {/* 비밀번호 찾기 버튼 */}
-          <div className="flex justify-end mt-4">
-            <button
-              type="button"
-              onClick={handleForgotPassword}
-              className="text-sm text-[#252E66] hover:underline focus:outline-none"
+              disabled={!nickname || !password} // 닉네임과 비밀번호가 없으면 비활성화
             >
-              비밀번호를 잊으셨나요?
+              로그인
             </button>
-          </div>
-        </form>
+
+
+            {/* 비밀번호 찾기 버튼 */}
+            <div className="flex justify-end mt-4">
+              <button
+                type="button"
+                onClick={handleForgotPassword}
+                className="text-sm text-[#252E66] hover:underline focus:outline-none"
+              >
+                비밀번호를 잊으셨나요?
+              </button>
+            </div>
+          </form>
+        </div>
+        {modalState.isOpen && (
+          <Modal onClose={modalState.onClose}>
+            <AlertModal
+              title={modalState.title}
+              content={modalState.content}
+              onClick={modalState.onClose}
+              btnText={modalState.btnText}
+            />
+          </Modal>
+        )}
       </div>
-      {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
-            title={modalState.title}
-            onClick={modalState.onClose}
-            btnText={modalState.btnText}
-          />
-        </Modal>
-      )}
     </div>
   );
 }

@@ -25,6 +25,7 @@ export default function UserCreateTicketPage() {
   const [firstCategories, setFirstCategories] = useState<string[]>([]);
   const [secondCategories, setSecondCategories] = useState<any>();
   const [helpContent, setHelpContent] = useState("");
+  const [helpFiles, setHelpFiles] = useState([]);
   const [countdown, setCountdown] = useState(1);
   const router = useRouter();
   const [modalState, setModalState] = useState({
@@ -158,6 +159,7 @@ export default function UserCreateTicketPage() {
       } else {
         setHelpTitle(`${service} 도움말`);
         setHelpContent(response.result.content);
+        setHelpFiles(response.result.attachmentUrls)
       }
 
       setIsModalOpen(true);
@@ -243,7 +245,7 @@ export default function UserCreateTicketPage() {
 
       {isModalOpen && (
         <ModalHelp onClose={toggleModal}>
-          <Help title={helpTitle} content={helpContent} />
+          <Help title={helpTitle} content={helpContent} fileUrls={helpFiles} />
         </ModalHelp>
       )}
 

@@ -3,8 +3,7 @@ import { usePathname, useRouter } from "next/navigation"; // 수정된 import
 import { useState, useEffect, useRef } from "react";
 import userStore from "@/stores/userStore"; // ✅ zustand 스토어 import
 import api from "@/lib/api/axios";
-import pageTitle from "@/data/pageTitle";
-import PageTitle from "./pageTitle";
+import PageTitle from "./PageTitle";
 
 export default function Headerbar() {
     const pathname = usePathname(); // 현재 경로 가져오기
@@ -65,13 +64,6 @@ export default function Headerbar() {
     
 
 
-    useEffect(() => {
-        if (pageTitle === "홈") {
-            document.title = "Tickety";
-        } else {
-            document.title = "Tickety - " + pageTitle;
-        }
-    }, [pageTitle]);
 
     // ✅ 로그아웃 처리 함수
     const handleLogout = async () => {

@@ -238,7 +238,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
                                     <li>
-                                        <a
+                                        <Link
                                             href="/manager/myticket"
                                             className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/manager/myticket" ? "bg-[#FFFFFF]/20" : ""
                                             }`}
@@ -247,10 +247,10 @@ export default function Sidebar({ user }: SidebarProps) {
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 담당 티켓
                                             </span>
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
-                                        <a
+                                        <Link
                                             href="/manager/departmentticket"
                                             className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/manager/departmentticket" ? "bg-[#FFFFFF]/20" : ""
                                                 }`}
@@ -259,7 +259,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 부서 티켓
                                             </span>
-                                        </a>
+                                        </Link>
                                     </li>
                                 </ul>
                             </li>
@@ -405,7 +405,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                     style={{transitionTimingFunction: "ease-in-out"}}
                                 >
                                     <li>
-                                        <a
+                                        <Link
                                             href="/administer/memberlist"
                                             className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/administer/memberlist" ? "bg-[#FFFFFF]/20" : ""
                                             }`}
@@ -414,7 +414,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                             <span className="ml-10 mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                                 회원 조회
                                             </span>
-                                        </a>
+                                        </Link>
                                     </li>
                                     <li>
                                         <Link
@@ -458,7 +458,7 @@ export default function Sidebar({ user }: SidebarProps) {
 
 
                             <li className="ml-3 mr-3">
-                                <a
+                                <Link
                                     href={`/administer/log`}
                                     className={`flex space-x-3 px-4 py-2 rounded-lg hover:bg-[#FFFFFF]/20 ${pathname === "/administer/log" ? "bg-[#FFFFFF]/20" : ""
                                     }`}
@@ -474,7 +474,7 @@ export default function Sidebar({ user }: SidebarProps) {
                                         className="mt-0.5 text-white font-inter text-base font-semibold leading-normal">
                                         접속 로그 조회
                                     </span>
-                                </a>
+                                </Link>
                             </li>
 
                         </ul>)}

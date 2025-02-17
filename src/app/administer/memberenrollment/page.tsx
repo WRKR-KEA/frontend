@@ -48,6 +48,23 @@ const AdminMemberEnrollPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
+  const formatPhoneNumber = (value: string) => {
+    // 숫자만 남기기 (하이픈, 공백 제거)
+    const phoneNumber = value.replace(/\D/g, "");
+  
+    if (phoneNumber.length <= 3) return phoneNumber;
+    if (phoneNumber.length <= 7) return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formatPhoneNumber(value),
+    }));
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -387,7 +404,7 @@ const AdminMemberEnrollPage: React.FC = () => {
                 type="tel"
                 name="phone"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={handleNumberChange}
                 className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none"
                 placeholder="010-1234-5678"
                 required

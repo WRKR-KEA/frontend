@@ -31,7 +31,7 @@ const AdminMemberEnrollPage: React.FC = () => {
 
 
 
-  const showModal = (title: string, content="", btnText = '닫기', onCloseCallback?: () => void) => {
+  const showModal = (title: string, content = "", btnText = '닫기', onCloseCallback?: () => void) => {
     setModalState({
       isOpen: true,
       title,
@@ -47,6 +47,23 @@ const AdminMemberEnrollPage: React.FC = () => {
 
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const formatPhoneNumber = (value: string) => {
+    // 숫자만 남기기 (하이픈, 공백 제거)
+    const phoneNumber = value.replace(/\D/g, "");
+
+    if (phoneNumber.length <= 3) return phoneNumber;
+    if (phoneNumber.length <= 7) return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formatPhoneNumber(value),
+    }));
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -106,7 +123,7 @@ const AdminMemberEnrollPage: React.FC = () => {
       console.log("서버 응답:", response.data); // ✅ 서버 응답 확인
 
       if (response.status === 201 || response.status === 200) {
-        
+
         setFormData({
           nickname: "",
           role: "USER", // Swagger API에 맞게 "USER" 유지
@@ -118,7 +135,7 @@ const AdminMemberEnrollPage: React.FC = () => {
           phone: "",
           position: "",
         });
-        showModal("회원이 성공적으로 등록되었습니다.","", "확인", ()=>{
+        showModal("회원이 성공적으로 등록되었습니다.", "", "확인", () => {
           router.push("/administer/memberlist")
         });
       } else {
@@ -131,24 +148,24 @@ const AdminMemberEnrollPage: React.FC = () => {
       if (axios.isAxiosError(error) && error.response?.data?.result) {
         const responseData = error.response?.data;
 
-    if (responseData?.result && typeof responseData.result === "object") {
-        // ✅ result가 객체인 경우
-        const firstKey = Object.keys(responseData.result)?.[0]; // 첫 번째 key 가져오기
-        console.log(firstKey)
-        const firstValue = firstKey ? responseData.result[firstKey]: "알 수 없는 오류";
-        if (firstKey == 'nickname'){          
-          showModal(firstValue,`아이디는 3~10자의 영문 소문자로 시작하고, 점(.)과 1~5자의 영문 소문자로 이루어져야 합니다.`,"확인");
-        }else if (firstKey == 'phone'){
-          showModal(firstValue,`전화번호 형식은 000-0000-0000입니다.`, "확인");
-        }
-        else{
+        if (responseData?.result && typeof responseData.result === "object") {
+          // ✅ result가 객체인 경우
+          const firstKey = Object.keys(responseData.result)?.[0]; // 첫 번째 key 가져오기
+          console.log(firstKey)
           const firstValue = firstKey ? responseData.result[firstKey] : "알 수 없는 오류";
-          showModal(`${firstValue}`);
+          if (firstKey == 'nickname') {
+            showModal(firstValue, `아이디는 3~10자의 영문 소문자로 시작하고, 점(.)과 1~5자의 영문 소문자로 이루어져야 합니다.`, "확인");
+          } else if (firstKey == 'phone') {
+            showModal(firstValue, `전화번호 형식은 000-0000-0000입니다.`, "확인");
+          }
+          else {
+            const firstValue = firstKey ? responseData.result[firstKey] : "알 수 없는 오류";
+            showModal(`${firstValue}`);
+          }
+        } else {
+          // ✅ result가 객체가 아닌 경우
+          showModal(responseData?.result);
         }
-    } else {
-        // ✅ result가 객체가 아닌 경우
-        showModal(responseData?.result);
-    }
       } else {
         showModal(error.response.data.message);
       }
@@ -282,11 +299,23 @@ const AdminMemberEnrollPage: React.FC = () => {
 
                 {/* 프로필 이미지 미리보기 */}
                 <img
-                  src={formData.profileImage || "/defaultProfileImage.jpg"} // 기본 이미지 설정
+                  src={formData.profileImageFile || "/defaultProfileImage.jpg"} // 기본 이미지 설정
                   alt="프로필 이미지"
                   className="w-32 h-32 rounded-full object-cover cursor-pointer min-w-32"
                   onClick={() => document.getElementById("profileImageInput")?.click()} // 클릭 시 파일 업로드 창 열기
                 />
+
+
+                <div
+                  className="absolute bottom-1 right-1 bg-[#252e66] text-white p-2 rounded-full cursor-pointer shadow-md"
+                  onClick={() => document.getElementById("profileImageInput")?.click()}
+                >
+                  <svg width="18" height="18" viewBox="0 0 28 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3.90316 23.1742H24.0937C26.5312 23.1742 27.7737 21.9552 27.7737 19.5412V7.27167C27.7737 4.85767 26.5312 3.65067 24.0937 3.65067H21.3517C20.4377 3.65067 20.1567 3.46317 19.6292 2.87717L18.6797 1.82217C18.1057 1.17817 17.5082 0.826172 16.2892 0.826172H11.6252C10.4182 0.826172 9.82016 1.17817 9.23466 1.82217L8.28516 2.87717C7.76966 3.45117 7.47666 3.65067 6.56266 3.65067H3.90266C1.46516 3.65067 0.222656 4.85767 0.222656 7.27167V19.5412C0.222656 21.9552 1.46566 23.1742 3.90316 23.1742ZM3.93766 21.2872C2.77766 21.2872 2.10966 20.6662 2.10966 19.4472V7.37717C2.10966 6.15817 2.77766 5.53717 3.93766 5.53717H7.03116C8.08616 5.53717 8.64866 5.33817 9.23466 4.68217L10.1602 3.65067C10.8282 2.90067 11.1682 2.71317 12.2112 2.71317H15.7032C16.7462 2.71317 17.0862 2.90067 17.7542 3.65067L18.6797 4.68167C19.2657 5.33817 19.8282 5.53717 20.8832 5.53717H24.0587C25.2187 5.53717 25.8872 6.15817 25.8872 7.37717V19.4472C25.8872 20.6662 25.2192 21.2872 24.0587 21.2872H3.93766ZM13.9927 19.4242C14.8345 19.4266 15.6686 19.2623 16.4467 18.9409C17.2248 18.6194 17.9316 18.1472 18.5263 17.5513C19.121 16.9555 19.592 16.2478 19.9119 15.4691C20.2319 14.6904 20.3946 13.856 20.3907 13.0142C20.3907 9.45117 17.5547 6.60417 13.9922 6.60417C10.4532 6.60417 7.60566 9.45117 7.60566 13.0142C7.60566 16.5762 10.4532 19.4242 13.9922 19.4242M22.4177 10.1542C23.2147 10.1542 23.8707 9.51017 23.8707 8.71317C23.8707 8.32781 23.7176 7.95824 23.4451 7.68575C23.1726 7.41325 22.803 7.26017 22.4177 7.26017C22.0323 7.26017 21.6627 7.41325 21.3902 7.68575C21.1177 7.95824 20.9647 8.32781 20.9647 8.71317C20.9647 9.51017 21.6207 10.1542 22.4177 10.1542ZM13.9927 17.6432C11.4497 17.6432 9.37566 15.5807 9.37566 13.0142C9.37566 10.4477 11.4382 8.38567 13.9927 8.38567C14.6007 8.38495 15.2029 8.50417 15.7648 8.73651C16.3267 8.96885 16.8373 9.30975 17.2673 9.73968C17.6973 10.1696 18.0382 10.6801 18.2706 11.242C18.503 11.8039 18.6223 12.4061 18.6217 13.0142C18.6224 13.6223 18.5031 14.2245 18.2708 14.7865C18.0384 15.3484 17.6975 15.859 17.2675 16.289C16.8375 16.719 16.3269 17.0599 15.765 17.2923C15.203 17.5247 14.6007 17.6439 13.9927 17.6432Z" fill="white" />
+                  </svg>
+
+                </div>
+
               </div>
 
               <div className="space-y-4"> {/* 여백 추가 */}
@@ -387,7 +416,7 @@ const AdminMemberEnrollPage: React.FC = () => {
                 type="tel"
                 name="phone"
                 value={formData.phone}
-                onChange={handleChange}
+                onChange={handleNumberChange}
                 className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none"
                 placeholder="010-1234-5678"
                 required

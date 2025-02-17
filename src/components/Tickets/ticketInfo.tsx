@@ -4,8 +4,8 @@ interface TicketInfoProps {
   ticket: {
     id: string,
     number: string,
-    firstCatetory: string,
-    secondCatetory: string,
+    firstCategory: string,
+    secondCategory: string,
     status: string,
     title: string,
     handler: string | "-",
@@ -24,7 +24,7 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
   }
 
   return (
-      <div className="bg-component p-4 rounded-md flex-1 max-w-4xl mx-auto min-w-96 mb-2">
+      <div className="bg-component p-4 rounded-md flex-1 w-full min-w-96 mb-2">
         <h2 className="text-md font-semibold mb-4">{ticket.number} 티켓 상세 정보</h2>
         <div className="flex justify-between">
           <div className="space-y-4 text-left truncate w-full">
@@ -33,7 +33,7 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
               <div className="flex text-sm truncate"><p className="w-16">업무: </p>{ticket.title}</div>
               <div className="flex text-sm truncate"><p className="w-16">담당자: </p>{ticket.handler || '―'}</div>
               <div className="flex text-sm truncate"><p className="w-16">요청자: </p>{ticket.requester || '―'}</div>
-              <div className="flex text-sm truncate"><p className="w-16">카테고리: </p>{`${ticket.firstCatetory}/${ticket.secondCatetory}` || '―'}</div>
+              <div className="flex text-sm truncate"><p className="w-16">카테고리: </p>{`${ticket.firstCategory}/${ticket.secondCategory}` || '―'}</div>
             </div>
           </div>
           {/* 😎 최근 티켓정보 > 티켓 상세 정보에서 요청일시 승인일시 수정일시 완료일시 좀 더 안쪽으로 이동되었으면 좋겠습니다. => pr 수치 조정 */}

@@ -87,12 +87,14 @@ export default function ManagerTicketDetailPage() {
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchManagerTicket(ticketId);
+    console.log("나의티켓!@", response)
     const ticket = response.result;
     return {
       id: ticket.ticketId,
       number: ticket.ticketSerialNumber,
       status: ticket.status,
-      type: ticket.category,
+      firstCategory: ticket.firstCategory,
+      secondCategory: ticket.secondCategory,
       title: ticket.title,
       content: ticket.content,
       requester: ticket.userNickname,
@@ -190,7 +192,7 @@ console.log(selectedTicket);
           <TicketRequest ticket={selectedTicket} />
         </div>
         <div className="flex-1">
-        <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
+        <div className="pt-4 px-0 pb-4 flex flex-col">
           <div className="flex justify-between items-center">
             <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
             {selectedTicket.status === "IN_PROGRESS" && (

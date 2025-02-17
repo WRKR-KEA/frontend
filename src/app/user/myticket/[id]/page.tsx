@@ -76,12 +76,14 @@ export default function UserTicketDetailPage() {
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchTicketDetail(ticketId);
+    
     const ticket = response.result;
     return {
       id: ticket.id,
       number: ticket.ticketSerialNumber,
       status: ticket.status,
-      type: ticket.category,
+      firstCategory: ticket.firstCategory,
+      secondCategory: ticket.secondCategory,
       title: ticket.title,
       content: ticket.content,
       requester: ticket.userNickname,
@@ -165,7 +167,7 @@ export default function UserTicketDetailPage() {
         </div>
 
         <div className="flex-1">
-          <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col">
+          <div className="pt-4 px-0 pb-4 flex flex-col">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
               <div className="mt-[-12px]">

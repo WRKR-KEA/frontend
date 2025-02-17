@@ -18,6 +18,7 @@ export default function RootLayout({
   const router = useRouter(); // ✅ useRouter 사용
   const [queryClient] = useState(() => new QueryClient());
   const excludedPaths = [
+    "/",
     '/login',
     '/changepassword',
     '/locked',
@@ -121,7 +122,7 @@ const refreshAccessToken = async () => {
   useEffect(() => {
     const accessToken = sessionStorage.getItem('accessToken');
 
-    if (!accessToken && pathname!='/reissuepassword') {
+    if (!accessToken && pathname!='/reissuepassword' && pathname != "/") {
       router.push('/login');     
     } else {
       refreshAccessToken();

@@ -10,7 +10,7 @@ import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import Skeleton from '@/components/Skeleton';
 import { HighlightText } from '@/components/highlightText';
-
+import SkeletonZero from "@/components/SkeletonZero"; 
 
 export default function AdminMemberListPage() {
   const [activeTab, setActiveTab] = useState('전체'); // 역할 선택 (탭)
@@ -216,7 +216,7 @@ export default function AdminMemberListPage() {
             <tbody>
               {members?.elements?.map((row: any, index: number) => (
                 <tr key={index} className={index % 2 === 0 ? "bg-[#F5F5F5]" : ""}>
-                  <td className="p-3 w-1/12">
+                  <td className="p-3 w-1/12 truncate">
                     <input
                       type="checkbox"
                       checked={selectedMembers.includes(row.memberId)}
@@ -225,7 +225,7 @@ export default function AdminMemberListPage() {
                     />
                   </td>
 
-                  <td className="p-4 w-3/12">
+                  <td className="p-4 w-3/12 truncate">
                     <Link href={`memberlist/${row.memberId}`} className="cursor-pointer hover:underline">
                       <div className="flex items-center space-x-3">
                         <img
@@ -239,15 +239,15 @@ export default function AdminMemberListPage() {
                       </div>
                     </Link>
                   </td>
-                  <td className="p-3 w-2/12">
+                  <td className="p-3 w-2/12 truncate">
                     <HighlightText text={row.name} highlight={searchTrigger} />
                   </td>
-                  <td className="p-4 w-2/12">
+                  <td className="p-4 w-2/12 truncate">
                     <HighlightText text={row.department} highlight={searchTrigger} />
                   </td>
-                  <td className="p-4 w-2/12">{row.position}</td>
-                  <td className="p-4 w-3/12">{row.phone}</td>
-                  <td className="p-4 w-4/12">
+                  <td className="p-4 w-2/12 truncate">{row.position}</td>
+                  <td className="p-4 w-3/12 truncate">{row.phone}</td>
+                  <td className="p-4 w-4/12 truncate">
                     <HighlightText text={row.email} highlight={searchTrigger} />
                   </td>
                 </tr>
@@ -272,8 +272,8 @@ export default function AdminMemberListPage() {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-              <p className="text-lg">검색 결과가 없습니다.</p>
-            </div>
+            <p className="text-lg">검색 결과가 없습니다.</p>
+          </div>
           )
         }
 

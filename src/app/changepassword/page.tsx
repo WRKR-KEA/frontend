@@ -20,13 +20,14 @@ export default function ChangePasswordPage() {
         onClose: () => { },
     });
 
-    const showModal = (title: string, btnText = '닫기') => {
+    const showModal = (title: string, btnText = '닫기', onCloseCallback?: () => void) => {
         setModalState({
             isOpen: true,
             title,
             btnText,
             onClose: () => {
                 setModalState(prev => ({ ...prev, isOpen: false }));
+                if (onCloseCallback) onCloseCallback()
             },
 
         });
@@ -70,22 +71,24 @@ export default function ChangePasswordPage() {
             });
 
             if (response.data.isSuccess) {
-                showModal("비밀번호 변경 성공!");
+                showModal("비밀번호 변경 성공!", "확인", () => {
+                    // 역할에 따라 라우팅
+                    switch (user?.role) {
+                        case "USER":
+                            router.push("/user/home");
+                            break;
+                        case "MANAGER":
+                            router.push("/manager/home");
+                            break;
+                        case "ADMIN":
+                            router.push("/administer/memberlist");
+                            break;
+                        default:
+                            break;
+                    }
+                });
 
-                // 역할에 따라 라우팅
-                switch (user?.role) {
-                    case "USER":
-                        router.push("/user/home");
-                        break;
-                    case "MANAGER":
-                        router.push("/manager/home");
-                        break;
-                    case "ADMIN":
-                        router.push("/administer/memberlist");
-                        break;
-                    default:
-                        break;
-                }
+
             } else {
                 showModal("비밀번호 변경 실패: " + response.data.message);
             }

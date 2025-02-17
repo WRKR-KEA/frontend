@@ -1,5 +1,6 @@
 import React from "react";
 import { useRouter } from "next/navigation";
+import SkeletonZero from "@/components/SkeletonZero";
 
 type Ticket = {
   ticketId: string;
@@ -43,7 +44,7 @@ export function TicketList({
   const router = useRouter();
 
   const handleTicketClick = (ticket: Ticket) => {
-    if (ticket.status === "REQUEST") 
+    if (ticket.status === "REQUEST")
       router.push(`/manager/departmentticket/${ticket.ticketId}`);
     else
       router.push(`/manager/myticket/${ticket.ticketId}`);
@@ -64,29 +65,38 @@ export function TicketList({
           </tr>
         </thead>
         <tbody>
-          {displayedTickets.map((ticket) => (
-            <tr
-              key={ticket.ticketId}
-              className="border-b cursor-pointer hover:bg-gray-100"
-              onClick={() => handleTicketClick(ticket)}
-            >
-              <td className="p-2 border max-w-28 truncate text-center">{ticket.ticketSerialNumber}</td>
-              <td className="p-2 border max-w-28 text-center">
-                <span
-                  className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${
-                    statusStyles[ticket.status] || ""
-                  }`}
-                >
-                  {ticket.status}
-                </span>
+          {tickets.length === 0 ? (
+            <tr>
+              <td colSpan={7} className="py-10 text-center">
+                <div className="flex justify-center items-center">
+                  <SkeletonZero width="100%" height="" />
+                </div>
               </td>
-              <td className="p-2 border max-w-28 truncate text-center">{ticket.firstCategory}/{ticket.secondCategory}</td>
-              <td className="p-2 border max-w-80 truncate">{ticket.title}</td>
-              <td className="p-2 border max-w-28 truncate text-center">{ticket.userNickname}</td>
-              <td className="p-2 border max-w-36 truncate text-center">{ticket.requestedDate}</td>
-              <td className="p-2 border max-w-36 truncate text-center">{ticket.updatedDate}</td>
             </tr>
-          ))}
+          ) : (
+            displayedTickets.map((ticket) => (
+              <tr
+                key={ticket.ticketId}
+                className="border-b cursor-pointer hover:bg-gray-100"
+                onClick={() => handleTicketClick(ticket)}
+              >
+                <td className="p-2 border max-w-28 truncate text-center">{ticket.ticketSerialNumber}</td>
+                <td className="p-2 border max-w-28 text-center">
+                  <span
+                    className={`inline-block px-3 py-1 rounded-md text-xs font-semibold ${statusStyles[ticket.status] || ""
+                      }`}
+                  >
+                    {ticket.status}
+                  </span>
+                </td>
+                <td className="p-2 border max-w-28 truncate text-center">{ticket.firstCategory}/{ticket.secondCategory}</td>
+                <td className="p-2 border max-w-80 truncate">{ticket.title}</td>
+                <td className="p-2 border max-w-28 truncate text-center">{ticket.userNickname}</td>
+                <td className="p-2 border max-w-36 truncate text-center">{ticket.requestedDate}</td>
+                <td className="p-2 border max-w-36 truncate text-center">{ticket.updatedDate}</td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

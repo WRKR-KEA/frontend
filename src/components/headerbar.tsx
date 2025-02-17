@@ -1,11 +1,10 @@
 "use client";
 import { usePathname, useRouter } from "next/navigation"; // 수정된 import
-import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
-import path from "path";
 import userStore from "@/stores/userStore"; // ✅ zustand 스토어 import
-import axios from "axios";
 import api from "@/lib/api/axios";
+import pageTitle from "@/data/pageTitle";
+import PageTitle from "./pageTitle";
 
 export default function Headerbar() {
     const pathname = usePathname(); // 현재 경로 가져오기
@@ -63,36 +62,8 @@ export default function Headerbar() {
         };
     }, [activeModal]);
 
-    const pageTitle = (() => {
-        switch (true) {
-            case pathname === "/user/home" || pathname === "/manager/home":
-                return "홈";
-            case pathname === "/user/createticket":
-                return "티켓 요청";
-            case pathname.startsWith("/user/myticket"):
-                return "티켓 조회";
-            case pathname === "/user/mypage" || pathname === "/manager/mypage":
-                return "계정";
-            case pathname.startsWith("/manager/myticket"):
-                return "담당 티켓";
-            case pathname.startsWith("/manager/departmentticket"):
-                return "부서 티켓";
-            case pathname === "/manager/managerlist":
-                return "담당자 조회";
-            case pathname.startsWith("/manager/monitoring"):
-                return "통계";
-            case pathname.startsWith("/administer/memberlist"):
-                return "회원 조회";
-            case pathname === "/administer/memberenrollment":
-                return "회원 등록";
-            case pathname === "/administer/categorymanagement":
-                return "카테고리 관리";
-            case pathname === "/administer/log":
-                return "접속 로그 조회"
-            default:
-                return "페이지 없음";
-        }
-    })();
+    
+
 
     useEffect(() => {
         if (pageTitle === "홈") {
@@ -153,20 +124,7 @@ export default function Headerbar() {
             className="text-black p-6 flex justify-between items-center border-b relative"
             style={{ borderColor: "rgba(0, 0, 0, 0.1)", height: "40px" }}
         >
-            <div className="text-black font-semibold flex items-center">
-                {/* 사이드바 토글 버튼 */}
-                <svg className="mr-4 cursor-pointer" onClick={toggleSidebar} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                    <path
-                        d="M22 11C22 7.229 22 5.343 20.828 4.172C19.656 3.001 17.771 3 14 3H10C6.229 3 4.343 3 3.172 4.172C2.001 5.344 2 7.229 2 11V13C2 16.771 2 18.657 3.172 19.828C4.344 20.999 6.229 21 10 21H14C17.771 21 19.657 21 20.828 19.828C21.999 18.656 22 16.771 22 13V11Z"
-                        stroke="black" strokeWidth="1.5" />
-                    <path d="M18.5 10H12.5M17.5 14H13.5" stroke="black" strokeWidth="1.5"
-                        strokeLinecap="round" />
-                    <path opacity="0.5" d="M9 21V3" stroke="black" strokeWidth="1.5"
-                        strokeLinecap="round" />
-                </svg>
-
-                {pageTitle}
-            </div>
+            <PageTitle pathname={pathname}/> 
             <nav>
                 <ul className="flex space-x-4">
                     {user?.role !== "ADMIN" && (

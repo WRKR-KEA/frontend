@@ -63,6 +63,24 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
     }
   }, [data]);
 
+const formatPhoneNumber = (value: string) => {
+    // 숫자만 남기기 (하이픈, 공백 제거)
+    const phoneNumber = value.replace(/\D/g, "");
+  
+    if (phoneNumber.length <= 3) return phoneNumber;
+    if (phoneNumber.length <= 7) return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
+  };
+
+  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setEditableData((prev) => ({
+      ...prev,
+      [name]: formatPhoneNumber(value),
+    }));
+  };
+
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setEditableData((prev) => ({
@@ -70,6 +88,8 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
       [name]: value,
     }));
   };
+
+  
 
 
   const handleSave = async () => {
@@ -208,7 +228,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
 
               <div className="flex items-center space-x-4 text-gray-500">
 
-                <p>{editableData.role === "USER" ? "사용자" : "담당자"}</p>
+                <p>{data.role === "USER" ? "사용자" : "담당자"}</p>
 
               </div>
             </div>
@@ -232,7 +252,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
                   type={field.type}
                   name={field.name}
                   value={editableData[field.name] || ""}
-                  onChange={handleInputChange}
+                  onChange={field.type != "tel" ? handleInputChange : handleNumberChange}
                   className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none h-10"
                   required
                 />

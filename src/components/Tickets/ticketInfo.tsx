@@ -24,7 +24,7 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
   }
 
   return (
-      <div className="bg-component p-4 rounded-md flex-1 max-w-4xl mx-auto min-w-96 mb-2">
+      <div className="bg-component p-4 rounded-md flex-1 w-full min-w-96 mb-2">
         <h2 className="text-md font-semibold mb-4">{ticket.number} 티켓 상세 정보</h2>
         <div className="flex justify-between">
           <div className="space-y-4 text-left truncate w-full">

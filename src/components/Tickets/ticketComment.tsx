@@ -91,7 +91,8 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
             )}
             {log.message && (
               <div className={`flex ${log.role !== user?.role ? 'justify-start' : 'justify-end'}`}>
-                {log.role !== user?.role && (
+                
+                {log.role === user?.role && (
                   <p className="self-end text-xs mr-2 text-gray-400">
                     {formatTime(log.createdAt)}
                   </p>
@@ -120,7 +121,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
                     log.message
                   )}
                 </div>
-                {log.role === user?.role && (
+                {log.role !== user?.role && (
                   <p className="self-end text-xs ml-2 text-gray-400">
                     {formatTime(log.createdAt)}
                   </p>

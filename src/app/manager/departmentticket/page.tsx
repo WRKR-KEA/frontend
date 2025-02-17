@@ -174,8 +174,8 @@ if (error) {
             />
             
             {tickets.length === 0 ? (
-                     <div className="flex flex-col items-center justify-center py-4 text-gray-500">
-                     <p className="text-md">검색 결과가 없습니다.</p>
+                     <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+                    <SkeletonZero width="100%" height=""/>
                    </div>
             ) : (
               <>

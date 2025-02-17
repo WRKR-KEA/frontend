@@ -10,7 +10,7 @@ import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
 import Skeleton from '@/components/Skeleton';
 import { HighlightText } from '@/components/highlightText';
-
+import SkeletonZero from "@/components/SkeletonZero"; 
 
 export default function AdminMemberListPage() {
   const [activeTab, setActiveTab] = useState('전체'); // 역할 선택 (탭)
@@ -272,8 +272,8 @@ export default function AdminMemberListPage() {
             </>
           ) : (
             <div className="flex flex-col items-center justify-center py-8 text-gray-500">
-              <p className="text-lg">검색 결과가 없습니다.</p>
-            </div>
+            <p className="text-lg">검색 결과가 없습니다.</p>
+          </div>
           )
         }
 

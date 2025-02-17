@@ -45,8 +45,6 @@ export default function ManagerHomePage() {
       <h2 className="text-lg font-semibold">고정된 티켓</h2>
       {isLoading ? (
         <Skeleton width="100%" height="40%" /> // 로딩 중일 때 Skeleton 표시
-      ) : pinTickets.length === 0 ? (
-        <SkeletonZero width="100%" height="40%" /> // 데이터가 없을 때 SkeletonZero 표시
       ) : (
         <TicketList tickets={pinTickets} maxTicketsToShow={maxTicketsToShow} page={1} />
       )}
@@ -54,8 +52,6 @@ export default function ManagerHomePage() {
       <h2 className="text-lg font-semibold">최근 티켓 요청 현황</h2>
       {isLoading ? (
         <Skeleton width="100%" height="40%" /> // 로딩 중일 때 Skeleton 표시
-      ) : requestTickets.length === 0 ? (
-        <SkeletonZero width="100%" height="40%" /> // 데이터가 없을 때 SkeletonZero 표시
       ) : (
         <TicketList tickets={requestTickets} maxTicketsToShow={maxTicketsToShow} page={1} />
       )}

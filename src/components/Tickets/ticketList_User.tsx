@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FilterTab } from "@/components/Filters/filterTab";
 import { useRouter } from "next/navigation";
 import { HighlightText } from "@/components/highlightText";
-
+import SkeletonZero from "@/components/SkeletonZero"; 
 type Ticket = {
   id: string,
   serialNumber: string,
@@ -84,8 +84,8 @@ export function TicketList_User({
     <div className="bg-white rounded-md">
       <FilterTab activeTab={activeTab} handleTabClick={handleTabClick} />
       {tickets.length === 0 ?(
-        <div className="flex flex-col items-center justify-center py-4 text-gray-500">
-        <p className="text-md">검색 결과가 없습니다.</p>
+        <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+        <SkeletonZero width="100%" height=""/>
       </div>
       ) : (
         <>

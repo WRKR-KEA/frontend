@@ -2,7 +2,7 @@
 
 import { FilterNum } from "@/components/Filters/filterNum";
 import PagePagination from "@/components/pagination";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaSearch } from "react-icons/fa";
 import { DateRange } from "react-date-range";
 import "react-date-range/dist/styles.css";
@@ -12,6 +12,7 @@ import Button from "@/components/Buttons/Button";
 import { format } from 'date-fns';
 import axios from "axios";
 import { HighlightText } from "@/components/highlightText";
+import Skeleton from "@/components/Skeleton";
 
 interface LogEntry {
   id: number;
@@ -39,6 +40,7 @@ export default function LogPage() {
   const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
   // Date Range Picker 관련 상태 및 핸들러
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [logisLoading, setLogisLoading] = useState(true)
   const [dateRange, setDateRange] = useState({
     startDate: null,
     endDate: null,
@@ -97,10 +99,12 @@ export default function LogPage() {
         );
         setTotalPages(response.result.totalPages); // 🔹 totalPages 적용
         setTotalElements(response.result.totalElements); // 🔹 전체 요소 개수 설정
+        setLogisLoading(false)
       } else {
         setLogs([]);
         setTotalPages(0);
         setTotalElements(0);
+        setLogisLoading(false)
       }
     } catch (error) {
       console.error("❌ 로그 데이터 조회 실패:", error);
@@ -127,7 +131,25 @@ export default function LogPage() {
     setitemsPerPage(count);
     setCurrentPage(1); // 페이지네이션도 첫 페이지로 이동
   };
+const datepickerRef = useRef(null); // ✅ 캘린더 감지용 ref
 
+  useEffect(() => {
+          const handleClickOutside = (event) => {
+              if (datepickerRef.current && !datepickerRef.current.contains(event.target)) {
+                  setIsCalendarOpen(false);
+              }
+          };
+  
+          if (isCalendarOpen) {
+              document.addEventListener("mousedown", handleClickOutside);
+          } else {
+              document.removeEventListener("mousedown", handleClickOutside);
+          }
+  
+          return () => {
+              document.removeEventListener("mousedown", handleClickOutside);
+          };
+      }, [isCalendarOpen]);
 
 
   // LogPage 컴포넌트의 handleDownloadExcel 함수 수정
@@ -153,6 +175,10 @@ export default function LogPage() {
     }
   };
 
+  if (logisLoading) {
+    return <Skeleton width="100%" height="100%"/>
+  }
+
   return (
     <div className="p-6">
       <div className="flex items-center justify-between">
@@ -177,7 +203,7 @@ export default function LogPage() {
         </div>
 
         {/* 오른쪽 - 캘린더 버튼과 필터 */}
-        <div className="flex items-center space-x-4 relative">
+        <div ref={datepickerRef}  className="flex items-center space-x-4 relative">
           <button
             className="flex items-center text-sm font-medium text-[#6E61CA] hover:text-[#5A50A8] px-2 py-2 rounded-md"
             onClick={toggleCalendar}

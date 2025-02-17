@@ -121,7 +121,7 @@ export default function UserHomePage() {
           maxTicketsToShow={maxTicketsToShow}
           page={1}
           status={ticketStatus}
-          onTicketClick={handleTicketClick}
+          onTicketHover={handleTicketClick}
         />
       )}
     </div>

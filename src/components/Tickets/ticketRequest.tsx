@@ -49,9 +49,9 @@ export default function TicketRequest({ ticket }: TicketRequestProps) {
   }, [ticket.content]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       <h2 className="text-lg font-semibold mb-4">요청 내용</h2>
-      <div className="bg-component p-4 rounded-md">
+      <div className="bg-component p-4 rounded-md h-full">
         <h3 className="text-lg font-bold mb-2">{ticket.title}</h3>
         <hr className="border-t-2 border-main-2 my-2" /> 
         <div dangerouslySetInnerHTML={{ __html: htmlContent }} />

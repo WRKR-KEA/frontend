@@ -39,6 +39,7 @@ export default function UserProfilePage() {
     email: "",
     department: "",
     position: "",
+    agitUrl:"",
   });
 
   const showModal = (title: string, btnText = "닫기") => {
@@ -106,6 +107,10 @@ export default function UserProfilePage() {
     }
     if (!editableData.department.trim()) {
       newErrors.department = "부서를 입력해주세요.";
+      valid = false;
+    }
+    if (!editableData.agitUrl.trim()) {
+      newErrors.agitUrl = "아지트 주소를 입력해주세요.";
       valid = false;
     }
     if (!editableData.position.trim()) {
@@ -181,6 +186,7 @@ export default function UserProfilePage() {
       phone: "",
       name: "",
       email: "",
+      agitUrl: "",
       department: "",
       position: "",
     });
@@ -227,7 +233,17 @@ export default function UserProfilePage() {
               />
             </div>
             <div className="space-y-2">
+              {isEditing ? (
+                <input
+                  type="text"
+                  name="nickname"
+                  value={editableData.nickname}
+                  onChange={handleInputChange}
+                  className="text-2xl font-bold text-gray-800 border-b-2 border-gray-300 focus:outline-none h-10"
+                />
+              ) : (
                 <h1 className="text-2xl font-bold text-gray-800">{editableData.nickname}</h1>
+              )}
                 <div className="flex items-center space-x-4 text-gray-500">
                 <p>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
               </div>

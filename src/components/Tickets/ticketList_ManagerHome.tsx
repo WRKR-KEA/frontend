@@ -56,11 +56,10 @@ export function TicketList({
           <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="p-2 w-28 max-w-28 border text-center">티켓 번호</th>
             <th className="p-2 w-28 max-w-28 border text-center">상태</th>
-            <th className="p-2 w-28 max-w-28 border text-center">카테고리</th>
             <th className="p-2 w-80 max-w-80 border text-center">제목</th>
             <th className="p-2 w-28 max-w-28 border text-center">요청자</th>
-            <th className="p-2 w-36 max-w-36 border text-center">요청일</th>
-            <th className="p-2 w-36 max-w-36 border text-center">최근 업데이트일</th>
+            <th className="p-2 w-28 max-w-28 border text-center">요청일</th>
+            <th className="p-2 w-32 max-w-32 border text-center">최근 업데이트일</th>
           </tr>
         </thead>
         <tbody>
@@ -80,11 +79,10 @@ export function TicketList({
                   {ticket.status}
                 </span>
               </td>
-              <td className="p-2 border max-w-28 truncate text-center">{ticket.firstCategory}/{ticket.secondCategory}</td>
               <td className="p-2 border max-w-80 truncate">{ticket.title}</td>
               <td className="p-2 border max-w-28 truncate text-center">{ticket.userNickname}</td>
-              <td className="p-2 border max-w-36 truncate text-center">{ticket.requestedDate}</td>
-              <td className="p-2 border max-w-36 truncate text-center">{ticket.updatedDate}</td>
+              <td className="p-2 border max-w-28 truncate text-center">{ticket.requestedDate}</td>
+              <td className="p-2 border max-w-32 truncate text-center">{ticket.updatedDate}</td>
             </tr>
           ))}
         </tbody>

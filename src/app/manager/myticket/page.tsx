@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
@@ -19,8 +19,9 @@ export default function ManagerTicketListPage() {
   const [selectedStatus, setSelectedStatus] = useState("");
 
   const [tickets, setTickets] = useState<any[]>([]); // 💡 티켓 상태 추가
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { data, isLoading, error, refetch } = useManageTicketListQuery(
+  const { data, isLoading, error } = useManageTicketListQuery(
     currentPage,
     maxTicketsToShow,
     sortOrder,
@@ -34,12 +35,7 @@ export default function ManagerTicketListPage() {
       setTickets(data.elements);
       console.log("📌 받은 티켓 데이터:", data.elements);
     }
-  }, [data]);
-
-  // 상태 변경 시 API 데이터 다시 호출
-  useEffect(() => {
-    refetch();
-  }, [selectedStatus, currentPage, maxTicketsToShow, sortOrder, searchTerm, refetch]);
+  }, [data]); // 'data'가 변경될 때마다 자동으로 tickets 상태 업데이트
 
   const handleSelectCount = useCallback((count: number) => {
     setMaxTicketsToShow(count);
@@ -97,6 +93,8 @@ export default function ManagerTicketListPage() {
         <div className="flex flex-col items-center space-y-4">
           <Skeleton width="100%" height="600px" />
         </div>
+      ) : data?.elements.length === 0 ?(
+        <SkeletonZero width="100%" height="40%" /> 
       ) : (
         <>
           <TicketList_Manager

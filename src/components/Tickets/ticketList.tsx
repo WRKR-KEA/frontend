@@ -1,4 +1,3 @@
-import { useRouter } from "next/navigation";
 import React from "react";
 
 type Ticket = {
@@ -20,14 +19,14 @@ type TicketListProps = {
   maxTicketsToShow: number;
   page: number;
   status?: string;
-  onTicketHover?: (ticket: Ticket) => void;
+  onTicketClick?: (ticket: Ticket) => void;
 };
 
 export function TicketList({
   tickets,
   maxTicketsToShow,
   page,
-  onTicketHover,
+  onTicketClick,
 }: TicketListProps) {
   const statusStyles: Record<string, string> = {
     COMPLETE: "bg-complete text-complete",
@@ -36,8 +35,6 @@ export function TicketList({
     REJECT: "bg-reject text-reject",
     REQUEST: "bg-request text-request",
   };
-
-  const router = useRouter();
 
   // 티켓을 페이지에 맞게 잘라서 표시
   const startIndex = (page - 1) * maxTicketsToShow;
@@ -62,16 +59,15 @@ export function TicketList({
             <tr
               key={ticket.id ?? `ticket-${index}`} 
               className="border-b cursor-pointer hover:bg-gray-100"
-              onMouseEnter={() => onTicketHover?.(ticket)}
-              onClick={()=>router.push(`/user/myticket/${ticket.id}`)}
+              onClick={() => onTicketClick?.(ticket)}
             >
               <td className="px-4 py-2 max-w-28 border truncate text-center">{ticket.number}</td>
               <td className="px-4 py-2 max-w-28 border text-center">
-                <p
-                  className={`max-w-fit px-2 py-1 border rounded-md truncate text-xs font-semibold mx-auto ${statusStyles[ticket.status]}`}
+                <span
+                  className={`inline-block px-2 py-1 border rounded-md truncate text-xs font-semibold ${statusStyles[ticket.status]}`}
                 >
                   {ticket.status}
-                </p>
+                </span>
               </td>
               <td className="px-4 py-2 max-w-28 border truncate text-center">
                 {ticket.firstCatetory}/{ticket.secondCatetory}

@@ -47,7 +47,6 @@ const CategoryManagement: React.FC = () => {
     onClose2:() => { }
   })
 
-  
   const [inputModalState, setInputModalState] = useState({
     isOpen: false,
     title: "",
@@ -55,21 +54,19 @@ const CategoryManagement: React.FC = () => {
     onClose: () => { },
   })
 
-    const showModal = (title: string, btnText = "닫기", onCloseCallback?: () => void) => {
-      setModalState({
-        isOpen: true,
-        title,
-        btnText,
-        onClose: () => {
-          setModalState((prev) => ({ ...prev, isOpen: false }));
-          if (onCloseCallback) onCloseCallback(); // ✅ 모달 닫힌 후 실행할 콜백 함수 실행
-        },
-        onClose2: () => {
-          setModalState((prev) => ({ ...prev, isOpen: false }));
-  
-        },
-      });
-    };
+  const showModal = (title: string, btnText = '닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+      onClose2: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+    });
+  };
 
   const showInputModal = (title: string, btnText = '닫기') => {
     setInputModalState({
@@ -165,7 +162,7 @@ const CategoryManagement: React.FC = () => {
       }
     } catch (error) {
       console.log("❌ 카테고리 추가 오류:", error);
-      showModal(error?.response.data.message, "확인")
+      showModal(error?.response.data.message)
       return false;
     }
   };

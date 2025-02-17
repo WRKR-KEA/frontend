@@ -24,22 +24,19 @@ const AdminMemberEnrollPage: React.FC = () => {
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
-    content: "",
     btnText: '',
     onClose: () => { },
   });
 
 
 
-  const showModal = (title: string, content="", btnText = '닫기', onCloseCallback?: () => void) => {
+  const showModal = (title: string, btnText = '닫기') => {
     setModalState({
       isOpen: true,
       title,
-      content,
       btnText,
       onClose: () => {
         setModalState(prev => ({ ...prev, isOpen: false }));
-        if (onCloseCallback) onCloseCallback();
       },
 
     });
@@ -106,7 +103,7 @@ const AdminMemberEnrollPage: React.FC = () => {
       console.log("서버 응답:", response.data); // ✅ 서버 응답 확인
 
       if (response.status === 201 || response.status === 200) {
-        
+        showModal("회원이 성공적으로 등록되었습니다.");
         setFormData({
           nickname: "",
           role: "USER", // Swagger API에 맞게 "USER" 유지
@@ -118,9 +115,6 @@ const AdminMemberEnrollPage: React.FC = () => {
           phone: "",
           position: "",
         });
-        showModal("회원이 성공적으로 등록되었습니다.","", "확인", ()=>{
-          router.push("/administer/memberlist")
-        });
       } else {
         throw response.data
       }
@@ -129,26 +123,9 @@ const AdminMemberEnrollPage: React.FC = () => {
 
       // ✅ 에러 응답에서 첫 번째 오류 메시지 추출
       if (axios.isAxiosError(error) && error.response?.data?.result) {
-        const responseData = error.response?.data;
-
-    if (responseData?.result && typeof responseData.result === "object") {
-        // ✅ result가 객체인 경우
-        const firstKey = Object.keys(responseData.result)?.[0]; // 첫 번째 key 가져오기
-        console.log(firstKey)
-        const firstValue = firstKey ? responseData.result[firstKey]: "알 수 없는 오류";
-        if (firstKey == 'nickname'){          
-          showModal(firstValue,`아이디는 3~10자의 영문 소문자로 시작하고, 점(.)과 1~5자의 영문 소문자로 이루어져야 합니다.`,"확인");
-        }else if (firstKey == 'phone'){
-          showModal(firstValue,`전화번호 형식은 000-0000-0000입니다.`, "확인");
-        }
-        else{
-          const firstValue = firstKey ? responseData.result[firstKey] : "알 수 없는 오류";
-          showModal(`${firstValue}`);
-        }
-    } else {
-        // ✅ result가 객체가 아닌 경우
-        showModal(responseData?.result);
-    }
+        const firstKey = Object.keys(error.response.data.result)?.[0]; // 첫 번째 key 가져오기
+        const firstValue = firstKey ? error.response.data.result[firstKey] : "알 수 없는 오류";
+        showModal(`${firstValue}`);
       } else {
         showModal(error.response.data.message);
       }
@@ -427,7 +404,6 @@ const AdminMemberEnrollPage: React.FC = () => {
           <Modal onClose={modalState.onClose}>
             <AlertModal
               title={modalState.title}
-              content={modalState.content}
               onClick={modalState.onClose}
               btnText={modalState.btnText}
             />

@@ -4,8 +4,8 @@ import React from "react";
 type Ticket = {
   id: string,
   number: string,
-  firstCatetory: string,
-  secondCatetory: string,
+  firstCategory: string,
+  secondCategory: string,
   status: string,
   title: string,
   handler: string,
@@ -74,7 +74,7 @@ export function TicketList({
                 </p>
               </td>
               <td className="px-4 py-2 max-w-28 border truncate text-center">
-                {ticket.firstCatetory}/{ticket.secondCatetory}
+                {ticket.firstCategory}/{ticket.secondCategory}
               </td>
               <td className="px-4 py-2 border max-w-80 truncate">{ticket.title}</td>
               <td className="px-4 py-2 border max-w-28 truncate text-center">{ticket.handler}</td>

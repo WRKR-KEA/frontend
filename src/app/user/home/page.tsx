@@ -13,8 +13,8 @@ import SkeletonZero from "@/components/SkeletonZero";
 type Ticket = {
   id: string,
   number: string,
-  firstCatetory: string,
-  secondCatetory: string,
+  firstCategory: string,
+  secondCategory: string,
   status: string,
   title: string,
   handler: string,
@@ -51,8 +51,8 @@ export default function UserHomePage() {
       const requestTicketList: Ticket[] = data?.map((ticket: any) => ({
         id: ticket.ticketId,
         number: ticket.ticketSerialNumber,
-        firstCatetory: ticket.firstCategory,
-        secondCatetory: ticket.secondCategory,
+        firstCategory: ticket.firstCategory,
+        secondCategory: ticket.secondCategory,
         status: ticket.status,
         title: ticket.title,
         handler: ticket.managerNickname || "-",

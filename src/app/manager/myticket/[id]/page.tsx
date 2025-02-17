@@ -87,12 +87,14 @@ export default function ManagerTicketDetailPage() {
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchManagerTicket(ticketId);
+    console.log("나의티켓!@", response)
     const ticket = response.result;
     return {
       id: ticket.ticketId,
       number: ticket.ticketSerialNumber,
       status: ticket.status,
-      type: ticket.category,
+      firstCategory: ticket.firstCategory,
+      secondCategory: ticket.secondCategory,
       title: ticket.title,
       content: ticket.content,
       requester: ticket.userNickname,

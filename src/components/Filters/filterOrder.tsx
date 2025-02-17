@@ -17,9 +17,9 @@ export function FilterOrder({ onSelectOrder, sortOrder }: FilterOrderProps) {
 
   // Order 값에 맞는 UI 텍스트 매핑
   const orderLabels: Record<string, string> = {
-    NEWEST: "최신순",
-    OLDEST: "오래된순",
-    UPDATED: "우선순위순",
+    NEWEST: "티켓 생성 순",
+    OLDEST: "오래된 순",
+    UPDATED: "우선순위 순",
   };
 
   return (

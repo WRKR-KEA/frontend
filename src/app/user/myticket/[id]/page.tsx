@@ -76,12 +76,14 @@ export default function UserTicketDetailPage() {
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchTicketDetail(ticketId);
+    
     const ticket = response.result;
     return {
       id: ticket.id,
       number: ticket.ticketSerialNumber,
       status: ticket.status,
-      type: ticket.category,
+      firstCategory: ticket.firstCategory,
+      secondCategory: ticket.secondCategory,
       title: ticket.title,
       content: ticket.content,
       requester: ticket.userNickname,

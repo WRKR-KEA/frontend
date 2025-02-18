@@ -18,7 +18,7 @@ type Ticket = {
   secondCategory: string,
   status: string,
   title: string,
-  managerName: string | "-",
+  managerName: string | "―",
   createdAt: string,
   updatedAt: string | "-",
   startedAt: string | "-",

@@ -131,7 +131,7 @@ console.log("🌟 받은 티켓 데이터:",tickets);
               <td className="px-4 py-2 border truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 border text-center truncate">{ticket.managerNickname}</td>
+              <td className="px-4 py-2 border text-center truncate">{ticket.managerNickname || '―'}</td>
               <td className="px-4 py-2 border text-center truncate">{ticket.userNickname}</td>
               <td className="px-4 py-2 border text-center truncate">{ticket.updatedDate}</td>
             </tr>

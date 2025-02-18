@@ -55,7 +55,7 @@ export default function UserHomePage() {
         secondCategory: ticket.secondCategory,
         status: ticket.status,
         title: ticket.title,
-        handler: ticket.managerNickname || "-",
+        handler: ticket.managerNickname || "―",
         requestDate: ticket.ticketTimeInfo?.createdAt,
         updateDate: ticket.ticketTimeInfo?.updatedAt || "-",
         acceptDate: ticket.ticketTimeInfo?.startedAt || "-",

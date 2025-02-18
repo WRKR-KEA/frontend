@@ -119,6 +119,56 @@ export default function Headerbar() {
     }
   };
 
+  const notificationIcon = (type: string) => {
+    switch (type) {
+      case 'TICKET':
+        return <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="8" fill="var(--main-3)" />
+          <path
+            d="M5.3335 12.0003C5.3335 9.48633 5.3335 8.22899 6.11483 7.44833C6.89616 6.66766 8.15283 6.66699 10.6668 6.66699H13.3335C15.8475 6.66699 17.1048 6.66699 17.8855 7.44833C18.6662 8.22966 18.6668 9.48633 18.6668 12.0003C18.6668 14.5143 18.6668 15.7717 17.8855 16.5523C17.1042 17.333 15.8475 17.3337 13.3335 17.3337H10.6668C8.15283 17.3337 6.8955 17.3337 6.11483 16.5523C5.33416 15.771 5.3335 14.5143 5.3335 12.0003Z"
+            stroke="var(--main-1)" stroke-width="1.5" />
+          <path opacity="0.5"
+                d="M10.6668 14.667H8.00016M13.3335 14.667H12.3335M5.3335 10.667H18.6668"
+                stroke="var(--main-1)" stroke-width="1.5" stroke-linecap="round" />
+        </svg>;
+      case 'COMMENT':
+        return <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="8" fill="var(--in-progress-bg)" />
+          <g clip-path="url(#clip0_923_32493)">
+            <path
+              d="M12.0002 18.6663C15.6822 18.6663 18.6668 15.6817 18.6668 11.9997C18.6668 8.31767 15.6822 5.33301 12.0002 5.33301C8.31816 5.33301 5.3335 8.31767 5.3335 11.9997C5.3335 13.0663 5.58416 14.0743 6.02883 14.9683C6.1475 15.2057 6.18683 15.477 6.11816 15.7337L5.7215 17.2177C5.68221 17.3645 5.68225 17.5191 5.7216 17.666C5.76095 17.8128 5.83824 17.9467 5.94571 18.0543C6.05317 18.1618 6.18703 18.2392 6.33385 18.2786C6.48067 18.3181 6.63528 18.3182 6.78216 18.279L8.26616 17.8817C8.52375 17.8166 8.79625 17.8481 9.03216 17.9703C9.95413 18.4294 10.9702 18.6677 12.0002 18.6663Z"
+              stroke="var(--in-progress)" stroke-width="1.5" />
+            <path opacity="0.5" d="M9.3335 11H14.6668M9.3335 13.3333H13.0002" stroke="var(--in-progress)"
+                  stroke-width="1.5" stroke-linecap="round" />
+          </g>
+          <defs>
+            <clipPath id="clip0_923_32493">
+              <rect width="16" height="16" fill="white" transform="translate(4 4)" />
+            </clipPath>
+          </defs>
+        </svg>;
+      case 'REMIND':
+        return <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+          <rect width="24" height="24" rx="8" fill="var(--request-bg)" />
+          <g clip-path="url(#clip0_923_32494)">
+            <path
+              d="M12.0002 18.6663C15.6821 18.6663 18.6668 15.6816 18.6668 11.9997C18.6668 8.31778 15.6821 5.33301 12.0002 5.33301C8.31826 5.33301 5.3335 8.31778 5.3335 11.9997C5.3335 15.6816 8.31826 18.6663 12.0002 18.6663Z"
+              stroke="var(--request)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M12 8V12L14.6667 13.3333" stroke="var(--request)" stroke-width="1.5"
+                  stroke-linecap="round" stroke-linejoin="round" />
+          </g>
+          <defs>
+            <clipPath id="clip0_923_32494">
+              <rect width="16" height="16" fill="white" transform="translate(4 4)" />
+            </clipPath>
+          </defs>
+        </svg>;
+    }
+  }
+
   return (
     <header
       className="text-black p-6 flex justify-between items-center border-b relative"
@@ -147,29 +197,25 @@ export default function Headerbar() {
                 {activeModal === "notification" && (
                   <div
                     ref={modalRef} // ✅ 모달 ref 추가
-                    className="absolute right-[-22px] top-9 w-80 bg-white border rounded-md shadow-lg p-4 z-[100]">
+                    className="absolute right-[-22px] top-9 w-96 bg-white border rounded-md shadow-lg p-4 z-[100]">
                     {/* 말풍선 뾰족한 부분 */}
                     <div className="absolute top-[-10px] right-6 w-4 h-4 bg-white border-t border-l rotate-45 transform origin-center"></div>
                     <p className="text-gray-700 mb-2">Notification</p>
                     {/* 알림 리스트 */}
-                    <ul className="space-y-4">
+                    <ul className="space-y-1 max-h-48 overflow-scroll hide-scrollbar">
                       {/* 알림 아이템 1 */}
                       {notificationData.length > 0 ? (
                         notificationData
                         .map((notification) => (
                           <li
                             key={notification.notificationId}
-                            className={`flex items-center space-x-3 ${notification.isRead
+                            className={`flex items-start space-x-2 ${notification.isRead
                               ? "bg-gray-50 p-3 rounded"
-                              : "bg-blue-200 p-3 rounded"
+                              : "bg-blue-50 p-3 rounded"
                             }`}
                           >
-                            <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                              <img
-                                src={notification.profileImage}
-                                alt="알림 아이콘"
-                                className="rounded-full"
-                              />
+                            <div className="w-6 h-6 flex items-center justify-center bg-gray-100 rounded-full">
+                              {notificationIcon(notification.type)}
                             </div>
                             <div>
                               <p className="text-sm font-semibold">{notification.content}</p>

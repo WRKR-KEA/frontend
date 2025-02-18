@@ -123,7 +123,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
   };
 
   return (
-    <div className="bg-component rounded-md p-4 flex flex-col h-[460px]">
+    <div className="bg-component rounded-md p-4 flex flex-col h-[380px]">
       <div ref={chatContainerRef} className="overflow-y-auto pr-2 flex-1 hide-scrollbar">
         {displayLogs.map((log, index) => (
           <div key={index} className="flex flex-col mb-2">

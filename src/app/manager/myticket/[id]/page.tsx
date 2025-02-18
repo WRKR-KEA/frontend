@@ -201,7 +201,7 @@ console.log(selectedTicket);
       </div>
 
        {/* 작업 반려 모달 */}
-       {isAbortTicketOpen && (
+       {!modalState.isOpen && isAbortTicketOpen && (
           <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={confirmAbortTicket} />
       )}
 

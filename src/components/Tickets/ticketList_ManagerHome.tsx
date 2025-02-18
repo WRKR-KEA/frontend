@@ -63,68 +63,64 @@ export function TicketList({
 
   return (
     <div className="bg-white rounded-md">
-      {tickets.length === 0? (
+      {tickets.length === 0 ? (
         <p className="text-gray-500 text-lg mt-2 text-center">티켓이 없습니다.</p>
       ) : (
-      <table className="w-full text-sm border-collapse">
-        <thead>
-          <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-32 text-center">티켓 번호</th>
-            <th className="px-4 py-2 w-20 text-center">상태</th>
-            <th className="px-4 py-2 w-32 text-center">카테고리</th>
-            <th className="px-4 py-2 w-80 text-center">제목</th>
-            {showUpdateDate && (
-              <th className="px-4 py-2 w-32 text-center">담당자</th>
-            )}
-            {showUpdateDate && (
-              <th className="px-4 py-2 w-36 text-center">최근 변경 일시</th>
-            )}
-            {showRequestDate && (
-              <th className="px-4 py-2 w-36 text-center">요청 일시</th>
-            )}
-          </tr>
-        </thead>
-        <tbody>
-          {displayedTickets.map((ticket, index) => (
-            <tr
-              key={ticket.ticketId ?? `ticket-${index}`}
-              className="border-b cursor-pointer h-[42px] hover:bg-gray-100"
-              onMouseEnter={() => onTicketHover?.(ticket)}
-              onClick={() => handleTicketClick(ticket)}
-            >
-              <td className="px-4 py-2 border truncate text-center">
-                {ticket.ticketSerialNumber}
-              </td>
-              <td className="px-4 py-2 border text-center">
-                <p
-                  className={`max-w-fit px-2 py-1 border rounded-md truncate text-xs font-semibold mx-auto ${statusStyles[ticket.status]}`}
-                >
-                  {statusLabels[ticket.status] ?? ticket.status}
-                </p>
-              </td>
-              <td className="px-4 py-2 border truncate text-center">
-                {ticket.firstCategory}/{ticket.secondCategory}
-              </td>
-              <td className="px-4 py-2 border truncate">{ticket.title}</td>
+        <table className="w-full text-sm border-collapse table-fixed">
+          <thead>
+            <tr className="bg-gray-6 text-left border-b border-gray-4">
+              <th className="px-4 py-2 w-32 text-center truncate">티켓 번호</th>
+              <th className="px-4 py-2 w-20 text-center truncate">상태</th>
+              <th className="px-4 py-2 w-32 text-center truncate">카테고리</th>
+              <th className="px-4 py-2 w-80 text-center truncate">제목</th>
+              <th className="px-4 py-2 w-32 text-center truncate">요청자</th>
               {showUpdateDate && (
-                <td className="px-4 py-2 border truncate text-center">
-                  {ticket.managerNickname}
-                </td>
-              )}
-              {showUpdateDate && (
-                <td className="px-4 py-2 border truncate text-center">
-                  {ticket.updatedDate}
-                </td>
+                <th className="px-4 py-2 w-36 text-center truncate">최근 변경 일시</th>
               )}
               {showRequestDate && (
-                <td className="px-4 py-2 border max-w-32 truncate text-center">
-                  {ticket.requestedDate}
-                </td>
+                <th className="px-4 py-2 w-36 text-center truncate">요청 일시</th>
               )}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {displayedTickets.map((ticket, index) => (
+              <tr
+                key={ticket.ticketId ?? `ticket-${index}`}
+                className="border-b cursor-pointer h-[42px] hover:bg-gray-100"
+                onMouseEnter={() => onTicketHover?.(ticket)}
+                onClick={() => handleTicketClick(ticket)}
+              >
+                <td className="px-4 py-2 border truncate text-center">
+                  {ticket.ticketSerialNumber}
+                </td>
+                <td className="px-4 py-2 border text-center truncate">
+                  <p
+                    className={`max-w-fit px-2 py-1 border rounded-md truncate text-xs font-semibold mx-auto ${statusStyles[ticket.status]}`}
+                  >
+                    {statusLabels[ticket.status] ?? ticket.status}
+                  </p>
+                </td>
+                <td className="px-4 py-2 border truncate text-center">
+                  {ticket.firstCategory}/{ticket.secondCategory}
+                </td>
+                <td className="px-4 py-2 border truncate">{ticket.title}</td>
+                <td className="px-4 py-2 border truncate text-center">
+                  {ticket.userNickname}
+                </td>
+                {showUpdateDate && (
+                  <td className="px-4 py-2 border truncate text-center">
+                    {ticket.updatedDate}
+                  </td>
+                )}
+                {showRequestDate && (
+                  <td className="px-4 py-2 border truncate text-center">
+                    {ticket.requestedDate}
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );

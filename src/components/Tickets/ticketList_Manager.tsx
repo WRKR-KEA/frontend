@@ -141,10 +141,10 @@ export function TicketList_Manager({
   return (
     <div className="bg-white rounded-md relative">
       <FilterTab_Manager activeTab={activeTab} handleTabClick={handleTabClick} />
-      <table className="w-full text-sm border-collapse">
+      <table className="w-full text-sm border-collapse table-fixed">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-8 "></th>
+            <th className="px-4 py-2 w-8"></th>
             <th className="px-4 py-2 w-32 text-center border">티켓 번호</th>
             <th className="px-4 py-2 w-20 text-center">상태</th>
             <th className="px-4 py-2 w-32 text-center">카테고리</th>
@@ -162,7 +162,7 @@ export function TicketList_Manager({
                 onClick={() => handleTicketClick(ticket.id)}
               >
                 <td
-                  className="px-4 py-2 border-l flex justify-center items-center"
+                  className="py-2 border-l flex justify-center items-center"
                   onClick={(e) => {
                     e.stopPropagation();
                     handlePinClick(ticket.id, ticket.isPinned);

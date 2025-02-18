@@ -98,7 +98,7 @@ console.log("🌟 받은 티켓 데이터:",tickets);
   return (
     <div className="bg-white rounded-md">
       <FilterTab_Depart activeTab={activeTab} handleTabClick={handleTabClick} />
-      <table className="w-full text-sm border-collapse">
+      <table className="w-full text-sm border-collapse table-fixed">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
             <th className="px-2 py-2 w-32 text-center">티켓 번호</th>

@@ -77,7 +77,7 @@ export function TicketList({
           {displayedTickets.map((ticket, index) => (
             <tr
               key={ticket.ticketId ?? `ticket-${index}`}
-              className="border-b cursor-pointer hover:bg-gray-100"
+              className="border-b cursor-pointer h-[42px] hover:bg-gray-100"
               onMouseEnter={() => onTicketHover?.(ticket)}
               onClick={() => router.push(`/user/myticket/${ticket.ticketId}`)}
             >

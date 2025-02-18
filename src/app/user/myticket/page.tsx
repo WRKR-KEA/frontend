@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import React, { useState, useEffect,useCallback } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { TicketList_User } from "@/components/Tickets/ticketList_User";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { Search } from "@/components/search";
@@ -36,7 +36,11 @@ export default function UserTicketListPage() {
   const [totalItemsCount, setTotalItems] = useState(1);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
-
+  const [openFilter, setOpenFilter] = useState<string | null>(null);
+  const filterRef = useRef<HTMLDivElement>(null); // 필터의 외부 클릭을 감지할 ref
+  const toggleFilter = () => {
+    setOpenFilter(openFilter ? null : "num"); 
+  }
   const user = useUserStore((state) => state.user);
 
   // 🔹 티켓 목록 가져오기
@@ -53,6 +57,20 @@ export default function UserTicketListPage() {
       setIsLoading(false); // 데이터 로딩 완료
     }
   }, [data]);
+
+  // 외부 클릭 시 필터 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setOpenFilter(null); // 필터를 닫음
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   // 페이지 변경 핸들러
   const handlePageChange = (pageNumber: number) => {
@@ -89,7 +107,14 @@ export default function UserTicketListPage() {
         </div>
 
         <div className="ml-auto">
-          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
+          <div ref={filterRef}>
+            <FilterNum
+              onSelectCount={handleSelectCount}
+              selectedCount={maxTicketsToShow}
+              isOpen={openFilter === "num"}
+              setIsOpen={() => toggleFilter()}
+            />
+          </div>
         </div>
       </div>
 

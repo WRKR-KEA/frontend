@@ -258,7 +258,7 @@ export default function UserProfilePage() {
             <div className="space-y-2">
                 <h1 className="text-2xl font-semibold text-gray-800">{editableData.nickname}</h1>
                 <div className="flex items-center space-x-4 text-gray-500">
-                <p className={isEditing ? 'pt-0':'pt-2'}>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
+                <p className='pt-2'>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
               </div>
             </div>
           </div>
@@ -274,17 +274,17 @@ export default function UserProfilePage() {
         <div className="space-y-2">
             <h2 className="text-sm font-semibold text-gray-500 mb-2">회원 정보</h2>
             <div className="border-t border-gray-300 pb-4"></div>
-            <div className={`${isEditing ? 'space-y-0.5' :'space-y-6'}`}>
+            <div className={`${isEditing ? 'space-y-0.5' :'space-y-5'}`}>
             {[
-              { label: "이름", name: "name", type: "text" },
-              { label: "이메일 주소", name: "email", type: "email" },
-              { label: "전화번호", name: "phone", type: "phone" },
+              { label: "* 이름", name: "name", type: "text" },
+              { label: "* 이메일 주소", name: "email", type: "email" },
+              { label: "* 전화번호", name: "phone", type: "phone" },
               { label: "아지트 URL", name: "agitUrl", type: "text" },
-              { label: "부서", name: "department", type: "text" },
-              { label: "직책", name: "position", type: "text" },
+              { label: "* 부서", name: "department", type: "text" },
+              { label: "* 직책", name: "position", type: "text" },
             ].map((field) => (
               <div key={field.name} className="pb-2">
-                <h2 className="text-sm font-semibold text-gray-500 mb-4">
+                <h2 className="text-sm font-semibold text-gray-500">
                   {field.label}
                 </h2>
                 {isEditing ? (

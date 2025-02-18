@@ -19,9 +19,10 @@ export interface TicketCommentProps {
   logs: Log[];
   ticketId: string;
   status: string;
+  handler: string; // 티켓의 핸들러
 }
 
-const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status }) => {
+const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, handler }) => {
   const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
@@ -29,15 +30,13 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  console.log("현재 logs 데이터:", logs);
-
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
     btnText: "",
     onClose: () => { },
-    onClose2:() => { }
-  })
+    onClose2: () => { }
+  });
 
   const showModal = (title: string, btnText = '닫기') => {
     setModalState({
@@ -76,16 +75,16 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
     e.target.value = '';
   };
 
-  const handleRemind = async () => { 
+  const handleRemind = async () => {
     if (!userData?.memberId) {
       showModal('사용자 정보를 찾을 수 없습니다.');
       return;
     }
     try {
       const response = await postRemind(ticketId, { memberId: userData.memberId });
-      if(response.result === true){
+      if (response.result === true) {
         showModal('리마인더가 전송되었습니다.');
-      }else{
+      } else {
         showModal('리마인더가 전송되지 않았습니다.');
       }
     } catch (error) {
@@ -96,15 +95,15 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
   const handleSendMessage = async () => {
     if (!message.trim() && !file) return;
     if (isLoading) return;
-  
+
     try {
       setIsLoading(true);
       const attachments: File[] = file ? [file] : [];
-  
+
       // 파일과 메시지 모두 전송
       await postComment(ticketId, message, attachments);
       queryClient.invalidateQueries({ queryKey: ['comments', { ticketId }] });
-  
+
       // Clear message and file state after sending
       setMessage('');
       setFile(null);
@@ -121,6 +120,9 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
       handleSendMessage();
     }
   };
+
+  const isTicketInProgress = status === 'IN_PROGRESS';
+  const isAuthorized = user?.nickname === handler;
 
   return (
     <div className="bg-component rounded-md p-4 flex flex-col h-[380px]">
@@ -177,42 +179,42 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
       </div>
 
       <div className="flex space-x-2 items-center mt-2">
-      <button
-        onClick={handleFileUploadClick}
-        className={`bg-gray-200 rounded-lg p-2 ${status !== 'IN_PROGRESS' ? 'cursor-not-allowed' : 'hover:bg-gray-300'}`}
-        type="button"
-        disabled={status !== 'IN_PROGRESS'}
-      >
-        <FiPaperclip className="text-xl text-gray-600" />
-      </button>
+        <button
+          onClick={handleFileUploadClick}
+          className={`bg-gray-200 rounded-lg p-2 ${isTicketInProgress ? 'hover:bg-gray-300' : 'cursor-not-allowed'}`}
+          type="button"
+          disabled={!isTicketInProgress}
+        >
+          <FiPaperclip className="text-xl text-gray-600" />
+        </button>
 
-      <button
-        onClick={handleRemind}
-        className={`bg-red-100 rounded-lg p-2 ${status !== 'IN_PROGRESS' ? 'cursor-not-allowed' : 'hover:bg-red-200'}`}
-        type="button"
-        disabled={status !== 'IN_PROGRESS'}
-      >
-        <FiClock className="text-xl text-red-600" />
-      </button>
+        <button
+          onClick={handleRemind}
+          className={`bg-red-100 rounded-lg p-2 ${isTicketInProgress ? 'hover:bg-red-200' : 'cursor-not-allowed'}`}
+          type="button"
+          disabled={!isTicketInProgress}
+        >
+          <FiClock className="text-xl text-red-600" />
+        </button>
 
-      <input
-        type="text"
-        value={message}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={handleKeyPress}
-        placeholder={status !== 'IN_PROGRESS' ? '진행 중인 티켓이 아니거나 권한이 없습니다.' : '메시지를 입력하세요...'}
-        className="flex-1 p-2 rounded-lg border border-gray-300"
-        disabled={status !== 'IN_PROGRESS'}
-      />
+        <input
+          type="text"
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyPress}
+          placeholder={!isTicketInProgress ? '진행 중인 티켓이 아닙니다.' : (isAuthorized ? '메시지를 입력하세요...' : '권한이 없습니다.')}
+          className="flex-1 p-2 rounded-lg border border-gray-300"
+          disabled={!isTicketInProgress || !isAuthorized}
+        />
 
-      <button
-        onClick={handleSendMessage}
-        disabled={status !== 'IN_PROGRESS' || (!message.trim() && !file)}
-        className={`p-2 bg-blue-500 text-white rounded-lg ${status !== 'IN_PROGRESS' ? 'cursor-not-allowed' : 'hover:bg-blue-600'}`}
-        type="button"
-      >
-        <FiSend className="text-xl" />
-      </button>
+        <button
+          onClick={handleSendMessage}
+          disabled={!isTicketInProgress || (!message.trim() && !file) || !isAuthorized}
+          className={`p-2 bg-blue-500 text-white rounded-lg ${isTicketInProgress && isAuthorized ? 'hover:bg-blue-600' : 'cursor-not-allowed'}`}
+          type="button"
+        >
+          <FiSend className="text-xl" />
+        </button>
       </div>
 
       {file && (

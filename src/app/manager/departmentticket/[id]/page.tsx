@@ -165,7 +165,7 @@ export default function ManagericketDetailPage() {
         <TicketInfo ticket={selectedTicket} />
         <TicketStatus status={selectedTicket.status} />
         <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-        <TicketComment ticketId={selectedTicket.id} logs={logs} status={selectedTicket.status}/>
+        <TicketComment ticketId={selectedTicket.id} logs={logs} status={selectedTicket.status} handler={selectedTicket.handler}/>
       </div>
     </div>
     

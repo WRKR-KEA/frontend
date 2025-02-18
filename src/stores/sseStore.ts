@@ -50,6 +50,18 @@ export const useSSEStore = create<SSEState>((set, get) => ({
       get().addMessage(event.data, event.type);
     };
 
+    eventSource.addEventListener("ticket", (event: MessageEvent) => {
+      get().addMessage(event.data, event.type);
+    });
+
+    eventSource.addEventListener("comment", (event: MessageEvent) => {
+      get().addMessage(event.data, event.type);
+    });
+
+    eventSource.addEventListener("remind", (event: MessageEvent) => {
+      get().addMessage(event.data, event.type);
+    });
+
     eventSource.onerror = () => {
       eventSource.close();
       set({ eventSource: null });

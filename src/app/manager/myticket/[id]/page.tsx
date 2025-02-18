@@ -68,7 +68,8 @@ export default function ManagerTicketDetailPage() {
         return { log: comment.content };
       }
       return {
-        message: comment.content || comment.attachments,
+        message: comment.content,
+        attachment: comment.attachments,
         role: comment.type,
         createdAt: comment.createdAt,
       };

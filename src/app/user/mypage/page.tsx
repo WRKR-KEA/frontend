@@ -276,16 +276,24 @@ export default function UserProfilePage() {
             <div className="border-t border-gray-300 pb-4"></div>
             <div className={`${isEditing ? 'space-y-0.5' :'space-y-5'}`}>
             {[
-              { label: "* 이름", name: "name", type: "text" },
-              { label: "* 이메일 주소", name: "email", type: "email" },
-              { label: "* 전화번호", name: "phone", type: "phone" },
+              { label: "이름", name: "name", type: "text", required: true},
+              { label: "이메일 주소", name: "email", type: "email", required: true},
+              { label: "전화번호", name: "phone", type: "phone", required: true },
               { label: "아지트 URL", name: "agitUrl", type: "text" },
-              { label: "* 부서", name: "department", type: "text" },
-              { label: "* 직책", name: "position", type: "text" },
+              { label: "부서", name: "department", type: "text", required: true },
+              { label: "직책", name: "position", type: "text", required: true },
             ].map((field) => (
               <div key={field.name} className="pb-2">
                 <h2 className="text-sm font-semibold text-gray-500">
                   {field.label}
+                  {isEditing && field.required && (
+                    <span className="text-red-500 ml-1 relative group cursor-default">
+                      *
+                      <span className="absolute left-1 bottom-0 text-red-500 text-xs px-2 py-1 rounded-md whitespace-nowrap group-hover:flex hidden">
+                        필수 항목
+                      </span>
+                    </span>
+                  )}
                 </h2>
                 {isEditing ? (
                   <>

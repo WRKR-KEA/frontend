@@ -28,6 +28,8 @@ export default function DepartmentTicketListPage() {
     key: "selection",
   });
 
+  const [openFilter, setOpenFilter] = useState<string | null>(null); 
+
   const formattedDateRange = dateRange.startDate
     ? `${format(dateRange.startDate, "yyyy.MM.dd")} - ${format(dateRange.endDate, "yyyy.MM.dd")}`
     : "모든 날짜";
@@ -46,6 +48,16 @@ export default function DepartmentTicketListPage() {
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
+    if (openFilter) {
+      setOpenFilter(null); // Close filter if open
+    }
+  };
+
+  const toggleFilter = () => {
+    setOpenFilter(openFilter ? null : "num"); // Toggle filter
+    if (isCalendarOpen) {
+      setIsCalendarOpen(false); // Close calendar if open
+    }
   };
 
   const handleSelectCount = (count: number) => {
@@ -92,11 +104,11 @@ export default function DepartmentTicketListPage() {
       console.error("엑셀 다운로드 중 오류 발생:", error);
     }
   };
+
   const [searchInput, setSearchInput] = useState(""); // 검색 입력 필드
   const [searchTrigger, setSearchTrigger] = useState(""); // ✅ Enter 입력 후 실행할 검색어
 
-   // ✅ 검색 입력 후 Enter 키 입력 시 실행
-   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
       setCurrentPage(1); // 검색 시 첫 페이지로 이동
@@ -104,15 +116,13 @@ export default function DepartmentTicketListPage() {
   };
 
   const handleSearch = () => {
-  
     setSearchTrigger(searchInput); // ✅ 현재 검색어로 실행
     setCurrentPage(1); // 검색 시 첫 페이지로 이동
-  
-};
+  };
 
-if (error) {
-  return <SkeletonNet width="100%" height="100%" />;
-}
+  if (error) {
+    return <SkeletonNet width="100%" height="100%" />;
+  }
 
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
@@ -120,16 +130,16 @@ if (error) {
         <h2 className="text-lg font-semibold">티켓 조회</h2>
 
         <div className="flex items-center space-x-2 ml-4">
-        <Search_depart
-                    onSearchChange={handleSearchChange} 
-                    placeHolder="제목, 티켓번호, 담당자 검색"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        console.log("검색 실행:", searchTerm);
-                      }
-                    }}
-                    onBlur={() => console.log("검색어 입력 완료:", searchTerm)}
-                  />
+          <Search_depart
+            onSearchChange={handleSearchChange}
+            placeHolder="제목, 티켓번호, 담당자 검색"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                console.log("검색 실행:", searchTerm);
+              }
+            }}
+            onBlur={() => console.log("검색어 입력 완료:", searchTerm)}
+          />
         </div>
 
         <div className="ml-auto flex items-center relative">
@@ -152,7 +162,12 @@ if (error) {
               />
             </div>
           )}
-          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
+          <FilterNum
+            onSelectCount={handleSelectCount}
+            selectedCount={maxTicketsToShow}
+            isOpen={openFilter === "num"}
+            setIsOpen={() => toggleFilter()}
+          />
         </div>
       </div>
 
@@ -172,11 +187,11 @@ if (error) {
               status={status || ""}
               onStatusChange={handleStatusChange}
             />
-            
+
             {tickets.length === 0 ? (
-                     <div className="flex flex-col items-center justify-center py-10 text-gray-500">
-                    <SkeletonZero width="100%" height=""/>
-                   </div>
+              <div className="flex flex-col items-center justify-center py-10 text-gray-500">
+                <SkeletonZero width="100%" height="" />
+              </div>
             ) : (
               <>
                 <div className="flex justify-end mb-4 mt-4">
@@ -188,7 +203,7 @@ if (error) {
                     totalItemsCount={totalItemsCount}
                     itemsCountPerPage={maxTicketsToShow}
                     pageRangeDisplayed={5}
-                    currentPage={currentPage} 
+                    currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
                   />

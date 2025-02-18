@@ -131,7 +131,7 @@ export function TicketList_User({
                   <HighlightText text={ticket.title} highlight={searchTerm} />
                 </td>
                 <td className="px-4 py-2 truncate text-center overflow-hidden whitespace-nowrap text-ellipsis border">
-                  <HighlightText text={ticket.managerName || "-"} highlight={searchTerm} />
+                  <HighlightText text={ticket.managerName || "―"} highlight={searchTerm} />
                 </td>
                 <td className="px-4 py-2 text-center overflow-hidden whitespace-nowrap text-ellipsis border">
                   {ticket.updatedAt}

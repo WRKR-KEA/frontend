@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import AlertModal from "@/components/Modals/AlertModal";
 import Modal from "@/components/Modals/Modal";
@@ -10,6 +10,7 @@ import Skeleton from "@/components/Skeleton";
 
 export default function UserProfilePage() {
   const router = useRouter();
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const [isEditing, setIsEditing] = useState(false);
   const [editableData, setEditableData] = useState({
@@ -76,10 +77,13 @@ export default function UserProfilePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+  
     if (name === 'phone') {
-      const numbers = value.replace(/[^\d]/g, '');
-      
+      const inputElement = e.target as HTMLInputElement; // 명확하게 input 요소로 타입 단언
+      const cursorPosition = inputElement.selectionStart; // 커서 위치 저장
+  
+      const numbers = value.replace(/[^\d]/g, ''); // 숫자만 남김
+  
       let formattedNumber = '';
       if (numbers.length <= 3) {
         formattedNumber = numbers;
@@ -88,16 +92,15 @@ export default function UserProfilePage() {
       } else {
         formattedNumber = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
       }
-      
-      setEditableData(prev => ({
-        ...prev,
-        [name]: formattedNumber
-      }));
+  
+      setEditableData((prev) => ({ ...prev, [name]: formattedNumber }));
+  
+      // 상태 업데이트 후 커서 위치 복원
+      requestAnimationFrame(() => {
+        inputElement.selectionStart = inputElement.selectionEnd = cursorPosition!;
+      });
     } else {
-      setEditableData(prev => ({
-        ...prev,
-        [name]: value
-      }));
+      setEditableData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -130,10 +133,10 @@ export default function UserProfilePage() {
       valid = false;
     }
 
-    // 전화번호 형식 확인 (000-0000-0000 형식)
-    const phoneRegex = /^\d{3}-\d{4}-\d{4}$/;
+    // 전화번호 형식 확인 (010-0000-0000 형식)
+    const phoneRegex = /^010-\d{4}-\d{4}$/;
     if (!phoneRegex.test(editableData.phone)) {
-      newErrors.phone = "전화번호는 000-0000-0000 형식으로 입력해주세요.";
+      newErrors.phone = "전화번호는 010-0000-0000 형식으로 입력해주세요.";
       valid = false;
     }
 
@@ -199,9 +202,7 @@ export default function UserProfilePage() {
       setIsEditing(false);
     } catch (error) {
       console.error("❌ 업데이트 요청 실패:", error);
-      showModal("회원 정보 수정에 실패했습니다.");
-    }
-  };
+      showModal(`회원 정보 수정에 실패했습니다.`,`${error}`); } };
 
   const handleCancel = () => {
     setIsEditing(false);
@@ -245,7 +246,7 @@ export default function UserProfilePage() {
 
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
-      <div className="flex flex-col justify-between bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[950px] h-[950px]">
+      <div className="flex flex-col justify-between bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[900px] h-[900px]">
         <div className="flex items-center justify-between border-b pb-6">
           <div className="flex items-center space-x-8">
             <div className="relative">
@@ -270,7 +271,7 @@ export default function UserProfilePage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-12 mt-8">
+        <div className="grid grid-cols-2 gap-12">
         <div className="space-y-2">
             <h2 className="text-sm font-semibold text-gray-500 mb-2">회원 정보</h2>
             <div className="border-t border-gray-300 pb-4"></div>
@@ -353,7 +354,7 @@ export default function UserProfilePage() {
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-center">
+        <div className="flex items-center justify-center">
           {isEditing ? (
             <>
               <button onClick={handleSave} className="px-6 py-3 bg-blue-500 hover:bg-opacity-80 text-white rounded-md">

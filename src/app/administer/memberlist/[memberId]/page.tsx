@@ -66,31 +66,48 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
   const formatPhoneNumber = (value: string) => {
     // 숫자만 남기기 (하이픈, 공백 제거)
     const phoneNumber = value.replace(/\D/g, "");
-
+  
     if (phoneNumber.length <= 3) return phoneNumber;
     if (phoneNumber.length <= 7) return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`;
     return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3, 7)}-${phoneNumber.slice(7, 11)}`;
   };
+  
+  // const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const { name, value } = e.target;
+  //   setEditableData((prev) => ({
+  //     ...prev,
+  //     [name]: formatPhoneNumber(value),
+  //   }));
+  // };
 
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setEditableData((prev) => ({
-      ...prev,
-      [name]: formatPhoneNumber(value),
-    }));
+  
+    if (name === "phone") {
+      const inputElement = e.target as HTMLInputElement;
+      const cursorPosition = inputElement.selectionStart; // 커서 위치 저장
+  
+      const numbers = value.replace(/[^\d]/g, ''); // 숫자만 남김
+  
+      let formattedNumber = '';
+      if (numbers.length <= 3) {
+        formattedNumber = numbers;
+      } else if (numbers.length <= 7) {
+        formattedNumber = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+      } else {
+        formattedNumber = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+      }
+  
+      setEditableData((prev) => ({ ...prev, [name]: formattedNumber }));
+  
+      // 상태 업데이트 후 커서 위치 복원
+      requestAnimationFrame(() => {
+        inputElement.selectionStart = inputElement.selectionEnd = cursorPosition!;
+      });
+    } else {
+      setEditableData((prev) => ({ ...prev, [name]: value }));
+    }
   };
-
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setEditableData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-
-
 
   const handleSave = async () => {
     try {
@@ -266,7 +283,7 @@ export default function AdminMemberDetailPage({ params }: { params: { memberId: 
                   type={field.type}
                   name={field.name}
                   value={editableData[field.name] || ""}
-                  onChange={field.type != "tel" ? handleInputChange : handleNumberChange}
+                  onChange={handleInputChange}
                   className="w-full border-b-2 border-gray-300 px-2 py-2 focus:outline-none h-10"
                   required
                 />

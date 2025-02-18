@@ -20,10 +20,10 @@ type Ticket = {
   title: string,
   managerName: string | "―",
   createdAt: string,
-  updatedAt: string | "-",
-  startedAt: string | "-",
-  endedAt: string | "-",
-  completedAt: string | "-",
+  updatedAt: string | "―",
+  startedAt: string | "―",
+  endedAt: string | "―",
+  completedAt: string | "―",
 };
 
 export default function UserTicketListPage() {

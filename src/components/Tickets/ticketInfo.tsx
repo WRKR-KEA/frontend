@@ -8,12 +8,12 @@ interface TicketInfoProps {
     secondCategory: string,
     status: string,
     title: string,
-    handler: string | "-",
-    requester: string | "-"
+    handler: string | "―",
+    requester: string | "―"
     requestDate: string,
-    updateDate: string | "-",
-    acceptDate: string | "-",
-    completeDate: string | "-",
+    updateDate: string | "―",
+    acceptDate: string | "―",
+    completeDate: string | "―",
   }
 }
 

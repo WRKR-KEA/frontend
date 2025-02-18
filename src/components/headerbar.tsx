@@ -156,7 +156,6 @@ export default function Headerbar() {
                       {/* 알림 아이템 1 */}
                       {notificationData.length > 0 ? (
                         notificationData
-                        .filter((item) => item.type === "COMMENT") // 필터링
                         .map((notification) => (
                           <li
                             key={notification.notificationId}
@@ -173,57 +172,7 @@ export default function Headerbar() {
                               />
                             </div>
                             <div>
-                              <p className="font-semibold">{notification.content}</p>
-                              <p className="text-xs text-gray-500">{notification.timeAgo}</p>
-                            </div>
-                          </li>
-                        ))
-                      ) : (
-                        <div className="text-gray-500 text-sm text-center">알림이 없습니다.</div>
-                      )}
-                    </ul>
-
-                  </div>
-                )}
-              </li>
-
-              {/* 티켓 알림 아이콘 */}
-              <li className="relative">
-                <svg className="cursor-pointer" onClick={() => toggleModal("ticket")} width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M2 12C2 8.229 2 6.343 3.172 5.172C4.344 4.001 6.229 4 10 4H14C17.771 4 19.657 4 20.828 5.172C21.999 6.344 22 8.229 22 12C22 15.771 22 17.657 20.828 18.828C19.656 19.999 17.771 20 14 20H10C6.229 20 4.343 20 3.172 18.828C2.001 17.656 2 15.771 2 12Z"
-                    stroke="black" strokeWidth="1.5" />
-                  <path opacity="0.5" d="M10 16H6M14 16H12.5M2 10H22" stroke="black"
-                        strokeWidth="1.5" strokeLinecap="round" />
-                </svg>
-                {activeModal === "ticket" && (
-                  <div
-                    ref={modalRef} // ✅ 모달 ref 추가
-                    className="absolute right-[-22px] top-9 w-80 bg-white border rounded-md shadow-lg p-4 z-[100]">
-                    {/* 말풍선 뾰족한 부분 */}
-                    <div className="absolute top-[-10px] right-6 w-4 h-4 bg-white border-t border-l rotate-45 transform origin-center"></div>
-                    <p className="text-gray-700 mb-2">Activities</p>
-
-                    {/* 알림 리스트 */}
-                    <ul className="space-y-4">
-                      {notificationData.length > 0 ? (
-                        notificationData
-                        .filter((item) => item.type === "TICKET") // 필터링
-                        .map((notification) => (
-                          <li
-                            key={notification.notificationId}
-                            className={`flex items-center space-x-3 ${notification.isRead ? "bg-gray-50 p-3 rounded" : "bg-blue-200 p-3 rounded"
-                            }`}
-                          >
-                            <div className="w-10 h-10 flex items-center justify-center bg-gray-100 rounded-full">
-                              <img
-                                src={notification.profileImage}
-                                alt="알림 아이콘"
-                                className="rounded-full"
-                              />
-                            </div>
-                            <div>
-                              <p className="font-semibold">{notification.content}</p>
+                              <p className="text-sm font-semibold">{notification.content}</p>
                               <p className="text-xs text-gray-500">{notification.timeAgo}</p>
                             </div>
                           </li>

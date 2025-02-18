@@ -222,7 +222,7 @@ const AdminMemberEnrollPage: React.FC = () => {
       }
     } catch (error) {
       console.error("회원 정보 업로드 중 오류 발생:", error);
-      showModal("회원 정보 업로드 중 오류가 발생했습니다.");
+      showModal(error.response.data.message);
     }
   };
 

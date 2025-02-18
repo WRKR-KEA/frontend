@@ -100,12 +100,8 @@ export default function ManagericketDetailPage() {
       console.log("요청 승인 성공:", result);
       showModal("요청이 승인되었습니다."); 
       setIsModalOpen(false); // 모달 닫기
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null));
-      }, 1000);
-      
+ 
       setTimeout(() => {
-        clearInterval(timer);
         router.push(`/manager/myticket/${result.result[0]?.ticketId}`);
       }, 1000);
 

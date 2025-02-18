@@ -7,11 +7,13 @@ import { formatTime } from '@/app/utils/formatTime';
 import { useUserDetailQuery } from '@/hooks/useUserDetail';
 import AlertModal from '../Modals/AlertModal';
 import Modal from '../Modals/Modal';
+import { FaFileAlt } from 'react-icons/fa'; 
 import { useSSEStore } from '@/stores/sseStore';
 
 interface Log {
   log?: string;
   message?: string | string[];
+  attachment?: string | string[];
   role?: 'MANAGER' | 'USER';
   createdAt?: string;
 }
@@ -38,6 +40,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
     onClose: () => { },
     onClose2: () => { }
   });
+  console.log("받은 로그", logs);
 
   const showModal = (title: string, btnText = '닫기') => {
     setModalState({
@@ -131,8 +134,17 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
   const isTicketInProgress = status === 'IN_PROGRESS';
   const isAuthorized = user?.nickname === handler;
 
+  console.log(displayLogs);
+
+  const isImage = (url) => {
+    const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
+    const extension = url.split('.').pop().toLowerCase();
+    return imageExtensions.includes(extension);
+  };
+
+
   return (
-    <div className="bg-component rounded-md p-4 flex flex-col h-[380px]">
+    <div className="bg-component rounded-md p-4 flex flex-col h-[450px]">
       <div ref={chatContainerRef} className="overflow-y-auto pr-2 flex-1 hide-scrollbar">
         {displayLogs.map((log, index) => (
           <div key={index} className="flex flex-col mb-2">
@@ -155,24 +167,104 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
                     log.role === user?.role ? 'bg-blue-100 text-blue-700' : 'bg-gray-200 text-gray-700'
                   }`}
                 >
-                  {Array.isArray(log.message) ? (
-                    log.message.map((attachment, idx) => {
+
+                {/* 메시지와 첨부파일 처리 */}
+                {log.message && !Array.isArray(log.message) && (
+                  <div>
+                    <span>{log.message}</span>
+                  </div>
+                )}
+
+                {Array.isArray(log.message) && log.message.length > 0 && (
+                  <div>
+                    {log.message.map((attachment, idx) => {
                       const fileName = attachment.split('/').pop();
-                      const finalFileName = fileName.replace(/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/, '');
+                      const finalFileName = fileName?.replace(
+                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/,
+                        ''
+                      );
                       return (
                         <a
                           key={idx}
                           href={attachment}
                           download
-                          className="text-blue-500 underline block"
+                          className="text-blue-500 underline block mb-2"
                         >
                           {finalFileName}
                         </a>
                       );
-                    })
-                  ) : (
-                    log.message
-                  )}
+                    })}
+                  </div>
+                )}
+
+                {/* 첨부파일 처리 */}
+                {log.attachment && !Array.isArray(log.attachment) && (
+                  <div>
+                    {isImage(log.attachment) ? (
+                      <a href={log.attachment} download>
+                        <div className="relative w-[100px] h-[100px]">
+                          <img
+                            src={log.attachment}
+                            alt="Attachment"
+                            className="w-[100px] h-[100px] object-cover mb-2 hover:opacity-60"
+                          />
+                          <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
+                            {log.attachment.split('/').pop()}
+                          </span>
+                        </div>
+                      </a>
+                    ) : (
+                      <a href={log.attachment} download>
+                        <div className="relative w-[100px] h-[100px] bg-gray-300 flex items-center justify-center text-gray-700 hover:opacity-60">
+                          <FaFileAlt className="text-gray-500" size={80} />
+                          <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
+                            {log.attachment.split('/').pop()}
+                          </span>
+                        </div>
+                      </a>
+                    )}
+                  </div>
+                )}
+
+                {/* message와 attachment 둘 다 있을 경우 */}
+                {log.attachment && Array.isArray(log.attachment) && (
+                  <div>
+                    {log.attachment.map((attachment, idx) => {
+                      const fileName = attachment.split('/').pop();
+                      const finalFileName = fileName?.replace(
+                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/,
+                        ''
+                      );
+                      return (
+                        <div key={idx} className="mb-2">
+                          {isImage(attachment) ? (
+                            <a href={attachment} download>
+                              <div className="relative w-[300px]">
+                                <img
+                                  src={attachment}
+                                  alt="Attachment"
+                                  className="w-[300px] object-cover mb-2 hover:opacity-60"
+                                />
+                                <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
+                                  {finalFileName}
+                                </span>
+                              </div>
+                            </a>
+                          ) : (
+                            <a href={attachment} download>
+                              <div className="relative w-[100px] h-[100px] bg-gray-300 flex items-center justify-center text-gray-700 hover:opacity-60">
+                                <FaFileAlt className="text-gray-500" size={80} />
+                                <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
+                                  {finalFileName}
+                                </span>
+                              </div>
+                            </a>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
                 </div>
                 {log.role === user?.role && (
                   <p className="self-end text-xs ml-2 text-gray-400">
@@ -188,7 +280,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
       <div className="flex space-x-2 items-center mt-2">
         <button
           onClick={handleFileUploadClick}
-          className={`bg-gray-200 rounded-lg p-2 ${isTicketInProgress ? 'hover:bg-gray-300' : 'cursor-not-allowed'}`}
+          className={`bg-gray-200 rounded-lg p-2 ${isTicketInProgress && isAuthorized ? 'hover:bg-gray-300' : 'cursor-not-allowed'}`}
           type="button"
           disabled={!isTicketInProgress}
         >
@@ -198,7 +290,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
 
         <button
           onClick={handleRemind}
-          className={`bg-red-100 rounded-lg p-2 ${isTicketInProgress ? 'hover:bg-red-200' : 'cursor-not-allowed'}`}
+          className={`bg-red-100 rounded-lg p-2 ${isTicketInProgress && isAuthorized ? 'hover:bg-red-200' : 'cursor-not-allowed'}`}
           type="button"
           disabled={!isTicketInProgress}
         >

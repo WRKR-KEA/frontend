@@ -50,7 +50,8 @@ export default function ManagericketDetailPage() {
       return { log: comment.content };
     }
     return {
-      message: comment.content || comment.attachments,
+      message: comment.content,
+      attachment: comment.attachments,
       role: comment.type as "MANAGER" | "USER", 
       createdAt: comment.createdAt,
     };

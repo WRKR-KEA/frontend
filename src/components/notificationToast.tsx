@@ -1,22 +1,22 @@
 import React, { useEffect } from 'react';
-import { useToastStore } from '../stores/notificationStore';
+import { useSSEStore } from '@/stores/sseStore';
 
 const Toast: React.FC = () => {
-  const { toasts, removeToast } = useToastStore();
+  const { messages, removeMessage } = useSSEStore();
 
   useEffect(() => {
-    if (toasts.length > 0) {
+    if (messages.length > 0) {
       const timer = setTimeout(() => {
-        removeToast(toasts[0].id);
+        removeMessage(messages[0].id);
       }, 3000); // 3초 후 사라짐
 
       return () => clearTimeout(timer);
     }
-  }, [toasts, removeToast]);
+  }, [messages]);
 
-  if (toasts.length === 0) return null;
+  if (messages.length === 0) return null;
 
-  const { id, message, type } = toasts[0];
+  const { id, message, type } = messages[0];
 
   return (
     <div

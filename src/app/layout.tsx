@@ -8,6 +8,8 @@ import React, { useState, useEffect } from 'react';
 import useUserStore from '@/stores/userStore'; // ✅ Zustand 스토어 import
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import axios from "axios";
+import useSSE from '@/services/userSse';
+import Toast from '@/components/notificationToast';
 
 export default function RootLayout({ children, }: { children: React.ReactNode; }) {
   const pathname = usePathname(); // 현재 경로 가져오기
@@ -50,7 +52,7 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
 
   const isChecking = useAuthGuard(); // 😎라우트 가드 훅 사용
 
-
+  useSSE();
 
   const refreshAccessToken = async () => {
     try {
@@ -133,6 +135,8 @@ export default function RootLayout({ children, }: { children: React.ReactNode; }
         <title>Tickety</title>
       </head>
       <body className="h-screen flex">
+
+      <Toast/>
         {/* 경로가 제외 대상이 아닌 경우에만 사이드바와 헤더바 표시 */}
         {!isExcluded && <Sidebar user={user} />}
 

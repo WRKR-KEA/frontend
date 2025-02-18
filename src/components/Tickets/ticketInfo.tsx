@@ -30,7 +30,7 @@ export const TicketInfo: React.FC<TicketInfoProps> = ({ ticket }) => {
           <div className="space-y-4 text-left truncate w-full">
             {/*TODO: type으로 변경*/}
             <div className="space-y-4 flex flex-col w-full">
-              <div className="flex text-sm truncate"><p className="w-16">업무: </p>{ticket.title}</div>
+              <div className="flex text-sm truncate"><p className="w-16">제목: </p>{ticket.title}</div>
               <div className="flex text-sm truncate"><p className="w-16">담당자: </p>{ticket.handler || '―'}</div>
               <div className="flex text-sm truncate"><p className="w-16">요청자: </p>{ticket.requester || '―'}</div>
               <div className="flex text-sm truncate"><p className="w-16">카테고리: </p>{`${ticket.firstCategory}/${ticket.secondCategory}` || '―'}</div>

@@ -4,16 +4,14 @@ import Sidebar from '@/components/sidebar';
 import Headerbar from '@/components/headerbar';
 import { usePathname, useRouter } from 'next/navigation'; // ✅ useRouter 추가
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect } from 'react';
 import useUserStore from '@/stores/userStore'; // ✅ Zustand 스토어 import
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import axios from "axios";
+import useSSE from '@/services/useSse';
+import Toast from '@/components/notificationToast';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children, }: { children: React.ReactNode; }) {
   const pathname = usePathname(); // 현재 경로 가져오기
   const router = useRouter(); // ✅ useRouter 사용
   const [queryClient] = useState(() => new QueryClient());
@@ -54,44 +52,44 @@ export default function RootLayout({
 
   const isChecking = useAuthGuard(); // 😎라우트 가드 훅 사용
 
+  useSSE();
 
+  const refreshAccessToken = async () => {
+    try {
+      const refreshToken = sessionStorage.getItem("refreshToken");
 
-const refreshAccessToken = async () => {
-  try {
-    const refreshToken = sessionStorage.getItem("refreshToken");
-
-    if (!refreshToken) {
-      console.warn("리프레시 토큰이 없습니다.");
-      return;
-    }
-
-    const response = await axios.post(
-      `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/refresh`,
-      {}, // ✅ POST 요청에 body 없음 (빈 객체 전달)
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${refreshToken}`,
-        },
+      if (!refreshToken) {
+        console.warn("리프레시 토큰이 없습니다.");
+        return;
       }
-    );
 
-    if (response.status !== 200) {
-      throw new Error(`토큰 갱신 실패: ${response.status} - ${response.statusText}`);
-    }
+      const response = await axios.post(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/refresh`,
+        {}, // ✅ POST 요청에 body 없음 (빈 객체 전달)
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${refreshToken}`,
+          },
+        }
+      );
 
-    const data = response.data;
+      if (response.status !== 200) {
+        throw new Error(`토큰 갱신 실패: ${response.status} - ${response.statusText}`);
+      }
 
-    // ✅ Zustand userStore에 로그인 정보 저장
-    if (data.result) {
-      setUser({
-        profileImage: data.result.profileImage,
-        name: data.result.name,
-        role: data.result.role,
-        nickname: data.result.nickname,
-      });
-      console.log("사용자 정보가 userStore에 저장되었습니다.");
-    }
+      const data = response.data;
+
+      // ✅ Zustand userStore에 로그인 정보 저장
+      if (data.result) {
+        setUser({
+          profileImage: data.result.profileImage,
+          name: data.result.name,
+          role: data.result.role,
+          nickname: data.result.nickname,
+        });
+        console.log("사용자 정보가 userStore에 저장되었습니다.");
+      }
 
     if (data.result?.accessToken && data.result?.refreshToken) {
       sessionStorage.setItem("accessToken", data.result.accessToken);
@@ -102,7 +100,7 @@ const refreshAccessToken = async () => {
     }
   } catch (error) {
     console.error("❌ 토큰 갱신 중 오류 발생:", error);
-    
+
     if (axios.isAxiosError(error)) {
       console.error("📌 오류 응답 상태 코드:", error.response?.status);
       console.error("📌 오류 메시지:", error.response?.data?.message || "서버 오류 발생");
@@ -132,11 +130,13 @@ const refreshAccessToken = async () => {
 
   return (
     <html lang="ko" >
-    <head>
-      <link rel="icon" href="/favicon.svg" />
-      <title>Tickety</title>
-    </head>
-    <body className="h-screen flex">
+      <head>
+        <link rel="icon" href="/favicon.svg" />
+        <title>Tickety</title>
+      </head>
+      <body className="h-screen flex">
+
+      <Toast/>
         {/* 경로가 제외 대상이 아닌 경우에만 사이드바와 헤더바 표시 */}
         {!isExcluded && <Sidebar user={user} />}
 

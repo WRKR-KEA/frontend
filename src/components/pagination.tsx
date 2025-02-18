@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface PagePaginationProps {
   totalItemsCount: number;
@@ -20,10 +20,7 @@ const PagePagination: React.FC<PagePaginationProps> = ({
   };
 
   const getStartAndEndPages = () => {
-    const startPage = Math.max(
-      1,
-      currentPage - Math.floor(pageRangeDisplayed / 2),
-    );
+    const startPage = Math.max(1, currentPage - Math.floor(pageRangeDisplayed / 2));
     const endPage = Math.min(totalPages, startPage + pageRangeDisplayed - 1);
     return { startPage, endPage };
   };
@@ -43,8 +40,8 @@ const PagePagination: React.FC<PagePaginationProps> = ({
         onClick={() => handleClick(pageNumber)}
         className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
           currentPage === pageNumber
-            ? 'bg-[#4F507F] text-white'
-            : 'text-black hover:bg-[#9192AE]'
+            ? "bg-[#4F507F] text-white"
+            : "text-black hover:bg-[#9192AE]"
         }`}
       >
         {pageNumber}
@@ -64,22 +61,24 @@ const PagePagination: React.FC<PagePaginationProps> = ({
         disabled={currentPage === 1}
         className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
           currentPage === 1
-            ? 'text-zinc-300'
-            : 'text-zinc-700 hover:bg-[#9192AE]'
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
         }`}
+
       >
-        {'<<'}
+        {"<<"}
       </button>
       <button
         onClick={goToPreviousPage}
         disabled={currentPage === 1}
         className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
           currentPage === 1
-            ? 'text-zinc-300'
-            : 'text-zinc-700 hover:bg-[#9192AE]'
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
         }`}
+
       >
-        {'<'}
+        {"<"}
       </button>
       {renderPageNumbers()}
       <button
@@ -87,22 +86,22 @@ const PagePagination: React.FC<PagePaginationProps> = ({
         disabled={currentPage === totalPages}
         className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
           currentPage === totalPages
-            ? 'text-zinc-300'
-            : 'text-zinc-700 hover:bg-[#9192AE]'
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
         }`}
       >
-        {'>'}
+        {">"}
       </button>
       <button
         onClick={goToLastPage}
         disabled={currentPage === totalPages}
         className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
           currentPage === totalPages
-            ? 'text-zinc-300'
-            : 'text-zinc-700 hover:bg-[#9192AE]'
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
         }`}
       >
-        {'>>'}
+        {">>"}
       </button>
     </div>
   );

@@ -53,7 +53,7 @@ export default function ManagericketDetailPage() {
       return { log: comment.content };
     }
     return {
-      message: comment.content,
+      message: comment.content || comment.attachments,
       role: comment.type as "MANAGER" | "USER", 
       createdAt: comment.createdAt,
     };
@@ -165,7 +165,7 @@ export default function ManagericketDetailPage() {
         <TicketInfo ticket={selectedTicket} />
         <TicketStatus status={selectedTicket.status} />
         <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-        <TicketComment ticketId={selectedTicket.id} logs={logs}/>
+        <TicketComment ticketId={selectedTicket.id} logs={logs} status={selectedTicket.status}/>
       </div>
     </div>
     

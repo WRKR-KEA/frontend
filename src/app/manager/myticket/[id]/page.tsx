@@ -194,7 +194,7 @@ console.log(selectedTicket);
         <div className="flex-1">
         <div className="pt-4 px-0 pb-4 flex flex-col">
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold">티켓 상세 정보</h2>
+            <h2 className="text-lg font-semibold w-32">티켓 상세 정보</h2>
             {selectedTicket.status === "IN_PROGRESS" && (
               <div className="flex space-x-3 mt-[-12px]">
                 <Button label="요청 반려" onClick={handleAbortTicket} color={7} />

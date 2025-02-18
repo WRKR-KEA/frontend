@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
@@ -9,7 +9,6 @@ import { Search_manager } from "@/components/search_manager";
 import Skeleton from "@/components/Skeleton";
 import { useManageTicketListQuery } from "@/hooks/useManageTicketList";
 import SkeletonNet from "@/components/SkeletonNet";
-import SkeletonZero from "@/components/SkeletonZero"; 
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -17,8 +16,10 @@ export default function ManagerTicketListPage() {
   const [sortOrder, setSortOrder] = useState("UPDATED");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState("");
+  const [isFilterNumOpen, setIsFilterNumOpen] = useState(false);
+  const [isFilterOrderOpen, setIsFilterOrderOpen] = useState(false);
 
-  const [tickets, setTickets] = useState<any[]>([]); // 💡 티켓 상태 추가
+  const [tickets, setTickets] = useState<any[]>([]);
 
   const { data, isLoading, error, refetch } = useManageTicketListQuery(
     currentPage,
@@ -28,7 +29,6 @@ export default function ManagerTicketListPage() {
     searchTerm
   );
 
-  // 💡 data가 변경될 때 tickets 상태 업데이트
   useEffect(() => {
     if (data) {
       setTickets(data.elements);
@@ -36,7 +36,6 @@ export default function ManagerTicketListPage() {
     }
   }, [data]);
 
-  // 상태 변경 시 API 데이터 다시 호출
   useEffect(() => {
     refetch();
   }, [selectedStatus, currentPage, maxTicketsToShow, sortOrder, searchTerm, refetch]);
@@ -44,6 +43,7 @@ export default function ManagerTicketListPage() {
   const handleSelectCount = useCallback((count: number) => {
     setMaxTicketsToShow(count);
     setCurrentPage(1);
+    setIsFilterNumOpen(false);
   }, []);
 
   const handleSearchChange = useCallback((term: string) => {
@@ -54,6 +54,7 @@ export default function ManagerTicketListPage() {
   const handleSelectOrder = useCallback((order: string) => {
     setSortOrder(order);
     setCurrentPage(1);
+    setIsFilterOrderOpen(false);
   }, []);
 
   const handlePageChange = useCallback((pageNumber: number) => {
@@ -64,6 +65,40 @@ export default function ManagerTicketListPage() {
     setSelectedStatus(status);
     setCurrentPage(1);
   }, []);
+
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterNumOpen(false);
+        setIsFilterOrderOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (data) {
+      const filteredTickets = data.elements.filter(ticket =>
+        // Filter logic with lowercase comparison for better accuracy
+        ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        ticket.ticketNumber.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setTickets(filteredTickets || []);
+      console.log("Filtered Tickets:", filteredTickets);  // Check the filtered tickets
+    }
+  }, [searchTerm, data]);
+
+  const [openFilter, setOpenFilter] = useState<string | null>(null); 
+
+  const toggleFilter = (filterType: string) => {
+    setOpenFilter(openFilter === filterType ? null : filterType);
+  };
 
   if (error) {
     return <SkeletonNet width="100%" height="100%" />;
@@ -76,7 +111,7 @@ export default function ManagerTicketListPage() {
 
         <div className="flex items-center space-x-2 ml-4">
           <Search_manager
-            onSearchChange={handleSearchChange} 
+            onSearchChange={handleSearchChange}
             placeHolder="제목, 티켓번호 검색"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -87,9 +122,19 @@ export default function ManagerTicketListPage() {
           />
         </div>
 
-        <div className="ml-auto flex items-center">
-          <FilterOrder onSelectOrder={handleSelectOrder} sortOrder={sortOrder} />
-          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
+        <div className="ml-auto flex items-center space-x-2" ref={filterRef}>
+        <FilterOrder
+            onSelectOrder={handleSelectOrder}
+            sortOrder={sortOrder}
+            isOpen={openFilter === "order"}
+            setIsOpen={() => toggleFilter("order")}
+          />
+          <FilterNum
+            onSelectCount={handleSelectCount}
+            selectedCount={maxTicketsToShow}
+            isOpen={openFilter === "num"}
+            setIsOpen={() => toggleFilter("num")}
+          />
         </div>
       </div>
 

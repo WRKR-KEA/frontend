@@ -3,11 +3,11 @@ import { useState } from "react";
 interface FilterNumProps {
   onSelectCount: (count: number) => void;
   selectedCount: number; // 부모에서 전달받음
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
 }
 
-export function FilterNum({ onSelectCount, selectedCount }: FilterNumProps) {
-  const [isOpen, setIsOpen] = useState(false);
-
+export function FilterNum({ onSelectCount, selectedCount, isOpen, setIsOpen }: FilterNumProps) {
   const handleSelect = (count: number) => {
     onSelectCount(count);
     setIsOpen(false);

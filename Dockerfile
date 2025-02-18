@@ -19,6 +19,7 @@ ENV NEXT_PUBLIC_BASE_URL=https://www.tickety.co.kr
 ARG NEXT_PUBLIC_NOTI_URL
 ENV NEXT_PUBLIC_NOTI_URL=https://www.tickety.co.kr
 
+
 # 7. 애플리케이션 빌드
 RUN npm run build
 

@@ -1,4 +1,4 @@
-import { fetchComments } from '@/service/user';
+import { fetchComments } from '@/services/user';
 import { useQuery } from '@tanstack/react-query';
 
 interface CommentResponse {

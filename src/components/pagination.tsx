@@ -58,26 +58,48 @@ const PagePagination: React.FC<PagePaginationProps> = ({
     <div className="flex items-center">
       <button
         onClick={goToFirstPage}
-        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+        disabled={currentPage === 1}
+        className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
+          currentPage === 1
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
+        }`}
+
       >
         {"<<"}
       </button>
       <button
         onClick={goToPreviousPage}
-        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+        disabled={currentPage === 1}
+        className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
+          currentPage === 1
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
+        }`}
+
       >
         {"<"}
       </button>
       {renderPageNumbers()}
       <button
         onClick={goToNextPage}
-        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+        disabled={currentPage === totalPages}
+        className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
+          currentPage === totalPages
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
+        }`}
       >
         {">"}
       </button>
       <button
         onClick={goToLastPage}
-        className="mx-1 text-black hover:bg-[#9192AE] w-8 h-8 flex items-center justify-center rounded-full"
+        disabled={currentPage === totalPages}
+        className={`mx-1 w-8 h-8 flex items-center justify-center rounded-full ${
+          currentPage === totalPages
+            ? "text-zinc-300"
+            : "text-zinc-700 hover:bg-[#9192AE]"
+        }`}
       >
         {">>"}
       </button>

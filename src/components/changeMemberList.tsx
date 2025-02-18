@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useManagerListQuery } from '@/hooks/useManagerList';
+import Skeleton from "@/components/Skeleton"; 
 
 interface Member {
   memberId: string; 
@@ -19,7 +20,7 @@ const ChangeMemberList: React.FC<ChangeMemberListProps> = ({ onSelectManager }) 
 
   const { data, isLoading, error } = useManagerListQuery();
 
-  if (isLoading) return <p>로딩 중...</p>;
+  if (isLoading) return <Skeleton width="100%" height="100%" />;
   if (error) return <p>데이터를 불러오는 중 오류가 발생했습니다.</p>;
 
 

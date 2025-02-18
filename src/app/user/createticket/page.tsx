@@ -6,12 +6,13 @@ import FirstTaskDrop from "@/components/Tickets/firstTaskDrop";
 import SecondTaskDrop from "@/components/Tickets/secondTaskDrop";
 import Help from "@/components/Modals/Help";
 import ModalHelp from "@/components/Modals/ModalHelp";
-import Modal from "@/components/Modals/Modal";
+import TicketModal from "@/components/Modals/TicketModal";
 import Template from "@/components/Tickets/Template";
 import Button from "@/components/Buttons/Button";
 import { fetchCategories, fetchGuide, postTicket } from "@/services/user";
 import { fetchTemplate } from "@/services/admin";
-import AlertModal from "@/components/Modals/AlertModal";
+import AlertTicketModal from "@/components/Modals/AlertTicketModal";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserCreateTicketPage() {
   const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");
@@ -34,6 +35,7 @@ export default function UserCreateTicketPage() {
     btnText: '',
     onClose: () => {},
   });
+  const queryClient = useQueryClient();
 
   const showModal = (title: string, btnText = '닫기') => {
     setModalState({
@@ -120,18 +122,14 @@ export default function UserCreateTicketPage() {
         showModal("티켓 생성에 실패했습니다.");
         return;
       }
+      await queryClient.invalidateQueries({ queryKey: ['user_tickets'] });
   
       console.log("✅ 티켓 생성 성공:", result);
       setIsTicketCreated(true); // 생성 완료 상태로 변경
       setCountdown(1); // 카운트다운 시작
       showModal("티켓 생성이 완료되었습니다.");
-      
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null));
-      }, 1000);
   
       setTimeout(() => {
-        clearInterval(timer);
         router.push(`/user/myticket/${result.result.ticketId}`);
       }, 1000);
     } catch (error: any) {
@@ -250,12 +248,12 @@ export default function UserCreateTicketPage() {
       )}
 
       {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
+        <TicketModal onClose={modalState.onClose}>
+          <AlertTicketModal
             title={modalState.title}
             onClick={modalState.onClose}
           />
-        </Modal>
+        </TicketModal>
       )}
     </div>
   );

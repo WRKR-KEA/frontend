@@ -4,8 +4,8 @@ import React from "react";
 type Ticket = {
   id: string,
   number: string,
-  firstCatetory: string,
-  secondCatetory: string,
+  firstCategory: string,
+  secondCategory: string,
   status: string,
   title: string,
   handler: string,
@@ -37,6 +37,14 @@ export function TicketList({
     REQUEST: "bg-request text-request",
   };
 
+  const statusLabels: Record<string, string> = {
+    COMPLETE: "완료",
+    IN_PROGRESS: "진행",
+    CANCEL: "취소",
+    REJECT: "반려",
+    REQUEST: "요청",
+  };
+
   const router = useRouter();
 
   // 티켓을 페이지에 맞게 잘라서 표시
@@ -46,15 +54,15 @@ export function TicketList({
 
   return (
     <div className="bg-white rounded-md">
-      <table className="w-full text-sm border-collapse">
+      <table className="w-full text-sm border-collapse table-fixed">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-4 py-2 w-28 max-w-28 text-center">티켓 번호</th>
-            <th className="px-4 py-2 w-28 max-w-28 text-center">상태</th>
-            <th className="px-4 py-2 w-28 max-w-28 text-center">카테고리</th>
-            <th className="px-4 py-2 w-80 max-w-80 text-center">제목</th>
-            <th className="px-4 py-2 w-28 max-w-28 text-center">담당자</th>
-            <th className="px-4 py-2 w-32 max-w-32 text-center">최근 변경 일시</th>
+            <th className="px-4 py-2 w-32 text-center">티켓 번호</th>
+            <th className="px-4 py-2 w-20 text-center">상태</th>
+            <th className="px-4 py-2 w-32 text-center">카테고리</th>
+            <th className="px-4 py-2 w-80 text-center">제목</th>
+            <th className="px-4 py-2 w-28 text-center">담당자</th>
+            <th className="px-4 py-2 w-36 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
@@ -65,16 +73,16 @@ export function TicketList({
               onMouseEnter={() => onTicketHover?.(ticket)}
               onClick={()=>router.push(`/user/myticket/${ticket.id}`)}
             >
-              <td className="px-4 py-2 max-w-28 border truncate text-center">{ticket.number}</td>
-              <td className="px-4 py-2 max-w-28 border text-center">
+              <td className="px-4 py-2 border truncate text-center">{ticket.number}</td>
+              <td className="px-4 py-2 border text-center">
                 <p
                   className={`max-w-fit px-2 py-1 border rounded-md truncate text-xs font-semibold mx-auto ${statusStyles[ticket.status]}`}
                 >
-                  {ticket.status}
+                  {statusLabels[ticket.status] ?? ticket.status}
                 </p>
               </td>
               <td className="px-4 py-2 max-w-28 border truncate text-center">
-                {ticket.firstCatetory}/{ticket.secondCatetory}
+                {ticket.firstCategory}/{ticket.secondCategory}
               </td>
               <td className="px-4 py-2 border max-w-80 truncate">{ticket.title}</td>
               <td className="px-4 py-2 border max-w-28 truncate text-center">{ticket.handler}</td>

@@ -9,8 +9,8 @@ import Button from "@/components/Buttons/Button";
 import { TicketAccept } from "@/components/Modals/ticketAccept";
 import { updateManagerTicketApprove, fetchManagerTicket } from "@/services/manager";
 import { useCommentList } from '@/hooks/useCommentList';
-import AlertModal from "@/components/Modals/AlertModal";
-import Modal from "@/components/Modals/Modal";
+import AlertTicketModal from "@/components/Modals/AlertTicketModal";
+import TicketModal from "@/components/Modals/TicketModal";
 import TicketRequest from "@/components/Tickets/ticketRequest";
 import Skeleton from "@/components/Skeleton";
 
@@ -18,9 +18,6 @@ export default function ManagericketDetailPage() {
   const router = useRouter();
   const [isModalOpen, setIsModalOpen] = useState(false); // 모달 상태 관리
   const [selectedTicket, setSelectedTicket] = useState<any | null>(null); // 선택된 티켓
-  const [isChangeModalOpen, setIsChangeModalOpen] = useState(false);
-  const [isCompleteTicketOpen, setIsCompleteTicketOpen] = useState(false); // 작업 완료 모달 상태
-  const [isAbortTicketOpen, setIsAbortTicketOpen] = useState(false);
   const [ticketId, setTicketId] = useState('');
   const param = useParams();
   const [countdown, setCountdown] = useState(1);
@@ -54,6 +51,7 @@ export default function ManagericketDetailPage() {
     }
     return {
       message: comment.content,
+      attachment: comment.attachments,
       role: comment.type as "MANAGER" | "USER", 
       createdAt: comment.createdAt,
     };
@@ -95,23 +93,18 @@ export default function ManagericketDetailPage() {
 
   const confirmAccept = async () => {
     try {
-
       const result = await updateManagerTicketApprove(ticketId);
       console.log("요청 승인 성공:", result);
+  
+      setIsModalOpen(false); // 🔹 TicketAccept 모달을 먼저 닫음
       showModal("요청이 승인되었습니다."); 
-      setIsModalOpen(false); // 모달 닫기
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null));
-      }, 1000);
-      
+  
       setTimeout(() => {
-        clearInterval(timer);
         router.push(`/manager/myticket/${result.result[0]?.ticketId}`);
       }, 1000);
-
+  
     } catch (error) {
       console.error("작업 승인 중 오류 발생:", error);
-      
     }
   };
 
@@ -126,24 +119,6 @@ export default function ManagericketDetailPage() {
       </div>
       );
   }
-
-  const handleCompleteTicket = () => {
-    setIsCompleteTicketOpen(true);
-  }; // 작업 완료 모달 열기
-  const handleAbortTicket = () => {
-    setIsAbortTicketOpen(true);
-  };
-  const closeAbortTicketModal = () => {
-    setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
-  };
-
-  const closeCompleteTicketModal = () => {
-    setIsCompleteTicketOpen(false); // 작업 완료 모달 닫기
-  };
-
-  const toggleChangeModal = () => {
-    setIsChangeModalOpen((prev) => !prev); // 담당자 변경 모달 열고 닫기
-  };
 
   return (
     <div className="pt-2 pl-6 pr-6 pb-4 flex flex-col">
@@ -165,23 +140,22 @@ export default function ManagericketDetailPage() {
         <TicketInfo ticket={selectedTicket} />
         <TicketStatus status={selectedTicket.status} />
         <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-        <TicketComment ticketId={selectedTicket.id} logs={logs}/>
+        <TicketComment ticketId={selectedTicket.id} logs={logs} status={selectedTicket.status} handler={selectedTicket.handler}/>
       </div>
     </div>
     
-      <TicketAccept
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        onConfirm={confirmAccept}
-      />
+      {!modalState.isOpen && ( // 🔹 TicketModal이 열릴 때 TicketAccept 숨김
+        <TicketAccept isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmAccept} />
+      )}
+
       {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal 
+        <TicketModal onClose={modalState.onClose}>
+          <AlertTicketModal 
             title={modalState.title} 
             onClick={modalState.onClose} 
             btnText={modalState.btnText}
           />
-        </Modal>
+        </TicketModal>
       )}
     </div>
   );

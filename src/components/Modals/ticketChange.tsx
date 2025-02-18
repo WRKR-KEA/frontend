@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import ChangeMemberList from "@/components/changeMemberList";
 import Button from "@/components/Buttons/Button";
 import axios from "axios";
 import AlertModal from "./AlertModal";
 import Modal from "./Modal";
+import TicketModal from "./TicketModal";  // 추가된 임포트
+import AlertTicketModal from "./AlertTicketModal";  // 추가된 임포트
 import { useRouter } from "next/navigation";
 import api from "@/lib/api/axios";
 
@@ -25,7 +27,6 @@ const fetchManagers = async () => {
     throw new Error("담당자 데이터를 가져오는 데 실패했습니다.");
   }
 };
-
 
 // 티켓 담당자 변경 API 요청 함수
 const changeTicketManager = async (ticketId: string, delegateManagerId: string) => {
@@ -55,7 +56,6 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
   const [selectedManagerId, setSelectedManagerId] = useState<string | null>(null);
   const [countdown, setCountdown] = useState(1);
   const router = useRouter();  // ✅ 여기서 useRouter() 사용
-
   const [modalState, setModalState] = useState({
     isOpen: false,
     title: "",
@@ -80,19 +80,19 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
 
   const handleChange = async () => {
     if (!selectedManagerId) {
-      showModal("담당자를 선택해주세요.");
+      showModal("담당자를 선택해주세요.");  // 기존 AlertModal 사용
       return;
     }
   
     try {
       const result = await changeTicketManager(ticketId, selectedManagerId);
-      
-      // 1초 후 모달 닫기
+      console.log("변경 성공:", result);
+
       showModal("담당자 변경이 완료되었습니다.");
       
       setTimeout(() => {
         setIsModalOpen(false); // 모달 닫기
-        router.push(`/manager/myticket`); 
+        router.replace(`/manager/departmentticket/${ticketId}`);
       }, 1000);
       
     } catch (err: any) {
@@ -114,15 +114,26 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
             <Button label="변경하기" onClick={handleChange} color={1} />
           </div>
         </div>
-        {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
-            title={modalState.title}
-            onClick={modalState.onClose}
-            btnText={modalState.btnText}
-          />
-        </Modal>
-      )}
+        {/* 기존 AlertModal */}
+        {modalState.isOpen && modalState.title !== "담당자 변경이 완료되었습니다." && (
+          <Modal onClose={modalState.onClose}>
+            <AlertModal
+              title={modalState.title}
+              onClick={modalState.onClose}
+              btnText={modalState.btnText}
+            />
+          </Modal>
+        )}
+        {/* 담당자 변경 완료 후 새로운 TicketModal */}
+        {modalState.title === "담당자 변경이 완료되었습니다." && modalState.isOpen && (
+          <TicketModal onClose={modalState.onClose}>
+            <AlertTicketModal
+              title={modalState.title}
+              onClick={modalState.onClose}
+              btnText={modalState.btnText}
+            />
+          </TicketModal>
+        )}
       </div>
     )
   );

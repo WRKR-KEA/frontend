@@ -43,6 +43,15 @@ export function TicketList_Depart({
     CANCEL: 'bg-cancel text-cancel',
     REJECT: 'bg-reject text-reject',
   };
+  const statusLabels: Record<string, string> = {
+    COMPLETE: "완료",
+    IN_PROGRESS: "진행",
+    CANCEL: "취소",
+    REJECT: "반려",
+    REQUEST: "요청",
+  };
+
+  
 console.log("🌟 받은 티켓 데이터:",tickets);
 
   const [currentPage, setCurrentPage] = useState(page);
@@ -89,42 +98,42 @@ console.log("🌟 받은 티켓 데이터:",tickets);
   return (
     <div className="bg-white rounded-md">
       <FilterTab_Depart activeTab={activeTab} handleTabClick={handleTabClick} />
-      <table className="w-full text-sm border-collapse">
+      <table className="w-full text-sm border-collapse table-fixed">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
-            <th className="px-2 py-2 w-28 max-w-28 text-center">티켓 번호</th>
-            <th className="px-2 py-2 w-32 max-w-32 text-center">상태</th>
-            <th className="px-2 py-2 w-32 max-w-32 text-center">카테고리</th>
-            <th className="px-2 py-2 w-80 max-w-80 text-center">제목</th> 
-            <th className="px-2 py-2 w-28 max-w-28 text-center">담당자</th>
-            <th className="px-2 py-2 w-28 max-w-28 text-center">요청자</th>
-            <th className="px-2 py-2 w-32 max-w-32 text-center">최근 변경 일시</th>
+            <th className="px-2 py-2 w-32 text-center">티켓 번호</th>
+            <th className="px-2 py-2 w-20 text-center">상태</th>
+            <th className="px-2 py-2 w-32 text-center">카테고리</th>
+            <th className="px-2 py-2 w-80 text-center">제목</th> 
+            <th className="px-2 py-2 w-32 text-center">담당자</th>
+            <th className="px-2 py-2 w-32 text-center">요청자</th>
+            <th className="px-2 py-2 w-36 text-center">최근 변경 일시</th>
           </tr>
         </thead>
         <tbody>
           {tickets.map((ticket) => (
             <tr
               key={ticket.ticketId}
-              className="border-t border-gray-5 cursor-pointer h-[50px] hover:bg-gray-100"
+              className="border-t border-gray-5 cursor-pointer h-[42px] hover:bg-gray-100"
               onClick={() => handleTicketClick(ticket.ticketId)}
             >
-              <td className="px-4 py-2 max-w-28 border text-center truncate">
+              <td className="px-4 py-2 border text-center truncate">
                 <HighlightText text={ticket.ticketSerialNumber} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 max-w-32 border text-center truncate">
+              <td className="px-4 py-2 border text-center truncate">
                 <span className={`rounded-md px-2 py-1 text-xs font-semibold ${statusStyles[ticket.status]}`}>
-                  {ticket.status}
+                {statusLabels[ticket.status] ?? ticket.status}
                 </span>
               </td>
-              <td className="px-4 py-2 max-w-32 border text-center truncate">
+              <td className="px-4 py-2 border text-center truncate">
                 {ticket.firstCategory}/{ticket.secondCategory}
               </td>
-              <td className="px-4 py-2 border max-w-80 truncate">
+              <td className="px-4 py-2 border truncate">
                 <HighlightText text={ticket.title} highlight={searchTerm} />
               </td>
-              <td className="px-4 py-2 max-w-28 border text-center truncate">{ticket.managerNickname}</td>
-              <td className="px-4 py-2 max-w-28 border text-center truncate">{ticket.userNickname}</td>
-              <td className="px-4 py-2 max-w-32 border text-center truncate">{ticket.updatedDate}</td>
+              <td className="px-4 py-2 border text-center truncate">{ticket.managerNickname || '―'}</td>
+              <td className="px-4 py-2 border text-center truncate">{ticket.userNickname}</td>
+              <td className="px-4 py-2 border text-center truncate">{ticket.updatedDate}</td>
             </tr>
           ))}
         </tbody>

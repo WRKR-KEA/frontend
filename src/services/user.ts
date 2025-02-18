@@ -44,6 +44,25 @@ export async function postComment(
   }
 }
 
+// (POST) 리마인더 전송
+export async function postRemind(ticketId:string, remindData:{memberId:string}){
+  try{
+    const accessToken = sessionStorage.getItem("accessToken");
+    const { data } = await api.post(
+      `/api/user/tickets/${ticketId}/remind`,
+      remindData,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return data;
+  }catch (error){
+    throw error;
+  }
+}
+
 // (GET) 도움말 조회
 export async function fetchGuide(cryptoCategoryId: string) {
   try {
@@ -135,7 +154,7 @@ export async function fetchTicketDetail(ticketId: string) {
     const { data } = await api.get(`/api/user/tickets/${ticketId}`);
     return data;
   } catch (error: any) {
-    console.error("사용자 요청한 특정 티켓 조회에 실패했는다. :", error);
+    console.error("사용자 요청한 특정 티켓 조회에 실패했습니다. :", error);
   }
 }
 
@@ -164,8 +183,6 @@ export async function postTicket(ticketData: {
   }
 }
 
-// (POST) 로그인은 세부 내용을 몰라서 제가 건들지 못할거같네요 'ㅅ'
-
 // (PATCH) 비밀번호 재설정
 export async function updatePassword(passwordData: { password: string }) {
   try {
@@ -179,22 +196,12 @@ export async function updatePassword(passwordData: { password: string }) {
   }
 }
 
-// (POST) 비밀번호 재발급, API 명세서에 바디에 무엇을 넣어야 할 지 안나와있네여 'ㅅ'
-
-// (POST) 토큰 재발급, 이거도 ㅇㅅㅇ
-
-// (DELETE) 로그아웃 이거도 ;ㅅ;
-
-/**
- * (GET)
- * const [userInfo, setUserInfo] = useState(null);
- *
- * const data = await fetchMyPage(memberId);
- * setUserInfo(data);
- * setPosition(data.position);
- * setPhone(data.phone);
- *
- * (POST, PUT, DELETE, PATCH)
- * const [newComment, setNewComment] = useState('');
- * postComment(ticketId, { content: newComment });
- */
+// (GET) 읽지 않은 알림 개수 조회
+export async function fetchNotificationCount() {
+  try {
+    const { data } = await api.get(`/api/user/notifications/count`);
+    return data;
+  } catch (error: any) {
+    console.error("알림 개수 조회에 실패했습니다. :", error);
+  }
+}

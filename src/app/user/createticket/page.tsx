@@ -128,13 +128,8 @@ export default function UserCreateTicketPage() {
       setIsTicketCreated(true); // 생성 완료 상태로 변경
       setCountdown(1); // 카운트다운 시작
       showModal("티켓 생성이 완료되었습니다.");
-      
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null));
-      }, 1000);
   
       setTimeout(() => {
-        clearInterval(timer);
         router.push(`/user/myticket/${result.result.ticketId}`);
       }, 1000);
     } catch (error: any) {

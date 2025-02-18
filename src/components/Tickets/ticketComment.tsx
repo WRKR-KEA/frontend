@@ -23,7 +23,7 @@ export interface TicketCommentProps {
   ticketId: string;
   status: string;
   requester: string;
-  handler: string; // 티켓의 핸들러
+  handler: string; 
 }
 
 const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, handler, requester }) => {
@@ -41,7 +41,9 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
     onClose: () => { },
     onClose2: () => { }
   });
-  console.log("받은 로그", logs, handler);
+  console.log("받은 로그", logs, handler, requester, user?.nickname);
+  console.log("받은 로그", logs, user?.nickname);
+
 
   const showModal = (title: string, btnText = '닫기') => {
     setModalState({

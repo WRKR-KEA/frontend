@@ -63,7 +63,7 @@ export default function ManagerProfilePage() {
         department: data.department || "",
         position: data.position || "",
         phone: data.phone || "",
-        role: data.role || "사용자", // 기본값 설정
+        role: data.role || "담당자", // 기본값 설정
         profileImage: data.profileImage || "",
         agitUrl: data.agitUrl || "",
         agitNotification: data.agitNotification ?? true,
@@ -76,10 +76,13 @@ export default function ManagerProfilePage() {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    
+  
     if (name === 'phone') {
-      const numbers = value.replace(/[^\d]/g, '');
-      
+      const inputElement = e.target as HTMLInputElement; // 명확하게 input 요소로 타입 단언
+      const cursorPosition = inputElement.selectionStart; // 커서 위치 저장
+  
+      const numbers = value.replace(/[^\d]/g, ''); // 숫자만 남김
+  
       let formattedNumber = '';
       if (numbers.length <= 3) {
         formattedNumber = numbers;
@@ -88,16 +91,15 @@ export default function ManagerProfilePage() {
       } else {
         formattedNumber = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
       }
-      
-      setEditableData(prev => ({
-        ...prev,
-        [name]: formattedNumber
-      }));
+  
+      setEditableData((prev) => ({ ...prev, [name]: formattedNumber }));
+  
+      // 상태 업데이트 후 커서 위치 복원
+      requestAnimationFrame(() => {
+        inputElement.selectionStart = inputElement.selectionEnd = cursorPosition!;
+      });
     } else {
-      setEditableData(prev => ({
-        ...prev,
-        [name]: value
-      }));
+      setEditableData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -130,12 +132,12 @@ export default function ManagerProfilePage() {
       valid = false;
     }
 
-    // 전화번호 형식 확인 (000-0000-0000 형식)
-    const phoneRegex = /^\d{3}-\d{4}-\d{4}$/;
-    if (!phoneRegex.test(editableData.phone)) {
-      newErrors.phone = "전화번호는 000-0000-0000 형식으로 입력해주세요.";
-      valid = false;
-    }
+    // 전화번호 형식 확인 (010-0000-0000 형식)
+      const phoneRegex = /^010-\d{4}-\d{4}$/;
+      if (!phoneRegex.test(editableData.phone)) {
+        newErrors.phone = "전화번호는 010-0000-0000 형식으로 입력해주세요.";
+        valid = false;
+      }
 
       // 아지트 알림이 활성화되어 있는데 아지트 URL이 비어있으면 에러 처리
   if (editableData.agitNotification && !editableData.agitUrl.trim()) {

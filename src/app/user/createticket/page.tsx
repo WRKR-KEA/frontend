@@ -6,12 +6,12 @@ import FirstTaskDrop from "@/components/Tickets/firstTaskDrop";
 import SecondTaskDrop from "@/components/Tickets/secondTaskDrop";
 import Help from "@/components/Modals/Help";
 import ModalHelp from "@/components/Modals/ModalHelp";
-import Modal from "@/components/Modals/Modal";
+import TicketModal from "@/components/Modals/TicketModal";
 import Template from "@/components/Tickets/Template";
 import Button from "@/components/Buttons/Button";
 import { fetchCategories, fetchGuide, postTicket } from "@/services/user";
 import { fetchTemplate } from "@/services/admin";
-import AlertModal from "@/components/Modals/AlertModal";
+import AlertTicketModal from "@/components/Modals/AlertTicketModal";
 import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserCreateTicketPage() {
@@ -253,12 +253,12 @@ export default function UserCreateTicketPage() {
       )}
 
       {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
+        <TicketModal onClose={modalState.onClose}>
+          <AlertTicketModal
             title={modalState.title}
             onClick={modalState.onClose}
           />
-        </Modal>
+        </TicketModal>
       )}
     </div>
   );

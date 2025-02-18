@@ -11,8 +11,8 @@ import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import { useCommentList } from '@/hooks/useCommentList';
-import AlertModal from "@/components/Modals/AlertModal";
-import Modal from "@/components/Modals/Modal";
+import AlertTicketModal from "@/components/Modals/AlertTicketModal";
+import TicketModal from "@/components/Modals/TicketModal";
 import TicketRequest from "@/components/Tickets/ticketRequest";
 import Skeleton from "@/components/Skeleton";
 
@@ -112,13 +112,8 @@ export default function ManagerTicketDetailPage() {
       console.log("완료 성공:", result);
 
       showModal("작업이 완료되었습니다."); 
-
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null));
-      }, 1000);
       
       setTimeout(() => {
-        clearInterval(timer);
         window.location.reload();
       }, 1000);
       setIsModalOpen(false);
@@ -135,13 +130,8 @@ export default function ManagerTicketDetailPage() {
       const result = await updateManagerTicketReject(ticketId);
       console.log("작업 반려 성공:", result);
       showModal("작업이 반려되었습니다."); 
-
-      const timer = setInterval(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null));
-      }, 1000);
       
       setTimeout(() => {
-        clearInterval(timer);
         window.location.reload();
       }, 1000);
 
@@ -225,13 +215,13 @@ console.log(selectedTicket);
         <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
       )}
        {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
+        <TicketModal onClose={modalState.onClose}>
+          <AlertTicketModal
             title={modalState.title}
             onClick={modalState.onClose}
             btnText={modalState.btnText}
           />
-        </Modal>
+        </TicketModal>
       )}
     </div>
   );

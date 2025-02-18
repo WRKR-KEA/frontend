@@ -9,8 +9,8 @@ import TicketComment from "@/components/Tickets/ticketComment";
 import Button from "@/components/Buttons/Button";
 import { TicketCancel } from "@/components/Modals/ticketCancel";
 import { fetchComments, fetchTicketDetail, updateTicket } from "@/services/user";
-import AlertModal from "@/components/Modals/AlertModal";
-import Modal from "@/components/Modals/Modal";
+import AlertTicketModal from "@/components/Modals/AlertTicketModal";
+import TicketModal from "@/components/Modals/TicketModal";
 import Skeleton from "@/components/Skeleton";
 import { useCommentList } from '@/hooks/useCommentList';
 
@@ -186,13 +186,13 @@ export default function UserTicketDetailPage() {
 
       <TicketCancel isOpen={isModalOpen} onClose={closeModal} onConfirm={confirmCancel} />
       {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
+        <TicketModal onClose={modalState.onClose}>
+          <AlertTicketModal
             title={modalState.title}
             onClick={modalState.onClose}
             btnText={modalState.btnText}
           />
-        </Modal>
+        </TicketModal>
       )}
     </div>
   );

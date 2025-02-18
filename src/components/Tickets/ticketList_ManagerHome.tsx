@@ -9,7 +9,7 @@ type Ticket = {
   firstCategory: string;
   secondCategory: string;
   userNickname: string;
-  managerNickname: string | "-";
+  managerNickname: string | "―";
   requestedDate: string;
   updatedDate: string;
 };

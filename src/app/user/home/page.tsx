@@ -57,9 +57,9 @@ export default function UserHomePage() {
         title: ticket.title,
         handler: ticket.managerNickname || "―",
         requestDate: ticket.ticketTimeInfo?.createdAt,
-        updateDate: ticket.ticketTimeInfo?.updatedAt || "-",
-        acceptDate: ticket.ticketTimeInfo?.startedAt || "-",
-        completeDate: ticket.ticketTimeInfo?.endedAt || "-",      
+        updateDate: ticket.ticketTimeInfo?.updatedAt || "―",
+        acceptDate: ticket.ticketTimeInfo?.startedAt || "―",
+        completeDate: ticket.ticketTimeInfo?.endedAt || "―",      
         requester: user?.nickname,
       })) || [];
       

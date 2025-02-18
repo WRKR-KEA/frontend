@@ -10,12 +10,12 @@ type Ticket = {
   secondCategory: string,
   status: string,
   title: string,
-  managerName: string | "-",
+  managerName: string | "―",
   createdAt: string,
-  updatedAt: string | "-",
-  startedAt: string | "-",
-  endedAt: string | "-",
-  completedAt: string | "-",
+  updatedAt: string | "―",
+  startedAt: string | "―",
+  endedAt: string | "―",
+  completedAt: string | "―",
 };
 
 type TicketList_UserProps = {

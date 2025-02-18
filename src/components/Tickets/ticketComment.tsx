@@ -22,10 +22,11 @@ export interface TicketCommentProps {
   logs: Log[];
   ticketId: string;
   status: string;
+  requester: string;
   handler: string; // 티켓의 핸들러
 }
 
-const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, handler }) => {
+const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, handler, requester }) => {
   const user = useUserStore((state) => state.user);
   const queryClient = useQueryClient();
   const [message, setMessage] = useState('');
@@ -40,7 +41,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
     onClose: () => { },
     onClose2: () => { }
   });
-  console.log("받은 로그", logs);
+  console.log("받은 로그", logs, handler);
 
   const showModal = (title: string, btnText = '닫기') => {
     setModalState({
@@ -132,7 +133,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
   };
 
   const isTicketInProgress = status === 'IN_PROGRESS';
-  const isAuthorized = user?.nickname === handler;
+  const isAuthorized = user?.nickname === handler || requester;
 
   console.log(displayLogs);
 

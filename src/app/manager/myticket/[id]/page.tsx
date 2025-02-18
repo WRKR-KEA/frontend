@@ -210,7 +210,7 @@ console.log(selectedTicket);
           <TicketInfo ticket={selectedTicket} />
           <TicketStatus status={selectedTicket.status} />
           <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-          <TicketComment ticketId={selectedTicket.id} status={selectedTicket.status} logs={logs} handler={selectedTicket.handler || selectedTicket.requester} />
+          <TicketComment ticketId={selectedTicket.id} status={selectedTicket.status} logs={logs} handler={selectedTicket.handler} requester={selectedTicket.requester} />
         </div>
       </div>
 

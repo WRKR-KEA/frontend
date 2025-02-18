@@ -72,7 +72,6 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
 
-    // Reset file input for next selection
     e.target.value = '';
   };
 
@@ -131,6 +130,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
 
   const isTicketInProgress = status === 'IN_PROGRESS';
   const isAuthorized = user?.nickname === handler;
+  console.log(handler, user.nickname);
 
   return (
     <div className="bg-component rounded-md p-4 flex flex-col h-[380px]">
@@ -195,6 +195,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
         >
           <FiPaperclip className="text-xl text-gray-600" />
         </button>
+        <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
 
         <button
           onClick={handleRemind}

@@ -92,7 +92,7 @@ export default function TicketChangeModal({ ticketId }: { ticketId: string }) {
       
       setTimeout(() => {
         setIsModalOpen(false); // 모달 닫기
-        router.push(`/manager/myticket`); 
+        router.replace(`/manager/myticket`);
       }, 1000);
       
     } catch (err: any) {

@@ -3,10 +3,11 @@ import { useState } from "react";
 interface FilterOrderProps {
   onSelectOrder: (order: string) => void;
   sortOrder: string;
+  isOpen: boolean;
+  setIsOpen: (open: boolean) => void;
 }
 
-export function FilterOrder({ onSelectOrder, sortOrder }: FilterOrderProps) {
-  const [isOpen, setIsOpen] = useState(false);
+export function FilterOrder({ onSelectOrder, sortOrder, isOpen, setIsOpen }: FilterOrderProps) {
   const [selectedOrder, setSelectedOrder] = useState(sortOrder);
 
   const handleSelect = (order: string) => {
@@ -15,7 +16,6 @@ export function FilterOrder({ onSelectOrder, sortOrder }: FilterOrderProps) {
     setIsOpen(false);
   };
 
-  // Order 값에 맞는 UI 텍스트 매핑
   const orderLabels: Record<string, string> = {
     NEWEST: "티켓 생성 순",
     OLDEST: "오래된 순",
@@ -28,7 +28,7 @@ export function FilterOrder({ onSelectOrder, sortOrder }: FilterOrderProps) {
         className="flex items-center space-x-2 rounded px-2 py-2 text-sm"
         onClick={() => setIsOpen(!isOpen)}
       >
-        <span>{orderLabels[selectedOrder]}</span> {/* 선택된 값에 맞게 표시 */}
+        <span>{orderLabels[selectedOrder]}</span>
         <svg
           className={`w-4 h-4 transform ${isOpen ? "rotate-180" : ""}`}
           xmlns="http://www.w3.org/2000/svg"
@@ -54,7 +54,7 @@ export function FilterOrder({ onSelectOrder, sortOrder }: FilterOrderProps) {
                   className="w-full text-left px-3 py-2 text-sm hover:bg-gray-100"
                   onClick={() => handleSelect(order)}
                 >
-                  {orderLabels[order]} {/* 매핑된 텍스트 표시 */}
+                  {orderLabels[order]}
                 </button>
               </li>
             ))}

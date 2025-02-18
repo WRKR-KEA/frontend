@@ -8,7 +8,7 @@ import React, { useState, useEffect } from 'react';
 import useUserStore from '@/stores/userStore'; // ✅ Zustand 스토어 import
 import { useAuthGuard } from '@/hooks/useAuthGuard';
 import axios from "axios";
-import useSSE from '@/services/userSse';
+import useSSE from '@/services/useSse';
 import Toast from '@/components/notificationToast';
 
 export default function RootLayout({ children, }: { children: React.ReactNode; }) {

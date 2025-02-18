@@ -29,6 +29,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
   const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  console.log("현재 logs 데이터:", logs);
 
   const [modalState, setModalState] = useState({
     isOpen: false,

@@ -1,4 +1,3 @@
-// 😎
 import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import useUserStore from '@/stores/userStore';

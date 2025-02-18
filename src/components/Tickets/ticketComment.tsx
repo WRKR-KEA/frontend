@@ -7,6 +7,7 @@ import { formatTime } from '@/app/utils/formatTime';
 import { useUserDetailQuery } from '@/hooks/useUserDetail';
 import AlertModal from '../Modals/AlertModal';
 import Modal from '../Modals/Modal';
+import { useSSEStore } from '@/stores/sseStore';
 
 interface Log {
   log?: string;
@@ -114,6 +115,13 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
       setIsLoading(false);
     }
   };
+
+  const { messages } = useSSEStore();
+  useEffect(() => {
+    if (messages.length > 0 && messages[0].type == "comment") {
+      queryClient.invalidateQueries({ queryKey: ['comments', { ticketId }] });
+    }
+  }, [messages, queryClient]);
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {

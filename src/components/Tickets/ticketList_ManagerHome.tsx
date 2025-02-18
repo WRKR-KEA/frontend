@@ -63,6 +63,9 @@ export function TicketList({
 
   return (
     <div className="bg-white rounded-md">
+      {tickets.length === 0? (
+        <p className="text-gray-500 text-lg mt-2 text-center">티켓이 없습니다.</p>
+      ) : (
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
@@ -122,6 +125,7 @@ export function TicketList({
           ))}
         </tbody>
       </table>
+      )}
     </div>
   );
 }

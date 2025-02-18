@@ -44,6 +44,25 @@ export async function postComment(
   }
 }
 
+// (POST) 리마인더 전송
+export async function postRemind(ticketId:string, remindData:{memberId:string}){
+  try{
+    const accessToken = sessionStorage.getItem("accessToken");
+    const { data } = await api.post(
+      `/api/user/tickets/${ticketId}/remind`,
+      remindData,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+        },
+      },
+    );
+    return data;
+  }catch (error){
+    throw error;
+  }
+}
+
 // (GET) 도움말 조회
 export async function fetchGuide(cryptoCategoryId: string) {
   try {

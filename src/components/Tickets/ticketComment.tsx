@@ -2,8 +2,11 @@ import React, { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { FiPaperclip, FiSend, FiClock } from 'react-icons/fi';
 import useUserStore from '@/stores/userStore';
 import { useQueryClient } from '@tanstack/react-query';
-import { postComment } from '@/services/user';
+import { postComment, postRemind } from '@/services/user';
 import { formatTime } from '@/app/utils/formatTime';
+import { useUserDetailQuery } from '@/hooks/useUserDetail';
+import AlertModal from '../Modals/AlertModal';
+import Modal from '../Modals/Modal';
 
 interface Log {
   log?: string;
@@ -27,6 +30,30 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
   const chatContainerRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [modalState, setModalState] = useState({
+    isOpen: false,
+    title: "",
+    btnText: "",
+    onClose: () => { },
+    onClose2:() => { }
+  })
+
+  const showModal = (title: string, btnText = '닫기') => {
+    setModalState({
+      isOpen: true,
+      title,
+      btnText,
+      onClose: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+      onClose2: () => {
+        setModalState(prev => ({ ...prev, isOpen: false }));
+      },
+    });
+  };
+
+  const { data: userData } = useUserDetailQuery();
+
   useEffect(() => {
     if (chatContainerRef.current) {
       chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
@@ -46,6 +73,23 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
 
     // Reset file input for next selection
     e.target.value = '';
+  };
+
+  const handleRemind = async () => { 
+    if (!userData?.memberId) {
+      showModal('사용자 정보를 찾을 수 없습니다.');
+      return;
+    }
+    try {
+      const response = await postRemind(ticketId, { memberId: userData.memberId });
+      if(response.result === true){
+        showModal('리마인더가 전송되었습니다.');
+      }else{
+        showModal('리마인더가 전송되지 않았습니다.');
+      }
+    } catch (error) {
+      showModal('리마인더 전송에 실패했습니다.');
+    }
   };
 
   const handleSendMessage = async () => {
@@ -91,8 +135,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
             )}
             {log.message && (
               <div className={`flex ${log.role !== user?.role ? 'justify-start' : 'justify-end'}`}>
-                
-                {log.role === user?.role && (
+                {log.role !== user?.role && (
                   <p className="self-end text-xs mr-2 text-gray-400">
                     {formatTime(log.createdAt)}
                   </p>
@@ -121,7 +164,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
                     log.message
                   )}
                 </div>
-                {log.role !== user?.role && (
+                {log.role === user?.role && (
                   <p className="self-end text-xs ml-2 text-gray-400">
                     {formatTime(log.createdAt)}
                   </p>
@@ -144,6 +187,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
         <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
 
         <button
+          onClick={handleRemind}
           className="bg-red-100 rounded-lg p-2 hover:bg-red-200 hover:rounded-xl"
           type="button"
           disabled={status !== 'IN_PROGRESS'}
@@ -175,6 +219,15 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
         <div className="text-sm text-gray-500 mt-1">
           첨부 파일: {file.name}
         </div>
+      )}
+
+      {modalState.isOpen && (
+        <Modal onClose={modalState.onClose2}>
+          <AlertModal
+            title={modalState.title}
+            onClick={modalState.onClose}
+          />
+        </Modal>
       )}
     </div>
   );

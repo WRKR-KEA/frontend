@@ -248,7 +248,7 @@ export default function UserProfilePage() {
 
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
-      <div className="flex flex-col justify-between bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[950px] h-[950px]">
+      <div className="flex flex-col justify-between bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[900px] h-[900px]">
         <div className="flex items-center justify-between border-b pb-6">
           <div className="flex items-center space-x-8">
             <div className="relative">
@@ -273,7 +273,7 @@ export default function UserProfilePage() {
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-12 mt-8">
+        <div className="grid grid-cols-2 gap-12">
         <div className="space-y-2">
             <h2 className="text-sm font-semibold text-gray-500 mb-2">회원 정보</h2>
             <div className="border-t border-gray-300 pb-4"></div>
@@ -356,7 +356,7 @@ export default function UserProfilePage() {
           </div>
         </div>
 
-        <div className="mt-8 flex items-center justify-center">
+        <div className="flex items-center justify-center">
           {isEditing ? (
             <>
               <button onClick={handleSave} className="px-6 py-3 bg-blue-500 hover:bg-opacity-80 text-white rounded-md">

@@ -11,8 +11,8 @@ import { TicketComplete } from "@/components/Modals/ticketComplete";
 import {TicketAbort} from "@/components/Modals/ticketAbort";
 import { updateManagerTicketReject, updateManagerTicketComplete, fetchManagerTicket } from "@/services/manager";
 import { useCommentList } from '@/hooks/useCommentList';
-import AlertModal from "@/components/Modals/AlertModal";
-import Modal from "@/components/Modals/Modal";
+import AlertTicketModal from "@/components/Modals/AlertTicketModal";
+import TicketModal from "@/components/Modals/TicketModal";
 import TicketRequest from "@/components/Tickets/ticketRequest";
 import Skeleton from "@/components/Skeleton";
 
@@ -111,7 +111,7 @@ export default function ManagerTicketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(ticketId);
       console.log("완료 성공:", result);
-
+      setIsModalOpen(false); 
       showModal("작업이 완료되었습니다."); 
 
       const timer = setInterval(() => {
@@ -122,7 +122,6 @@ export default function ManagerTicketDetailPage() {
         clearInterval(timer);
         window.location.reload();
       }, 1000);
-      setIsModalOpen(false);
 
     } catch (error) {
       console.error("티켓 완료 중 오류 발생:", error);
@@ -135,6 +134,7 @@ export default function ManagerTicketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketReject(ticketId);
       console.log("작업 반려 성공:", result);
+      setIsModalOpen(false); 
       showModal("작업이 반려되었습니다."); 
 
       const timer = setInterval(() => {
@@ -145,8 +145,6 @@ export default function ManagerTicketDetailPage() {
         clearInterval(timer);
         window.location.reload();
       }, 1000);
-
-      setIsModalOpen(false);
 
     } catch (error) {
       console.error("작업 반려 중 오류 발생:", error);
@@ -175,14 +173,18 @@ console.log(selectedTicket);
 
   const closeAbortTicketModal = () => {
     setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
+    setIsModalOpen(false);
   };
 
   const closeCompleteTicketModal = () => {
     setIsCompleteTicketOpen(false); // 작업 완료 모달 닫기
+    setIsModalOpen(false);
   };
 
   const toggleChangeModal = () => {
-    setIsChangeModalOpen((prev) => !prev); 
+    setIsChangeModalOpen(false);
+    setTimeout(() => setIsChangeModalOpen(true), 0);
+    setIsModalOpen(false);
   };
 
   return (
@@ -212,27 +214,27 @@ console.log(selectedTicket);
       </div>
 
        {/* 작업 반려 모달 */}
-       {isAbortTicketOpen && (
+       {!modalState.isOpen && isAbortTicketOpen && (
           <TicketAbort isOpen={isAbortTicketOpen} onClose={closeAbortTicketModal} onConfirm={confirmAbortTicket} />
       )}
 
       {/* 담당자 변경 모달 */}
       {isChangeModalOpen && selectedTicket && (
       <TicketChange ticketId={selectedTicket.id} />
-)}
+      )}
 
       {/* 작업 완료 모달 */}
-      {isCompleteTicketOpen && (
+      {!modalState.isOpen && isCompleteTicketOpen && (
         <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
       )}
        {modalState.isOpen && (
-        <Modal onClose={modalState.onClose}>
-          <AlertModal
+        <TicketModal onClose={modalState.onClose}>
+          <AlertTicketModal
             title={modalState.title}
             onClick={modalState.onClose}
             btnText={modalState.btnText}
           />
-        </Modal>
+        </TicketModal>
       )}
     </div>
   );

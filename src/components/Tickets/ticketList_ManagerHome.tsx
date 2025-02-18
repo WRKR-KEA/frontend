@@ -53,8 +53,19 @@ export function TicketList({
   const endIndex = startIndex + maxTicketsToShow;
   const displayedTickets = tickets.slice(startIndex, endIndex);
 
+  const handleTicketClick = (ticket: Ticket) => {
+    if (showUpdateDate) {
+      router.push(`/manager/myticket/${ticket.ticketId}`);
+    } else if (showRequestDate) {
+      router.push(`/manager/departmentticket/${ticket.ticketId}`);
+    }
+  };
+
   return (
     <div className="bg-white rounded-md">
+      {tickets.length === 0? (
+        <p className="text-gray-500 text-lg mt-2 text-center">티켓이 없습니다.</p>
+      ) : (
       <table className="w-full text-sm border-collapse">
         <thead>
           <tr className="bg-gray-6 text-left border-b border-gray-4">
@@ -79,7 +90,7 @@ export function TicketList({
               key={ticket.ticketId ?? `ticket-${index}`}
               className="border-b cursor-pointer h-[42px] hover:bg-gray-100"
               onMouseEnter={() => onTicketHover?.(ticket)}
-              onClick={() => router.push(`/user/myticket/${ticket.ticketId}`)}
+              onClick={() => handleTicketClick(ticket)}
             >
               <td className="px-4 py-2 border truncate text-center">
                 {ticket.ticketSerialNumber}
@@ -97,8 +108,8 @@ export function TicketList({
               <td className="px-4 py-2 border truncate">{ticket.title}</td>
               {showUpdateDate && (
                 <td className="px-4 py-2 border truncate text-center">
-                {ticket.managerNickname}
-              </td>
+                  {ticket.managerNickname}
+                </td>
               )}
               {showUpdateDate && (
                 <td className="px-4 py-2 border truncate text-center">
@@ -114,6 +125,7 @@ export function TicketList({
           ))}
         </tbody>
       </table>
+      )}
     </div>
   );
 }

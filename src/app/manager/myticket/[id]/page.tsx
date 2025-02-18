@@ -182,7 +182,9 @@ console.log(selectedTicket);
   };
 
   const toggleChangeModal = () => {
-    setIsChangeModalOpen((prev) => !prev); 
+    setIsChangeModalOpen(false);
+    setTimeout(() => setIsChangeModalOpen(true), 0);
+    setIsModalOpen(false);
   };
 
   return (
@@ -217,9 +219,9 @@ console.log(selectedTicket);
       )}
 
       {/* 담당자 변경 모달 */}
-      {!modalState.isOpen && isChangeModalOpen && selectedTicket && (
+      {isChangeModalOpen && selectedTicket && (
       <TicketChange ticketId={selectedTicket.id} />
-)}
+      )}
 
       {/* 작업 완료 모달 */}
       {!modalState.isOpen && isCompleteTicketOpen && (

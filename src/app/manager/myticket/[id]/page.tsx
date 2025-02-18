@@ -87,6 +87,7 @@ export default function ManagerTicketDetailPage() {
 
   const getTicketDetail = async (ticketId) => {
     const response = await fetchManagerTicket(ticketId);
+    console.log("나의티켓!@", response)
     const ticket = response.result;
     return {
       id: ticket.ticketId,
@@ -110,13 +111,17 @@ export default function ManagerTicketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketComplete(ticketId);
       console.log("완료 성공:", result);
-
+      setIsModalOpen(false); 
       showModal("작업이 완료되었습니다."); 
+
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
       
       setTimeout(() => {
+        clearInterval(timer);
         window.location.reload();
       }, 1000);
-      setIsModalOpen(false);
 
     } catch (error) {
       console.error("티켓 완료 중 오류 발생:", error);
@@ -129,13 +134,17 @@ export default function ManagerTicketDetailPage() {
       // TODO: 타입 오류 해결
       const result = await updateManagerTicketReject(ticketId);
       console.log("작업 반려 성공:", result);
+      setIsModalOpen(false); 
       showModal("작업이 반려되었습니다."); 
+
+      const timer = setInterval(() => {
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
       
       setTimeout(() => {
+        clearInterval(timer);
         window.location.reload();
       }, 1000);
-
-      setIsModalOpen(false);
 
     } catch (error) {
       console.error("작업 반려 중 오류 발생:", error);
@@ -164,10 +173,12 @@ console.log(selectedTicket);
 
   const closeAbortTicketModal = () => {
     setIsAbortTicketOpen(false); // 작업 반려 모달 닫기
+    setIsModalOpen(false);
   };
 
   const closeCompleteTicketModal = () => {
     setIsCompleteTicketOpen(false); // 작업 완료 모달 닫기
+    setIsModalOpen(false);
   };
 
   const toggleChangeModal = () => {
@@ -196,7 +207,7 @@ console.log(selectedTicket);
           <TicketInfo ticket={selectedTicket} />
           <TicketStatus status={selectedTicket.status} />
           <h2 className="text-lg font-semibold mt-4 mb-2">티켓 상세 문의</h2>
-          <TicketComment ticketId={selectedTicket.id} status={selectedTicket.status} logs={logs} handler={selectedTicket.handler}/>
+          <TicketComment ticketId={selectedTicket.id} status={selectedTicket.status} logs={logs} />
         </div>
       </div>
 
@@ -206,12 +217,12 @@ console.log(selectedTicket);
       )}
 
       {/* 담당자 변경 모달 */}
-      {isChangeModalOpen && selectedTicket && (
+      {!modalState.isOpen && isChangeModalOpen && selectedTicket && (
       <TicketChange ticketId={selectedTicket.id} />
 )}
 
       {/* 작업 완료 모달 */}
-      {isCompleteTicketOpen && (
+      {!modalState.isOpen && isCompleteTicketOpen && (
         <TicketComplete isOpen={isCompleteTicketOpen} onClose={closeCompleteTicketModal} onConfirm={confirmCompleteTicket} />
       )}
        {modalState.isOpen && (

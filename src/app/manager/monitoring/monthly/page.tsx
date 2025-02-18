@@ -51,7 +51,7 @@ export default function Dashboard() {
   const [secondCategoryDonutChartLabels, setSecondCategoryDonutChartLabels] = useState<string[]>([]);
   const [secondCategoryCategoryId, setSecondCategoryCategoryId] = useState<string[]>([]);
   const [secondCategoryDonutChartOptions, setSecondCategoryDonutChartOptions] = useState<ApexOptions>({
-    colors: ['#BDBDBD'],
+    colors: ['#F3F3F3'],
     chart: { type: 'donut' },
     labels: ['init'],
     legend: {
@@ -101,7 +101,7 @@ export default function Dashboard() {
     try {
       console.log('date:', date);
       const res = await postManagerStatistics('MONTHLY', { date });
-      setTicketCountByCategory(res.result.statisticData.firstCategoryTicketCount);
+      setTicketCountByCategory(res.result.statisticData.categoryTicketCount);
     } catch (error) {
       console.error('API 요청 실패:', error);
     }
@@ -116,7 +116,7 @@ export default function Dashboard() {
     try {
       const res = await postSecondCategoryManagerStatistics('MONTHLY', categoryId, { date });
       console.log('res:', res);
-      setSecondCategoryTicketCount(res.result.statisticData.firstCategoryTicketCount);
+      setSecondCategoryTicketCount(res.result.statisticData.categoryTicketCount);
     } catch (error) {
       console.error('API 요청 실패:', error);
     }
@@ -173,10 +173,10 @@ export default function Dashboard() {
       const dynamicColors = ticketCountByCategory?.map((_, index) => {
         const colors = [
           getCssVariable('--main-1'),
-          getCssVariable('--main-2'),
-          getCssVariable('--complete'),
-          getCssVariable('--sub-1'),
-          getCssVariable('--sub-2'),
+          '#F4B44E',
+          '#649DEE',
+          '#3BC389',
+          '#F98B5F',
         ];
         return colors[index % colors.length];
       });
@@ -222,10 +222,10 @@ export default function Dashboard() {
       const dynamicColors = secondCategoryTicketCount?.map((_, index) => {
         const colors = [
           getCssVariable('--main-1'),
-          getCssVariable('--complete'),
-          getCssVariable('--sub-1'),
-          getCssVariable('--main-2'),
-          getCssVariable('--sub-2'),
+          '#F4B44E',
+          '#649DEE',
+          '#3BC389',
+          '#F98B5F',
         ];
         return colors[index % colors.length];
       });

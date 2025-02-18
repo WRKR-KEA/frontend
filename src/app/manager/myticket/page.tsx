@@ -1,6 +1,6 @@
-"use client";
+"use client"
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { TicketList_Manager } from "@/components/Tickets/ticketList_Manager";
 import { FilterNum } from "@/components/Filters/filterNum";
 import { FilterOrder } from "@/components/Filters/filterOrder";
@@ -9,6 +9,8 @@ import { Search_manager } from "@/components/search_manager";
 import Skeleton from "@/components/Skeleton";
 import { useManageTicketListQuery } from "@/hooks/useManageTicketList";
 import SkeletonNet from "@/components/SkeletonNet";
+import SkeletonZero from "@/components/SkeletonZero"; 
+import { fetchCategories } from "@/services/user";
 
 export default function ManagerTicketListPage() {
   const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
@@ -16,19 +18,88 @@ export default function ManagerTicketListPage() {
   const [sortOrder, setSortOrder] = useState("UPDATED");
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedStatus, setSelectedStatus] = useState("");
-  const [isFilterNumOpen, setIsFilterNumOpen] = useState(false);
-  const [isFilterOrderOpen, setIsFilterOrderOpen] = useState(false);
 
-  const [tickets, setTickets] = useState<any[]>([]);
+  const [selectedService, setSelectedService] = useState("1차 카테고리를 선택해주세요.");
+  const [selectedSecondCategoryService, setSelectedSecondCategoryService] = useState("2차 카테고리를 선택해주세요.");
+  const [firstCategories, setFirstCategories] = useState<string[]>([]);
+  const [secondCategories, setSecondCategories] = useState([]);
+  const [isOpen, setIsOpen] = useState(false); 
+  const [isSecondCategoryOpen, setIsSecondCategoryOpen] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+  const [categoryId, setCategoryId] = useState(''); 
+
+  const handleSelect = (service: string) => {
+    const selectedCategory = categories.find((category) => category.name === service);
+    if (selectedCategory?.categoryId) {
+      setCategoryId(selectedCategory.categoryId);
+    }
+    
+    setSecondCategories(selectedCategory.childCategories);
+    
+    setSelectedService(service);
+    handleFirstCategoryChange(selectedCategory?.categoryId || '');
+    setIsOpen(false);
+  };
+
+  const handleSecondCategorySelect = (service: string) => {
+    const selectedCategory = secondCategories.find((category) => category.name === service);
+    if (selectedCategory?.categoryId) {
+      setCategoryId(selectedCategory.categoryId);
+    }
+    
+    setSelectedSecondCategoryService(service);
+    handleSecondCategoryChange(selectedCategory?.categoryId || '');
+    setIsSecondCategoryOpen(false);
+  };
+
+    useEffect(() => {
+      const loadCategories = async () => {
+        try {
+          const response = await fetchCategories();
+  
+          if (!response || typeof response !== "object") {
+            setCategories([]); // 빈 배열로 초기화
+            return;
+          }
+  
+          if (!response.result || !Array.isArray(response.result.categories)) {
+            setCategories([]); // 빈 배열로 초기화
+            return;
+          }
+  
+          // 정상적인 경우에만 데이터 설정
+          setCategories(response.result.categories);
+          setFirstCategories(response.result.categories.map((category: any) => category.name));
+        } catch (error) {
+          setCategories([]); // 에러 발생 시 빈 배열 설정
+        }
+      };
+  
+      loadCategories();
+    }, []);
+
+    const handleReset = () => {
+      setCategoryId('');
+      setSelectedService("1차 카테고리를 선택해주세요.");
+      setSelectedSecondCategoryService("2차 카테고리를 선택해주세요.");
+      setSecondCategories([]);
+      setCurrentPage(1);
+    
+      refetch();
+    };
+
+  const [tickets, setTickets] = useState<any[]>([]); // 💡 티켓 상태 추가
 
   const { data, isLoading, error, refetch } = useManageTicketListQuery(
     currentPage,
     maxTicketsToShow,
     sortOrder,
     selectedStatus,
-    searchTerm
+    searchTerm,
+    categoryId,
   );
 
+  // 💡 data가 변경될 때 tickets 상태 업데이트
   useEffect(() => {
     if (data) {
       setTickets(data.elements);
@@ -36,14 +107,15 @@ export default function ManagerTicketListPage() {
     }
   }, [data]);
 
+  // 상태 변경 시 API 데이터 다시 호출
+  // categoryId 추가
   useEffect(() => {
     refetch();
-  }, [selectedStatus, currentPage, maxTicketsToShow, sortOrder, searchTerm, refetch]);
+  }, [selectedStatus, currentPage, maxTicketsToShow, sortOrder, searchTerm, categoryId, refetch]);
 
   const handleSelectCount = useCallback((count: number) => {
     setMaxTicketsToShow(count);
     setCurrentPage(1);
-    setIsFilterNumOpen(false);
   }, []);
 
   const handleSearchChange = useCallback((term: string) => {
@@ -54,7 +126,6 @@ export default function ManagerTicketListPage() {
   const handleSelectOrder = useCallback((order: string) => {
     setSortOrder(order);
     setCurrentPage(1);
-    setIsFilterOrderOpen(false);
   }, []);
 
   const handlePageChange = useCallback((pageNumber: number) => {
@@ -66,44 +137,19 @@ export default function ManagerTicketListPage() {
     setCurrentPage(1);
   }, []);
 
-  const filterRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
-        setIsFilterNumOpen(false);
-        setIsFilterOrderOpen(false);
-      }
-    };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
+  const handleFirstCategoryChange = useCallback((status: string) => {
+    setCategoryId(status);
+    setCurrentPage(1);
   }, []);
 
-  useEffect(() => {
-    if (data) {
-      const filteredTickets = data.elements.filter(ticket =>
-        // Filter logic with lowercase comparison for better accuracy
-        ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        ticket.ticketNumber.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setTickets(filteredTickets || []);
-      console.log("Filtered Tickets:", filteredTickets);  // Check the filtered tickets
-    }
-  }, [searchTerm, data]);
-
-  const [openFilter, setOpenFilter] = useState<string | null>(null); 
-
-  const toggleFilter = (filterType: string) => {
-    setOpenFilter(openFilter === filterType ? null : filterType);
-  };
+  const handleSecondCategoryChange = useCallback((status: string) => {
+    setCategoryId(status);
+    setCurrentPage(1);
+  }, []);
 
   if (error) {
     return <SkeletonNet width="100%" height="100%" />;
   }
-
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
@@ -111,7 +157,7 @@ export default function ManagerTicketListPage() {
 
         <div className="flex items-center space-x-2 ml-4">
           <Search_manager
-            onSearchChange={handleSearchChange}
+            onSearchChange={handleSearchChange} 
             placeHolder="제목, 티켓번호 검색"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -122,19 +168,106 @@ export default function ManagerTicketListPage() {
           />
         </div>
 
-        <div className="ml-auto flex items-center space-x-2" ref={filterRef}>
-        <FilterOrder
-            onSelectOrder={handleSelectOrder}
-            sortOrder={sortOrder}
-            isOpen={openFilter === "order"}
-            setIsOpen={() => toggleFilter("order")}
+        <div className="ml-auto flex items-center">
+          
+    {categoryId && <button className="px-2 pt-0.5 pb-0 text-[13px] border border-gray-3 mr-1 rounded-2xl bg-white hover:bg-gray-100" onClick={handleReset}>초기화</button>}
+
+    <div className="relative">
+      <button
+        className="flex items-center space-x-2 rounded px-2 py-2 text-sm"
+        onClick={() => {
+          setIsOpen(!isOpen);
+          setIsSecondCategoryOpen(false);
+        }}
+      >
+        <span>{selectedService}</span>
+        <svg
+          className={`w-4 h-4 transform ${isOpen ? "rotate-180" : ""} ml-auto`}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7"
           />
-          <FilterNum
-            onSelectCount={handleSelectCount}
-            selectedCount={maxTicketsToShow}
-            isOpen={openFilter === "num"}
-            setIsOpen={() => toggleFilter("num")}
+        </svg>
+      </button>
+
+      {isOpen && (
+        <div className="absolute right-0 mr-2 w-28 bg-white border shadow-lg rounded z-50 
+        whitespace-nowrap max-h-80 overflow-y-auto hide-scrollbar">
+          <ul className="space-y-1 p-2">
+            {firstCategories.map((service) => (
+              <li key={service}>
+                <button
+                  className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                    selectedService === service ? "text-black" : "text-gray-500"
+                  } hover:bg-gray-100 hover:text-[#6E61CA]`}
+                  onClick={() => handleSelect(service)}
+                >
+                  <span>{service}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+
+    {/* 2차 카테고리 */}
+    {secondCategories.length !==0 && <div className="relative mr-3">
+      <button
+        disabled={secondCategories.length ===0}
+        className={`flex items-center space-x-2 rounded px-2 py-2 text-sm` }
+        onClick={() => {
+          setIsSecondCategoryOpen(!isSecondCategoryOpen);
+          setIsOpen(false);
+        }}
+      >
+        <span>{selectedSecondCategoryService}</span>
+        <svg
+          className={`w-4 h-4 transform ${isSecondCategoryOpen ? "rotate-180" : ""} ml-auto`}
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M19 9l-7 7-7-7"
           />
+        </svg>
+      </button>
+
+      {isSecondCategoryOpen && (
+        <div className="absolute right-0 mr-2 w-28 bg-white border shadow-lg rounded z-50 
+        whitespace-nowrap max-h-80 overflow-y-auto hide-scrollbar">
+          <ul className="space-y-1 p-2">
+            {secondCategories?.map((service) => (
+              <li key={service.categoryId}>
+                <button
+                  className={`flex items-center w-full text-left px-3 py-2 text-sm ${
+                    selectedSecondCategoryService === service.name ? "text-black" : "text-gray-500"
+                  } hover:bg-gray-100 hover:text-[#6E61CA]`}
+                  onClick={() => handleSecondCategorySelect(service.name)}
+                >
+                  <span>{service.name}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+    } 
+          <FilterOrder onSelectOrder={handleSelectOrder} sortOrder={sortOrder} />
+          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
         </div>
       </div>
 

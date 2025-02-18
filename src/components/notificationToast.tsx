@@ -3,20 +3,19 @@ import { useSSEStore } from '@/stores/sseStore';
 
 const Toast: React.FC = () => {
   const { messages, removeMessage } = useSSEStore();
+  const timers = [];
 
   useEffect(() => {
     if (messages.length > 0) {
-      const timer = setTimeout(() => {
+      timers.push(setTimeout(() => {
         removeMessage(messages[0].id);
-      }, 3000); // 3초 후 사라짐
+      }, 3000))
 
-      return () => clearTimeout(timer);
+      return () => timers.forEach(clearTimeout);
     }
   }, [messages]);
 
   if (messages.length === 0) return null;
-
-  const { id, message, type } = messages[0];
 
   const notificationIcon = (type: string) => {
     switch (type) {
@@ -54,11 +53,17 @@ const Toast: React.FC = () => {
   }
 
   return (
-    <div
-      className={`fixed flex items-center top-5 right-5 whitespace-pre-wrap w-[480px] h-20 text-black p-4 gap-4 rounded-md shadow-md z-50 ${notificationBgColor(type)}`}>
-      {notificationIcon(type)}
-      {message}
-    </div>
+    <ul className="fixed flex flex-col gap-y-2 top-5 right-5 w-fit h-fit z-50">
+      {messages.map(({ message, type }, index) => (
+        <li key={index}>
+          <div
+            className={`flex items-center whitespace-pre-wrap w-[480px] h-20 text-black p-4 gap-4 rounded-md shadow-md ${notificationBgColor(type)}`}>
+            {notificationIcon(type)}
+            {message}
+          </div>
+        </li>
+      ))}
+    </ul>
   );
 };
 

@@ -130,7 +130,6 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
 
   const isTicketInProgress = status === 'IN_PROGRESS';
   const isAuthorized = user?.nickname === handler;
-  console.log(handler, user.nickname);
 
   return (
     <div className="bg-component rounded-md p-4 flex flex-col h-[380px]">

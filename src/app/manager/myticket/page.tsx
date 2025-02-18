@@ -83,14 +83,17 @@ export default function ManagerTicketListPage() {
   }, []);
 
   useEffect(() => {
-    // 검색어에 대해 대소문자 구분 없이 필터링
-    const filteredTickets = data?.elements.filter(ticket => 
-      ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-      ticket.ticketNumber.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-    setTickets(filteredTickets || []);
+    if (data) {
+      const filteredTickets = data.elements.filter(ticket =>
+        // Filter logic with lowercase comparison for better accuracy
+        ticket.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        ticket.ticketNumber.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+      setTickets(filteredTickets || []);
+      console.log("Filtered Tickets:", filteredTickets);  // Check the filtered tickets
+    }
   }, [searchTerm, data]);
-  
+
   const [openFilter, setOpenFilter] = useState<string | null>(null); 
 
   const toggleFilter = (filterType: string) => {

@@ -179,7 +179,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
       <div className="flex space-x-2 items-center mt-2">
       <button
         onClick={handleFileUploadClick}
-        className={`bg-gray-200 rounded-lg p-2 ${status !== 'IN_PROGRESS' ? 'cursor-not-allowed' : 'hover:bg-gray-300 hover:rounded-xl'}`}
+        className={`bg-gray-200 rounded-lg p-2 ${status !== 'IN_PROGRESS' ? 'cursor-not-allowed' : 'hover:bg-gray-300'}`}
         type="button"
         disabled={status !== 'IN_PROGRESS'}
       >
@@ -188,7 +188,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status })
 
       <button
         onClick={handleRemind}
-        className={`bg-red-100 rounded-lg p-2 ${status !== 'IN_PROGRESS' ? 'cursor-not-allowed' : 'hover:bg-red-200 hover:rounded-xl'}`}
+        className={`bg-red-100 rounded-lg p-2 ${status !== 'IN_PROGRESS' ? 'cursor-not-allowed' : 'hover:bg-red-200'}`}
         type="button"
         disabled={status !== 'IN_PROGRESS'}
       >

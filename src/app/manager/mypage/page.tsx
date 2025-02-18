@@ -8,7 +8,7 @@ import { useUserDetailQuery } from "@/hooks/useUserDetail";
 import SkeletonNet from "@/components/SkeletonNet";
 import Skeleton from "@/components/Skeleton";
 
-export default function UserProfilePage() {
+export default function ManagerProfilePage() {
   const router = useRouter();
 
   const [isEditing, setIsEditing] = useState(false);
@@ -74,14 +74,31 @@ export default function UserProfilePage() {
     }
   }, [data]);
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setEditableData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    
+    if (name === 'phone') {
+      const numbers = value.replace(/[^\d]/g, '');
+      
+      let formattedNumber = '';
+      if (numbers.length <= 3) {
+        formattedNumber = numbers;
+      } else if (numbers.length <= 7) {
+        formattedNumber = `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+      } else {
+        formattedNumber = `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+      }
+      
+      setEditableData(prev => ({
+        ...prev,
+        [name]: formattedNumber
+      }));
+    } else {
+      setEditableData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleToggle = (name: string) => {
@@ -119,6 +136,18 @@ export default function UserProfilePage() {
       newErrors.phone = "전화번호는 000-0000-0000 형식으로 입력해주세요.";
       valid = false;
     }
+
+      // 아지트 알림이 활성화되어 있는데 아지트 URL이 비어있으면 에러 처리
+  if (editableData.agitNotification && !editableData.agitUrl.trim()) {
+    newErrors.agitUrl = "아지트 알림을 활성화하려면 아지트 URL을 작성해주세요.";
+    valid = false;
+  }
+
+  // 아지트 URL 형식 확인 (https://agit.io/webhook/ 로 시작해야 함)
+  if (editableData.agitUrl.trim() && !editableData.agitUrl.startsWith("https://agit.io/webhook/")) {
+    newErrors.agitUrl = "https://agit.io/webhook/ 로 시작하는 URL을 입력해주세요.";
+    valid = false;
+  }
 
     setErrors(newErrors);
     return valid;
@@ -216,7 +245,7 @@ export default function UserProfilePage() {
 
   return (
     <div className="bg-gray-50 flex flex-col items-center p-8">
-      <div className="bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[600px]">
+      <div className="flex flex-col justify-between bg-white shadow-md rounded-lg p-12 w-full max-w-4xl min-h-[950px] h-[950px]">
         <div className="flex items-center justify-between border-b pb-6">
           <div className="flex items-center space-x-8">
             <div className="relative">
@@ -227,9 +256,9 @@ export default function UserProfilePage() {
               />
             </div>
             <div className="space-y-2">
-                <h1 className="text-2xl font-bold text-gray-800">{editableData.nickname}</h1>
+                <h1 className="text-2xl font-semibold text-gray-800">{editableData.nickname}</h1>
                 <div className="flex items-center space-x-4 text-gray-500">
-                <p>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
+                <p className={isEditing ? 'pt-0':'pt-2'}>{editableData.role === "사용자" ? "사용자" : "담당자"}</p>
               </div>
             </div>
           </div>
@@ -242,20 +271,20 @@ export default function UserProfilePage() {
         </div>
 
         <div className="grid grid-cols-2 gap-12 mt-8">
-          <div className="space-y-6">
+        <div className="space-y-2">
             <h2 className="text-sm font-semibold text-gray-500 mb-2">회원 정보</h2>
-            <div className="border-t border-gray-300 mb-4"></div>
-
+            <div className="border-t border-gray-300 pb-4"></div>
+            <div className={`${isEditing ? 'space-y-0.5' :'space-y-6'}`}>
             {[
               { label: "이름", name: "name", type: "text" },
               { label: "이메일 주소", name: "email", type: "email" },
-              { label: "전화번호", name: "phone", type: "tel" },
+              { label: "전화번호", name: "phone", type: "phone" },
               { label: "아지트 URL", name: "agitUrl", type: "text" },
               { label: "부서", name: "department", type: "text" },
               { label: "직책", name: "position", type: "text" },
             ].map((field) => (
-              <div key={field.name} className="mb-6">
-                <h2 className="text-sm font-semibold text-gray-500 mb-2">
+              <div key={field.name} className="pb-2">
+                <h2 className="text-sm font-semibold text-gray-500 mb-4">
                   {field.label}
                 </h2>
                 {isEditing ? (
@@ -265,22 +294,23 @@ export default function UserProfilePage() {
                       name={field.name}
                       value={editableData[field.name]}
                       onChange={handleInputChange}
-                      className={`w-full border-b-2 px-2 py-2 focus:outline-none h-10 ${errors[field.name] ? 'border-red-500' : 'border-gray-300'}`}
+                      className={`w-full border-b-2 py-0 focus:outline-none h-10 ${errors[field.name] ? 'border-red-500' : 'border-gray-300'}`}
                     />
                     {errors[field.name] && (
                       <p className="text-sm text-red-500 mt-1">{errors[field.name]}</p>
                     )}
                   </>
                 ) : (
-                  <p>{editableData[field.name]}</p>
+                  <p className="pt-1">{editableData[field.name]}</p>
                 )}
               </div>
             ))}
+            </div>
           </div>
 
-          <div className="space-y-6">
+          <div className="space-y-2">
             <h2 className="text-sm font-semibold text-gray-500 mb-2">알림 설정</h2>
-            <div className="border-t border-gray-300 mb-4"></div>
+            <div className="border-t border-gray-300 pb-4"></div>
             <div className="space-y-6">
               {[
                 { label: "아지트 알림", name: "agitNotification" },
@@ -303,11 +333,10 @@ export default function UserProfilePage() {
                     />
                     <div className="w-12 h-6 bg-gray-300 peer-checked:bg-blue-600 rounded-full">
                       <div
-                        className={`absolute w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out ${
+                        className={`absolute w-5 h-5 bg-white rounded-full shadow-md transition-transform duration-300 ease-in-out top-0.5 ${
                           editableData[option.name] ? "translate-x-6" : "translate-x-1"
                         }`}
-                        style={{ top: "2px" }}
-                      ></div>
+                      />
                     </div>
                   </label>
                 </div>
@@ -316,18 +345,18 @@ export default function UserProfilePage() {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-center">
+        <div className="mt-8 flex items-center justify-center">
           {isEditing ? (
             <>
-              <button onClick={handleSave} className="px-6 py-3 bg-blue-500 text-white rounded-md">
+              <button onClick={handleSave} className="px-6 py-3 bg-blue-500 hover:bg-opacity-80 text-white rounded-md">
                 저장
               </button>
-              <button onClick={handleCancel} className="px-6 py-3 bg-gray-200 rounded-md ml-4">
+              <button onClick={handleCancel} className="px-6 py-3 bg-gray-200 hover:bg-opacity-80 rounded-md ml-4">
                 취소
               </button>
             </>
           ) : (
-            <button onClick={() => setIsEditing(true)} className="px-6 py-3 bg-gray-200 rounded-md">
+            <button onClick={() => setIsEditing(true)} className=" px-6 py-3 bg-gray-200 hover:bg-opacity-80 rounded-md">
               수정
             </button>
           )}

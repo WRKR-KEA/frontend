@@ -137,6 +137,18 @@ export default function UserProfilePage() {
       valid = false;
     }
 
+      // 아지트 알림이 활성화되어 있는데 아지트 URL이 비어있으면 에러 처리
+  if (editableData.agitNotification && !editableData.agitUrl.trim()) {
+    newErrors.agitUrl = "아지트 알림을 활성화하려면 아지트 URL을 작성해주세요.";
+    valid = false;
+  }
+
+  // 아지트 URL 형식 확인 (https://agit.io/webhook/ 로 시작해야 함)
+  if (editableData.agitUrl.trim() && !editableData.agitUrl.startsWith("https://agit.io/webhook/")) {
+    newErrors.agitUrl = "https://agit.io/webhook/ 로 시작하는 URL을 입력해주세요.";
+    valid = false;
+  }
+
     setErrors(newErrors);
     return valid;
   };

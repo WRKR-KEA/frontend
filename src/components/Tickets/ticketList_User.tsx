@@ -40,7 +40,7 @@ export function TicketList_User({
     REJECT: "bg-reject text-reject",
     REQUEST: "bg-request text-request",
   };
-  console.log("here",tickets);
+
   const [activeTab, setActiveTab] = useState(status);
   const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();

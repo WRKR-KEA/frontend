@@ -9,8 +9,8 @@ interface AlertTicketModalProps {
 
 const AlertModal: React.FC<AlertTicketModalProps> = ({title, content, onClick, btnText}) => {
   return (
-    <div className="flex flex-col items-center gap-2 pb-4 w-56">
-      <h2 className="text-lg font-bold pt-6">{title}</h2>
+    <div className="flex flex-col items-center gap-2 pb-4 w-56 whitespace-pre-line">
+      <h2 className="text-lg font-bold pt-6 whitespace-pre-line">{title}</h2>
       <p className="text-sm mt-2">{content}</p>
     </div>
   );

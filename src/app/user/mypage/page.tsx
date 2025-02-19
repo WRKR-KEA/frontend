@@ -204,7 +204,7 @@ export default function UserProfilePage() {
       setIsEditing(false);
     } catch (error) {
       console.error("❌ 업데이트 요청 실패:", error);
-      showModal(`회원 정보 수정에 실패했습니다.`,`${error}`); } };
+      showModal(`회원 정보 수정에 실패했습니다. \n ${error}`); } };
 
   const handleCancel = () => {
     setIsEditing(false);

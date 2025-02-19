@@ -41,8 +41,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
     onClose: () => { },
     onClose2: () => { }
   });
-  console.log("받은 로그", logs, handler, requester, user?.nickname);
-  console.log("받은 로그", logs, user?.nickname);
+  console.log("받은 로그", logs);
 
 
   const showModal = (title: string, btnText = '닫기') => {
@@ -137,8 +136,6 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
   const isTicketInProgress = status === 'IN_PROGRESS';
   const isAuthorized = user?.nickname === handler || requester;
 
-  console.log(displayLogs);
-
   const isImage = (url) => {
     const imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
     const extension = url.split('.').pop().toLowerCase();
@@ -158,7 +155,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
                 <hr className="flex-grow border-gray-300" />
               </div>
             )}
-            {log.message && (
+            {(log.message || log.attachment) && (
               <div className={`flex ${log.role !== user?.role ? 'justify-start' : 'justify-end'}`}>
                 {log.role !== user?.role && (
                   <p className="self-end text-xs mr-2 text-gray-400">
@@ -171,101 +168,55 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
                   }`}
                 >
 
-                {/* 메시지와 첨부파일 처리 */}
-                {log.message && !Array.isArray(log.message) && (
+                {/* 메시지 또는 첨부파일이 있는 경우 */}
+                {(log.message || (log.attachment && log.attachment.length > 0)) && (
                   <div>
-                    <span>{log.message}</span>
-                  </div>
-                )}
-
-                {Array.isArray(log.message) && log.message.length > 0 && (
-                  <div>
-                    {log.message.map((attachment, idx) => {
-                      const fileName = attachment.split('/').pop();
-                      const finalFileName = fileName?.replace(
-                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/,
-                        ''
-                      );
-                      return (
-                        <a
-                          key={idx}
-                          href={attachment}
-                          download
-                          className="text-blue-500 underline block mb-2"
-                        >
-                          {finalFileName}
-                        </a>
-                      );
-                    })}
-                  </div>
-                )}
-
-                {/* 첨부파일 처리 */}
-                {log.attachment && !Array.isArray(log.attachment) && (
-                  <div>
-                    {isImage(log.attachment) ? (
-                      <a href={log.attachment} download>
-                        <div className="relative w-[100px] h-[100px]">
-                          <img
-                            src={log.attachment}
-                            alt="Attachment"
-                            className="w-[100px] h-[100px] object-cover mb-2 hover:opacity-60"
-                          />
-                          <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
-                            {log.attachment.split('/').pop()}
-                          </span>
-                        </div>
-                      </a>
-                    ) : (
-                      <a href={log.attachment} download>
-                        <div className="relative w-[100px] h-[100px] bg-gray-300 flex items-center justify-center text-gray-700 hover:opacity-60">
-                          <FaFileAlt className="text-gray-500" size={80} />
-                          <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
-                            {log.attachment.split('/').pop()}
-                          </span>
-                        </div>
-                      </a>
+                    {/* 메시지가 있을 때만 표시 */}
+                    {log.message !== "" && (
+                      <div className={log.attachment.length > 0 ? "mb-2" : ""}>
+                        <span>{log.message}</span>
+                      </div>
                     )}
-                  </div>
-                )}
+                    {/* 첨부파일이 있을 때만 표시 */}
+                    {log.attachment.length > 0 && (
+                      <div>
+                        {(Array.isArray(log.attachment) ? log.attachment : [log.attachment]).map((attachment, idx) => {
+                          const fileName = attachment.split('/').pop();
+                          const finalFileName = fileName?.replace(
+                            /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/,
+                            ''
+                          );
 
-                {/* message와 attachment 둘 다 있을 경우 */}
-                {log.attachment && Array.isArray(log.attachment) && (
-                  <div>
-                    {log.attachment.map((attachment, idx) => {
-                      const fileName = attachment.split('/').pop();
-                      const finalFileName = fileName?.replace(
-                        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}-/,
-                        ''
-                      );
-                      return (
-                        <div key={idx} className="mb-2">
-                          {isImage(attachment) ? (
-                            <a href={attachment} download>
-                              <div className="relative w-[300px]">
-                                <img
-                                  src={attachment}
-                                  alt="Attachment"
-                                  className="w-[300px] object-cover mb-2 hover:opacity-60"
-                                />
-                                <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
-                                  {finalFileName}
-                                </span>
-                              </div>
-                            </a>
-                          ) : (
-                            <a href={attachment} download>
-                              <div className="relative w-[100px] h-[100px] bg-gray-300 flex items-center justify-center text-gray-700 hover:opacity-60">
-                                <FaFileAlt className="text-gray-500" size={80} />
-                                <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
-                                  {finalFileName}
-                                </span>
-                              </div>
-                            </a>
-                          )}
-                        </div>
-                      );
-                    })}
+                          return (
+                            <div key={idx} className="">
+                              {isImage(attachment) ? (
+                                <a href={attachment} download>
+                                  <div className="relative w-[300px]">
+                                    <img
+                                      src={attachment}
+                                      alt="Attachment"
+                                      className="w-[300px] object-cover hover:opacity-60"
+                                    />
+                                    <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
+                                      {finalFileName}
+                                    </span>
+                                  </div>
+                                </a>
+                              ) : (
+                                <a href={attachment} download>
+                                  <div className="relative w-[100px] h-[100px] flex items-center justify-center text-gray-700 hover:opacity-60">
+                                    <FaFileAlt className="text-gray-500" size={100} />
+                                    <span className="absolute bottom-0 left-0 right-0 bg-gray-700 text-white text-xs text-center opacity-0 hover:opacity-100 transition-opacity duration-200 p-1">
+                                      {finalFileName}
+                                    </span>
+                                  </div>
+                                </a>
+                              )}
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
                 )}
                 </div>

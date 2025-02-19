@@ -31,6 +31,7 @@ export default function LogPage() {
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [activeTab, setActiveTab] = useState("전체");
+  const [maxTicketsToShow, setMaxTicketsToShow] = useState(20);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -118,6 +119,18 @@ export default function LogPage() {
 
   const toggleCalendar = () => {
     setIsCalendarOpen(!isCalendarOpen);
+    if (openFilter) {
+      setOpenFilter(null);
+    }
+  };
+
+  const [openFilter, setOpenFilter] = useState<string | null>(null); 
+
+  const toggleFilter = () => {
+    setOpenFilter(openFilter ? null : "num"); // Toggle filter
+    if (isCalendarOpen) {
+      setIsCalendarOpen(false); // Close calendar if open
+    }
   };
 
   // 날짜 범위 포맷팅
@@ -129,9 +142,12 @@ export default function LogPage() {
 
   const handleSelectCount = (count: number) => {
     setitemsPerPage(count);
+    setMaxTicketsToShow(count);
     setCurrentPage(1); // 페이지네이션도 첫 페이지로 이동
   };
-const datepickerRef = useRef(null); // ✅ 캘린더 감지용 ref
+
+
+  const datepickerRef = useRef(null); // ✅ 캘린더 감지용 ref
 
   useEffect(() => {
           const handleClickOutside = (event) => {
@@ -227,9 +243,12 @@ const datepickerRef = useRef(null); // ✅ 캘린더 감지용 ref
               />
             </div>
           )}
-
-          {/* 필터 버튼 */}
-          <FilterNum onSelectCount={handleSelectCount} selectedCount={itemsPerPage} />
+          <FilterNum
+            onSelectCount={handleSelectCount}
+            selectedCount={maxTicketsToShow}
+            isOpen={openFilter === "num"}
+            setIsOpen={() => toggleFilter()}
+          />
         </div>
       </div>
 

@@ -56,6 +56,8 @@ export default function UserProfilePage() {
   const { data, isLoading, error, refetch } = useUserDetailQuery();
 
   useEffect(() => {
+    refetch();
+
     if (data) {
       setEditableData({
         email: data.email || "",
@@ -73,7 +75,7 @@ export default function UserProfilePage() {
         kakaoworkNotification: data.kakaoworkNotification ?? true,
       });
     }
-  }, [data]);
+  }, [data, refetch]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;

@@ -157,7 +157,7 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
             )}
             {(log.message || log.attachment) && (
               <div className={`flex ${log.role !== user?.role ? 'justify-start' : 'justify-end'}`}>
-                {log.role !== user?.role && (
+                {log.role === user?.role && (
                   <p className="self-end text-xs mr-2 text-gray-400">
                     {formatTime(log.createdAt)}
                   </p>
@@ -220,8 +220,8 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
                   </div>
                 )}
                 </div>
-                {log.role === user?.role && (
-                  <p className="self-end text-xs ml-2 text-gray-400">
+                {log.role !== user?.role && (
+                  <p className="self-end text-xs  text-left ml-2 text-gray-400">
                     {formatTime(log.createdAt)}
                   </p>
                 )}
@@ -232,24 +232,28 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
       </div>
 
       <div className="flex space-x-2 items-center mt-2">
-        <button
-          onClick={handleFileUploadClick}
-          className={`bg-gray-200 rounded-lg p-2 ${isTicketInProgress && isAuthorized ? 'hover:bg-gray-300' : 'cursor-not-allowed'}`}
-          type="button"
-          disabled={!isTicketInProgress}
-        >
-          <FiPaperclip className="text-xl text-gray-600" />
-        </button>
-        <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+      <button
+        onClick={handleFileUploadClick}
+        className={`bg-gray-200 rounded-lg p-2 ${
+          isTicketInProgress && isAuthorized ? 'hover:bg-gray-300' : 'cursor-not-allowed opacity-50 pointer-events-none'
+        }`}
+        type="button"
+        disabled={!isTicketInProgress || !isAuthorized} // 여기서 기능을 막음
+      >
+        <FiPaperclip className="text-xl text-gray-600" />
+      </button>
+      <input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
 
-        <button
-          onClick={handleRemind}
-          className={`bg-red-100 rounded-lg p-2 ${isTicketInProgress && isAuthorized ? 'hover:bg-red-200' : 'cursor-not-allowed'}`}
-          type="button"
-          disabled={!isTicketInProgress}
-        >
-          <FiClock className="text-xl text-red-600" />
-        </button>
+      <button
+        onClick={handleRemind}
+        className={`bg-red-100 rounded-lg p-2 ${
+          isTicketInProgress && isAuthorized ? 'hover:bg-red-200' : 'cursor-not-allowed opacity-50 pointer-events-none'
+        }`}
+        type="button"
+        disabled={!isTicketInProgress || !isAuthorized}
+      >
+        <FiClock className="text-xl text-red-600" />
+      </button>
 
         <input
           type="text"
@@ -261,14 +265,18 @@ const TicketComment: React.FC<TicketCommentProps> = ({ logs, ticketId, status, h
           disabled={!isTicketInProgress || !isAuthorized}
         />
 
-        <button
-          onClick={handleSendMessage}
-          disabled={!isTicketInProgress || (!message.trim() && !file) || !isAuthorized}
-          className={`p-2 bg-blue-500 text-white rounded-lg ${isTicketInProgress && isAuthorized ? 'hover:bg-blue-600' : 'cursor-not-allowed'}`}
-          type="button"
-        >
-          <FiSend className="text-xl" />
-        </button>
+<button
+  onClick={handleSendMessage}
+  disabled={!isTicketInProgress || (!message.trim() && !file) || !isAuthorized}
+  className={`p-2 bg-blue-500 text-white rounded-lg ${
+    isTicketInProgress && isAuthorized && (message.trim() || file)
+      ? 'hover:bg-blue-600'
+      : 'cursor-not-allowed opacity-50 pointer-events-none'
+  }`}
+  type="button"
+>
+  <FiSend className="text-xl" />
+</button>
       </div>
 
       {file && (

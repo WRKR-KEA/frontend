@@ -150,6 +150,26 @@ export default function ManagerTicketListPage() {
   if (error) {
     return <SkeletonNet width="100%" height="100%" />;
   }
+
+  const [openFilter, setOpenFilter] = useState<string | null>(null); 
+const [isOrderOpen, setIsOrderOpen] = useState(false);
+
+const toggleFilter = (filterType: string) => {
+  if (openFilter === filterType) {
+    setOpenFilter(null); // 이미 열려있는 필터를 클릭하면 닫기
+  } else {
+    setOpenFilter(filterType); // 새로운 필터 열기
+  }
+
+  if (filterType !== "filter") {
+    setIsOrderOpen(false); // FilterOrder가 아닌 경우에는 그걸 닫기
+  }
+
+  if (filterType !== "num") {
+    setIsOrderOpen(true); // FilterNum이 아닌 경우에는 FilterOrder를 열기
+  }
+};
+
   return (
     <div className="pt-4 pl-6 pr-6 pb-4 flex flex-col space-y-4">
       <div className="flex items-center">
@@ -265,9 +285,21 @@ export default function ManagerTicketListPage() {
         </div>
       )}
     </div>
+
     } 
-          <FilterOrder onSelectOrder={handleSelectOrder} sortOrder={sortOrder} />
-          <FilterNum onSelectCount={handleSelectCount} selectedCount={maxTicketsToShow} />
+          <FilterOrder 
+            onSelectOrder={handleSelectOrder} 
+            sortOrder={sortOrder} 
+            isOpen={openFilter === "filter"} 
+            setIsOpen={() => toggleFilter("filter")} 
+          />
+
+          <FilterNum
+            onSelectCount={handleSelectCount}
+            selectedCount={maxTicketsToShow}
+            isOpen={openFilter === "num"}
+            setIsOpen={() => toggleFilter("num")} 
+          />
         </div>
       </div>
 

@@ -16,6 +16,11 @@
   - 알림 기능
   - 통계 대시보드
 
+
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/4d6f4248-cd68-46d9-822c-bca99bce550c" alt="SVG Image">
+</div>
+
 ## 프로젝트 구조
 ### 1. 패키지 구조
 ```plaintext
@@ -115,8 +120,6 @@ frontend/
   - `feature` 브랜치는 작업하고자 하는 티켓을 브랜치 명으로 생성합니다.
   - 개발 완료 시, `develop` 브랜치로 병합과 동시에 삭제합니다.
   
-<img src="https://private-user-images.githubusercontent.com/44363238/405489078-724ac54f-caa9-455a-b018-e699cefc2313.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3Mzc1MjUxNDEsIm5iZiI6MTczNzUyNDg0MSwicGF0aCI6Ii80NDM2MzIzOC80MDU0ODkwNzgtNzI0YWM1NGYtY2FhOS00NTVhLWIwMTgtZTY5OWNlZmMyMzEzLnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNTAxMjIlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjUwMTIyVDA1NDcyMVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTdkZDcxYjE0N2UyYzU3NmI3NjZlODcyNmE5YjEyN2ZhOWFlYzBjNzI2ZTg3MmQ5YWMwMDc4YTA5ZmNjM2Q3NjImWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0In0.OpAcdIvkIqh4nAdmnsNxGqgqqLVrR5TlPVF3OQgYF2g" width="500" >
-
 ### 2. 커밋 전략
 - **a. 커밋 메시지 작성의 중요성**
     - 팀원과의 원활한 소통을 위해

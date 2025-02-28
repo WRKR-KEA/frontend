@@ -15,9 +15,9 @@ COPY . .
 
 # 6. 환경변수 설정
 ARG NEXT_PUBLIC_BASE_URL
-ENV NEXT_PUBLIC_BASE_URL=https://www.tickety.co.kr
+ENV NEXT_PUBLIC_BASE_URL=http://172.16.211.53:8080
 ARG NEXT_PUBLIC_NOTI_URL
-ENV NEXT_PUBLIC_NOTI_URL=https://www.tickety.co.kr
+ENV NEXT_PUBLIC_NOTI_URL=http://172.16.211.53:8080
 
 
 # 7. 애플리케이션 빌드
